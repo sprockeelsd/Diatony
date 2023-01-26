@@ -24,6 +24,8 @@
 using namespace Gecode;
 using namespace std;
 
+//Global Variables
+
 class FourVoiceTexture : public Space
 {
 protected:
@@ -31,6 +33,7 @@ protected:
     int n;
 
     // Variable arrays for the melodic intervals of the different voices
+    // Maybe change into Argument variables? Depending on whether we need to branch on them
     IntVarArray sopranoVoiceIntervals;
     IntVarArray altoVoiceIntervals;
     IntVarArray tenorVoiceIntervals;
@@ -66,14 +69,20 @@ public:
     }
 
     /**
-     * @brief Print the solution, TODO
+     * @brief Print all the variables, used for development
+     *
+     */
+    void printDevelop(void) const;
+
+    /**
+     * @brief Print the solution
      *
      */
     void print(void) const;
 
     /**
-     * @brief Prints the solution in an OM-ready way (parenthesis with the note values in MIDIcent)
-     * 
+     * @brief Prints the solution in an OM-ready way (parenthesis with the note values in MIDIcent). Example output : ((6000 6200 6400) (6500 6700 6900))
+     *
      */
     void printForOM(void) const;
 

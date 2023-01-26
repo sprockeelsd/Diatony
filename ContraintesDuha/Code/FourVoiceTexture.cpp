@@ -25,12 +25,22 @@ FourVoiceTexture::FourVoiceTexture(int size)
     n = size;
 
     // TODO change the domains for all variables (intervals and chords)
-    sopranoVoiceIntervals = IntVarArray(*this, n - 1, -3, 3);
-    altoVoiceIntervals = IntVarArray(*this, n - 1, -3, 3);
-    tenorVoiceIntervals = IntVarArray(*this, n - 1, -3, 3);
-    bassVoiceIntervals = IntVarArray(*this, n - 1, -3, 3);
+    sopranoVoiceIntervals = IntVarArray(*this, n - 1, -24, 24);
+    altoVoiceIntervals = IntVarArray(*this, n - 1, -24, 24);
+    tenorVoiceIntervals = IntVarArray(*this, n - 1, -24, 24);
+    bassVoiceIntervals = IntVarArray(*this, n - 1, -24, 24);
 
-    chordsVoicings = IntVarArray(*this, 4 * n, 0, 4 * n);
+    chordsVoicings = IntVarArray(*this, 4 * n, 12, 108);
+
+    //------------Linking the Arrays together------------------
+    // Posts the constraints that the intervals are the difference between 2 consecutive notes for each voice
+    for (int i = 0; i < n - 1; ++i)
+    {
+        sopranoVoiceIntervals[i] = expr(*this, chordsVoicings[(i + 1) * 4] - chordsVoicings[i * 4]);
+        altoVoiceIntervals[i] = expr(*this, chordsVoicings[((i + 1) * 4) + 1] - chordsVoicings[(i * 4) + 1]);
+        tenorVoiceIntervals[i] = expr(*this, chordsVoicings[((i + 1) * 4) + 2] - chordsVoicings[(i * 4) + 2]);
+        bassVoiceIntervals[i] = expr(*this, chordsVoicings[((i + 1) * 4) + 3] - chordsVoicings[(i * 4) + 3]);
+    }
 
     //----------------------Constraints------------------------
 
@@ -48,7 +58,11 @@ FourVoiceTexture::FourVoiceTexture(int size)
     branch(*this, bassVoiceIntervals, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
 }
 
-void FourVoiceTexture::print(void) const
+/**
+ * @brief Print all the variables, used for development
+ *
+ */
+void FourVoiceTexture::printDevelop(void) const
 {
     std::cout << "soprano : " << sopranoVoiceIntervals << std::endl
               << "alto : " << altoVoiceIntervals << std::endl
@@ -58,6 +72,19 @@ void FourVoiceTexture::print(void) const
     std::cout << chordsVoicings << std::endl;
 }
 
+/**
+ * @brief Print the solution
+ *
+ */
+void FourVoiceTexture::print(void) const
+{
+    std::cout << "TODO" << std::endl;
+}
+
+/**
+ * @brief Prints the solution in an OM-ready way (parenthesis with the note values in MIDIcent). Example output : ((6000 6200 6400) (6500 6700 6900))
+ *
+ */
 void FourVoiceTexture::printForOM(void) const
 {
     std::cout << "TODO" << std::endl;
