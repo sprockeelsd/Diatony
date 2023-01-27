@@ -12,17 +12,16 @@
 
 #include "FourVoiceTexture.h"
 
-using namespace Gecode;
-using namespace std;
-
 /**
  * @brief Construct a new FourVoiceTexture object
  * @param size The number of chords in the 4 voice texture to be generated
  */
-FourVoiceTexture::FourVoiceTexture(int size)
+FourVoiceTexture::FourVoiceTexture(int size, int key, int mode)
 {
     //---------------------Initialisation---------------------
     n = size;
+    key = key;
+    mode = mode;
 
     // TODO change the domains for all variables (intervals and chords)
     sopranoVoiceIntervals = IntVarArray(*this, n - 1, -24, 24);
@@ -30,7 +29,7 @@ FourVoiceTexture::FourVoiceTexture(int size)
     tenorVoiceIntervals = IntVarArray(*this, n - 1, -24, 24);
     bassVoiceIntervals = IntVarArray(*this, n - 1, -24, 24);
 
-    chordsVoicings = IntVarArray(*this, 4 * n, 12, 108);
+    chordsVoicings = IntVarArray(*this, 4 * n, 60, 72);
 
     //------------Linking the Arrays together------------------
     // Posts the constraints that the intervals are the difference between 2 consecutive notes for each voice
@@ -44,10 +43,10 @@ FourVoiceTexture::FourVoiceTexture(int size)
 
     //----------------------Constraints------------------------
 
+    setToTonality(chordsVoicings);
+
     //---------------------Branching---------------------------
 
-    // Branch on each of the chords
-    distinct(*this, chordsVoicings);
     // TODO réfléchir au branching
 
     branch(*this, chordsVoicings, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
@@ -56,6 +55,19 @@ FourVoiceTexture::FourVoiceTexture(int size)
     branch(*this, altoVoiceIntervals, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
     branch(*this, tenorVoiceIntervals, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
     branch(*this, bassVoiceIntervals, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
+}
+
+/**
+ * @brief Posts the constraint that the domain of vars is equal to domain
+ *
+ * @param space An instance of a 4 voice texture problem
+ * @param vars The array of variables that we want to apply the constraint to
+ * @param domain The set of notes representing the tonality
+ */
+void FourVoiceTexture::setToTonality(IntVarArray vars)
+{
+    IntSet domain(getAllNotesFromTonality(key, mode));
+    dom(*this, vars, domain);
 }
 
 /**

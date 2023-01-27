@@ -7,10 +7,8 @@
  *
  */
 #include "Main.h"
-#include "FourVoiceTexture.h"
 
-using namespace Gecode;
-using namespace std;
+
 
 /**********************************************
  *                                            *
@@ -20,12 +18,12 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-    FourVoiceTexture *problem = new FourVoiceTexture(3);
+    FourVoiceTexture *problem = new FourVoiceTexture(3,60,MAJOR);
 
     // Search options
     Gecode::Search::Options opts;
     opts.threads = 0; // As many as possible
-    Gecode::Search::TimeStop maxTime(1000); // Search for max 1s
+    Gecode::Search::TimeStop maxTime(3); // Search for max 1s
     opts.stop = &maxTime;
 
     // Create the search engine
@@ -35,11 +33,12 @@ int main(int argc, char *argv[])
     int nbSol = 0;
     while (FourVoiceTexture *s = e.next())
     {
-        s->print();
+        s->printDevelop();
         delete s;
         ++nbSol;
     }
 
     std::cout << "Finished. Number of solutions found: " << nbSol << std::endl;
+
     return 0;
 }

@@ -12,9 +12,15 @@
 #include <gecode/int.hh>
 #include <gecode/search.hh>
 
+#include "Utilities.h"
+#include "FourVoiceTexture.h"
+
 #include <iostream>
 #include <vector>
 #include <string>
+
+using namespace Gecode;
+using namespace std;
 
 /**********************************************
  *                                            *

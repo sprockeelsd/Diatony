@@ -14,8 +14,10 @@
 #define FOUR_VOICE_TEXTURE
 
 #include <gecode/int.hh>
-#include <gecode/search.hh>
 #include <gecode/minimodel.hh>
+
+#include "Utilities.h"
+#include "FourVoiceTextureConstraints.h"
 
 #include <iostream>
 #include <vector>
@@ -24,13 +26,12 @@
 using namespace Gecode;
 using namespace std;
 
-//Global Variables
-
 class FourVoiceTexture : public Space
 {
 protected:
-    // The number of chord for which to generate 4 voice texture
-    int n;
+    int n;    // The number of chord for which to generate 4 voice texture
+    int key;  // The key of the tonality of the chord progression
+    int mode; // The mode of the tonality of the chord progression
 
     // Variable arrays for the melodic intervals of the different voices
     // Maybe change into Argument variables? Depending on whether we need to branch on them
@@ -49,7 +50,16 @@ public:
      *
      * @param size The number of chords in the 4 voice texture to be generated
      */
-    FourVoiceTexture(int size);
+    FourVoiceTexture(int size, int key, int mode);
+
+    /**
+     * @brief Posts the constraint that the domain of vars is equal to domain
+     *
+     * @param space An instance of a 4 voice texture problem
+     * @param vars The array of variables that we want to apply the constraint to
+     * @param domain The set of notes representing the tonality
+     */
+    void setToTonality(IntVarArray vars);
 
     /**
      * @brief Search support, updates the variables
