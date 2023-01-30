@@ -71,15 +71,12 @@ public:
     /**
      * @brief Posts the constraint that the different voices of the chord have a value that is part of the chord
      *
-     * @param bass The bass variable of the chord
-     * @param tenor The tenor variable of the chord
-     * @param alto The alto variable of the chord
-     * @param soprano The soprano variable of the chord
+     * @param chordNotes the variables representing the notes of the chord 
      * @param chordRoot The root of the chord
      * @param chordQuality The quality of the chord (M/m/...)
      * @param chordBass The bass of the chord
      */
-    void setToChord(IntVar soprano, IntVar alto, IntVar tenor, IntVar bass, int chordRoot, vector<int> chordQuality, int chordBass);
+    void setToChord(IntVarArgs chordNotes, int chordRoot, vector<int> chordQuality, int chordBass);
 
     /**
      * @brief Search support, updates the variables
