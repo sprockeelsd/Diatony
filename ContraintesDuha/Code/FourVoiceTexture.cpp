@@ -32,35 +32,43 @@ FourVoiceTexture::FourVoiceTexture(int size, int key, vector<int> mode, vector<i
     chordQualities = chordQualities;
     chordBass = chordBass;
 
-    IntSet tonality(getAllNotesFromTonality(key, mode)); // Set of all the notes from a tonality
-
-    chordsVoicings = IntVarArray(*this, 4 * n, tonality);
-
-    // std::cout << "chordsVoicings : " << chordsVoicings << std::endl;
+    // The domain of all notes is the set of all the notes from the (key, mode) tonality
+    chordsVoicings = IntVarArray(*this, 4 * n, getAllNotesFromTonality(key, mode));
 
     // TODO change the domains for the intervals
-    sopranoVoiceIntervals = IntVarArray(*this, n - 1, -24, 24);
-    altoVoiceIntervals = IntVarArray(*this, n - 1, -24, 24);
-    tenorVoiceIntervals = IntVarArray(*this, n - 1, -24, 24);
-    bassVoiceIntervals = IntVarArray(*this, n - 1, -24, 24);
+    bassVoiceIntervals = IntVarArray(*this, n - 1, -12, 12);
+    tenorVoiceIntervals = IntVarArray(*this, n - 1, -12, 12);
+    altoVoiceIntervals = IntVarArray(*this, n - 1, -12, 12);
+    sopranoVoiceIntervals = IntVarArray(*this, n - 1, -12, 12);
 
-    // std::cout << "sopranoVoceIntervals : " << sopranoVoiceIntervals << std::endl;
+    //---------------------------------------------------------Linking the variables together--------------------------------------------------------------
 
-    //----------------------------------------------------------Linking the Arrays together---------------------------------------------------------------
     // Posts the constraints that the intervals are the difference between 2 consecutive notes for each voice
-
-    // /!\ This causes inconsistencies with the domain of soprano etc
+    // TODO change to an element-like constraint?
     for (int i = 0; i < n - 1; ++i)
     {
-        rel(*this, sopranoVoiceIntervals[i] == chordsVoicings[(i + 1) * 4] - chordsVoicings[i * 4]);
-        rel(*this, bassVoiceIntervals[i] == chordsVoicings[((i + 1) * 4) + 3] - chordsVoicings[(i * 4) + 3]);
-        rel(*this, altoVoiceIntervals[i] == chordsVoicings[((i + 1) * 4) + 1] - chordsVoicings[(i * 4) + 1]);
-        rel(*this, tenorVoiceIntervals[i] == chordsVoicings[((i + 1) * 4) + 2] - chordsVoicings[(i * 4) + 2]);
+        rel(*this, bassVoiceIntervals[i] == chordsVoicings[(i + 1) * 4] - chordsVoicings[i * 4]);
+        rel(*this, tenorVoiceIntervals[i] == chordsVoicings[((i + 1) * 4) + 1] - chordsVoicings[(i * 4) + 1]);
+        rel(*this, altoVoiceIntervals[i] == chordsVoicings[((i + 1) * 4) + 2] - chordsVoicings[(i * 4) + 2]);
+        rel(*this, sopranoVoiceIntervals[i] == chordsVoicings[((i + 1) * 4) + 3] - chordsVoicings[(i * 4) + 3]);
+    }
+
+    // Posts the constraint that bass[i] <= tenor[i] <= alto[i] <= soprano[i]
+    for (int i = 0; i < n; ++i)
+    {
+        rel(*this, chordsVoicings[4 * i] <= chordsVoicings[(4 * i) + 1]);
+        rel(*this, chordsVoicings[(4 * i) + 1] <= chordsVoicings[(4 * i) + 2]);
+        rel(*this, chordsVoicings[(4 * i) + 2] <= chordsVoicings[(4 * i) + 3]);
     }
 
     //---------------------------------------------------------------------Constraints---------------------------------------------------------------------
 
     // Set the notes of each chord to belong to the given chord
+    for (int i = 0; i < n; ++i) // For each chord
+    {
+        // Set the domain of the notes of that chord to possible notes from the chord
+        setToChord(chordsVoicings[4 * i], chordsVoicings[(4 * i) + 1], chordsVoicings[(4 * i) + 2], chordsVoicings[(4 * i) + 3], chordRoots[i], chordQualities[i]);
+    }
 
     //----------------------------------------------------------------------Branching----------------------------------------------------------------------
 
@@ -80,6 +88,19 @@ FourVoiceTexture::FourVoiceTexture(int size, int key, vector<int> mode, vector<i
  *                                                                    *
  **********************************************************************/
 
+/**
+ * @brief Set the domain of variables to notes from a given chord
+ *
+ */
+void FourVoiceTexture::setToChord(IntVar bass, IntVar tenor, IntVar alto, IntVar soprano, int chordRoot, vector<int> chordQuality)
+{
+    IntSet chordNotes(getAllNotesFromChord(chordRoot, chordQuality)); // Get all notes of the chord
+    dom(*this, bass, getAllGivenNote(chordRoot));                     // Special treatment for the bass since it is already known
+    dom(*this, tenor, chordNotes);
+    dom(*this, alto, chordNotes);
+    dom(*this, soprano, chordNotes);
+}
+
 /**********************************************************************
  *                                                                    *
  *                          Support functions                         *
@@ -92,10 +113,10 @@ FourVoiceTexture::FourVoiceTexture(int size, int key, vector<int> mode, vector<i
  */
 void FourVoiceTexture::printDevelop(void) const
 {
-    std::cout << "soprano : " << sopranoVoiceIntervals << std::endl
-              << "alto : " << altoVoiceIntervals << std::endl
+    std::cout << "bass : " << bassVoiceIntervals << std::endl
               << "tenor : " << tenorVoiceIntervals << std::endl
-              << "bass : " << bassVoiceIntervals << std::endl;
+              << "alto : " << altoVoiceIntervals << std::endl
+              << "soprano : " << sopranoVoiceIntervals << std::endl;
 
     std::cout << chordsVoicings << std::endl;
 }
@@ -125,10 +146,10 @@ void FourVoiceTexture::printForOM(void) const
  */
 FourVoiceTexture::FourVoiceTexture(FourVoiceTexture &s) : Space(s)
 {
-    sopranoVoiceIntervals.update(*this, s.sopranoVoiceIntervals);
-    altoVoiceIntervals.update(*this, s.altoVoiceIntervals);
-    tenorVoiceIntervals.update(*this, s.tenorVoiceIntervals);
     bassVoiceIntervals.update(*this, s.bassVoiceIntervals);
+    tenorVoiceIntervals.update(*this, s.tenorVoiceIntervals);
+    altoVoiceIntervals.update(*this, s.altoVoiceIntervals);
+    sopranoVoiceIntervals.update(*this, s.sopranoVoiceIntervals);
 
     chordsVoicings.update(*this, s.chordsVoicings);
 }

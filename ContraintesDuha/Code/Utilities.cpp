@@ -9,6 +9,8 @@
 
 #include "Utilities.h"
 
+using namespace Gecode;
+
 /**
  * @brief For a given tonality (root + mode), get all the possible notes
  *
@@ -16,7 +18,7 @@
  * @param scale the set of tones and semitones that define the scale
  * @return vector<int> all the possible notes from that tonality
  */
-const vector<int> getAllNotesFromTonality(int root, vector<int> scale)
+IntSet getAllNotesFromTonality(int root, vector<int> scale)
 {
     int note = root % 12 + 12; // bring the root back to [12,23] in case the argument is wrong
     vector<int> notes;
@@ -28,7 +30,8 @@ const vector<int> getAllNotesFromTonality(int root, vector<int> scale)
         note += scale[i % scale.size()];
         ++i;
     }
-    return (const vector<int>)notes;
+    IntSet set((const vector<int>)notes);
+    return set;
 }
 
 /**
@@ -38,7 +41,7 @@ const vector<int> getAllNotesFromTonality(int root, vector<int> scale)
  * @param quality the set of tones and semitones that define the chord
  * @return vector<int> all the possible notes from that chord
  */
-const vector<int> getAllNotesFromChord(int root, vector<int> quality)
+IntSet getAllNotesFromChord(int root, vector<int> quality)
 {
     int note = root % 12 + 12; // bring the root back to [12,23] in case the argument is wrong
     vector<int> notes;
@@ -50,7 +53,27 @@ const vector<int> getAllNotesFromChord(int root, vector<int> quality)
         note += quality[i % quality.size()];
         ++i;
     }
-    return (const vector<int>)notes;
+    IntSet set((const vector<int>)notes);
+    return set;
+}
+
+/**
+ * @brief Get all values for a given note
+ *
+ * @param note a note
+ * @return const vector<int> a vector containing all the given notes
+ */
+IntSet getAllGivenNote(int note)
+{
+    int current = note % 12 + 12;
+    vector<int> notes;
+    while (current < 127)
+    {
+        notes.push_back(current);
+        current += 12;
+    }
+    IntSet set((const vector<int>)notes);
+    return set;
 }
 
 /**

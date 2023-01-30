@@ -9,11 +9,15 @@
 #ifndef UTILITIES
 #define UTILITIES
 
+#include <gecode/int.hh>
+#include <gecode/minimodel.hh>
+
 #include <iostream>
 #include <vector>
 #include <string>
 
 using namespace std;
+using namespace Gecode;
 
 //--------------------Useful constants---------------------
 
@@ -60,7 +64,7 @@ const vector<int> MINOR_SCALE = {2, 1, 2, 2, 1, 2, 2};
  * @param scale the set of tones and semitones that define the scale
  * @return vector<int> all the possible notes from that tonality
  */
-const vector<int> getAllNotesFromTonality(int root, vector<int> scale);
+IntSet getAllNotesFromTonality(int root, vector<int> scale);
 
 /**
  * @brief For a given chord (root + mode), get all the possible notes
@@ -69,7 +73,15 @@ const vector<int> getAllNotesFromTonality(int root, vector<int> scale);
  * @param quality the set of tones and semitones that define the chord
  * @return vector<int> all the possible notes from that chord
  */
-const vector<int> getAllNotesFromChord(int root, vector<int> quality);
+IntSet getAllNotesFromChord(int root, vector<int> quality);
+
+/**
+ * @brief Get all values for a given note
+ * 
+ * @param note a note
+ * @return const vector<int> a vector containing all the given notes
+ */
+IntSet getAllGivenNote(int note);
 
 /**
  * @brief Print a dynamic array of integers

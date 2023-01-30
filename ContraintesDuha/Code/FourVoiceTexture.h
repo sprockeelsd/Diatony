@@ -68,10 +68,10 @@ public:
      **********************************************************************/
 
     /**
-     * @brief Set the To Chord object
+     * @brief Set the domain of variables to notes from a given chord
      *
      */
-    void setToChord();
+    void setToChord(IntVar soprano, IntVar alto, IntVar tenor, IntVar bass, int chordRoot, vector<int> chordQuality);
 
     /**
      * @brief Search support, updates the variables
@@ -89,6 +89,12 @@ public:
     {
         return new FourVoiceTexture(*this);
     }
+
+    /**
+     * @brief Print the solution in letters
+     * 
+     */
+    void printNoteNames(void) const;
 
     /**
      * @brief Print all the variables, used for development
