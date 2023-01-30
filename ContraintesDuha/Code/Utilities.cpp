@@ -90,6 +90,15 @@ void printIntVector(vector<int> v)
     std::cout << std::endl;
 }
 
-void printIntVar(IntVar var){
+/**
+ * @brief Prints A note with its name (e.g. 60 = C)
+ * 
+ * @param var an integer variable
+ */
+void printNoteInLetter(IntVar var){
     std::cout << noteNames[var.val() % 12] << var.val() / 12 << " ";
+}
+
+void printNoteForOM(IntVar var){
+    std::cout << var.val() * 100 << " ";
 }

@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
     while (FourVoiceTexture *s = e.next())
     {
         std::cout << " Solution " << nbSol + 1 << " : " << std::endl;
-        s->print();
+        s->printForOM();
         std::cout << std::endl;
         delete s;
         ++nbSol;

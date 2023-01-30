@@ -92,6 +92,13 @@ IntSet getAllGivenNote(int note);
  */
 void printIntVector(vector<int> vector);
 
-void printIntVar(IntVar var);
+/**
+ * @brief Prints A note with its name (e.g. 60 = C)
+ * 
+ * @param var an integer variable
+ */
+void printNoteInLetter(IntVar var);
+
+void printNoteForOM(IntVar var);
 
 #endif

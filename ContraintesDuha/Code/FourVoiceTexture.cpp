@@ -1,10 +1,13 @@
 /**
  * @file FourVoiceTexture.cpp
  * @author Sprockeels Damien (damien.sprockeels@uclouvain.be)
- * @brief This class creates a constraint problem to generate a 4 voice texture based on chord names and inversion.
+ * @brief This class creates a constraint problem to generate a 4 voice texture based on chord names, types and bass.
  * The variables are the following:
  * - An array for each voice containing the intervals between them. They are of size n-1 where n is the number of chords.
  * - An array for the chords. It is of size 4*n, and the first 4 variables represent one chord with the voices in ascending order (bass -> tenor -> alto -> soprano).
+ * The currently supported constraints are the following :
+ *      - The notes are in the right tonality
+ *      - The notes are in the given chord
  * @version 1.0
  * @date 2023-01-25
  *
@@ -134,7 +137,7 @@ void FourVoiceTexture::print(void) const
     {
         if (i % 4 == 0 && i != 0)
             std::cout << std::endl;
-        printIntVar(chordsVoicings[i]);
+        printNoteInLetter(chordsVoicings[i]);
     }
 }
 
@@ -145,6 +148,12 @@ void FourVoiceTexture::print(void) const
 void FourVoiceTexture::printForOM(void) const
 {
     std::cout << "TODO" << std::endl;
+    for (int i = 0; i < chordsVoicings.size(); ++i)
+    {
+        if (i % 4 == 0 && i != 0)
+            std::cout << std::endl;
+        printNoteForOM(chordsVoicings[i]);
+    }
 }
 
 /**
