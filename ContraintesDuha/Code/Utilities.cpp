@@ -91,5 +91,5 @@ void printIntVector(vector<int> v)
 }
 
 void printIntVar(IntVar var){
-    std::cout << noteNames[var.val() % 12] << " ";
+    std::cout << noteNames[var.val() % 12] << var.val() / 12 << " ";
 }

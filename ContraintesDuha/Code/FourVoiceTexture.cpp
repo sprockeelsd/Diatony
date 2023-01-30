@@ -74,7 +74,9 @@ FourVoiceTexture::FourVoiceTexture(int size, int key, vector<int> mode, vector<i
 
     // TODO réfléchir au branching
 
-    branch(*this, chordsVoicings, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
+    Rnd r1(0);
+    Rnd r2(1);
+    branch(*this, chordsVoicings, INT_VAR_RND(r1), INT_VAL_RND(r2));
 
     /*     branch(*this, sopranoVoiceIntervals, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
         branch(*this, altoVoiceIntervals, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
