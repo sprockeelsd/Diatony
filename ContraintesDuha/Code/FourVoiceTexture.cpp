@@ -13,35 +13,49 @@
 #include "FourVoiceTexture.h"
 
 /**
- * @brief Construct a new FourVoiceTexture object
- * @param size The number of chords in the 4 voice texture to be generated
- * TODO peut-être donner la liste d'intervalles de la tonalité au lieu du mode
+ * @brief Construct a new Four Voice Texture object
+ *
+ * @param size the number of chords
+ * @param key the key of the tonality
+ * @param mode the mode of the tonality
+ * @param chordRoots the roots of the chords
+ * @param chordQualities the qualities of the chords
+ * @param chordBass the bass of the chords
  */
-FourVoiceTexture::FourVoiceTexture(int size, int key, vector<int> mode)
+FourVoiceTexture::FourVoiceTexture(int size, int key, vector<int> mode, vector<int> chordRoots, vector<vector<int>> chordQualities, vector<int> chordBass)
 {
     //-------------------------------------------------------------------Initialisation--------------------------------------------------------------------
-    n = size;    // number of chords
-    key = key;   // key of the tonality
-    mode = mode; // mode of the tonality
+    n = size;
+    key = key;
+    mode = mode;
+    chordRoots = chordRoots;
+    chordQualities = chordQualities;
+    chordBass = chordBass;
 
     IntSet tonality(getAllNotesFromTonality(key, mode)); // Set of all the notes from a tonality
 
-    // TODO change the domains for all variables (intervals and chords)
+    chordsVoicings = IntVarArray(*this, 4 * n, tonality);
+
+    // std::cout << "chordsVoicings : " << chordsVoicings << std::endl;
+
+    // TODO change the domains for the intervals
     sopranoVoiceIntervals = IntVarArray(*this, n - 1, -24, 24);
     altoVoiceIntervals = IntVarArray(*this, n - 1, -24, 24);
     tenorVoiceIntervals = IntVarArray(*this, n - 1, -24, 24);
     bassVoiceIntervals = IntVarArray(*this, n - 1, -24, 24);
 
-    chordsVoicings = IntVarArray(*this, 4 * n, tonality);
+    // std::cout << "sopranoVoceIntervals : " << sopranoVoiceIntervals << std::endl;
 
     //----------------------------------------------------------Linking the Arrays together---------------------------------------------------------------
     // Posts the constraints that the intervals are the difference between 2 consecutive notes for each voice
+
+    // /!\ This causes inconsistencies with the domain of soprano etc
     for (int i = 0; i < n - 1; ++i)
     {
-        sopranoVoiceIntervals[i] = expr(*this, chordsVoicings[(i + 1) * 4] - chordsVoicings[i * 4]);
-        altoVoiceIntervals[i] = expr(*this, chordsVoicings[((i + 1) * 4) + 1] - chordsVoicings[(i * 4) + 1]);
-        tenorVoiceIntervals[i] = expr(*this, chordsVoicings[((i + 1) * 4) + 2] - chordsVoicings[(i * 4) + 2]);
-        bassVoiceIntervals[i] = expr(*this, chordsVoicings[((i + 1) * 4) + 3] - chordsVoicings[(i * 4) + 3]);
+        rel(*this, sopranoVoiceIntervals[i] == chordsVoicings[(i + 1) * 4] - chordsVoicings[i * 4]);
+        rel(*this, bassVoiceIntervals[i] == chordsVoicings[((i + 1) * 4) + 3] - chordsVoicings[(i * 4) + 3]);
+        rel(*this, altoVoiceIntervals[i] == chordsVoicings[((i + 1) * 4) + 1] - chordsVoicings[(i * 4) + 1]);
+        rel(*this, tenorVoiceIntervals[i] == chordsVoicings[((i + 1) * 4) + 2] - chordsVoicings[(i * 4) + 2]);
     }
 
     //---------------------------------------------------------------------Constraints---------------------------------------------------------------------

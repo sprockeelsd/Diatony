@@ -18,12 +18,17 @@
 
 int main(int argc, char *argv[])
 {
-    FourVoiceTexture *problem = new FourVoiceTexture(3,C,MAJORSCALE);
+    // INPUT
+    vector<int> chordRoots = {C,F,G,C};
+    vector<vector<int>> chordQualities = {MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD};
+    vector<int> chordBass = {C,F,G,C};
+
+    FourVoiceTexture *problem = new FourVoiceTexture(4,C,MAJOR_SCALE, chordRoots, chordQualities, chordBass);
 
     // Search options
     Gecode::Search::Options opts;
     opts.threads = 0; // As many as possible
-    Gecode::Search::TimeStop maxTime(3); // Search for max 1s
+    Gecode::Search::TimeStop maxTime(1); // Search for max 1s
     opts.stop = &maxTime;
 
     // Create the search engine

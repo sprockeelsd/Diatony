@@ -29,9 +29,12 @@ using namespace std;
 class FourVoiceTexture : public Space
 {
 protected:
-    int n;    // The number of chord for which to generate 4 voice texture
-    int key;  // The key of the tonality of the chord progression
-    vector<int> mode; // The mode of the tonality of the chord progression
+    int n;                      // The number of chord for which to generate 4 voice texture
+    int key;                    // The key of the tonality of the chord progression
+    vector<int> mode;           // The mode of the tonality of the chord progression
+    vector<int> chordRoots;     // The roots of the chords
+    vector<vector<int>> chordQualities; // The qualities of the chords
+    vector<int> chordBass;      // The bass of the chords
 
     // Variable arrays for the melodic intervals of the different voices
     // Maybe change into Argument variables? Depending on whether we need to branch on them
@@ -48,10 +51,27 @@ protected:
 public:
     /**
      * @brief Construct a new Four Voice Texture object
-     *
-     * @param size The number of chords in the 4 voice texture to be generated
+     * 
+     * @param size the number of chords
+     * @param key the key of the tonality
+     * @param mode the mode of the tonality
+     * @param chordRoots the roots of the chords
+     * @param chordQualities the qualities of the chords
+     * @param chordBass the bass of the chords
      */
-    FourVoiceTexture(int size, int key, vector<int> mode);
+    FourVoiceTexture(int size, int key, vector<int> mode, vector<int> chordRoots, vector<vector<int>> chordQualities, vector<int> chordBass);
+
+    /**********************************************************************
+     *                                                                    *
+     *                          Constraint functions                      *
+     *                                                                    *
+     **********************************************************************/
+
+    /**
+     * @brief Set the To Chord object
+     *
+     */
+    void setToChord();
 
     /**
      * @brief Search support, updates the variables

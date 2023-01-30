@@ -17,11 +17,14 @@ using namespace std;
 
 //--------------------Useful constants---------------------
 
-// Modes and types of chords
-const int MAJOR = 0;
-const int MINOR = 1;
-const int DIMINISHED = 2;
-const int AUGMENTED = 3;
+// Types of chords represented with the intervals going up to an octave so it can be nicely looped
+const vector<int> MAJOR_CHORD = {4, 3, 5};
+const vector<int> MINOR_CHORD = {3, 4, 5};
+const vector<int> DIMINISHED_CHORD = {3, 3, 6};
+const vector<int> AUGMENTED_CHORD = {4, 4, 4};
+const vector<int> DOMINANT_SEVENTH_CHORD = {4, 3, 3, 2};
+const vector<int> MAJOR_SEVENTH_CHORD = {4, 3, 4, 1};
+const vector<int> MINOR_SEVENTH_CHORD = {3, 4, 3, 2};
 
 // Notes
 const int Bsharp = 12;
@@ -47,9 +50,8 @@ const int B = 23;
 const int Cflat = 23;
 
 // Scales
-const vector<int> MAJORSCALE = {2, 2, 1, 2, 2, 2, 1};
-const vector<int> MINORSCALE = {2, 1, 2, 2, 1, 2, 2};
-
+const vector<int> MAJOR_SCALE = {2, 2, 1, 2, 2, 2, 1};
+const vector<int> MINOR_SCALE = {2, 1, 2, 2, 1, 2, 2};
 
 /**
  * @brief For a given tonality (root + mode), get all the possible notes
@@ -59,6 +61,15 @@ const vector<int> MINORSCALE = {2, 1, 2, 2, 1, 2, 2};
  * @return vector<int> all the possible notes from that tonality
  */
 const vector<int> getAllNotesFromTonality(int root, vector<int> scale);
+
+/**
+ * @brief For a given chord (root + mode), get all the possible notes
+ *
+ * @param root the root of the chord
+ * @param quality the set of tones and semitones that define the chord
+ * @return vector<int> all the possible notes from that chord
+ */
+const vector<int> getAllNotesFromChord(int root, vector<int> quality);
 
 /**
  * @brief Print a dynamic array of integers
