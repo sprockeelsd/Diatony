@@ -89,3 +89,7 @@ void printIntVector(vector<int> v)
     }
     std::cout << std::endl;
 }
+
+void printIntVar(IntVar var){
+    std::cout << noteNames[var.val() % 12] << " ";
+}

@@ -21,6 +21,8 @@ using namespace Gecode;
 
 //--------------------Useful constants---------------------
 
+const vector<std::string> noteNames = {"C", "C#", "D", "Eb", "E", "F", "F#", "G", "Ab", "A", "Bb", "B"};
+
 // Types of chords represented with the intervals going up to an octave so it can be nicely looped
 const vector<int> MAJOR_CHORD = {4, 3, 5};
 const vector<int> MINOR_CHORD = {3, 4, 5};
@@ -89,5 +91,7 @@ IntSet getAllGivenNote(int note);
  * @param v a dynamic array of integers
  */
 void printIntVector(vector<int> vector);
+
+void printIntVar(IntVar var);
 
 #endif

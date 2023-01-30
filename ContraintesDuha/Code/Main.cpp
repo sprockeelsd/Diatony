@@ -27,8 +27,8 @@ int main(int argc, char *argv[])
 
     // Search options
     Gecode::Search::Options opts;
-    opts.threads = 0; // As many as possible
-    Gecode::Search::TimeStop maxTime(1); // Search for max 1s
+    opts.threads = 1; // As many as possible
+    Gecode::Search::TimeStop maxTime(10); // Search for max 1s
     opts.stop = &maxTime;
 
     // Create the search engine
@@ -38,7 +38,9 @@ int main(int argc, char *argv[])
     int nbSol = 0;
     while (FourVoiceTexture *s = e.next())
     {
-        s->printDevelop();
+        std::cout << " Solution " << nbSol + 1 << " : " << std::endl;
+        s->print();
+        std::cout << std::endl;
         delete s;
         ++nbSol;
     }

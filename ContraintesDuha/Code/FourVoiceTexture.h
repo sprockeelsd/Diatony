@@ -22,6 +22,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <typeinfo>
 
 using namespace Gecode;
 using namespace std;

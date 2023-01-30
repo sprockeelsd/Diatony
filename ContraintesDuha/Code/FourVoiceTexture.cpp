@@ -127,7 +127,13 @@ void FourVoiceTexture::printDevelop(void) const
  */
 void FourVoiceTexture::print(void) const
 {
-    std::cout << "TODO" << std::endl;
+    // std::for_each(chordsVoicings.begin(), chordsVoicings.end(), printIntVar);
+    for (int i = 0; i < chordsVoicings.size(); ++i)
+    {
+        if (i % 4 == 0 && i != 0)
+            std::cout << std::endl;
+        printIntVar(chordsVoicings[i]);
+    }
 }
 
 /**
