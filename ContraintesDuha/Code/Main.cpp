@@ -18,7 +18,7 @@
 
 int main(int argc, char *argv[])
 {
-    FourVoiceTexture *problem = new FourVoiceTexture(3,60,MAJOR);
+    FourVoiceTexture *problem = new FourVoiceTexture(3,C,MAJORSCALE);
 
     // Search options
     Gecode::Search::Options opts;

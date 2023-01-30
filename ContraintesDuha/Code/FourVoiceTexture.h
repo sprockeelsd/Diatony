@@ -31,7 +31,7 @@ class FourVoiceTexture : public Space
 protected:
     int n;    // The number of chord for which to generate 4 voice texture
     int key;  // The key of the tonality of the chord progression
-    int mode; // The mode of the tonality of the chord progression
+    vector<int> mode; // The mode of the tonality of the chord progression
 
     // Variable arrays for the melodic intervals of the different voices
     // Maybe change into Argument variables? Depending on whether we need to branch on them
@@ -41,7 +41,8 @@ protected:
     IntVarArray bassVoiceIntervals;
 
     // Array containing the chords
-    // A 4*n array where each chord is represented with their voices in increasing order. Example : [bass0, tenor0, alto0, soprano0, bass1, tenor1,...]
+    // A 4*n array where each chord is represented with their voices in increasing order. Example :
+    // [bass0, tenor0, alto0, soprano0, bass1, tenor1, alto1, soprano1, ...]
     IntVarArray chordsVoicings;
 
 public:
@@ -50,16 +51,7 @@ public:
      *
      * @param size The number of chords in the 4 voice texture to be generated
      */
-    FourVoiceTexture(int size, int key, int mode);
-
-    /**
-     * @brief Posts the constraint that the domain of vars is equal to domain
-     *
-     * @param space An instance of a 4 voice texture problem
-     * @param vars The array of variables that we want to apply the constraint to
-     * @param domain The set of notes representing the tonality
-     */
-    void setToTonality(IntVarArray vars);
+    FourVoiceTexture(int size, int key, vector<int> mode);
 
     /**
      * @brief Search support, updates the variables

@@ -15,13 +15,16 @@
 /**
  * @brief Construct a new FourVoiceTexture object
  * @param size The number of chords in the 4 voice texture to be generated
+ * TODO peut-être donner la liste d'intervalles de la tonalité au lieu du mode
  */
-FourVoiceTexture::FourVoiceTexture(int size, int key, int mode)
+FourVoiceTexture::FourVoiceTexture(int size, int key, vector<int> mode)
 {
-    //---------------------Initialisation---------------------
-    n = size;
-    key = key;
-    mode = mode;
+    //-------------------------------------------------------------------Initialisation--------------------------------------------------------------------
+    n = size;    // number of chords
+    key = key;   // key of the tonality
+    mode = mode; // mode of the tonality
+
+    IntSet tonality(getAllNotesFromTonality(key, mode)); // Set of all the notes from a tonality
 
     // TODO change the domains for all variables (intervals and chords)
     sopranoVoiceIntervals = IntVarArray(*this, n - 1, -24, 24);
@@ -29,9 +32,9 @@ FourVoiceTexture::FourVoiceTexture(int size, int key, int mode)
     tenorVoiceIntervals = IntVarArray(*this, n - 1, -24, 24);
     bassVoiceIntervals = IntVarArray(*this, n - 1, -24, 24);
 
-    chordsVoicings = IntVarArray(*this, 4 * n, 60, 72);
+    chordsVoicings = IntVarArray(*this, 4 * n, tonality);
 
-    //------------Linking the Arrays together------------------
+    //----------------------------------------------------------Linking the Arrays together---------------------------------------------------------------
     // Posts the constraints that the intervals are the difference between 2 consecutive notes for each voice
     for (int i = 0; i < n - 1; ++i)
     {
@@ -41,34 +44,33 @@ FourVoiceTexture::FourVoiceTexture(int size, int key, int mode)
         bassVoiceIntervals[i] = expr(*this, chordsVoicings[((i + 1) * 4) + 3] - chordsVoicings[(i * 4) + 3]);
     }
 
-    //----------------------Constraints------------------------
+    //---------------------------------------------------------------------Constraints---------------------------------------------------------------------
 
-    setToTonality(chordsVoicings);
+    // Set the notes of each chord to belong to the given chord
 
-    //---------------------Branching---------------------------
+    //----------------------------------------------------------------------Branching----------------------------------------------------------------------
 
     // TODO réfléchir au branching
 
     branch(*this, chordsVoicings, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
 
-    branch(*this, sopranoVoiceIntervals, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
-    branch(*this, altoVoiceIntervals, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
-    branch(*this, tenorVoiceIntervals, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
-    branch(*this, bassVoiceIntervals, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
+    /*     branch(*this, sopranoVoiceIntervals, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
+        branch(*this, altoVoiceIntervals, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
+        branch(*this, tenorVoiceIntervals, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
+        branch(*this, bassVoiceIntervals, INT_VAR_SIZE_MIN(), INT_VAL_MIN()); */
 }
 
-/**
- * @brief Posts the constraint that the domain of vars is equal to domain
- *
- * @param space An instance of a 4 voice texture problem
- * @param vars The array of variables that we want to apply the constraint to
- * @param domain The set of notes representing the tonality
- */
-void FourVoiceTexture::setToTonality(IntVarArray vars)
-{
-    IntSet domain(getAllNotesFromTonality(key, mode));
-    dom(*this, vars, domain);
-}
+/**********************************************************************
+ *                                                                    *
+ *                          Constraint functions                      *
+ *                                                                    *
+ **********************************************************************/
+
+/**********************************************************************
+ *                                                                    *
+ *                          Support functions                         *
+ *                                                                    *
+ **********************************************************************/
 
 /**
  * @brief Print all the variables, used for development
@@ -117,6 +119,11 @@ FourVoiceTexture::FourVoiceTexture(FourVoiceTexture &s) : Space(s)
     chordsVoicings.update(*this, s.chordsVoicings);
 }
 
+/**
+ * @brief This method is called when a Branch and Bound solver is used everytime a solution is found by the solver.
+ *
+ * @param _b The solution found by the solver
+ */
 void FourVoiceTexture::constrain(const Space &_b)
 {
     std::cout << "TODO" << std::endl;

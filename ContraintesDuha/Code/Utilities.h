@@ -47,17 +47,18 @@ const int B = 23;
 const int Cflat = 23;
 
 // Scales
-const int majorScale[] = {2, 2, 1, 2, 2, 2, 1};
-const int minorScale[] = {2, 1, 2, 2, 1, 2, 2};
+const vector<int> MAJORSCALE = {2, 2, 1, 2, 2, 2, 1};
+const vector<int> MINORSCALE = {2, 1, 2, 2, 1, 2, 2};
+
 
 /**
  * @brief For a given tonality (root + mode), get all the possible notes
- * 
- * @param root the root of the tonality
- * @param mode the mode of the tonality
+ *
+ * @param root the root of the tonality (in [12,23])
+ * @param scale the set of tones and semitones that define the scale
  * @return vector<int> all the possible notes from that tonality
  */
-const vector<int> getAllNotesFromTonality(int root, int mode);
+const vector<int> getAllNotesFromTonality(int root, vector<int> scale);
 
 /**
  * @brief Print a dynamic array of integers
