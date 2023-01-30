@@ -5,6 +5,7 @@
  * The variables are the following:
  * - An array for each voice containing the intervals between them. They are of size n-1 where n is the number of chords.
  * - An array for the chords. It is of size 4*n, and the first 4 variables represent one chord with the voices in ascending order (bass -> tenor -> alto -> soprano).
+ *   The arrays are linked together
  * The currently supported constraints are the following :
  *      - The notes are in the right tonality
  *      - The notes are in the given chord
@@ -39,7 +40,7 @@ FourVoiceTexture::FourVoiceTexture(int size, int key, vector<int> mode, vector<i
     // The domain of all notes is the set of all the notes from the (key, mode) tonality
     chordsVoicings = IntVarArray(*this, 4 * n, getAllNotesFromTonality(key, mode));
 
-    // TODO change the domains for the intervals
+    // TODO change the domains for the intervals -> ASK KARIM
     bassVoiceIntervals = IntVarArray(*this, n - 1, -12, 12);
     tenorVoiceIntervals = IntVarArray(*this, n - 1, -12, 12);
     altoVoiceIntervals = IntVarArray(*this, n - 1, -12, 12);
@@ -59,11 +60,7 @@ FourVoiceTexture::FourVoiceTexture(int size, int key, vector<int> mode, vector<i
 
     // Posts the constraint that bass[i] <= tenor[i] <= alto[i] <= soprano[i]
     for (int i = 0; i < n; ++i)
-    {
-        rel(*this, chordsVoicings[4 * i] <= chordsVoicings[(4 * i) + 1]);
-        rel(*this, chordsVoicings[(4 * i) + 1] <= chordsVoicings[(4 * i) + 2]);
-        rel(*this, chordsVoicings[(4 * i) + 2] <= chordsVoicings[(4 * i) + 3]);
-    }
+        rel(*this, chordsVoicings.slice(4 * i, 1, 4), IRT_LQ);
 
     //---------------------------------------------------------------------Constraints---------------------------------------------------------------------
 
@@ -77,7 +74,12 @@ FourVoiceTexture::FourVoiceTexture(int size, int key, vector<int> mode, vector<i
         count(*this, chordsVoicings.slice(4 * i, 1, 4), getAllGivenNote(key - 1), IRT_LQ, 1); // There can be at most 1 7th (1 semitone below the key)
 
         // For perfect chords, each note should be present at least once
-        // count(*this, chordsVoicings.slice(4*i,1,4), getAllGivenNote(root - third - fifth), IRTGQ, 1);
+        if (chordQualities[i] == MAJOR_CHORD || chordQualities[i] == MINOR_CHORD || chordQualities[i] == AUGMENTED_CHORD || chordQualities[i] == DIMINISHED_CHORD) // If this is a perfect chord
+        {
+            count(*this, chordsVoicings.slice(4 * i, 1, 4), getAllGivenNote(chordRoots[i]), IRT_GQ, 1);                                               // The fundamental is present at least once
+            count(*this, chordsVoicings.slice(4 * i, 1, 4), getAllGivenNote(chordRoots[i] + chordQualities[i][0]), IRT_GQ, 1);                        // The third is present at least once
+            count(*this, chordsVoicings.slice(4 * i, 1, 4), getAllGivenNote(chordRoots[i] + chordQualities[i][0] + chordQualities[i][1]), IRT_GQ, 1); // The fifth is present at least once
+        }
 
         // If there is a tritone in the chord, the 7th of the scale should resolve upwards and the 4th of the scale should resolve downwards
         // Use if then else constraint
