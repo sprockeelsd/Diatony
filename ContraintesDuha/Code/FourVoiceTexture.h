@@ -72,7 +72,7 @@ public:
      * @brief Set the domain of variables to notes from a given chord
      *
      */
-    void setToChord(IntVar soprano, IntVar alto, IntVar tenor, IntVar bass, int chordRoot, vector<int> chordQuality);
+    void setToChord(IntVar soprano, IntVar alto, IntVar tenor, IntVar bass, int chordRoot, vector<int> chordQuality, int chordBass);
 
     /**
      * @brief Search support, updates the variables

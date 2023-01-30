@@ -21,14 +21,14 @@ int main(int argc, char *argv[])
     // INPUT
     vector<int> chordRoots = {C,F,G,C};
     vector<vector<int>> chordQualities = {MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD};
-    vector<int> chordBass = {C,F,G,C};
+    vector<int> chordBass = {C,F,B,C};
 
     FourVoiceTexture *problem = new FourVoiceTexture(4,C,MAJOR_SCALE, chordRoots, chordQualities, chordBass);
 
     // Search options
     Gecode::Search::Options opts;
     opts.threads = 0; // As many as possible
-    Gecode::Search::TimeStop maxTime(50); // Search for max 1s
+    Gecode::Search::TimeStop maxTime(100); // Search for max 1s
     opts.stop = &maxTime;
 
     // Create the search engine
@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
     while (FourVoiceTexture *s = e.next())
     {
         std::cout << " Solution " << nbSol + 1 << " : " << std::endl;
-        s->printForOM();
+        s->print();
         std::cout << std::endl;
         delete s;
         ++nbSol;

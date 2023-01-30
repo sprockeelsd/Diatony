@@ -57,7 +57,7 @@ const int Cflat = 23;
 
 // Scales
 const vector<int> MAJOR_SCALE = {2, 2, 1, 2, 2, 2, 1};
-const vector<int> MINOR_SCALE = {2, 1, 2, 2, 1, 2, 2};
+const vector<int> MINOR_SCALE = {2, 1, 2, 2, 1, 2, 1, 1}; // To allow the major seventh necessary for the dominant chord
 
 /**
  * @brief For a given tonality (root + mode), get all the possible notes

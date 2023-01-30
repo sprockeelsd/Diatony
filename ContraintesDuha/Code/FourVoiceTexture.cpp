@@ -70,8 +70,13 @@ FourVoiceTexture::FourVoiceTexture(int size, int key, vector<int> mode, vector<i
     for (int i = 0; i < n; ++i) // For each chord
     {
         // Set the domain of the notes of that chord to possible notes from the chord
-        setToChord(chordsVoicings[4 * i], chordsVoicings[(4 * i) + 1], chordsVoicings[(4 * i) + 2], chordsVoicings[(4 * i) + 3], chordRoots[i], chordQualities[i]);
+        setToChord(chordsVoicings[4 * i], chordsVoicings[(4 * i) + 1], chordsVoicings[(4 * i) + 2], chordsVoicings[(4 * i) + 3], chordRoots[i], chordQualities[i], chordBass[i]);
+        // Never double the seventh degree of the scale
+        count(*this, chordsVoicings.slice(4 * i, 1, 4), getAllGivenNote(key - 1), IRT_LQ, 1); // There can be at most 1 7th (1 semitone below the key)
     }
+
+    // Never double the 7th degree of the scale in a chord
+    // count(*this, chordsVoicings.slice(i, i+3), getAllOfNote(key-1), <=1);
 
     //----------------------------------------------------------------------Branching----------------------------------------------------------------------
 
@@ -97,13 +102,14 @@ FourVoiceTexture::FourVoiceTexture(int size, int key, vector<int> mode, vector<i
  * @brief Set the domain of variables to notes from a given chord
  *
  */
-void FourVoiceTexture::setToChord(IntVar bass, IntVar tenor, IntVar alto, IntVar soprano, int chordRoot, vector<int> chordQuality)
+void FourVoiceTexture::setToChord(IntVar bass, IntVar tenor, IntVar alto, IntVar soprano, int chordRoot, vector<int> chordQuality, int chordBass)
 {
     IntSet chordNotes(getAllNotesFromChord(chordRoot, chordQuality)); // Get all notes of the chord
-    dom(*this, bass, getAllGivenNote(chordRoot));                     // Special treatment for the bass since it is already known
+    dom(*this, bass, chordNotes);
     dom(*this, tenor, chordNotes);
     dom(*this, alto, chordNotes);
     dom(*this, soprano, chordNotes);
+    dom(*this, bass, getAllGivenNote(chordBass)); // Special treatment for the bass since it is already known
 }
 
 /**********************************************************************
@@ -147,7 +153,6 @@ void FourVoiceTexture::print(void) const
  */
 void FourVoiceTexture::printForOM(void) const
 {
-    std::cout << "TODO" << std::endl;
     for (int i = 0; i < chordsVoicings.size(); ++i)
     {
         if (i % 4 == 0 && i != 0)
