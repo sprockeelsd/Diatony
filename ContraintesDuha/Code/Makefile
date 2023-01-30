@@ -11,4 +11,4 @@ run:
 	./Main
 
 clean:
-	rm -f *.o Main
+	rm -f *.o Main *.out

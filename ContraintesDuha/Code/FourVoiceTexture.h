@@ -30,12 +30,12 @@ using namespace std;
 class FourVoiceTexture : public Space
 {
 protected:
-    int n;                      // The number of chord for which to generate 4 voice texture
-    int key;                    // The key of the tonality of the chord progression
-    vector<int> mode;           // The mode of the tonality of the chord progression
-    vector<int> chordRoots;     // The roots of the chords
+    int n;                              // The number of chord for which to generate 4 voice texture
+    int key;                            // The key of the tonality of the chord progression
+    vector<int> mode;                   // The mode of the tonality of the chord progression
+    vector<int> chordRoots;             // The roots of the chords
     vector<vector<int>> chordQualities; // The qualities of the chords
-    vector<int> chordBass;      // The bass of the chords
+    vector<int> chordBass;              // The bass of the chords
 
     // Variable arrays for the melodic intervals of the different voices
     // Maybe change into Argument variables? Depending on whether we need to branch on them
@@ -52,7 +52,7 @@ protected:
 public:
     /**
      * @brief Construct a new Four Voice Texture object
-     * 
+     *
      * @param size the number of chords
      * @param key the key of the tonality
      * @param mode the mode of the tonality
@@ -69,8 +69,15 @@ public:
      **********************************************************************/
 
     /**
-     * @brief Set the domain of variables to notes from a given chord
+     * @brief Posts the constraint that the different voices of the chord have a value that is part of the chord
      *
+     * @param bass The bass variable of the chord
+     * @param tenor The tenor variable of the chord
+     * @param alto The alto variable of the chord
+     * @param soprano The soprano variable of the chord
+     * @param chordRoot The root of the chord
+     * @param chordQuality The quality of the chord (M/m/...)
+     * @param chordBass The bass of the chord
      */
     void setToChord(IntVar soprano, IntVar alto, IntVar tenor, IntVar bass, int chordRoot, vector<int> chordQuality, int chordBass);
 
@@ -93,7 +100,7 @@ public:
 
     /**
      * @brief Print the solution in letters
-     * 
+     *
      */
     void printNoteNames(void) const;
 

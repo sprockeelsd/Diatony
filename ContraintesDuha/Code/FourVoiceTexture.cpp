@@ -8,6 +8,7 @@
  * The currently supported constraints are the following :
  *      - The notes are in the right tonality
  *      - The notes are in the given chord
+ *      - The seventh degree of a scale can never be doubled
  * @version 1.0
  * @date 2023-01-25
  *
@@ -71,12 +72,16 @@ FourVoiceTexture::FourVoiceTexture(int size, int key, vector<int> mode, vector<i
     {
         // Set the domain of the notes of that chord to possible notes from the chord
         setToChord(chordsVoicings[4 * i], chordsVoicings[(4 * i) + 1], chordsVoicings[(4 * i) + 2], chordsVoicings[(4 * i) + 3], chordRoots[i], chordQualities[i], chordBass[i]);
+
         // Never double the seventh degree of the scale
         count(*this, chordsVoicings.slice(4 * i, 1, 4), getAllGivenNote(key - 1), IRT_LQ, 1); // There can be at most 1 7th (1 semitone below the key)
-    }
 
-    // Never double the 7th degree of the scale in a chord
-    // count(*this, chordsVoicings.slice(i, i+3), getAllOfNote(key-1), <=1);
+        // For perfect chords, each note should be present at least once
+        // count(*this, chordsVoicings.slice(4*i,1,4), getAllGivenNote(root - third - fifth), IRTGQ, 1);
+
+        // If there is a tritone in the chord, the 7th of the scale should resolve upwards and the 4th of the scale should resolve downwards
+        // Use if then else constraint
+    }
 
     //----------------------------------------------------------------------Branching----------------------------------------------------------------------
 
@@ -99,8 +104,15 @@ FourVoiceTexture::FourVoiceTexture(int size, int key, vector<int> mode, vector<i
  **********************************************************************/
 
 /**
- * @brief Set the domain of variables to notes from a given chord
+ * @brief Posts the constraint that the different voices of the chord have a value that is part of the chord
  *
+ * @param bass The bass variable of the chord
+ * @param tenor The tenor variable of the chord
+ * @param alto The alto variable of the chord
+ * @param soprano The soprano variable of the chord
+ * @param chordRoot The root of the chord
+ * @param chordQuality The quality of the chord (M/m/...)
+ * @param chordBass The bass of the chord
  */
 void FourVoiceTexture::setToChord(IntVar bass, IntVar tenor, IntVar alto, IntVar soprano, int chordRoot, vector<int> chordQuality, int chordBass)
 {

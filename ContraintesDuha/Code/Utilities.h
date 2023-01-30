@@ -99,6 +99,11 @@ void printIntVector(vector<int> vector);
  */
 void printNoteInLetter(IntVar var);
 
+/**
+ * @brief Prints a node in MIDIcent value
+ * 
+ * @param var an integer variable
+ */
 void printNoteForOM(IntVar var);
 
 #endif

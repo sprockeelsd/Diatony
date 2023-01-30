@@ -99,6 +99,11 @@ void printNoteInLetter(IntVar var){
     std::cout << noteNames[var.val() % 12] << var.val() / 12 << " ";
 }
 
+/**
+ * @brief Prints a node in MIDIcent value
+ * 
+ * @param var an integer variable
+ */
 void printNoteForOM(IntVar var){
     std::cout << var.val() * 100 << " ";
 }
