@@ -66,22 +66,36 @@ FourVoiceTexture::FourVoiceTexture(int size, int key, vector<int> mode, vector<i
 
     for (int i = 0; i < n; ++i) // For each chord
     {
+        // Current chord
+        IntVarArgs currentChord = chordsVoicings.slice(4 * i, 1, 4);
+
+        // Variables to count the number of sevenths
+        IntVar containsSeventh(*this, 0, 1);
+
         // Set the domain of the notes of that chord to possible notes from the chord
-        setToChord(chordsVoicings.slice(4 * i, 1, 4), chordRoots[i], chordQualities[i], chordBass[i]);
+        setToChord(currentChord, chordRoots[i], chordQualities[i], chordBass[i]);
+
+        // Never double the seventh since containsSeventh is <=1 by default
+        count(*this, currentChord, getAllGivenNote(key + 11), IRT_EQ, containsSeventh);
 
         // Never double the seventh degree of the scale
-        count(*this, chordsVoicings.slice(4 * i, 1, 4), getAllGivenNote(key - 1), IRT_LQ, 1); // There can be at most 1 7th (1 semitone below the key)
+        // rel(*this, nOfSeventh, IRT_LQ, 1);
+
+        // Last chord cannot contain a tritone TODO
 
         // For perfect chords, each note should be present at least once
         if (chordQualities[i] == MAJOR_CHORD || chordQualities[i] == MINOR_CHORD || chordQualities[i] == AUGMENTED_CHORD || chordQualities[i] == DIMINISHED_CHORD) // If this is a perfect chord
         {
-            count(*this, chordsVoicings.slice(4 * i, 1, 4), getAllGivenNote(chordRoots[i]), IRT_GQ, 1);                                               // The fundamental is present at least once
-            count(*this, chordsVoicings.slice(4 * i, 1, 4), getAllGivenNote(chordRoots[i] + chordQualities[i][0]), IRT_GQ, 1);                        // The third is present at least once
-            count(*this, chordsVoicings.slice(4 * i, 1, 4), getAllGivenNote(chordRoots[i] + chordQualities[i][0] + chordQualities[i][1]), IRT_GQ, 1); // The fifth is present at least once
+            count(*this, currentChord, getAllGivenNote(chordRoots[i]), IRT_GQ, 1);                                               // The fundamental is present at least once
+            count(*this, currentChord, getAllGivenNote(chordRoots[i] + chordQualities[i][0]), IRT_GQ, 1);                        // The third is present at least once
+            count(*this, currentChord, getAllGivenNote(chordRoots[i] + chordQualities[i][0] + chordQualities[i][1]), IRT_GQ, 1); // The fifth is present at least once
         }
 
         // If there is a tritone in the chord, the 7th of the scale should resolve upwards and the 4th of the scale should resolve downwards
-        // Use if then else constraint
+        // Move this to a different loop to n-1 (that can be used for interval constraints) because the last chord cannot be a dominant or diminished chord
+        tritoneResolution(currentChord, containsSeventh, i);
+
+        // if there is, the seventh of the scale must resolve upwards in the same voice and the fourth must resolve downwards in the same voice
     }
 
     //----------------------------------------------------------------------Branching----------------------------------------------------------------------
@@ -117,6 +131,27 @@ void FourVoiceTexture::setToChord(IntVarArgs chordNotes, int chordRoot, vector<i
     IntSet chordNotesValues(getAllNotesFromChord(chordRoot, chordQuality)); // Get all notes of the chord
     dom(*this, chordNotes, chordNotesValues);
     dom(*this, chordNotes[0], getAllGivenNote(chordBass)); // Special treatment for the bass since it is already known
+}
+
+/**
+ * @brief Ensures that if there is a tritone in the chord it resolves properly.
+ * That is, the seventh should resolve upwards in the next chord and the fourth should resolve downwards.
+ *
+ * @param chordNotes the variables for the notes of the current chord
+ * @param nOfSeventh the number of seventh present in the chord (should be <=1)
+ * @param chordPosition the position of the chord in the big array
+ */
+void FourVoiceTexture::tritoneResolution(IntVarArgs chordNotes, IntVar containsSeventh, int chordPosition)
+{
+    // Variables to count the number of fourths
+    IntVar nOfFourth(*this, 0, 4);
+    IntVar containsFourth(*this, 0, 1);
+
+    // Check if there is a fourth
+    count(*this, chordNotes, getAllGivenNote(key + 5), IRT_EQ, nOfFourth);
+    // containsFourth = nOfFourth >=1
+
+    // If nOfSeventh >=1 and nOfFourth >=1 -> there is a tritone so post cst on the next position in the big array
 }
 
 /**********************************************************************

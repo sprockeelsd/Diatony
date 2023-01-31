@@ -79,6 +79,16 @@ public:
     void setToChord(IntVarArgs chordNotes, int chordRoot, vector<int> chordQuality, int chordBass);
 
     /**
+     * @brief Ensures that if there is a tritone in the chord it resolves properly.
+     * That is, the seventh should resolve upwards in the next chord and the fourth should resolve downwards.
+     * 
+     * @param chordNotes the variables for the notes of the current chord
+     * @param nOfSeventh the number of seventh present in the chord (should be <=1)
+     * @param chordPosition the position of the chord in the big array
+     */
+    void tritoneResolution(IntVarArgs chordNotes, IntVar containsSeventh, int chordPosition);
+
+    /**
      * @brief Search support, updates the variables
      *
      * @param s
