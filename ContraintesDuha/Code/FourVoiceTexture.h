@@ -71,7 +71,7 @@ public:
     /**
      * @brief Posts the constraint that the different voices of the chord have a value that is part of the chord
      *
-     * @param chordNotes the variables representing the notes of the chord 
+     * @param chordNotes the variables representing the notes of the chord
      * @param chordRoot The root of the chord
      * @param chordQuality The quality of the chord (M/m/...)
      * @param chordBass The bass of the chord
@@ -81,12 +81,20 @@ public:
     /**
      * @brief Ensures that if there is a tritone in the chord it resolves properly.
      * That is, the seventh should resolve upwards in the next chord and the fourth should resolve downwards.
-     * 
+     *
      * @param chordNotes the variables for the notes of the current chord
      * @param nOfSeventh the number of seventh present in the chord (should be <=1)
      * @param chordPosition the position of the chord in the big array
      */
     void tritoneResolution(IntVarArgs chordNotes, IntVar containsSeventh, int chordPosition);
+
+    void fundamentalStateThreeNoteChord(IntVarArgs chordNotes, int chordPosition);
+
+/**********************************************************************
+ *                                                                    *
+ *                          Support functions                         *
+ *                                                                    *
+ **********************************************************************/
 
     /**
      * @brief Search support, updates the variables

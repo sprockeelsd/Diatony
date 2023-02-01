@@ -15,6 +15,18 @@
  *
  */
 
+/**
+ *
+ * @todo Add an IntSet for each note of the scale in the attributes of the class so we don't have to compute it everytime we need it (maybe create a specific object for it?)
+ * @todo Keep working on the tritone resolution constraint
+ * @todo change the constraint linking the interval arrays to the chord array to an element-like constraint?
+ * @todo Put the code for the cst that we can never double the seventh into its separate function
+ * @todo Write a constraint that the last chord can't contain a tritone (maybe in the specs though)
+ * @todo Check with Karim if the constraint for all notes must be present at least once in perfect chords is valid or not
+ * @todo Move the tritone resolution constraint to a loop that iterates over intervals since the constraint has to access both the current and future chords
+ * @todo Think about the branching strategy once we have enough constraints that it makes sense
+ */
+
 #include "FourVoiceTexture.h"
 
 /**
@@ -37,8 +49,6 @@ FourVoiceTexture::FourVoiceTexture(int size, int key, vector<int> mode, vector<i
     chordQualities = chordQualities;
     chordBass = chordBass;
 
-    // @todo add an IntSet for each note of the scale (fundamental, second, ...) so we don't have to compute it everytime we need it
-
     // The domain of all notes is the set of all the notes from the (key, mode) tonality
     chordsVoicings = IntVarArray(*this, 4 * n, getAllNotesFromTonality(key, mode));
 
@@ -51,7 +61,6 @@ FourVoiceTexture::FourVoiceTexture(int size, int key, vector<int> mode, vector<i
     //---------------------------------------------------------Linking the variables together--------------------------------------------------------------
 
     // Posts the constraints that the intervals are the difference between 2 consecutive notes for each voice
-    // TODO change to an element-like constraint?
     for (int i = 0; i < n - 1; ++i)
     {
         rel(*this, bassVoiceIntervals[i] == chordsVoicings[(i + 1) * 4] - chordsVoicings[i * 4]);
@@ -74,16 +83,12 @@ FourVoiceTexture::FourVoiceTexture(int size, int key, vector<int> mode, vector<i
         // Set the domain of the notes of that chord to possible notes from the chord
         setToChord(currentChord, chordRoots[i], chordQualities[i], chordBass[i]);
 
-        // Variable to count the number of sevenths
-        IntVar nOfSeventh(*this, 0, 4);
-
         // Never double the seventh
+        IntVar nOfSeventh(*this, 0, 4);                                            // Variable to count the number of sevenths
         count(*this, currentChord, getAllGivenNote(key + 11), IRT_EQ, nOfSeventh); // nOfSeventh == nb of seventh in the chord
         rel(*this, nOfSeventh, IRT_LQ, 1);                                         // nOfSeventh <= 1
 
-        // Last chord cannot contain a tritone TODO
-
-        // For perfect chords, each note should be present at least once
+        // For perfect chords, each note should be present at least once ASK KARIM
         if (chordQualities[i] == MAJOR_CHORD || chordQualities[i] == MINOR_CHORD || chordQualities[i] == AUGMENTED_CHORD || chordQualities[i] == DIMINISHED_CHORD) // If this is a perfect chord
         {
             count(*this, currentChord, getAllGivenNote(chordRoots[i]), IRT_GQ, 1);                                               // The fundamental is present at least once
@@ -91,16 +96,14 @@ FourVoiceTexture::FourVoiceTexture(int size, int key, vector<int> mode, vector<i
             count(*this, currentChord, getAllGivenNote(chordRoots[i] + chordQualities[i][0] + chordQualities[i][1]), IRT_GQ, 1); // The fifth is present at least once
         }
 
-        // If there is a tritone in the chord, the 7th of the scale should resolve upwards and the 4th of the scale should resolve downwards by a half step
-        // Move this to a different loop to n-1 (that can be used for interval constraints) because the last chord cannot be a dominant or diminished chord
-        // tritoneResolution(currentChord, containsSeventh, i);
+        // For 3 note chords, double the fundamental in priority
+        //fundamentalStateThreeNoteChord(currentChord, i);
 
-        // if there is, the seventh of the scale must resolve upwards in the same voice and the fourth must resolve downwards in the same voice
+        // If there is a tritone in the chord, the 7th of the scale should resolve upwards and the 4th of the scale should resolve downwards by a half step
+        // tritoneResolution(currentChord, containsSeventh, i);
     }
 
     //----------------------------------------------------------------------Branching----------------------------------------------------------------------
-
-    // TODO réfléchir au branching
 
     Rnd r1(0);
     Rnd r2(1);
@@ -143,6 +146,9 @@ void FourVoiceTexture::setToChord(IntVarArgs chordNotes, int chordRoot, vector<i
  */
 void FourVoiceTexture::tritoneResolution(IntVarArgs chordNotes, IntVar nOfSeventh, int chordPosition)
 {
+    // Autre idée : if chordQuality[i] == dominant seventh or diminished
+    // Then post for each element of the array : if the variable belongs to seventh -> the next is +1 and same for fourth
+
     BoolVar containsSeventh(*this, 0, 1);  // Variable to tell if the chord contains a seventh
     Reify cS(containsSeventh, RM_PMI);     // half reification
     rel(*this, nOfSeventh, IRT_EQ, 1, cS); // nOfSeventh == 1 => containsSeventh == 1 && containsSeventh == 0 => nOfSeventh != 1
@@ -158,6 +164,14 @@ void FourVoiceTexture::tritoneResolution(IntVarArgs chordNotes, IntVar nOfSevent
     rel(*this, containsSeventh, BOT_AND, containsFourth, containsTritone); // containsTritone = containsSeventh AND containsFourth
 
     // if containsTritone then we must know what voices have themso we can resolve the voices appropriately
+    // TODO continuer
+}
+
+void FourVoiceTexture::fundamentalStateThreeNoteChord(IntVarArgs chordNotes, int chordPosition)
+{
+    if (chordRoots[chordPosition] % 12 + 12 == chordBass[chordPosition] % 12 + 12) // If the chord is in fundamental state
+    {
+    }
 }
 
 /**********************************************************************
