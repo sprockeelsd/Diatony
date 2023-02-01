@@ -37,6 +37,8 @@ FourVoiceTexture::FourVoiceTexture(int size, int key, vector<int> mode, vector<i
     chordQualities = chordQualities;
     chordBass = chordBass;
 
+    // @todo add an IntSet for each note of the scale (fundamental, second, ...) so we don't have to compute it everytime we need it
+
     // The domain of all notes is the set of all the notes from the (key, mode) tonality
     chordsVoicings = IntVarArray(*this, 4 * n, getAllNotesFromTonality(key, mode));
 
@@ -69,17 +71,15 @@ FourVoiceTexture::FourVoiceTexture(int size, int key, vector<int> mode, vector<i
         // Current chord
         IntVarArgs currentChord = chordsVoicings.slice(4 * i, 1, 4);
 
-        // Variables to count the number of sevenths
-        IntVar containsSeventh(*this, 0, 1);
-
         // Set the domain of the notes of that chord to possible notes from the chord
         setToChord(currentChord, chordRoots[i], chordQualities[i], chordBass[i]);
 
-        // Never double the seventh since containsSeventh is <=1 by default
-        count(*this, currentChord, getAllGivenNote(key + 11), IRT_EQ, containsSeventh);
+        // Variable to count the number of sevenths
+        IntVar nOfSeventh(*this, 0, 4);
 
-        // Never double the seventh degree of the scale
-        // rel(*this, nOfSeventh, IRT_LQ, 1);
+        // Never double the seventh
+        count(*this, currentChord, getAllGivenNote(key + 11), IRT_EQ, nOfSeventh); // nOfSeventh == nb of seventh in the chord
+        rel(*this, nOfSeventh, IRT_LQ, 1);                                         // nOfSeventh <= 1
 
         // Last chord cannot contain a tritone TODO
 
@@ -91,9 +91,9 @@ FourVoiceTexture::FourVoiceTexture(int size, int key, vector<int> mode, vector<i
             count(*this, currentChord, getAllGivenNote(chordRoots[i] + chordQualities[i][0] + chordQualities[i][1]), IRT_GQ, 1); // The fifth is present at least once
         }
 
-        // If there is a tritone in the chord, the 7th of the scale should resolve upwards and the 4th of the scale should resolve downwards
+        // If there is a tritone in the chord, the 7th of the scale should resolve upwards and the 4th of the scale should resolve downwards by a half step
         // Move this to a different loop to n-1 (that can be used for interval constraints) because the last chord cannot be a dominant or diminished chord
-        tritoneResolution(currentChord, containsSeventh, i);
+        // tritoneResolution(currentChord, containsSeventh, i);
 
         // if there is, the seventh of the scale must resolve upwards in the same voice and the fourth must resolve downwards in the same voice
     }
@@ -141,17 +141,23 @@ void FourVoiceTexture::setToChord(IntVarArgs chordNotes, int chordRoot, vector<i
  * @param nOfSeventh the number of seventh present in the chord (should be <=1)
  * @param chordPosition the position of the chord in the big array
  */
-void FourVoiceTexture::tritoneResolution(IntVarArgs chordNotes, IntVar containsSeventh, int chordPosition)
+void FourVoiceTexture::tritoneResolution(IntVarArgs chordNotes, IntVar nOfSeventh, int chordPosition)
 {
-    // Variables to count the number of fourths
-    IntVar nOfFourth(*this, 0, 4);
-    IntVar containsFourth(*this, 0, 1);
+    BoolVar containsSeventh(*this, 0, 1);  // Variable to tell if the chord contains a seventh
+    Reify cS(containsSeventh, RM_PMI);     // half reification
+    rel(*this, nOfSeventh, IRT_EQ, 1, cS); // nOfSeventh == 1 => containsSeventh == 1 && containsSeventh == 0 => nOfSeventh != 1
 
-    // Check if there is a fourth
-    count(*this, chordNotes, getAllGivenNote(key + 5), IRT_EQ, nOfFourth);
-    // containsFourth = nOfFourth >=1
+    IntVar nOfFourth(*this, 0, 4);                                         // Variables to count the number of fourths
+    count(*this, chordNotes, getAllGivenNote(key + 5), IRT_EQ, nOfFourth); // Count the fourths
 
-    // If nOfSeventh >=1 and nOfFourth >=1 -> there is a tritone so post cst on the next position in the big array
+    BoolVar containsFourth(*this, 0, 1);  // Variable to tell if the chord contains a fourth
+    Reify cF(containsFourth, RM_PMI);     // half reification
+    rel(*this, nOfFourth, IRT_GQ, 1, cF); // nOfFourth >= 1 => containsFourth == 1 && containsFourt == 0 => nOfFourth == 0
+
+    BoolVar containsTritone(*this, 0, 1);                                  // Variable to tell if the chord contains a tritone
+    rel(*this, containsSeventh, BOT_AND, containsFourth, containsTritone); // containsTritone = containsSeventh AND containsFourth
+
+    // if containsTritone then we must know what voices have themso we can resolve the voices appropriately
 }
 
 /**********************************************************************
