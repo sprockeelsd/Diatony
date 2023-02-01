@@ -2,8 +2,8 @@
  * @file Utilities.h
  * @author Sprockeels Damien (damien.sprockeels@uclouvain.be)
  * @brief This file contains useful constants and functions
- * @version 1.0
- * @date 2023-01-20
+ * @version 1.1
+ * @date 2023-02-01
  *
  */
 

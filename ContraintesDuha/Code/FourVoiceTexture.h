@@ -1,12 +1,17 @@
 /**
  * @file FourVoiceTexture.h
  * @author Sprockeels Damien (damien.sprockeels@uclouvain.be)
- * @brief This class creates a constraint problem to generate a 4 voice texture based on chord names and inversion.
+ * @brief This class creates a constraint problem to generate a 4 voice texture based on chord names, qualities and bass.
  * The variables are the following:
  * - An array for each voice containing the intervals between them. They are of size n-1 where n is the number of chords.
  * - An array for the chords. It is of size 4*n, and the first 4 variables represent one chord with the voices in ascending order (bass -> tenor -> alto -> soprano).
- * @version 1.0
- * @date 2023-01-25
+ *   The arrays are linked together
+ * The currently supported constraints are the following :
+ *      - The notes are in the right tonality
+ *      - The notes are in the given chord
+ *      - The seventh degree of a scale can never be doubled
+ * @version 1.1
+ * @date 2023-02-01
  *
  */
 
@@ -37,6 +42,10 @@ protected:
     vector<vector<int>> chordQualities; // The qualities of the chords
     vector<int> chordBass;              // The bass of the chords
 
+    IntSet fundamentals; // The set of notes that are fundamentals
+    IntSet fourths;      // The set of notes that are fourths
+    IntSet sevenths;     // The set of notes that are sevenths
+
     // Variable arrays for the melodic intervals of the different voices
     // Maybe change into Argument variables? Depending on whether we need to branch on them
     IntVarArray sopranoVoiceIntervals;
@@ -64,37 +73,9 @@ public:
 
     /**********************************************************************
      *                                                                    *
-     *                          Constraint functions                      *
+     *                          Support functions                         *
      *                                                                    *
      **********************************************************************/
-
-    /**
-     * @brief Posts the constraint that the different voices of the chord have a value that is part of the chord
-     *
-     * @param chordNotes the variables representing the notes of the chord
-     * @param chordRoot The root of the chord
-     * @param chordQuality The quality of the chord (M/m/...)
-     * @param chordBass The bass of the chord
-     */
-    void setToChord(IntVarArgs chordNotes, int chordRoot, vector<int> chordQuality, int chordBass);
-
-    /**
-     * @brief Ensures that if there is a tritone in the chord it resolves properly.
-     * That is, the seventh should resolve upwards in the next chord and the fourth should resolve downwards.
-     *
-     * @param chordNotes the variables for the notes of the current chord
-     * @param nOfSeventh the number of seventh present in the chord (should be <=1)
-     * @param chordPosition the position of the chord in the big array
-     */
-    void tritoneResolution(IntVarArgs chordNotes, IntVar containsSeventh, int chordPosition);
-
-    void fundamentalStateThreeNoteChord(IntVarArgs chordNotes, int chordPosition);
-
-/**********************************************************************
- *                                                                    *
- *                          Support functions                         *
- *                                                                    *
- **********************************************************************/
 
     /**
      * @brief Search support, updates the variables

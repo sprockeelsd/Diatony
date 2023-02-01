@@ -2,8 +2,8 @@
  * @file Utilities.h
  * @author Sprockeels Damien (damien.sprockeels@uclouvain.be)
  * @brief This file contains useful constants and functions
- * @version 1.0
- * @date 2023-01-20
+ * @version 1.1
+ * @date 2023-02-01
  *
  */
 #ifndef UTILITIES
@@ -54,6 +54,20 @@ const int Asharp = 22;
 const int Bflat = 22;
 const int B = 23;
 const int Cflat = 23;
+
+// Intervals
+const int minorSecond = 1;
+const int majorSecond = 2;
+const int minorThird = 3;
+const int majorThird = 4;
+const int perfectFourth = 5;
+const int tritone = 6;
+const int perfectFifth = 7;
+const int minorSixth = 8;
+const int majorSixth = 9;
+const int minorSeventh = 10;
+const int majorSeventh = 11;
+const int perfectOctave = 12;
 
 // Scales
 const vector<int> MAJOR_SCALE = {2, 2, 1, 2, 2, 2, 1};

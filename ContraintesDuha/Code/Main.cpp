@@ -3,7 +3,7 @@
  * @author Sprockeels Damien (damien.sprockeels@uclouvain.be)
  * @brief This function creates the problem
  * @version 1.0
- * @date 2023-01-20
+ * @date 2023-02-01
  *
  */
 #include "Main.h"
@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
     vector<vector<int>> chordQualities = {MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD};
     vector<int> chordBass = {C,F,B,C};
 
-    FourVoiceTexture *problem = new FourVoiceTexture(4,C,MAJOR_SCALE, chordRoots, chordQualities, chordBass);
+    FourVoiceTexture *problem = new FourVoiceTexture(4,C,MAJOR_SCALE, chordRoots, chordQualities, chordBass); // Create the problem
 
     // Search options
     Gecode::Search::Options opts;
