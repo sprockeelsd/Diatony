@@ -17,6 +17,7 @@
 
 /**
  *
+ * @todo Add the minimisation of the intervals between notes in the same voice
  * @todo Update the fundamentalStateThreeNoteChord constraint to include priority
  * @todo Add an IntSet for each note of the scale in the attributes of the class so we don't have to compute it everytime we need it (maybe create a specific object for it?)
  * @todo Keep working on the tritone resolution constraint
@@ -63,7 +64,7 @@ FourVoiceTexture::FourVoiceTexture(int size, int key, vector<int> mode, vector<i
 
     // costs
     doublingCosts = IntVarArray(*this, n, NO_COST, FORBIDDEN);
-    totalDoublingCost = IntVar(*this, NO_COST, n*FORBIDDEN);
+    totalDoublingCost = IntVar(*this, NO_COST, n * FORBIDDEN);
 
     //---------------------------------------------------------Linking the variables together--------------------------------------------------------------
 
@@ -101,9 +102,15 @@ FourVoiceTexture::FourVoiceTexture(int size, int key, vector<int> mode, vector<i
 
         // For 3 note chords, double the fundamental in priority
         fundamentalStateThreeNoteChord(*this, currentChord, chordRoots[i], chordQualities[i], chordBass[i], doublingCosts[i]);
+    }
 
-        // If there is a tritone in the chord, the 7th of the scale should resolve upwards and the 4th of the scale should resolve downwards by a half step
-        // tritoneResolution(currentChord, containsSeventh, i);
+    for (int i = 0; i < n - 1; ++i)
+    {
+        // tritone resolution
+        // tritoneResolution(*this, chordsVoicings, key, i, chordQualities[i], fourths, sevenths);
+
+        // Post the rules for moving from a chord in fundamental state to another
+        fundamentalStateChordToFundamentalStateChord(*this, i, bassVoiceIntervals, tenorVoiceIntervals, altoVoiceIntervals, sopranoVoiceIntervals, chordBass, chordRoots);
     }
 
     //----------------------------------------------------------------------Branching----------------------------------------------------------------------

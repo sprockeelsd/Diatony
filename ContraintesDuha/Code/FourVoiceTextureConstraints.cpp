@@ -39,15 +39,20 @@ void dontDoubleTheSeventh(Home home, IntVarArgs chordNotes, IntSet sevenths)
  * @param chordPosition the position of the chord in the big array
  * @param chordQuality the quality of the given chord (M/m/7/...)
  */
-void tritoneResolution(Home home, IntVarArray chords, int chordPosition, vector<int> chordQuality)
+void tritoneResolution(Home home, IntVarArray chords, int key, int chordPosition, vector<int> chordQuality, IntSet fourths, IntSet sevenths)
 {
     if (chordQuality == DOMINANT_SEVENTH_CHORD || chordQuality == DIMINISHED_CHORD) // There is a tritone in the chord
     {
         // post for each element of the array : if the variable belongs to the set of seventh, the next is +1 and same for fourth
+        IntVarArgs currentChord = chords.slice(chordPosition, 1, 4);
+        IntVarArgs nextChord = chords.slice(chordPosition + 4, 1, 4);
         for (int j = 0; j < 4; ++j)
         {
-            BoolVar c(home, 0, 1);
-            Reify check(c, RM_PMI); // x = y -> b = 1 reification
+            IntVar tempVar(home, 0, 127); // For decomposed reification
+            BoolVar isSeventh(home, 0, 1);
+            Reify iS(isSeventh, RM_PMI);
+            // rel(home, currentChord[j] % 12 == (key + majorSeventh) % 12, tempVar); // currentChord[j] is the seventh of the scale
+            // ite(home, isSeventh, nextChord[j], dummyVariable, expr(home, currentChord[j] + 1));
         }
     }
 }
@@ -107,3 +112,49 @@ void fundamentalStateThreeNoteChord(Home home, IntVarArgs chordNotes, int chordR
  *                  Voice leading related constraints                 *
  *                                                                    *
  **********************************************************************/
+
+/**
+ * @brief Post the constraints for moving from a chord in fundamental state to another. For now, it only posts a constraint if the interval is a second.
+ * 
+ * @param home The space of the problem
+ * @param currentPosition The current chord which corresponds to the index in the interval arrays
+ * @param bass The variable array for the bass
+ * @param tenor The variable array for the tenor
+ * @param alto The variable array for the alto
+ * @param soprano The variable array for the soprano
+ * @param chordBass The array of bass given as input
+ * @param chordRoots The array of roots given as input
+ */
+void fundamentalStateChordToFundamentalStateChord(Home home, int currentPosition, IntVarArray bass, IntVarArray tenor, IntVarArray alto, IntVarArray soprano,
+                                                  vector<int> chordBass, vector<int> chordRoots)
+{
+    if (chordBass[currentPosition] == chordRoots[currentPosition] && chordBass[currentPosition + 1] == chordRoots[currentPosition + 1]) // If both chords are in fundamental position
+    {
+        int diff = (chordRoots[currentPosition] % 12 + 12) - (chordRoots[currentPosition + 1] % 12 + 12);
+        // We only need to post a constraint when the interval is of a second. Otherwise, we only need to minimize the voice movements which is done in the FourVoiceTexture.cpp file
+        // Voices need to move in contrary motion to the bass
+        switch (diff)
+        {
+        case majorSecond || minorSecond:                 // The bass goes up so the other voices need to go down
+            rel(home, bass[currentPosition], IRT_LQ, 0); // The interval cannot be 0 but <= is less restrictive so we'll put that
+            rel(home, tenor[currentPosition], IRT_LQ, 0);
+            rel(home, alto[currentPosition], IRT_LQ, 0);
+            rel(home, soprano[currentPosition], IRT_LQ, 0);
+            break;
+        case -majorSecond: // The bass goes down so the other voices need to go up
+            rel(home, bass[currentPosition], IRT_GQ, 0);
+            rel(home, tenor[currentPosition], IRT_GQ, 0);
+            rel(home, alto[currentPosition], IRT_GQ, 0);
+            rel(home, soprano[currentPosition], IRT_GQ, 0);
+            break;
+        case -minorSecond:
+            rel(home, bass[currentPosition], IRT_GQ, 0);
+            rel(home, tenor[currentPosition], IRT_GQ, 0);
+            rel(home, alto[currentPosition], IRT_GQ, 0);
+            rel(home, soprano[currentPosition], IRT_GQ, 0);
+            break;
+        default: // Ignore if the interval is not a second
+            break;
+        }
+    }
+}
