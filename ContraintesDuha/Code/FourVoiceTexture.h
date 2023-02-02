@@ -58,6 +58,10 @@ protected:
     // [bass0, tenor0, alto0, soprano0, bass1, tenor1, alto1, soprano1, ...]
     IntVarArray chordsVoicings;
 
+    // Cost variables
+    IntVarArray doublingCosts; // Array to give priorities to the doubling of notes
+    IntVar totalDoublingCost; // Sum of the doublingCosts
+
 public:
     /**
      * @brief Construct a new Four Voice Texture object

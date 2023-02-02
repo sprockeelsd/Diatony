@@ -73,6 +73,11 @@ const int perfectOctave = 12;
 const vector<int> MAJOR_SCALE = {2, 2, 1, 2, 2, 2, 1};
 const vector<int> MINOR_SCALE = {2, 1, 2, 2, 1, 2, 1, 1}; // To allow the major seventh necessary for the dominant chord
 
+// Cost values for priorities on operations
+const int NO_COST = 0;
+const int SMALL_COST = 1;
+const int FORBIDDEN = 100;
+
 /**
  * @brief For a given tonality (root + mode), get all the possible notes
  *

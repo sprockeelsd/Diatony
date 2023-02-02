@@ -54,6 +54,6 @@ void dontDoubleTheSeventh(Home home, IntVarArgs chordNotes, IntSet sevenths);
  */
 void tritoneResolution(Home home, IntVarArgs chordNotes, IntVar containsSeventh, int chordPosition, vector<int> chordQuality);
 
-void fundamentalStateThreeNoteChord(Home home, IntVarArgs chordNotes, int chordPosition);
+void fundamentalStateThreeNoteChord(Home home, IntVarArgs chordNotes, int chordRoot, vector<int> chordQuality, int chordBass, IntVar doublingCost);
 
 #endif

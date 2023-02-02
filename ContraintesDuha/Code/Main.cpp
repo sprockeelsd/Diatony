@@ -19,8 +19,8 @@
 int main(int argc, char *argv[])
 {
     // INPUT
-    vector<int> chordRoots = {C,F,G,C};
-    vector<vector<int>> chordQualities = {MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD};
+    vector<int> chordRoots = {C,F,B,C};
+    vector<vector<int>> chordQualities = {MAJOR_CHORD, MAJOR_CHORD, DIMINISHED_CHORD, MAJOR_CHORD};
     vector<int> chordBass = {C,F,B,C};
 
     FourVoiceTexture *problem = new FourVoiceTexture(4,C,MAJOR_SCALE, chordRoots, chordQualities, chordBass); // Create the problem

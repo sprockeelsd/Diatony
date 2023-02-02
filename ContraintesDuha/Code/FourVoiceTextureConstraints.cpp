@@ -24,9 +24,9 @@
  */
 void dontDoubleTheSeventh(Home home, IntVarArgs chordNotes, IntSet sevenths)
 {
-    IntVar nOfSeventh(home, 0, 4);                         // Variable to count the number of sevenths
+    IntVar nOfSeventh(home, 0, 1);                         // Variable to count the number of sevenths
     count(home, chordNotes, sevenths, IRT_EQ, nOfSeventh); // nOfSeventh == nb of seventh in the chord
-    rel(home, nOfSeventh, IRT_LQ, 1);                      // nOfSeventh <= 1
+    // rel(home, nOfSeventh, IRT_LQ, 1);                      // nOfSeventh <= 1
 }
 
 /**
@@ -74,8 +74,20 @@ void setToChord(Home home, IntVarArgs chordNotes, int chordRoot, vector<int> cho
     dom(home, chordNotes[0], getAllGivenNote(chordBass)); // Special treatment for the bass since it is already known
 }
 
-void fundamentalStateThreeNoteChord(IntVarArgs chordNotes, int chordPosition)
+void fundamentalStateThreeNoteChord(Home home, IntVarArgs chordNotes, int chordRoot, vector<int> chordQuality, int chordBass, IntVar doublingCost)
 {
+    if (chordQuality == MAJOR_CHORD || chordQuality == MINOR_CHORD || chordQuality == DIMINISHED_CHORD || chordQuality == AUGMENTED_CHORD) // It is a 3 note chord
+    {
+        if (chordRoot % 12 + 12 == chordBass % 12 + 12) // It is in fundamental position
+        {
+            // doubler en priorité la basse
+            count(home, chordNotes, getAllGivenNote(chordRoot), IRT_EQ, 2); // Double the bass (mandatory and not preferred -> not ideal)
+        }
+    }
+    if (chordQuality == DIMINISHED_CHORD)
+    {
+        nvalues(home, chordNotes, IRT_EQ, 3); // The chordNotes array can only have 3 different values
+    }
 }
 
 /**********************************************************************

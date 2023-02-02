@@ -17,6 +17,7 @@
 
 /**
  *
+ * @todo Update the fundamentalStateThreeNoteChord constraint to include priority
  * @todo Add an IntSet for each note of the scale in the attributes of the class so we don't have to compute it everytime we need it (maybe create a specific object for it?)
  * @todo Keep working on the tritone resolution constraint
  * @todo change the constraint linking the interval arrays to the chord array to an element-like constraint?
@@ -60,6 +61,10 @@ FourVoiceTexture::FourVoiceTexture(int size, int key, vector<int> mode, vector<i
     altoVoiceIntervals = IntVarArray(*this, n - 1, -12, 12);
     sopranoVoiceIntervals = IntVarArray(*this, n - 1, -12, 12);
 
+    // costs
+    doublingCosts = IntVarArray(*this, n, NO_COST, FORBIDDEN);
+    totalDoublingCost = IntVar(*this, NO_COST, n*FORBIDDEN);
+
     //---------------------------------------------------------Linking the variables together--------------------------------------------------------------
 
     // Posts the constraints that the intervals are the difference between 2 consecutive notes for each voice
@@ -79,14 +84,12 @@ FourVoiceTexture::FourVoiceTexture(int size, int key, vector<int> mode, vector<i
 
     for (int i = 0; i < n; ++i) // For each chord
     {
-        // Current chord
-        IntVarArgs currentChord = chordsVoicings.slice(4 * i, 1, 4);
 
-        // Set the domain of the notes of that chord to possible notes from the chord
-        setToChord(*this, currentChord, chordRoots[i], chordQualities[i], chordBass[i]);
+        IntVarArgs currentChord = chordsVoicings.slice(4 * i, 1, 4); // Current chord
 
-        // Never double the seventh
-        dontDoubleTheSeventh(*this, currentChord, sevenths);
+        setToChord(*this, currentChord, chordRoots[i], chordQualities[i], chordBass[i]); // Set the domain of the notes of that chord to possible notes from the chord
+
+        dontDoubleTheSeventh(*this, currentChord, sevenths); // Never double the seventh
 
         // For perfect chords, each note should be present at least once
         if (chordQualities[i] == MAJOR_CHORD || chordQualities[i] == MINOR_CHORD || chordQualities[i] == AUGMENTED_CHORD || chordQualities[i] == DIMINISHED_CHORD) // If this is a perfect chord
@@ -97,7 +100,7 @@ FourVoiceTexture::FourVoiceTexture(int size, int key, vector<int> mode, vector<i
         }
 
         // For 3 note chords, double the fundamental in priority
-        // fundamentalStateThreeNoteChord(currentChord, i);
+        fundamentalStateThreeNoteChord(*this, currentChord, chordRoots[i], chordQualities[i], chordBass[i], doublingCosts[i]);
 
         // If there is a tritone in the chord, the 7th of the scale should resolve upwards and the 4th of the scale should resolve downwards by a half step
         // tritoneResolution(currentChord, containsSeventh, i);
