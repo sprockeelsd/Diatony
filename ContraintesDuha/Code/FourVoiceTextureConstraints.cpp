@@ -39,7 +39,7 @@ void dontDoubleTheSeventh(Home home, IntVarArgs chordNotes, IntSet sevenths)
  * @param chordPosition the position of the chord in the big array
  * @param chordQuality the quality of the given chord (M/m/7/...)
  */
-void tritoneResolution(Home home, IntVarArgs chordNotes, IntVar nOfSeventh, int chordPosition, vector<int> chordQuality)
+void tritoneResolution(Home home, IntVarArray chords, int chordPosition, vector<int> chordQuality)
 {
     if (chordQuality == DOMINANT_SEVENTH_CHORD || chordQuality == DIMINISHED_CHORD) // There is a tritone in the chord
     {
@@ -74,9 +74,21 @@ void setToChord(Home home, IntVarArgs chordNotes, int chordRoot, vector<int> cho
     dom(home, chordNotes[0], getAllGivenNote(chordBass)); // Special treatment for the bass since it is already known
 }
 
+/**
+ * @brief This function posts a variety of constraints on 3 note chords. These constraints include :
+ * - The doubling of the bass (should be priority-based -> TODO)
+ * - Diminished chords should be 3 voices only -> 2 voices have to be the same
+ *
+ * @param home The space of the problem
+ * @param chordNotes the variables representing the notes of the chord
+ * @param chordRoot The root of the chord
+ * @param chordQuality The quality of the chord (M/m/...)
+ * @param chordBass The bass of the chord
+ * @param doublingCost The cost variable for the doubling
+ */
 void fundamentalStateThreeNoteChord(Home home, IntVarArgs chordNotes, int chordRoot, vector<int> chordQuality, int chordBass, IntVar doublingCost)
 {
-    if (chordQuality == MAJOR_CHORD || chordQuality == MINOR_CHORD || chordQuality == DIMINISHED_CHORD || chordQuality == AUGMENTED_CHORD) // It is a 3 note chord
+    if (chordQuality == MAJOR_CHORD || chordQuality == MINOR_CHORD)
     {
         if (chordRoot % 12 + 12 == chordBass % 12 + 12) // It is in fundamental position
         {

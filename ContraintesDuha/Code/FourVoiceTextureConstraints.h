@@ -52,8 +52,20 @@ void dontDoubleTheSeventh(Home home, IntVarArgs chordNotes, IntSet sevenths);
  * @param chordPosition the position of the chord in the big array
  * @param chordQuality the quality of the given chord (M/m/7/...)
  */
-void tritoneResolution(Home home, IntVarArgs chordNotes, IntVar containsSeventh, int chordPosition, vector<int> chordQuality);
+void tritoneResolution(Home home, IntVarArray chords, int chordPosition, vector<int> chordQuality);
 
+/**
+ * @brief This function posts a variety of constraints on 3 note chords. These constraints include :
+ * - The doubling of the bass (should be priority-based -> TODO)
+ * - Diminished chords should be 3 voices only -> 2 voices have to be the same
+ *
+ * @param home The space of the problem
+ * @param chordNotes the variables representing the notes of the chord
+ * @param chordRoot The root of the chord
+ * @param chordQuality The quality of the chord (M/m/...)
+ * @param chordBass The bass of the chord
+ * @param doublingCost The cost variable for the doubling
+ */
 void fundamentalStateThreeNoteChord(Home home, IntVarArgs chordNotes, int chordRoot, vector<int> chordQuality, int chordBass, IntVar doublingCost);
 
 #endif

@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
     // Search options
     Gecode::Search::Options opts;
     opts.threads = 0; // As many as possible
-    Gecode::Search::TimeStop maxTime(100); // Search for max 1s
+    Gecode::Search::TimeStop maxTime(10); // Search for max 1s
     opts.stop = &maxTime;
 
     // Create the search engine
