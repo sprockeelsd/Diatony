@@ -99,7 +99,7 @@ void fundamentalStateThreeNoteChord(Home home, IntVarArgs chordNotes, int chordR
  * @param chordBass The array of bass given as input
  * @param chordRoots The array of roots given as input
  */
-void fundamentalStateChordToFundamentalStateChord(Home home, int currentPosition, IntVarArray bass, IntVarArray tenor, IntVarArray alto, IntVarArray soprano,
-                                                  vector<int> chordBass, vector<int> chordRoots);
+void fundamentalStateChordToFundamentalStateChord(Home home, int currentPosition, IntVarArray bassIntervals, IntVarArray tenorIntervals, IntVarArray altoIntervals,
+                                                  IntVarArray sopranoIntervals, vector<int> chordBass, vector<int> chordRoots);
 
 #endif

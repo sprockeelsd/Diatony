@@ -115,7 +115,7 @@ void fundamentalStateThreeNoteChord(Home home, IntVarArgs chordNotes, int chordR
 
 /**
  * @brief Post the constraints for moving from a chord in fundamental state to another. For now, it only posts a constraint if the interval is a second.
- * 
+ *
  * @param home The space of the problem
  * @param currentPosition The current chord which corresponds to the index in the interval arrays
  * @param bass The variable array for the bass
@@ -125,36 +125,82 @@ void fundamentalStateThreeNoteChord(Home home, IntVarArgs chordNotes, int chordR
  * @param chordBass The array of bass given as input
  * @param chordRoots The array of roots given as input
  */
-void fundamentalStateChordToFundamentalStateChord(Home home, int currentPosition, IntVarArray bass, IntVarArray tenor, IntVarArray alto, IntVarArray soprano,
-                                                  vector<int> chordBass, vector<int> chordRoots)
+void fundamentalStateChordToFundamentalStateChord(Home home, int currentPosition, IntVarArray bassIntervals, IntVarArray tenorIntervals, IntVarArray altoIntervals,
+                                                  IntVarArray sopranoIntervals, vector<int> chordBass, vector<int> chordRoots)
 {
-    if (chordBass[currentPosition] == chordRoots[currentPosition] && chordBass[currentPosition + 1] == chordRoots[currentPosition + 1]) // If both chords are in fundamental position
+    // If both chords are in fundamental position
+    if (chordBass[currentPosition] % 12 + 12 == chordRoots[currentPosition] % 12 + 12 && chordBass[currentPosition + 1] % 12 + 12 == chordRoots[currentPosition + 1] % 12 + 12)
     {
-        int diff = (chordRoots[currentPosition] % 12 + 12) - (chordRoots[currentPosition + 1] % 12 + 12);
+        std::cout << "Entered loop for i = " << currentPosition << std::endl;
+        int diff = (chordRoots[currentPosition + 1] % 12 + 12) - (chordRoots[currentPosition] % 12 + 12); // The interval between the 2 roots
+        std::cout << "interval : " << diff << std::endl;
         // We only need to post a constraint when the interval is of a second. Otherwise, we only need to minimize the voice movements which is done in the FourVoiceTexture.cpp file
-        // Voices need to move in contrary motion to the bass
-        switch (diff)
+        if (diff == majorSecond || diff == -majorSecond || diff == minorSecond || diff == -minorSecond || diff == majorSeventh || diff == -majorSeventh ||
+            diff == minorSeventh || diff == -minorSeventh) // If the interval between the roots of the chords is a second
         {
-        case majorSecond || minorSecond:                 // The bass goes up so the other voices need to go down
-            rel(home, bass[currentPosition], IRT_LQ, 0); // The interval cannot be 0 but <= is less restrictive so we'll put that
-            rel(home, tenor[currentPosition], IRT_LQ, 0);
-            rel(home, alto[currentPosition], IRT_LQ, 0);
-            rel(home, soprano[currentPosition], IRT_LQ, 0);
+            // Other voices need to move in contrary motion to the bass
+            rel(home, expr(home, bassIntervals[currentPosition] < 0), BOT_IMP, expr(home, tenorIntervals[currentPosition] > 0), 1);   // bassIntervals[i] <0 => tenorIntervals[i] > 0
+            rel(home, expr(home, bassIntervals[currentPosition] > 0), BOT_IMP, expr(home, tenorIntervals[currentPosition] < 0), 1);   // bassIntervals[i] >0 => tenorIntervals[i] < 0
+            rel(home, expr(home, bassIntervals[currentPosition] < 0), BOT_IMP, expr(home, altoIntervals[currentPosition] > 0), 1);    // bassIntervals[i] <0 => altoIntervals[i] > 0
+            rel(home, expr(home, bassIntervals[currentPosition] > 0), BOT_IMP, expr(home, altoIntervals[currentPosition] < 0), 1);    // bassIntervals[i] >0 => altoIntervals[i] < 0
+            rel(home, expr(home, bassIntervals[currentPosition] < 0), BOT_IMP, expr(home, sopranoIntervals[currentPosition] > 0), 1); // bassIntervals[i] <0 => sopranoIntervals[i] > 0
+            rel(home, expr(home, bassIntervals[currentPosition] > 0), BOT_IMP, expr(home, sopranoIntervals[currentPosition] < 0), 1); // bassIntervals[i] >0 => sopranoIntervals[i] < 0
+        }
+        /* switch (diff)
+        {
+        case majorSecond: // The root goes up a major second
+            std::cout << "root moves up a major second" << std::endl;
+            rel(home, tenorIntervals[currentPosition], IRT_LE, 0);
+            rel(home, altoIntervals[currentPosition], IRT_LE, 0);
+            rel(home, sopranoIntervals[currentPosition], IRT_LE, 0);
             break;
-        case -majorSecond: // The bass goes down so the other voices need to go up
-            rel(home, bass[currentPosition], IRT_GQ, 0);
-            rel(home, tenor[currentPosition], IRT_GQ, 0);
-            rel(home, alto[currentPosition], IRT_GQ, 0);
-            rel(home, soprano[currentPosition], IRT_GQ, 0);
+        case minorSecond: // The root goes up a minor second
+            std::cout << "root moves up a minor second" << std::endl;
+            rel(home, tenorIntervals[currentPosition], IRT_LE, 0);
+            rel(home, altoIntervals[currentPosition], IRT_LE, 0);
+            rel(home, sopranoIntervals[currentPosition], IRT_LE, 0);
             break;
-        case -minorSecond:
-            rel(home, bass[currentPosition], IRT_GQ, 0);
-            rel(home, tenor[currentPosition], IRT_GQ, 0);
-            rel(home, alto[currentPosition], IRT_GQ, 0);
-            rel(home, soprano[currentPosition], IRT_GQ, 0);
+        case -majorSeventh: // The root goes up a minor second
+            std::cout << "root moves up a minor second" << std::endl;
+            rel(home, tenorIntervals[currentPosition], IRT_LE, 0);
+            rel(home, altoIntervals[currentPosition], IRT_LE, 0);
+            rel(home, sopranoIntervals[currentPosition], IRT_LE, 0);
+            break;
+        case -minorSeventh: // The root goes up a major second
+            std::cout << "root moves up a major second" << std::endl;
+            rel(home, tenor[currentPosition], IRT_LE, 0);
+            rel(home, alto[currentPosition], IRT_LE, 0);
+            rel(home, soprano[currentPosition], IRT_LE, 0);
+            break;
+        case -majorSecond: // The root goes down a major second
+            std::cout << "bass moves down a major second" << std::endl;
+            rel(home, tenor[currentPosition], IRT_GR, 0);
+            rel(home, alto[currentPosition], IRT_GR, 0);
+            rel(home, soprano[currentPosition], IRT_GR, 0);
+            break;
+        case -minorSecond: // The root goes down a minor second
+            std::cout << "bass moves down a minor second" << std::endl;
+            rel(home, tenor[currentPosition], IRT_GR, 0);
+            rel(home, alto[currentPosition], IRT_GR, 0);
+            rel(home, soprano[currentPosition], IRT_GR, 0);
+            break;
+        case majorSeventh: // The root goes down a minor second
+            std::cout << "bass moves down a minor second" << std::endl;
+            rel(home, bass[currentPosition]<0 => tenor[currentPosition] >= 0);
+
+            rel(home, tenor[currentPosition], IRT_GR, 0);
+            rel(home, alto[currentPosition], IRT_GR, 0);
+            rel(home, soprano[currentPosition], IRT_GR, 0);
+            break;
+        case minorSeventh: // The root goes down a major second
+            std::cout << "bass moves down a major second" << std::endl;
+            rel(home, tenor[currentPosition], IRT_GR, 0);
+            rel(home, alto[currentPosition], IRT_GR, 0);
+            rel(home, soprano[currentPosition], IRT_GR, 0);
             break;
         default: // Ignore if the interval is not a second
+            std::cout << "interval greater than a second" << std::endl;
             break;
-        }
+        } */
     }
 }
