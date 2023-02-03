@@ -51,6 +51,7 @@ void tritoneResolution(Home home, IntVarArray chords, int key, int chordPosition
             IntVar tempVar(home, 0, 127); // For decomposed reification
             BoolVar isSeventh(home, 0, 1);
             Reify iS(isSeventh, RM_PMI);
+
             // rel(home, currentChord[j] % 12 == (key + majorSeventh) % 12, tempVar); // currentChord[j] is the seventh of the scale
             // ite(home, isSeventh, nextChord[j], dummyVariable, expr(home, currentChord[j] + 1));
         }
@@ -91,7 +92,7 @@ void setToChord(Home home, IntVarArgs chordNotes, int chordRoot, vector<int> cho
  * @param chordBass The bass of the chord
  * @param doublingCost The cost variable for the doubling
  */
-void fundamentalStateThreeNoteChord(Home home, IntVarArgs chordNotes, int chordRoot, vector<int> chordQuality, int chordBass, IntVar doublingCost)
+void fundamentalStateThreeNoteChord(Home home, IntVarArgs chordNotes, int chordRoot, vector<int> chordQuality, int chordBass)
 {
     if (chordQuality == MAJOR_CHORD || chordQuality == MINOR_CHORD)
     {
@@ -133,7 +134,6 @@ void fundamentalStateChordToFundamentalStateChord(Home home, int currentPosition
     {
         int diff = (chordRoots[currentPosition + 1] % 12 + 12) - (chordRoots[currentPosition] % 12 + 12); // The interval between the 2 roots
 
-        // We only need to post a constraint when the interval is of a second. Otherwise, we only need to minimize the voice movements which is done in the FourVoiceTexture.cpp file
         if (diff == majorSecond || diff == -majorSecond || diff == minorSecond || diff == -minorSecond || diff == majorSeventh || diff == -majorSeventh ||
             diff == minorSeventh || diff == -minorSeventh) // If the interval between the roots of the chords is a second
         {

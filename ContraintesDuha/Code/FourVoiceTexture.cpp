@@ -17,9 +17,13 @@
  */
 
 /**
+ * @todo To optimize for cost, we must inherit from the IntMinimizeSpace class (maybe IntLexMinimizeSpace is better)
+ * @todo Modify the cost to a more appropriate function later
  *
  * @todo Add the minimisation of the intervals between notes in the same voice for fundamental state chords
  * @todo Update the fundamentalStateThreeNoteChord constraint to include priority
+ * 
+ * @todo Give a specific domain to each voice to anchor the chords in the right range and not have a chord progression that is too high or too low
  *
  * @todo Add an IntSet for each note of the scale in the attributes of the class so we don't have to compute it everytime we need it (maybe create a specific object for it?)
  * @todo Keep working on the tritone resolution constraint
@@ -64,9 +68,8 @@ FourVoiceTexture::FourVoiceTexture(int size, int key, vector<int> mode, vector<i
     altoVoiceIntervals = IntVarArray(*this, n - 1, -12, 12);
     sopranoVoiceIntervals = IntVarArray(*this, n - 1, -12, 12);
 
-    // costs
-    doublingCosts = IntVarArray(*this, n, NO_COST, FORBIDDEN);
-    totalDoublingCost = IntVar(*this, NO_COST, n * FORBIDDEN);
+    intervalCosts = IntVarArray(*this, n - 1, NO_COST, FORBIDDEN);
+    totalIntervalCost = IntVar(*this, NO_COST, (n - 1) * FORBIDDEN);
 
     //---------------------------------------------------------Linking the variables together--------------------------------------------------------------
 
@@ -82,6 +85,20 @@ FourVoiceTexture::FourVoiceTexture(int size, int key, vector<int> mode, vector<i
     // Posts the constraint that bass[i] <= tenor[i] <= alto[i] <= soprano[i]
     for (int i = 0; i < n; ++i)
         rel(*this, chordsVoicings.slice(4 * i, 1, 4), IRT_LQ);
+
+    // Posts the constraint that the interval between two adjacent voices of a chord is at most an octave
+    for (int i = 0; i < n; ++i)
+    {
+        rel(*this, chordsVoicings[(4 * i) + 1] - chordsVoicings[(4 * i)] <= 12); // maybe 2 octaves for the interval between the bass and the tenor?
+        rel(*this, chordsVoicings[(4 * i) + 2] - chordsVoicings[(4 * i) + 1] <= 12);
+        rel(*this, chordsVoicings[(4 * i) + 3] - chordsVoicings[(4 * i) + 2] <= 12);
+    }
+
+    // Link the intervalCosts to intervals
+    // intervalCosts[i] = sum of the absolute value of the intervals between chord i and i+1 TO MODIFY
+    for (int i = 0; i < n - 1; ++i)
+        rel(*this, abs(bassVoiceIntervals[i]) + abs(tenorVoiceIntervals[i]) + abs(altoVoiceIntervals[i]) + abs(sopranoVoiceIntervals[i]) == intervalCosts[i]);
+    linear(*this, intervalCosts, IRT_EQ, totalIntervalCost); // The sum of the intervalCosts is the totalIntervalCost
 
     //---------------------------------------------------------------------Constraints---------------------------------------------------------------------
 
@@ -103,7 +120,7 @@ FourVoiceTexture::FourVoiceTexture(int size, int key, vector<int> mode, vector<i
         }
 
         // For 3 note chords, double the fundamental in priority
-        fundamentalStateThreeNoteChord(*this, currentChord, chordRoots[i], chordQualities[i], chordBass[i], doublingCosts[i]);
+        fundamentalStateThreeNoteChord(*this, currentChord, chordRoots[i], chordQualities[i], chordBass[i]);
     }
 
     for (int i = 0; i < n - 1; ++i) // For each interval between the chords
@@ -121,10 +138,10 @@ FourVoiceTexture::FourVoiceTexture(int size, int key, vector<int> mode, vector<i
     Rnd r2(1);
     branch(*this, chordsVoicings, INT_VAR_RND(r1), INT_VAL_RND(r2));
 
-    /*     branch(*this, sopranoVoiceIntervals, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
-        branch(*this, altoVoiceIntervals, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
-        branch(*this, tenorVoiceIntervals, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
-        branch(*this, bassVoiceIntervals, INT_VAR_SIZE_MIN(), INT_VAL_MIN()); */
+    branch(*this, sopranoVoiceIntervals, INT_VAR_RND(r1), INT_VAL_MIN());
+    branch(*this, altoVoiceIntervals, INT_VAR_RND(r1), INT_VAL_MIN());
+    branch(*this, tenorVoiceIntervals, INT_VAR_RND(r1), INT_VAL_MIN());
+    branch(*this, bassVoiceIntervals, INT_VAR_RND(r1), INT_VAL_MIN());
 }
 
 /**********************************************************************
@@ -168,12 +185,14 @@ void FourVoiceTexture::print(void) const
  */
 void FourVoiceTexture::printForOM(void) const
 {
+    std::cout << "((";
     for (int i = 0; i < chordsVoicings.size(); ++i)
     {
         if (i % 4 == 0 && i != 0)
-            std::cout << std::endl;
+            std::cout << ")(";
         printNoteForOM(chordsVoicings[i]);
     }
+    std::cout << "))" << std::endl;
 }
 
 /**
@@ -181,7 +200,7 @@ void FourVoiceTexture::printForOM(void) const
  *
  * @param s
  */
-FourVoiceTexture::FourVoiceTexture(FourVoiceTexture &s) : Space(s)
+FourVoiceTexture::FourVoiceTexture(FourVoiceTexture &s) : IntMinimizeSpace(s)
 {
     bassVoiceIntervals.update(*this, s.bassVoiceIntervals);
     tenorVoiceIntervals.update(*this, s.tenorVoiceIntervals);
@@ -199,4 +218,9 @@ FourVoiceTexture::FourVoiceTexture(FourVoiceTexture &s) : Space(s)
 void FourVoiceTexture::constrain(const Space &_b)
 {
     std::cout << "TODO" << std::endl;
+}
+
+IntVar FourVoiceTexture::cost(void) const
+{
+    return totalIntervalCost;
 }

@@ -79,7 +79,7 @@ void setToChord(Home home, IntVarArgs chordNotes, int chordRoot, vector<int> cho
  * @param chordBass The bass of the chord
  * @param doublingCost The cost variable for the doubling
  */
-void fundamentalStateThreeNoteChord(Home home, IntVarArgs chordNotes, int chordRoot, vector<int> chordQuality, int chordBass, IntVar doublingCost);
+void fundamentalStateThreeNoteChord(Home home, IntVarArgs chordNotes, int chordRoot, vector<int> chordQuality, int chordBass);
 
 /**********************************************************************
  *                                                                    *

@@ -32,7 +32,7 @@
 using namespace Gecode;
 using namespace std;
 
-class FourVoiceTexture : public Space
+class FourVoiceTexture : public IntMinimizeSpace
 {
 protected:
     int n;                              // The number of chord for which to generate 4 voice texture
@@ -59,8 +59,8 @@ protected:
     IntVarArray chordsVoicings;
 
     // Cost variables
-    IntVarArray doublingCosts; // Array to give priorities to the doubling of notes
-    IntVar totalDoublingCost; // Sum of the doublingCosts
+    IntVarArray intervalCosts; // Array to give priorities to the doubling of notes
+    IntVar totalIntervalCost; // Sum of the doublingCosts
 
 public:
     /**
@@ -128,6 +128,8 @@ public:
      * @param _b The solution found by the solver
      */
     virtual void constrain(const Space &_b);
+
+    virtual IntVar cost(void) const;
 };
 
 #endif
