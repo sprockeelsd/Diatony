@@ -10,6 +10,7 @@
  *      - The notes are in the right tonality
  *      - The notes are in the given chord
  *      - The seventh degree of a scale can never be doubled
+ *      - If two chords in fundamental position are after each other and the interval between their root notes is a second, the other voices need to move in contrary motion to the bass
  * @version 1.1
  * @date 2023-02-01
  *
@@ -17,11 +18,11 @@
 
 /**
  *
- * @todo Add the minimisation of the intervals between notes in the same voice
+ * @todo Add the minimisation of the intervals between notes in the same voice for fundamental state chords
  * @todo Update the fundamentalStateThreeNoteChord constraint to include priority
+ *
  * @todo Add an IntSet for each note of the scale in the attributes of the class so we don't have to compute it everytime we need it (maybe create a specific object for it?)
  * @todo Keep working on the tritone resolution constraint
- * @todo change the constraint linking the interval arrays to the chord array to an element-like constraint?
  * @todo Write a constraint that the last chord can't contain a tritone (maybe in the specs though)
  * @todo Check with Karim if the constraint for all notes must be present at least once in perfect chords is valid or not
  * @todo Move the tritone resolution constraint to a loop that iterates over intervals since the constraint has to access both the current and future chords
@@ -51,6 +52,7 @@ FourVoiceTexture::FourVoiceTexture(int size, int key, vector<int> mode, vector<i
     chordQualities = chordQualities;
     chordBass = chordBass;
 
+    fundamentals = IntSet(getAllGivenNote(key));            // Get all the fundamentals
     fourths = IntSet(getAllGivenNote(key + perfectFourth)); // Get all the fourths (a 5 semitone above the key)
     sevenths = IntSet(getAllGivenNote(key + majorSeventh)); // Get all the sevenths (a 11 semitone above the key)
 
@@ -104,7 +106,7 @@ FourVoiceTexture::FourVoiceTexture(int size, int key, vector<int> mode, vector<i
         fundamentalStateThreeNoteChord(*this, currentChord, chordRoots[i], chordQualities[i], chordBass[i], doublingCosts[i]);
     }
 
-    for (int i = 0; i < n - 1; ++i)
+    for (int i = 0; i < n - 1; ++i) // For each interval between the chords
     {
         // tritone resolution
         // tritoneResolution(*this, chordsVoicings, key, i, chordQualities[i], fourths, sevenths);

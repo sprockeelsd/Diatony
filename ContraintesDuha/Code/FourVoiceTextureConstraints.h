@@ -89,13 +89,13 @@ void fundamentalStateThreeNoteChord(Home home, IntVarArgs chordNotes, int chordR
 
 /**
  * @brief Post the constraints for moving from a chord in fundamental state to another. For now, it only posts a constraint if the interval is a second.
- *
+ * The constraint posted is the following : If the interval between the roots of the 2 chords is a second, the other voices have to move in contrary movement to the bass.
  * @param home The space of the problem
  * @param currentPosition The current chord which corresponds to the index in the interval arrays
- * @param bass The variable array for the bass
- * @param tenor The variable array for the tenor
- * @param alto The variable array for the alto
- * @param soprano The variable array for the soprano
+ * @param bassIntervals The variable array for the bass
+ * @param tenorIntervals The variable array for the tenor
+ * @param altoIntervals The variable array for the alto
+ * @param sopranoIntervals The variable array for the soprano
  * @param chordBass The array of bass given as input
  * @param chordRoots The array of roots given as input
  */
