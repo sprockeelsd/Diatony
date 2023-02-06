@@ -8,8 +8,6 @@
  */
 #include "Main.h"
 
-
-
 /**********************************************
  *                                            *
  * @brief This function creates the problem   *
@@ -19,17 +17,17 @@
 int main(int argc, char *argv[])
 {
     // INPUT
-    vector<int> chordRoots = {C,F,B,C};
-    vector<vector<int>> chordQualities = {MAJOR_CHORD, MAJOR_CHORD, DIMINISHED_CHORD, MAJOR_CHORD};
-    vector<int> chordBass = {C,F,B,C};
+    vector<int> chordRoots = {C, G, A, E, F, C, F, G, C, C, G, A, E, F, C, F, G, C};
+    vector<vector<int>> chordQualities = {MAJOR_CHORD, MAJOR_CHORD, MINOR_CHORD, MINOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MINOR_CHORD, MINOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD};
+    vector<int> chordBass = {C, G, A, E, F, C, F, G, C, C, G, A, E, F, C, F, G, C};
 
-    FourVoiceTexture *problem = new FourVoiceTexture(4,C,MAJOR_SCALE, chordRoots, chordQualities, chordBass); // Create the problem
+    FourVoiceTexture *problem = new FourVoiceTexture(chordRoots.size(), C, MAJOR_SCALE, chordRoots, chordQualities, chordBass); // Create the problem
 
     // Search options
     Gecode::Search::Options opts;
     opts.threads = 0; // As many as possible
-    Gecode::Search::TimeStop maxTime(10); // Search for max 1s
-    opts.stop = &maxTime;
+    // Gecode::Search::TimeStop maxTime(10000); // Search for max 1s
+    // opts.stop = &maxTime;
 
     // Create the search engine
     DFS<FourVoiceTexture> e(problem, opts);
@@ -39,10 +37,12 @@ int main(int argc, char *argv[])
     while (FourVoiceTexture *s = e.next())
     {
         std::cout << " Solution " << nbSol + 1 << " : " << std::endl;
-        s->print();
+        s->printForOM();
         std::cout << std::endl;
         delete s;
         ++nbSol;
+        if (nbSol >= 10)
+            break;
     }
 
     std::cout << "Finished. Number of solutions found: " << nbSol << std::endl;

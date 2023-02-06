@@ -20,6 +20,10 @@
  * @todo To optimize for cost, we must inherit from the IntMinimizeSpace class (maybe IntLexMinimizeSpace is better)
  * @todo Modify the cost to a more appropriate function later
  *
+ * @todo Inherit from IntLexMinimizzeSpace so that we can minimize on different variables with a priority order between them
+ *
+ * @todo Handle cadences to finish sentences
+ *
  * @todo Add the minimisation of the intervals between notes in the same voice for fundamental state chords
  * @todo Update the fundamentalStateThreeNoteChord constraint to include priority
  *
@@ -33,7 +37,7 @@
  * @todo Think about the branching strategy once we have enough constraints that it makes sense
  *
  * @todo Ask Karim the questions
- * 
+ *
  * @todo Think about moving the loops inside the function calls for the variables for the interval constraints to avoid passing the full array, though it might not make a difference if the arrays are passed as pointers
  */
 
@@ -85,23 +89,29 @@ FourVoiceTexture::FourVoiceTexture(int size, int key, vector<int> mode, vector<i
         rel(*this, sopranoVoiceIntervals[i] == chordsVoicings[((i + 1) * 4) + 3] - chordsVoicings[(i * 4) + 3]);
     }
 
-    // Posts the constraint that bass[i] <= tenor[i] <= alto[i] <= soprano[i]
-    for (int i = 0; i < n; ++i)
-        rel(*this, chordsVoicings.slice(4 * i, 1, 4), IRT_LQ);
-
-    // Posts the constraint that the interval between two adjacent voices of a chord is at most an octave
+    // Posts the constraints on the domain of the different voices
     for (int i = 0; i < n; ++i)
     {
-        rel(*this, chordsVoicings[(4 * i) + 1] - chordsVoicings[(4 * i)] <= 12); // maybe 2 octaves for the interval between the bass and the tenor?
-        rel(*this, chordsVoicings[(4 * i) + 2] - chordsVoicings[(4 * i) + 1] <= 12);
-        rel(*this, chordsVoicings[(4 * i) + 3] - chordsVoicings[(4 * i) + 2] <= 12);
+        IntVarArgs currentChord(chordsVoicings.slice(4 * i, 1, 4));
+        rel(*this, currentChord, IRT_LQ);     // bass[i] <= tenor[i] <= alto[i] <= soprano[i]
+        rel(*this, currentChord, IRT_GQ, 43); // >= G2
+        rel(*this, currentChord, IRT_LQ, 84); // <= C5
+    }
+
+    // TEMPORARY UNTIL I DISCUSS WITH KARIM
+    // Posts the constraint that the interval between two adjacent voices of a chord is at most an octave and a third
+    for (int i = 0; i < n; ++i)
+    {
+        rel(*this, chordsVoicings[(4 * i) + 1] - chordsVoicings[(4 * i)] <= 16); // maybe 2 octaves for the interval between the bass and the tenor?
+        rel(*this, chordsVoicings[(4 * i) + 2] - chordsVoicings[(4 * i) + 1] <= 16);
+        rel(*this, chordsVoicings[(4 * i) + 3] - chordsVoicings[(4 * i) + 2] <= 16);
     }
 
     // Link the intervalCosts to intervals
     // intervalCosts[i] = sum of the absolute value of the intervals between chord i and i+1 TO MODIFY
     for (int i = 0; i < n - 1; ++i)
         // for now, the bass is in there too because even though the bass is given, the octave in which it is played isn't and this guarantees that the bass are not 3 octaves apart
-        rel(*this, abs(bassVoiceIntervals[i]) + abs(tenorVoiceIntervals[i]) + abs(altoVoiceIntervals[i]) + abs(sopranoVoiceIntervals[i]) == intervalCosts[i]);
+        rel(*this, abs(tenorVoiceIntervals[i]) + abs(altoVoiceIntervals[i]) + abs(sopranoVoiceIntervals[i]) == intervalCosts[i]);
 
     linear(*this, intervalCosts, IRT_EQ, totalIntervalCost); // The sum of the intervalCosts is the totalIntervalCost
 
@@ -141,6 +151,7 @@ FourVoiceTexture::FourVoiceTexture(int size, int key, vector<int> mode, vector<i
 
         setToChord(*this, currentChord, chordRoots[i], chordQualities[i], chordBass[i]); // Set the domain of the notes of that chord to possible notes from the chord
 
+        // TEMPORARY UNTIL I TALK TO KARIM
         // For perfect chords, each note should be present at least once
         if (chordQualities[i] == MAJOR_CHORD || chordQualities[i] == MINOR_CHORD || chordQualities[i] == AUGMENTED_CHORD || chordQualities[i] == DIMINISHED_CHORD) // If this is a perfect chord
         {

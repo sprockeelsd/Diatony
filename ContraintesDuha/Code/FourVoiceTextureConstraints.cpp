@@ -122,6 +122,8 @@ void setToChord(Home home, IntVarArgs chordNotes, int chordRoot, vector<int> cho
  * @brief This function posts a variety of constraints on 3 note chords. These constraints include :
  * - The doubling of the bass (should be priority-based -> TODO)
  * - Diminished chords should be 3 voices only -> 2 voices have to be the same
+ * 
+ * @todo Change the constraint for chords in fundamental form to a priority-based constraint
  *
  * @param home The space of the problem
  * @param chordNotes the variables representing the notes of the chord
