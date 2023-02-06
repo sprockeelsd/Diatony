@@ -22,16 +22,19 @@
  *
  * @todo Add the minimisation of the intervals between notes in the same voice for fundamental state chords
  * @todo Update the fundamentalStateThreeNoteChord constraint to include priority
- * 
+ *
  * @todo Give a specific domain to each voice to anchor the chords in the right range and not have a chord progression that is too high or too low
  *
  * @todo Add an IntSet for each note of the scale in the attributes of the class so we don't have to compute it everytime we need it (maybe create a specific object for it?)
  * @todo Keep working on the tritone resolution constraint
  * @todo Write a constraint that the last chord can't contain a tritone (maybe in the specs though)
- * @todo Check with Karim if the constraint for all notes must be present at least once in perfect chords is valid or not
+ *
  * @todo Move the tritone resolution constraint to a loop that iterates over intervals since the constraint has to access both the current and future chords
  * @todo Think about the branching strategy once we have enough constraints that it makes sense
- * @todo Ask Karim what limit to put for intervals in a given voice
+ *
+ * @todo Ask Karim the questions
+ * 
+ * @todo Think about moving the loops inside the function calls for the variables for the interval constraints to avoid passing the full array, though it might not make a difference if the arrays are passed as pointers
  */
 
 #include "FourVoiceTexture.h"
@@ -97,19 +100,46 @@ FourVoiceTexture::FourVoiceTexture(int size, int key, vector<int> mode, vector<i
     // Link the intervalCosts to intervals
     // intervalCosts[i] = sum of the absolute value of the intervals between chord i and i+1 TO MODIFY
     for (int i = 0; i < n - 1; ++i)
+        // for now, the bass is in there too because even though the bass is given, the octave in which it is played isn't and this guarantees that the bass are not 3 octaves apart
         rel(*this, abs(bassVoiceIntervals[i]) + abs(tenorVoiceIntervals[i]) + abs(altoVoiceIntervals[i]) + abs(sopranoVoiceIntervals[i]) == intervalCosts[i]);
+
     linear(*this, intervalCosts, IRT_EQ, totalIntervalCost); // The sum of the intervalCosts is the totalIntervalCost
 
     //---------------------------------------------------------------------Constraints---------------------------------------------------------------------
 
+    /**********************************************************************
+     *                                                                    *
+     *                         Generic constraints                        *
+     *                                                                    *
+     **********************************************************************/
+
+    for (int i = 0; i < n; ++i)
+    {
+        dontDoubleTheSeventh(*this, chordsVoicings.slice(4 * i, 1, 4), sevenths); // Never double the seventh
+    }
+
+    for (int j = 0; j < n - 1; ++j)
+    {
+        // tritone resolution
+        // tritoneResolution(*this, chordsVoicings, key, i, chordQualities[i], fourths, sevenths);
+
+        // consecutive fifths/octaves/unissons are forbidden
+        forbidParallelIntervals(*this, unisson, j, bassVoiceIntervals, tenorVoiceIntervals, altoVoiceIntervals, sopranoVoiceIntervals);
+        forbidParallelIntervals(*this, perfectFifth, j, bassVoiceIntervals, tenorVoiceIntervals, altoVoiceIntervals, sopranoVoiceIntervals);
+        forbidParallelIntervals(*this, perfectOctave, j, bassVoiceIntervals, tenorVoiceIntervals, altoVoiceIntervals, sopranoVoiceIntervals);
+    }
+
+    /**********************************************************************
+     *                                                                    *
+     *                      Chord-related constraints                     *
+     *                                                                    *
+     **********************************************************************/
+
     for (int i = 0; i < n; ++i) // For each chord
     {
-
         IntVarArgs currentChord = chordsVoicings.slice(4 * i, 1, 4); // Current chord
 
         setToChord(*this, currentChord, chordRoots[i], chordQualities[i], chordBass[i]); // Set the domain of the notes of that chord to possible notes from the chord
-
-        dontDoubleTheSeventh(*this, currentChord, sevenths); // Never double the seventh
 
         // For perfect chords, each note should be present at least once
         if (chordQualities[i] == MAJOR_CHORD || chordQualities[i] == MINOR_CHORD || chordQualities[i] == AUGMENTED_CHORD || chordQualities[i] == DIMINISHED_CHORD) // If this is a perfect chord
@@ -119,15 +149,18 @@ FourVoiceTexture::FourVoiceTexture(int size, int key, vector<int> mode, vector<i
             count(*this, currentChord, getAllGivenNote(chordRoots[i] + chordQualities[i][0] + chordQualities[i][1]), IRT_GQ, 1); // The fifth is present at least once
         }
 
-        // For 3 note chords, double the fundamental in priority
+        // For 3 note chords, double the fundamental in priority unless it is a diminished chord then each note should only be present once -> 3 distinct values
         fundamentalStateThreeNoteChord(*this, currentChord, chordRoots[i], chordQualities[i], chordBass[i]);
     }
 
+    /**********************************************************************
+     *                                                                    *
+     *                  Voice leading related constraints                 *
+     *                                                                    *
+     **********************************************************************/
+
     for (int i = 0; i < n - 1; ++i) // For each interval between the chords
     {
-        // tritone resolution
-        // tritoneResolution(*this, chordsVoicings, key, i, chordQualities[i], fourths, sevenths);
-
         // Post the rules for moving from a chord in fundamental state to another
         fundamentalStateChordToFundamentalStateChord(*this, i, bassVoiceIntervals, tenorVoiceIntervals, altoVoiceIntervals, sopranoVoiceIntervals, chordBass, chordRoots);
     }

@@ -56,6 +56,7 @@ const int B = 23;
 const int Cflat = 23;
 
 // Intervals
+const int unisson = 0;
 const int minorSecond = 1;
 const int majorSecond = 2;
 const int minorThird = 3;

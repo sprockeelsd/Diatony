@@ -50,6 +50,22 @@ void dontDoubleTheSeventh(Home home, IntVarArgs chordNotes, IntSet sevenths);
  */
 void tritoneResolution(Home home, IntVarArray chords, int key, int chordPosition, vector<int> chordQuality, IntSet fourths, IntSet sevenths);
 
+/**
+ * @brief
+ *
+ * @todo Check with Karim for the consecutive fourths thing. Also ask if the fact that its an octave higher matters of not (a parallel fifth an octave higher e.g)
+ *
+ * @param home The space of the problem
+ * @param interval the parallel interval we wish to forbid
+ * @param currentPosition The current chord which corresponds to the index in the interval arrays
+ * @param bassIntervals The variable array for the bass
+ * @param tenorIntervals The variable array for the tenor
+ * @param altoIntervals The variable array for the alto
+ * @param sopranoIntervals The variable array for the soprano
+ */
+void forbidParallelIntervals(Home home, int interval, int currentPosition, IntVarArray bassIntervals, IntVarArray tenorIntervals, IntVarArray altoIntervals,
+                             IntVarArray sopranoIntervals);
+
 /**********************************************************************
  *                                                                    *
  *                      Chord-related constraints                     *

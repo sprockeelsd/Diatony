@@ -57,6 +57,44 @@ void tritoneResolution(Home home, IntVarArray chords, int key, int chordPosition
         }
     }
 }
+/**
+ * @brief
+ *
+ * @todo Check with Karim for the consecutive fourths thing. Also ask if the fact that its an octave higher matters of not (a parallel fifth an octave higher e.g). Also ask if its in 1 voice or any
+ *
+ * @param home The space of the problem
+ * @param interval the parallel interval we wish to forbid
+ * @param currentPosition The current chord which corresponds to the index in the interval arrays
+ * @param bassIntervals The variable array for the bass
+ * @param tenorIntervals The variable array for the tenor
+ * @param altoIntervals The variable array for the alto
+ * @param sopranoIntervals The variable array for the soprano
+ */
+void forbidParallelIntervals(Home home, int interval, int currentPosition, IntVarArray bassIntervals, IntVarArray tenorIntervals, IntVarArray altoIntervals,
+                             IntVarArray sopranoIntervals)
+{
+    // if the interval between these two voices is equal to interval (typically fifth/octave), then it cannot be in the next chord
+    // It is necessary to do it for all possible combinations because depending on the interval it may appear between different voices
+
+    // tenor - bass
+    rel(home, expr(home, tenorIntervals[currentPosition] - bassIntervals[currentPosition] == interval), BOT_IMP,
+        expr(home, tenorIntervals[currentPosition] - bassIntervals[currentPosition] != interval), 1);
+    // alto - bass
+    rel(home, expr(home, altoIntervals[currentPosition] - bassIntervals[currentPosition] == interval), BOT_IMP,
+        expr(home, altoIntervals[currentPosition] - bassIntervals[currentPosition] != interval), 1);
+    // soprano - bass
+    rel(home, expr(home, sopranoIntervals[currentPosition] - bassIntervals[currentPosition] == interval), BOT_IMP,
+        expr(home, sopranoIntervals[currentPosition] - bassIntervals[currentPosition] != interval), 1);
+    // alto - tenor
+    rel(home, expr(home, altoIntervals[currentPosition] - tenorIntervals[currentPosition] == interval), BOT_IMP,
+        expr(home, altoIntervals[currentPosition] - tenorIntervals[currentPosition] != interval), 1);
+    // soprano - tenor
+    rel(home, expr(home, sopranoIntervals[currentPosition] - tenorIntervals[currentPosition] == interval), BOT_IMP,
+        expr(home, sopranoIntervals[currentPosition] - tenorIntervals[currentPosition] != interval), 1);
+    // soprano - alto
+    rel(home, expr(home, sopranoIntervals[currentPosition] - altoIntervals[currentPosition] == interval), BOT_IMP,
+        expr(home, sopranoIntervals[currentPosition] - altoIntervals[currentPosition] != interval), 1);
+}
 
 /**********************************************************************
  *                                                                    *
