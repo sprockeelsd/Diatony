@@ -17,11 +17,13 @@
 int main(int argc, char *argv[])
 {
     // INPUT
-    vector<int> chordRoots = {C, G, A, E, F, C, F, G, C, C, G, A, E, F, C, F, G, C};
-    vector<vector<int>> chordQualities = {MAJOR_CHORD, MAJOR_CHORD, MINOR_CHORD, MINOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MINOR_CHORD, MINOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD};
-    vector<int> chordBass = {C, G, A, E, F, C, F, G, C, C, G, A, E, F, C, F, G, C};
+    vector<int> chordRoots = {C, G, A, E, F, C};
+    vector<vector<int>> chordQualities = {MAJOR_CHORD, MAJOR_CHORD, MINOR_CHORD, MINOR_CHORD, MAJOR_CHORD, MAJOR_CHORD};
+    vector<int> chordBass = {C, G, A, E, F, C};
 
-    FourVoiceTexture *problem = new FourVoiceTexture(chordRoots.size(), C, MAJOR_SCALE, chordRoots, chordQualities, chordBass); // Create the problem
+    Tonality tonality(C, MAJOR_SCALE);
+
+    FourVoiceTexture *problem = new FourVoiceTexture(chordRoots.size(), tonality, chordRoots, chordQualities, chordBass); // Create the problem
 
     // Search options
     Gecode::Search::Options opts;

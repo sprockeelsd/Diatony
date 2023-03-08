@@ -13,6 +13,7 @@
 #include <gecode/search.hh>
 
 #include "Utilities.h"
+#include "Tonality.h"
 #include "FourVoiceTexture.h"
 
 #include <iostream>

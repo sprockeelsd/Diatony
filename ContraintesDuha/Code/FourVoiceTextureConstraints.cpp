@@ -39,21 +39,22 @@ void dontDoubleTheSeventh(Home home, IntVarArgs chordNotes, IntSet sevenths)
  * @param chordPosition the position of the chord in the big array
  * @param chordQuality the quality of the given chord (M/m/7/...)
  */
-void tritoneResolution(Home home, IntVarArray chords, int key, int chordPosition, vector<int> chordQuality, IntSet fourths, IntSet sevenths)
+void tritoneResolution(Home home, IntVarArray chords, Tonality tonality, int chordPosition, vector<int> chordQuality, IntSet fourths, IntSet sevenths)
 {
     if (chordQuality == DOMINANT_SEVENTH_CHORD || chordQuality == DIMINISHED_CHORD) // There is a tritone in the chord
     {
         // post for each element of the array : if the variable belongs to the set of seventh, the next is +1 and same for fourth
         IntVarArgs currentChord = chords.slice(chordPosition, 1, 4);
         IntVarArgs nextChord = chords.slice(chordPosition + 4, 1, 4);
+        IntVarArgs seventhsAsVars(home, (int) sevenths.size(), 0, 127);
+        for(int i = 0; i < sevenths.size(); ++i)
+            // rel(home, seventhsAsVars[i], IRT_EQ, sevenths);
+            // Make a function that returns all the sevenths as a vector of int so we can access them individually
+        
         for (int j = 0; j < 4; ++j)
         {
-            IntVar tempVar(home, 0, 127); // For decomposed reification
-            BoolVar isSeventh(home, 0, 1);
-            Reify iS(isSeventh, RM_PMI);
-
-            // rel(home, currentChord[j] % 12 == (key + majorSeventh) % 12, tempVar); // currentChord[j] is the seventh of the scale
-            // ite(home, isSeventh, nextChord[j], dummyVariable, expr(home, currentChord[j] + 1));
+            // creer un tableau de variables de taille == sevents et faire un boucle pour que chaque variable == une des valeurs puis poster member avec ce tableau
+            // rel(home, member(home, sevenths, currentChord[0]), BOT_IMP, rel(home, nextChord[0] == currentChord[0] + 1), 1);
         }
     }
 }
@@ -172,7 +173,7 @@ void fundamentalStateChordToFundamentalStateChord(Home home, int currentPosition
     // If both chords are in fundamental position
     if (chordBass[currentPosition] % 12 + 12 == chordRoots[currentPosition] % 12 + 12 && chordBass[currentPosition + 1] % 12 + 12 == chordRoots[currentPosition + 1] % 12 + 12)
     {
-        int diff = (chordRoots[currentPosition + 1] % 12 + 12) - (chordRoots[currentPosition] % 12 + 12); // The interval between the 2 roots
+        int diff = (chordRoots[currentPosition + 1] % perfectOctave + 12) - (chordRoots[currentPosition] % 12 + 12); // The interval between the 2 roots
 
         if (diff == majorSecond || diff == -majorSecond || diff == minorSecond || diff == -minorSecond || diff == majorSeventh || diff == -majorSeventh ||
             diff == minorSeventh || diff == -minorSeventh) // If the interval between the roots of the chords is a second

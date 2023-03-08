@@ -22,6 +22,7 @@
 #include <gecode/minimodel.hh>
 
 #include "Utilities.h"
+#include "Tonality.h"
 #include "FourVoiceTextureConstraints.h"
 
 #include <iostream>
@@ -32,12 +33,11 @@
 using namespace Gecode;
 using namespace std;
 
-class FourVoiceTexture : public IntMinimizeSpace
+class FourVoiceTexture : public Space
 {
 protected:
     int n;                              // The number of chord for which to generate 4 voice texture
-    int key;                            // The key of the tonality of the chord progression
-    vector<int> mode;                   // The mode of the tonality of the chord progression
+    Tonality tonality;                  // The tonality of the chord progression
     vector<int> chordRoots;             // The roots of the chords
     vector<vector<int>> chordQualities; // The qualities of the chords
     vector<int> chordBass;              // The bass of the chords
@@ -58,10 +58,6 @@ protected:
     // [bass0, tenor0, alto0, soprano0, bass1, tenor1, alto1, soprano1, ...]
     IntVarArray chordsVoicings;
 
-    // Cost variables
-    IntVarArray intervalCosts; // Array to give priorities to the doubling of notes
-    IntVar totalIntervalCost; // Sum of the doublingCosts
-
 public:
     /**
      * @brief Construct a new Four Voice Texture object
@@ -73,7 +69,7 @@ public:
      * @param chordQualities the qualities of the chords
      * @param chordBass the bass of the chords
      */
-    FourVoiceTexture(int size, int key, vector<int> mode, vector<int> chordRoots, vector<vector<int>> chordQualities, vector<int> chordBass);
+    FourVoiceTexture(int size, Tonality tonality, vector<int> chordRoots, vector<vector<int>> chordQualities, vector<int> chordBass);
 
     /**********************************************************************
      *                                                                    *
@@ -129,7 +125,7 @@ public:
      */
     virtual void constrain(const Space &_b);
 
-    virtual IntVar cost(void) const;
+    // virtual IntVar cost(void) const;
 };
 
 #endif

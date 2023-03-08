@@ -17,8 +17,11 @@
  */
 
 /**
+ * @todo Check the parallel intervals cst
  * @todo To optimize for cost, we must inherit from the IntMinimizeSpace class (maybe IntLexMinimizeSpace is better)
  * @todo Modify the cost to a more appropriate function later
+ *
+ * @todo Faire une table constraint pour enchainer les septièmes et les quartes dans le cas des tritons
  *
  * @todo Inherit from IntLexMinimizzeSpace so that we can minimize on different variables with a priority order between them
  *
@@ -53,30 +56,25 @@
  * @param chordQualities the qualities of the chords
  * @param chordBass the bass of the chords
  */
-FourVoiceTexture::FourVoiceTexture(int size, int key, vector<int> mode, vector<int> chordRoots, vector<vector<int>> chordQualities, vector<int> chordBass)
+FourVoiceTexture::FourVoiceTexture(int size, Tonality tonality, vector<int> chordRoots, vector<vector<int>> chordQualities, vector<int> chordBass)
 {
     //-------------------------------------------------------------------Initialisation--------------------------------------------------------------------
     n = size;
-    key = key;
-    mode = mode;
+    tonality = tonality;
     chordRoots = chordRoots;
     chordQualities = chordQualities;
     chordBass = chordBass;
 
-    fundamentals = IntSet(getAllGivenNote(key));            // Get all the fundamentals
-    fourths = IntSet(getAllGivenNote(key + perfectFourth)); // Get all the fourths (a 5 semitone above the key)
-    sevenths = IntSet(getAllGivenNote(key + majorSeventh)); // Get all the sevenths (a 11 semitone above the key)
+    fourths = IntSet(getAllGivenNote(tonality.getKey() + perfectFourth)); // Get all the fourths (a 5 semitone above the key)
+    sevenths = IntSet(getAllGivenNote(tonality.getKey() + majorSeventh)); // Get all the sevenths (a 11 semitone above the key)
 
     // The domain of all notes is the set of all the notes from the (key, mode) tonality
-    chordsVoicings = IntVarArray(*this, 4 * n, getAllNotesFromTonality(key, mode));
+    chordsVoicings = IntVarArray(*this, 4 * n, tonality.getTonalityNotes());
 
-    bassVoiceIntervals = IntVarArray(*this, n - 1, -12, 12);
-    tenorVoiceIntervals = IntVarArray(*this, n - 1, -12, 12);
-    altoVoiceIntervals = IntVarArray(*this, n - 1, -12, 12);
-    sopranoVoiceIntervals = IntVarArray(*this, n - 1, -12, 12);
-
-    intervalCosts = IntVarArray(*this, n - 1, NO_COST, FORBIDDEN);
-    totalIntervalCost = IntVar(*this, NO_COST, (n - 1) * FORBIDDEN);
+    bassVoiceIntervals = IntVarArray(*this, n - 1, -perfectOctave, perfectOctave);
+    tenorVoiceIntervals = IntVarArray(*this, n - 1, -perfectOctave, perfectOctave);
+    altoVoiceIntervals = IntVarArray(*this, n - 1, -perfectOctave, perfectOctave);
+    sopranoVoiceIntervals = IntVarArray(*this, n - 1, -perfectOctave, perfectOctave);
 
     //---------------------------------------------------------Linking the variables together--------------------------------------------------------------
 
@@ -106,14 +104,6 @@ FourVoiceTexture::FourVoiceTexture(int size, int key, vector<int> mode, vector<i
         rel(*this, chordsVoicings[(4 * i) + 2] - chordsVoicings[(4 * i) + 1] <= 16);
         rel(*this, chordsVoicings[(4 * i) + 3] - chordsVoicings[(4 * i) + 2] <= 16);
     }
-
-    // Link the intervalCosts to intervals
-    // intervalCosts[i] = sum of the absolute value of the intervals between chord i and i+1 TO MODIFY
-    for (int i = 0; i < n - 1; ++i)
-        // for now, the bass is in there too because even though the bass is given, the octave in which it is played isn't and this guarantees that the bass are not 3 octaves apart
-        rel(*this, abs(tenorVoiceIntervals[i]) + abs(altoVoiceIntervals[i]) + abs(sopranoVoiceIntervals[i]) == intervalCosts[i]);
-
-    linear(*this, intervalCosts, IRT_EQ, totalIntervalCost); // The sum of the intervalCosts is the totalIntervalCost
 
     //---------------------------------------------------------------------Constraints---------------------------------------------------------------------
 
@@ -244,7 +234,7 @@ void FourVoiceTexture::printForOM(void) const
  *
  * @param s
  */
-FourVoiceTexture::FourVoiceTexture(FourVoiceTexture &s) : IntMinimizeSpace(s)
+FourVoiceTexture::FourVoiceTexture(FourVoiceTexture &s) : Space(s)
 {
     bassVoiceIntervals.update(*this, s.bassVoiceIntervals);
     tenorVoiceIntervals.update(*this, s.tenorVoiceIntervals);
@@ -264,7 +254,7 @@ void FourVoiceTexture::constrain(const Space &_b)
     std::cout << "TODO" << std::endl;
 }
 
-IntVar FourVoiceTexture::cost(void) const
+/* IntVar FourVoiceTexture::cost(void) const
 {
     return totalIntervalCost;
-}
+} */
