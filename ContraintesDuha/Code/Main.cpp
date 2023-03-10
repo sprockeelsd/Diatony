@@ -6,7 +6,7 @@
  * @date 2023-02-01
  *
  */
-#include "Main.h"
+#include "Main.hpp"
 
 /**********************************************
  *                                            *
@@ -21,9 +21,9 @@ int main(int argc, char *argv[])
     vector<vector<int>> chordQualities = {MAJOR_CHORD, MAJOR_CHORD, MINOR_CHORD, MINOR_CHORD, MAJOR_CHORD, MAJOR_CHORD};
     vector<int> chordBass = {C, G, A, E, F, C};
 
-    Tonality tonality(C, MAJOR_SCALE);
+    MajorTonality majorTonality(C);
 
-    FourVoiceTexture *problem = new FourVoiceTexture(chordRoots.size(), tonality, chordRoots, chordQualities, chordBass); // Create the problem
+    FourVoiceTexture *problem = new FourVoiceTexture(chordRoots.size(), majorTonality, chordRoots, chordQualities, chordBass); // Create the problem
 
     // Search options
     Gecode::Search::Options opts;

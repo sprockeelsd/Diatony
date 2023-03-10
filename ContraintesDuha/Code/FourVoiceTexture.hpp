@@ -21,9 +21,9 @@
 #include <gecode/int.hh>
 #include <gecode/minimodel.hh>
 
-#include "Utilities.h"
-#include "Tonality.h"
-#include "FourVoiceTextureConstraints.h"
+#include "Utilities.hpp"
+#include "Tonality.hpp"
+#include "FourVoiceTextureConstraints.hpp"
 
 #include <iostream>
 #include <vector>

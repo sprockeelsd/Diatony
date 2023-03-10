@@ -13,8 +13,8 @@
 #include <gecode/minimodel.hh>
 #include <gecode/search.hh>
 
-#include "Utilities.h"
-#include "Tonality.h"
+#include "Utilities.hpp"
+#include "Tonality.hpp"
 
 #include <iostream>
 #include <vector>
@@ -49,7 +49,7 @@ void dontDoubleTheSeventh(Home home, IntVarArgs chordNotes, IntSet sevenths);
  * @param chordPosition the position of the chord in the big array
  * @param chordQuality the quality of the given chord (M/m/7/...)
  */
-void tritoneResolution(Home home, IntVarArray chords, Tonality tonality, int chordPosition, vector<int> chordQuality, IntSet fourths, IntSet sevenths);
+void tritoneResolution(Home home, IntVarArray chords, Tonality& tonality, int chordPosition, vector<int> chordQuality, IntSet fourths, IntSet sevenths);
 
 /**
  * @brief

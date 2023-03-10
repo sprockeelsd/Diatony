@@ -7,7 +7,7 @@
  *
  */
 
-#include "FourVoiceTextureConstraints.h"
+#include "FourVoiceTextureConstraints.hpp"
 
 /**********************************************************************
  *                                                                    *
@@ -39,7 +39,7 @@ void dontDoubleTheSeventh(Home home, IntVarArgs chordNotes, IntSet sevenths)
  * @param chordPosition the position of the chord in the big array
  * @param chordQuality the quality of the given chord (M/m/7/...)
  */
-void tritoneResolution(Home home, IntVarArray chords, Tonality tonality, int chordPosition, vector<int> chordQuality, IntSet fourths, IntSet sevenths)
+void tritoneResolution(Home home, IntVarArray chords, Tonality& tonality, int chordPosition, vector<int> chordQuality, IntSet fourths, IntSet sevenths)
 {
     if (chordQuality == DOMINANT_SEVENTH_CHORD || chordQuality == DIMINISHED_CHORD) // There is a tritone in the chord
     {

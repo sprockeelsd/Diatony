@@ -12,9 +12,10 @@
 #include <gecode/int.hh>
 #include <gecode/search.hh>
 
-#include "Utilities.h"
-#include "Tonality.h"
-#include "FourVoiceTexture.h"
+#include "Utilities.hpp"
+#include "Tonality.hpp"
+#include "MajorTonality.hpp"
+#include "FourVoiceTexture.hpp"
 
 #include <iostream>
 #include <vector>

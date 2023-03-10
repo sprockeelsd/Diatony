@@ -44,7 +44,7 @@
  * @todo Think about moving the loops inside the function calls for the variables for the interval constraints to avoid passing the full array, though it might not make a difference if the arrays are passed as pointers
  */
 
-#include "FourVoiceTexture.h"
+#include "FourVoiceTexture.hpp"
 
 /**
  * @brief Construct a new Four Voice Texture object

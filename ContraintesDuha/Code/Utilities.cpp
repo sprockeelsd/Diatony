@@ -7,7 +7,7 @@
  *
  */
 
-#include "Utilities.h"
+#include "Utilities.hpp"
 
 using namespace Gecode;
 

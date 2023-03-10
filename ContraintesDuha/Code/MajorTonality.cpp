@@ -1,20 +1,14 @@
-/**
- * @file Tonality.cpp
- * @author Sprockeels Damien (damien.sprockeels@uclouvain.be)
- * @brief This class represents a tonality based on a root note and a mode
- * @version 0.1
- * @date 2023-03-08
- *
- */
-
-#include "Tonality.hpp"
+#include "MajorTonality.hpp"
 
 /**
- * @brief Construct a new Tonality object. The default values are C and MAJOR_SCALE
+ * @brief Construct a new Major Tonality object
  *
+ * @param root an integer representing the root of the tonality.
  */
-Tonality::Tonality() : key(C), mode(MAJOR_SCALE)
+MajorTonality::MajorTonality(int root)
 {
+    key = root % 12 + 12;
+    mode = MAJOR_SCALE;
     tonalityNotes = getAllNotesFromTonality(key, mode);
     scaleDegrees = {unisson, majorSecond, majorThird, perfectFourth, perfectFifth, majorSixth, majorSeventh};
     scaleDegreesChordQualities = {MAJOR_CHORD, MINOR_CHORD, MINOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MINOR_CHORD, DIMINISHED_CHORD};
@@ -26,4 +20,4 @@ Tonality::Tonality() : key(C), mode(MAJOR_SCALE)
         scaleDegreeChords.insert(make_pair(deg, getAllNotesFromChord(key, scaleDegreesChordQualities[i])));
         i += 1;
     }
-};
+}
