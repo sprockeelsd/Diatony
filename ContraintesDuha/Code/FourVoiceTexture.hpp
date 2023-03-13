@@ -37,7 +37,7 @@ class FourVoiceTexture : public Space
 {
 protected:
     int n;                              // The number of chord for which to generate 4 voice texture
-    Tonality tonality;                  // The tonality of the chord progression
+    Tonality* tonality;                  // The tonality of the chord progression
     vector<int> chordRoots;             // The roots of the chords
     vector<vector<int>> chordQualities; // The qualities of the chords
     vector<int> chordBass;              // The bass of the chords
@@ -69,7 +69,7 @@ public:
      * @param chordQualities the qualities of the chords
      * @param chordBass the bass of the chords
      */
-    FourVoiceTexture(int size, Tonality tonality, vector<int> chordRoots, vector<vector<int>> chordQualities, vector<int> chordBass);
+    FourVoiceTexture(int size, Tonality& tonality, vector<int> chordRoots, vector<vector<int>> chordQualities, vector<int> chordBass);
 
     /**********************************************************************
      *                                                                    *

@@ -56,7 +56,7 @@
  * @param chordQualities the qualities of the chords
  * @param chordBass the bass of the chords
  */
-FourVoiceTexture::FourVoiceTexture(int size, Tonality tonality, vector<int> chordRoots, vector<vector<int>> chordQualities, vector<int> chordBass)
+FourVoiceTexture::FourVoiceTexture(int size, Tonality& tonality, vector<int> chordRoots, vector<vector<int>> chordQualities, vector<int> chordBass)
 {
     //-------------------------------------------------------------------Initialisation--------------------------------------------------------------------
     n = size;
@@ -64,9 +64,6 @@ FourVoiceTexture::FourVoiceTexture(int size, Tonality tonality, vector<int> chor
     chordRoots = chordRoots;
     chordQualities = chordQualities;
     chordBass = chordBass;
-
-    fourths = IntSet(getAllGivenNote(tonality.getKey() + perfectFourth)); // Get all the fourths (a 5 semitone above the key)
-    sevenths = IntSet(getAllGivenNote(tonality.getKey() + majorSeventh)); // Get all the sevenths (a 11 semitone above the key)
 
     // The domain of all notes is the set of all the notes from the (key, mode) tonality
     chordsVoicings = IntVarArray(*this, 4 * n, tonality.getTonalityNotes());
@@ -115,7 +112,7 @@ FourVoiceTexture::FourVoiceTexture(int size, Tonality tonality, vector<int> chor
 
     for (int i = 0; i < n; ++i)
     {
-        dontDoubleTheSeventh(*this, chordsVoicings.slice(4 * i, 1, 4), sevenths); // Never double the seventh
+        dontDoubleTheSeventh(*this, chordsVoicings.slice(4 * i, 1, 4), tonality.getScaleDegree(tonality.getKey() + majorSeventh)); // Never double the seventh
     }
 
     for (int j = 0; j < n - 1; ++j)

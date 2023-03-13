@@ -33,6 +33,64 @@ public:
      * @param root an integer representing the root of the tonality.
      */
     MajorTonality(int root);
+
+    /**
+     * @brief returns the key of the tonality
+     *
+     * @return int the key of the tonality [12,23]
+     */
+    int getKey() override { return key; };
+
+    /**
+     * @brief returns the mode of the tonality
+     *
+     * @return vector<int> the mode of the tonality
+     */
+    vector<int> getMode() override { return mode; };
+
+    /**
+     * @brief returns the set of the notes in the tonality
+     *
+     * @return IntSet the set of the notes in the tonality
+     */
+    IntSet getTonalityNotes() override { return tonalityNotes; };
+
+    /**
+     * @brief Returns the scale degrees that are present in the scale
+     *
+     * @return vector<int> a vector of integers representing the degrees in a scale using their interval with the root
+     */
+    vector<int> getScaleDegrees() override { return scaleDegrees; };
+
+    /**
+     * @brief Returns the map giving all notes for all degrees of the scale
+     *
+     * @return map<int, IntSet> a map containing all the notes for each degree of the scale
+     */
+    map<int, IntSet> getScaleDegreeNotes() override { return scaleDegreeNotes; };
+
+    /**
+     * @brief Get all the notes for a given scale degree
+     *
+     * @param degree an integer representing the degree of the scale using its interval with the root
+     * @return IntSet the set of all notes of that degree
+     */
+    IntSet getScaleDegree(int degree) override { return scaleDegreeNotes[degree]; };
+
+    /**
+     * @brief Get all the notes for the chord for each degree of the scale
+     *
+     * @return map<int, IntSet> a map containing all notes for the chord based on each degree of the scale
+     */
+    map<int, IntSet> getScaleDegreesChords() override { return scaleDegreeChords; };
+
+    /**
+     * @brief Get all the notes for a given scale degree chord
+     *
+     * @param degree an integer representing the degree of the scale using its interval with the root
+     * @return IntSet The set of all notes making the chord based on that scale degree
+     */
+    IntSet getScaleDegreeChord(int degree) override { return scaleDegreeChords[degree]; };
 };
 
 #endif
