@@ -16,34 +16,6 @@
  *
  */
 
-/**
- * @todo Check the parallel intervals cst
- * @todo To optimize for cost, we must inherit from the IntMinimizeSpace class (maybe IntLexMinimizeSpace is better)
- * @todo Modify the cost to a more appropriate function later
- *
- * @todo Faire une table constraint pour enchainer les septièmes et les quartes dans le cas des tritons
- *
- * @todo Inherit from IntLexMinimizzeSpace so that we can minimize on different variables with a priority order between them
- *
- * @todo Handle cadences to finish sentences
- *
- * @todo Add the minimisation of the intervals between notes in the same voice for fundamental state chords
- * @todo Update the fundamentalStateThreeNoteChord constraint to include priority
- *
- * @todo Give a specific domain to each voice to anchor the chords in the right range and not have a chord progression that is too high or too low
- *
- * @todo Add an IntSet for each note of the scale in the attributes of the class so we don't have to compute it everytime we need it (maybe create a specific object for it?)
- * @todo Keep working on the tritone resolution constraint
- * @todo Write a constraint that the last chord can't contain a tritone (maybe in the specs though)
- *
- * @todo Move the tritone resolution constraint to a loop that iterates over intervals since the constraint has to access both the current and future chords
- * @todo Think about the branching strategy once we have enough constraints that it makes sense
- *
- * @todo Ask Karim the questions
- *
- * @todo Think about moving the loops inside the function calls for the variables for the interval constraints to avoid passing the full array, though it might not make a difference if the arrays are passed as pointers
- */
-
 #include "FourVoiceTexture.hpp"
 
 /**
@@ -65,7 +37,7 @@ FourVoiceTexture::FourVoiceTexture(int size, Tonality& tonality, vector<int> cho
     chordQualities = chordQualities;
     chordBass = chordBass;
 
-    // The domain of all notes is the set of all the notes from the (key, mode) tonality
+    // The domain of all notes is the set of all the notes from the tonality
     chordsVoicings = IntVarArray(*this, 4 * n, tonality.getTonalityNotes());
 
     bassVoiceIntervals = IntVarArray(*this, n - 1, -perfectOctave, perfectOctave);

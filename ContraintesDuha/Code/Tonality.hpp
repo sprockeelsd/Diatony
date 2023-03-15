@@ -1,7 +1,7 @@
 /**
  * @file Tonality.h
  * @author Sprockeels Damien (damien.sprockeels@uclouvain.be)
- * @brief This abstract class represents a tonality
+ * @brief This abstract class represents a tonality. It specifies a set of functions that each tonality must satisfy.
  * @version 0.1
  * @date 2023-03-08
  *

@@ -1,0 +1,31 @@
+- TODO think about how I can represent different chords for the same scale degree (maybe vector of vector? That way I can also add seventh, ninth... chords)
+- TODO finish minor tonality
+
+
+
+- Check the parallel intervals cst
+- To optimize for cost, we must inherit from the IntMinimizeSpace class (maybe IntLexMinimizeSpace is better)
+- Modify the cost to a more appropriate function later
+
+- Faire une table constraint pour enchainer les septièmes et les quartes dans le cas des tritons
+
+- Inherit from IntLexMinimizeSpace so that we can minimize on different variables with a priority order between them
+
+- Handle cadences to finish sentences
+
+- Add the minimisation of the intervals between notes in the same voice for fundamental state chords
+- Update the fundamentalStateThreeNoteChord constraint to include priority
+
+- Give a specific domain to each voice to anchor the chords in the right range and not have a chord progression that is too high or too low
+
+- Keep working on the tritone resolution constraint
+- Write a constraint that the last chord can't contain a tritone (maybe in the specs though)
+
+- Move the tritone resolution constraint to a loop that iterates over intervals since the constraint has to access both the current and future chords
+- Think about the branching strategy once we have enough constraints that it makes sense
+
+- Ask Karim the questions
+
+- Think about moving the loops inside the function calls for the variables for the interval constraints to avoid passing the full array, though it might not make a difference 
+if the arrays are passed as pointers
+

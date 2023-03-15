@@ -1,7 +1,7 @@
 /**
  * @file Tonality.cpp
  * @author Sprockeels Damien (damien.sprockeels@uclouvain.be)
- * @brief This class represents a tonality based on a root note and a mode
+ * @brief This abstract class represents a tonality
  * @version 0.1
  * @date 2023-03-08
  *

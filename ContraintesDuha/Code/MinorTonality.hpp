@@ -1,7 +1,7 @@
 /**
- * @file MajorTonality.hpp
+ * @file MinorTonality.hpp
  * @author Damien Sprockeels (damien.sprockeels@uclouvain.be)
- * @brief This class implements the Tonality abstract class and describes a major tonality.
+ * @brief This class implements the Tonality abstract class and describes a minor tonality.
  * @version 0.1
  * @date 2023-03-13
  * 
@@ -22,7 +22,7 @@
 using namespace Gecode;
 using namespace std;
 
-class MajorTonality : public Tonality
+class MinorTonality : public Tonality
 {
 protected:
     int key;                                        // The key of the tonality
@@ -40,7 +40,7 @@ public:
      *
      * @param root an integer representing the root of the tonality.
      */
-    MajorTonality(int root);
+    MinorTonality(int root);
 
     /**
      * @brief returns the key of the tonality

@@ -1,3 +1,12 @@
+/**
+ * @file MajorTonality.hpp
+ * @author Damien Sprockeels (damien.sprockeels@uclouvain.be)
+ * @brief This class implements the Tonality abstract class and describes a major tonality.
+ * @version 0.1
+ * @date 2023-03-13
+ * 
+ */
+
 #include "MajorTonality.hpp"
 
 /**
