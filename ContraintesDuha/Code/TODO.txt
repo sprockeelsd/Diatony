@@ -1,5 +1,13 @@
+For fundamental state chords:
+- Modify the constraint that says to double the bass of the chord to make it a preference
+
+
+
+
 - TODO think about how I can represent different chords for the same scale degree (maybe vector of vector? That way I can also add seventh, ninth... chords)
 - TODO finish minor tonality
+- TODO change the constraint for notes in a chord to maximize the number of different notes while respecting other constraints
+- TODO changer la cst intervales // pour autoriser si c'est le même intervalle
 
 
 

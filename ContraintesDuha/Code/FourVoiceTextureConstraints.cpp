@@ -26,7 +26,7 @@ void dontDoubleTheSeventh(Home home, IntVarArgs chordNotes, IntSet sevenths)
 {
     IntVar nOfSeventh(home, 0, 1);                         // Variable to count the number of sevenths
     count(home, chordNotes, sevenths, IRT_EQ, nOfSeventh); // nOfSeventh == nb of seventh in the chord
-    // rel(home, nOfSeventh, IRT_LQ, 1);                      // nOfSeventh <= 1
+    // rel(home, nOfSeventh, IRT_LQ, 1);                      // nOfSeventh <= 1 not necessary because of the domain
 }
 
 /**
@@ -39,24 +39,8 @@ void dontDoubleTheSeventh(Home home, IntVarArgs chordNotes, IntSet sevenths)
  * @param chordPosition the position of the chord in the big array
  * @param chordQuality the quality of the given chord (M/m/7/...)
  */
-void tritoneResolution(Home home, IntVarArray chords, Tonality& tonality, int chordPosition, vector<int> chordQuality, IntSet fourths, IntSet sevenths)
+void tritoneResolution(Home home, IntVarArray chords, Tonality &tonality, int chordPosition, vector<int> chordQuality, IntSet fourths, IntSet sevenths)
 {
-    if (chordQuality == DOMINANT_SEVENTH_CHORD || chordQuality == DIMINISHED_CHORD) // There is a tritone in the chord
-    {
-        // post for each element of the array : if the variable belongs to the set of seventh, the next is +1 and same for fourth
-        IntVarArgs currentChord = chords.slice(chordPosition, 1, 4);
-        IntVarArgs nextChord = chords.slice(chordPosition + 4, 1, 4);
-        IntVarArgs seventhsAsVars(home, (int) sevenths.size(), 0, 127);
-        for(int i = 0; i < sevenths.size(); ++i)
-            // rel(home, seventhsAsVars[i], IRT_EQ, sevenths);
-            // Make a function that returns all the sevenths as a vector of int so we can access them individually
-        
-        for (int j = 0; j < 4; ++j)
-        {
-            // creer un tableau de variables de taille == sevents et faire un boucle pour que chaque variable == une des valeurs puis poster member avec ce tableau
-            // rel(home, member(home, sevenths, currentChord[0]), BOT_IMP, rel(home, nextChord[0] == currentChord[0] + 1), 1);
-        }
-    }
 }
 /**
  * @brief
@@ -74,27 +58,40 @@ void tritoneResolution(Home home, IntVarArray chords, Tonality& tonality, int ch
 void forbidParallelIntervals(Home home, int interval, int currentPosition, IntVarArray bassIntervals, IntVarArray tenorIntervals, IntVarArray altoIntervals,
                              IntVarArray sopranoIntervals)
 {
-    // if the interval between these two voices is equal to interval (typically fifth/octave), then it cannot be in the next chord
+    // if the interval between two voices is equal to interval (typically fifth/octave) and if the notes for both voices are not the same,
+    // then it cannot be in the next chord
     // It is necessary to do it for all possible combinations because depending on the interval it may appear between different voices
 
+    // If the interval between two voices is interval and the two voices don't have the same value in the next chord, then it can not have the same interval
+
     // tenor - bass
+
+/*     rel(home,
+        expr(home, expr(home, tenorIntervals[currentPosition] - bassIntervals[currentPosition] == interval) &&                // the interval between the tenor and bass is interval
+                       expr(home, chordsVoicings[currentPosition * 4] != chordsVoicings[(currentPosition + 1) * 4]) &&        // the bass doesn't have the same note in the current chord and the next
+                       expr(home, chordsVoicings[currentPosition * 4 + 1] != chordsVoicings[(currentPosition + 1) * 4 + 1])), // the tenor doesn't have the same note in the current chord and the next
+        // theoretically should be  !(expr1 && expr2) but they if one of them is not true then the intervals are different
+        BOT_IMP,                                                                                         // implies
+        expr(home, (tenorIntervals[currentPosition] - bassIntervals[currentPosition]) % 12 != interval), // the interval between the bass and tenor in the next chord cannot be interval
+        true); */
+
     rel(home, expr(home, tenorIntervals[currentPosition] - bassIntervals[currentPosition] == interval), BOT_IMP,
-        expr(home, tenorIntervals[currentPosition] - bassIntervals[currentPosition] != interval), 1);
+        expr(home, tenorIntervals[currentPosition] - bassIntervals[currentPosition] != interval), true);
     // alto - bass
     rel(home, expr(home, altoIntervals[currentPosition] - bassIntervals[currentPosition] == interval), BOT_IMP,
-        expr(home, altoIntervals[currentPosition] - bassIntervals[currentPosition] != interval), 1);
+        expr(home, altoIntervals[currentPosition] - bassIntervals[currentPosition] != interval), true);
     // soprano - bass
     rel(home, expr(home, sopranoIntervals[currentPosition] - bassIntervals[currentPosition] == interval), BOT_IMP,
-        expr(home, sopranoIntervals[currentPosition] - bassIntervals[currentPosition] != interval), 1);
+        expr(home, sopranoIntervals[currentPosition] - bassIntervals[currentPosition] != interval), true);
     // alto - tenor
     rel(home, expr(home, altoIntervals[currentPosition] - tenorIntervals[currentPosition] == interval), BOT_IMP,
-        expr(home, altoIntervals[currentPosition] - tenorIntervals[currentPosition] != interval), 1);
+        expr(home, altoIntervals[currentPosition] - tenorIntervals[currentPosition] != interval), true);
     // soprano - tenor
     rel(home, expr(home, sopranoIntervals[currentPosition] - tenorIntervals[currentPosition] == interval), BOT_IMP,
-        expr(home, sopranoIntervals[currentPosition] - tenorIntervals[currentPosition] != interval), 1);
+        expr(home, sopranoIntervals[currentPosition] - tenorIntervals[currentPosition] != interval), true);
     // soprano - alto
     rel(home, expr(home, sopranoIntervals[currentPosition] - altoIntervals[currentPosition] == interval), BOT_IMP,
-        expr(home, sopranoIntervals[currentPosition] - altoIntervals[currentPosition] != interval), 1);
+        expr(home, sopranoIntervals[currentPosition] - altoIntervals[currentPosition] != interval), true);
 }
 
 /**********************************************************************
@@ -123,7 +120,7 @@ void setToChord(Home home, IntVarArgs chordNotes, int chordRoot, vector<int> cho
  * @brief This function posts a variety of constraints on 3 note chords. These constraints include :
  * - The doubling of the bass (should be priority-based -> TODO)
  * - Diminished chords should be 3 voices only -> 2 voices have to be the same
- * 
+ *
  * @todo Change the constraint for chords in fundamental form to a priority-based constraint
  *
  * @param home The space of the problem
@@ -143,7 +140,7 @@ void fundamentalStateThreeNoteChord(Home home, IntVarArgs chordNotes, int chordR
             count(home, chordNotes, getAllGivenNote(chordRoot), IRT_EQ, 2); // Double the bass (mandatory and not preferred -> not ideal)
         }
     }
-    if (chordQuality == DIMINISHED_CHORD)
+    else if (chordQuality == DIMINISHED_CHORD)
     {
         nvalues(home, chordNotes, IRT_EQ, 3); // The chordNotes array can only have 3 different values
     }

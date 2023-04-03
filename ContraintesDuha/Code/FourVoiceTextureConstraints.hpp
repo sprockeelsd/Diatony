@@ -76,7 +76,7 @@ void forbidParallelIntervals(Home home, int interval, int currentPosition, IntVa
 /**
  * @brief Posts the constraint that the different voices of the chord have a value that is part of the chord
  *
- *ƒ @param home The space of the problem
+ * @param home The space of the problem
  * @param chordNotes the variables representing the notes of the chord
  * @param chordRoot The root of the chord
  * @param chordQuality The quality of the chord (M/m/...)

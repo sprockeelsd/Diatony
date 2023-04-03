@@ -53,6 +53,11 @@ protected:
     IntVarArray tenorVoiceIntervals;
     IntVarArray bassVoiceIntervals;
 
+    // Variable arrays for the harmonic intervals between adjacent voices for each chord
+    IntVarArray bassTenorIntervals;
+    IntVarArray tenorAltoIntervals;
+    IntVarArray altoSopranoIntervals;
+
     // Array containing the chords
     // A 4*n array where each chord is represented with their voices in increasing order. Example :
     // [bass0, tenor0, alto0, soprano0, bass1, tenor1, alto1, soprano1, ...]

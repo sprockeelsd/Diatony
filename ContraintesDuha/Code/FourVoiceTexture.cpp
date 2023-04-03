@@ -28,7 +28,7 @@
  * @param chordQualities the qualities of the chords
  * @param chordBass the bass of the chords
  */
-FourVoiceTexture::FourVoiceTexture(int size, Tonality& tonality, vector<int> chordRoots, vector<vector<int>> chordQualities, vector<int> chordBass)
+FourVoiceTexture::FourVoiceTexture(int size, Tonality &tonality, vector<int> chordRoots, vector<vector<int>> chordQualities, vector<int> chordBass)
 {
     //-------------------------------------------------------------------Initialisation--------------------------------------------------------------------
     n = size;
@@ -40,20 +40,35 @@ FourVoiceTexture::FourVoiceTexture(int size, Tonality& tonality, vector<int> cho
     // The domain of all notes is the set of all the notes from the tonality
     chordsVoicings = IntVarArray(*this, 4 * n, tonality.getTonalityNotes());
 
+    // Voices cannot move melodically by more than octave skips
     bassVoiceIntervals = IntVarArray(*this, n - 1, -perfectOctave, perfectOctave);
     tenorVoiceIntervals = IntVarArray(*this, n - 1, -perfectOctave, perfectOctave);
     altoVoiceIntervals = IntVarArray(*this, n - 1, -perfectOctave, perfectOctave);
     sopranoVoiceIntervals = IntVarArray(*this, n - 1, -perfectOctave, perfectOctave);
 
+    // The interval between two adjacent voices of a given chord is at most an octave
+    // except for the interval between the bass and tenor which can be up to an octave and a fifth
+    bassTenorIntervals = IntVarArray(*this, n, 0, perfectOctave + perfectFifth);
+    tenorAltoIntervals = IntVarArray(*this, n, 0, perfectOctave);
+    altoSopranoIntervals = IntVarArray(*this, n, 0, perfectOctave);
+
     //---------------------------------------------------------Linking the variables together--------------------------------------------------------------
 
-    // Posts the constraints that the intervals are the difference between 2 consecutive notes for each voice
+    // Posts the constraints that the melodic intervals are the difference between 2 consecutive notes for each voice
     for (int i = 0; i < n - 1; ++i)
     {
         rel(*this, bassVoiceIntervals[i] == chordsVoicings[(i + 1) * 4] - chordsVoicings[i * 4]);
         rel(*this, tenorVoiceIntervals[i] == chordsVoicings[((i + 1) * 4) + 1] - chordsVoicings[(i * 4) + 1]);
         rel(*this, altoVoiceIntervals[i] == chordsVoicings[((i + 1) * 4) + 2] - chordsVoicings[(i * 4) + 2]);
         rel(*this, sopranoVoiceIntervals[i] == chordsVoicings[((i + 1) * 4) + 3] - chordsVoicings[(i * 4) + 3]);
+    }
+
+    // Posts the constraints that the harmonic intervals are the difference between adjacent notes of each chord
+    for (int i = 0; i < n; ++i)
+    {
+        rel(*this, bassTenorIntervals[i] == chordsVoicings[(4 * i) + 1] - chordsVoicings[4 * i]);
+        rel(*this, tenorAltoIntervals[i] == chordsVoicings[(4 * i) + 2] - chordsVoicings[(4 * i) + 1]);
+        rel(*this, altoSopranoIntervals[i] == chordsVoicings[(4 * i) + 3] - chordsVoicings[(4 * i) + 3]);
     }
 
     // Posts the constraints on the domain of the different voices
@@ -63,15 +78,6 @@ FourVoiceTexture::FourVoiceTexture(int size, Tonality& tonality, vector<int> cho
         rel(*this, currentChord, IRT_LQ);     // bass[i] <= tenor[i] <= alto[i] <= soprano[i]
         rel(*this, currentChord, IRT_GQ, 43); // >= G2
         rel(*this, currentChord, IRT_LQ, 84); // <= C5
-    }
-
-    // TEMPORARY UNTIL I DISCUSS WITH KARIM
-    // Posts the constraint that the interval between two adjacent voices of a chord is at most an octave and a third
-    for (int i = 0; i < n; ++i)
-    {
-        rel(*this, chordsVoicings[(4 * i) + 1] - chordsVoicings[(4 * i)] <= 16); // maybe 2 octaves for the interval between the bass and the tenor?
-        rel(*this, chordsVoicings[(4 * i) + 2] - chordsVoicings[(4 * i) + 1] <= 16);
-        rel(*this, chordsVoicings[(4 * i) + 3] - chordsVoicings[(4 * i) + 2] <= 16);
     }
 
     //---------------------------------------------------------------------Constraints---------------------------------------------------------------------
@@ -89,9 +95,6 @@ FourVoiceTexture::FourVoiceTexture(int size, Tonality& tonality, vector<int> cho
 
     for (int j = 0; j < n - 1; ++j)
     {
-        // tritone resolution
-        // tritoneResolution(*this, chordsVoicings, key, i, chordQualities[i], fourths, sevenths);
-
         // consecutive fifths/octaves/unissons are forbidden
         forbidParallelIntervals(*this, unisson, j, bassVoiceIntervals, tenorVoiceIntervals, altoVoiceIntervals, sopranoVoiceIntervals);
         forbidParallelIntervals(*this, perfectFifth, j, bassVoiceIntervals, tenorVoiceIntervals, altoVoiceIntervals, sopranoVoiceIntervals);
