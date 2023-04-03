@@ -18,4 +18,4 @@ run:
 	./Main
 
 clean:
-	rm -f *.o Main *.out
+	rm -f *.o Main TonalityTest *.out

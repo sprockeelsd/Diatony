@@ -45,7 +45,8 @@ void tritoneResolution(Home home, IntVarArray chords, Tonality &tonality, int ch
 /**
  * @brief
  *
- * @todo Check with Karim for the consecutive fourths thing. Also ask if the fact that its an octave higher matters of not (a parallel fifth an octave higher e.g). Also ask if its in 1 voice or any
+ * @todo Check with Karim for the consecutive fourths thing. Also ask if the fact that its an octave higher matters of not (a parallel fifth an octave higher e.g).
+ * @todo Also ask if its in 1 voice or any
  *
  * @param home The space of the problem
  * @param interval the parallel interval we wish to forbid
@@ -176,14 +177,21 @@ void fundamentalStateChordToFundamentalStateChord(Home home, int currentPosition
             diff == minorSeventh || diff == -minorSeventh) // If the interval between the roots of the chords is a second
         {
             // Other voices need to move in contrary motion to the bass
-            rel(home, expr(home, bassIntervals[currentPosition] < 0), BOT_IMP, expr(home, tenorIntervals[currentPosition] > 0), 1); // bassIntervals[i] <0 => tenorIntervals[i] > 0
-            rel(home, expr(home, bassIntervals[currentPosition] > 0), BOT_IMP, expr(home, tenorIntervals[currentPosition] < 0), 1); // bassIntervals[i] >0 => tenorIntervals[i] < 0
 
-            rel(home, expr(home, bassIntervals[currentPosition] < 0), BOT_IMP, expr(home, altoIntervals[currentPosition] > 0), 1); // bassIntervals[i] <0 => altoIntervals[i] > 0
-            rel(home, expr(home, bassIntervals[currentPosition] > 0), BOT_IMP, expr(home, altoIntervals[currentPosition] < 0), 1); // bassIntervals[i] >0 => altoIntervals[i] < 0
+            // bassIntervals[i] <0 => tenorIntervals[i] > 0
+            rel(home, expr(home, bassIntervals[currentPosition] < 0), BOT_IMP, expr(home, tenorIntervals[currentPosition] > 0), 1);
+            // bassIntervals[i] >0 => tenorIntervals[i] < 0
+            rel(home, expr(home, bassIntervals[currentPosition] > 0), BOT_IMP, expr(home, tenorIntervals[currentPosition] < 0), 1);
 
-            rel(home, expr(home, bassIntervals[currentPosition] < 0), BOT_IMP, expr(home, sopranoIntervals[currentPosition] > 0), 1); // bassIntervals[i] <0 => sopranoIntervals[i] > 0
-            rel(home, expr(home, bassIntervals[currentPosition] > 0), BOT_IMP, expr(home, sopranoIntervals[currentPosition] < 0), 1); // bassIntervals[i] >0 => sopranoIntervals[i] < 0
+            // bassIntervals[i] <0 => altoIntervals[i] > 0
+            rel(home, expr(home, bassIntervals[currentPosition] < 0), BOT_IMP, expr(home, altoIntervals[currentPosition] > 0), 1);
+            // bassIntervals[i] >0 => altoIntervals[i] < 0
+            rel(home, expr(home, bassIntervals[currentPosition] > 0), BOT_IMP, expr(home, altoIntervals[currentPosition] < 0), 1);
+
+            // bassIntervals[i] <0 => sopranoIntervals[i] > 0
+            rel(home, expr(home, bassIntervals[currentPosition] < 0), BOT_IMP, expr(home, sopranoIntervals[currentPosition] > 0), 1);
+            // bassIntervals[i] >0 => sopranoIntervals[i] < 0
+            rel(home, expr(home, bassIntervals[currentPosition] > 0), BOT_IMP, expr(home, sopranoIntervals[currentPosition] < 0), 1);
         }
     }
 }

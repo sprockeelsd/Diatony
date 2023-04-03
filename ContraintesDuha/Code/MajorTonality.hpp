@@ -4,7 +4,7 @@
  * @brief This class implements the Tonality abstract class and describes a major tonality.
  * @version 0.1
  * @date 2023-03-13
- * 
+ *
  */
 #ifndef MAJOR_TONALITY
 #define MAJOR_TONALITY
@@ -26,13 +26,15 @@ class MajorTonality : public Tonality
 {
 protected:
     int key;                                        // The key of the tonality
-    vector<int> mode;                               // The mode of the tonality. Any mode is supported as long as it is described using a vector containing the intervals between the different notes of the scale
+    vector<int> mode;                               // The mode of the tonality.
     IntSet tonalityNotes;                           // The set of all notes in the tonality
     vector<int> scaleDegrees;                       // An array of integer representing the degrees present in that scale using their interval with respect to the root
     vector<vector<int>> scaleDegreesChordQualities; // An array representing the quality of chords with respect to their degrees
 
-    map<int, IntSet> scaleDegreeNotes;  // A dictionnary containing the corresponding notes for each scale degree represented as an integer
-    map<int, IntSet> scaleDegreeChords; // A dictionnary containing the corresponding notes for each scale degree chord represented as an integer
+    IntSet tonalNotes; // Useful for doubling notes in inverted chords
+
+    map<int, IntSet> scaleDegreeNotes;  // A dictionary containing the corresponding notes for each scale degree represented as an integer
+    map<int, IntSet> scaleDegreeChords; // A dictionary containing the corresponding notes for each scale degree chord represented as an integer
 
 public:
     /**

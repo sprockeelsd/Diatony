@@ -10,7 +10,8 @@
  *      - The notes are in the right tonality
  *      - The notes are in the given chord
  *      - The seventh degree of a scale can never be doubled
- *      - If two chords in fundamental position are after each other and the interval between their root notes is a second, the other voices need to move in contrary motion to the bass
+ *      - If two chords in fundamental position are after each other and the interval between their root notes is a second, the other voices need to move in contrary motion
+ *        to the bass
  * @version 1.1
  * @date 2023-02-01
  *
@@ -101,15 +102,19 @@ FourVoiceTexture::FourVoiceTexture(int size, Tonality &tonality, vector<int> cho
 
     for (int i = 0; i < n; ++i)
     {
-        dontDoubleTheSeventh(*this, chordsVoicings.slice(4 * i, 1, 4), tonality.getScaleDegree(tonality.getKey() + majorSeventh)); // Never double the seventh
+        // Never double the seventh
+        dontDoubleTheSeventh(*this, chordsVoicings.slice(4 * i, 1, 4), tonality.getScaleDegree(tonality.getKey() + majorSeventh));
     }
 
     for (int j = 0; j < n - 1; ++j)
     {
         // consecutive fifths/octaves/unissons are forbidden
-        forbidParallelIntervals(*this, unisson, j, bassVoiceIntervals, tenorVoiceIntervals, altoVoiceIntervals, sopranoVoiceIntervals);
-        forbidParallelIntervals(*this, perfectFifth, j, bassVoiceIntervals, tenorVoiceIntervals, altoVoiceIntervals, sopranoVoiceIntervals);
-        forbidParallelIntervals(*this, perfectOctave, j, bassVoiceIntervals, tenorVoiceIntervals, altoVoiceIntervals, sopranoVoiceIntervals);
+        forbidParallelIntervals(*this, unisson, j, bassVoiceIntervals, tenorVoiceIntervals,
+                                altoVoiceIntervals, sopranoVoiceIntervals);
+        forbidParallelIntervals(*this, perfectFifth, j, bassVoiceIntervals, tenorVoiceIntervals,
+                                altoVoiceIntervals, sopranoVoiceIntervals);
+        forbidParallelIntervals(*this, perfectOctave, j, bassVoiceIntervals, tenorVoiceIntervals,
+                                altoVoiceIntervals, sopranoVoiceIntervals);
     }
 
     /**********************************************************************
@@ -122,15 +127,20 @@ FourVoiceTexture::FourVoiceTexture(int size, Tonality &tonality, vector<int> cho
     {
         IntVarArgs currentChord = chordsVoicings.slice(4 * i, 1, 4); // Current chord
 
-        setToChord(*this, currentChord, chordRoots[i], chordQualities[i], chordBass[i]); // Set the domain of the notes of that chord to possible notes from the chord
+        // Set the domain of the notes of that chord to possible notes from the chord
+        setToChord(*this, currentChord, chordRoots[i], chordQualities[i], chordBass[i]);
 
         // TEMPORARY UNTIL I TALK TO KARIM
         // For perfect chords, each note should be present at least once
-        if (chordQualities[i] == MAJOR_CHORD || chordQualities[i] == MINOR_CHORD || chordQualities[i] == AUGMENTED_CHORD || chordQualities[i] == DIMINISHED_CHORD) // If this is a perfect chord
+        // If this is a perfect chord
+        if (chordQualities[i] == MAJOR_CHORD || chordQualities[i] == MINOR_CHORD || chordQualities[i] == AUGMENTED_CHORD || chordQualities[i] == DIMINISHED_CHORD)
         {
-            count(*this, currentChord, getAllGivenNote(chordRoots[i]), IRT_GQ, 1);                                               // The fundamental is present at least once
-            count(*this, currentChord, getAllGivenNote(chordRoots[i] + chordQualities[i][0]), IRT_GQ, 1);                        // The third is present at least once
-            count(*this, currentChord, getAllGivenNote(chordRoots[i] + chordQualities[i][0] + chordQualities[i][1]), IRT_GQ, 1); // The fifth is present at least once
+            // The fundamental is present at least once
+            count(*this, currentChord, getAllGivenNote(chordRoots[i]), IRT_GQ, 1);
+            // The third is present at least once
+            count(*this, currentChord, getAllGivenNote(chordRoots[i] + chordQualities[i][0]), IRT_GQ, 1);
+            // The fifth is present at least once
+            count(*this, currentChord, getAllGivenNote(chordRoots[i] + chordQualities[i][0] + chordQualities[i][1]), IRT_GQ, 1);
         }
 
         // For 3 note chords, double the fundamental in priority unless it is a diminished chord then each note should only be present once -> 3 distinct values
@@ -146,7 +156,8 @@ FourVoiceTexture::FourVoiceTexture(int size, Tonality &tonality, vector<int> cho
     for (int i = 0; i < n - 1; ++i) // For each interval between the chords
     {
         // Post the rules for moving from a chord in fundamental state to another
-        fundamentalStateChordToFundamentalStateChord(*this, i, bassVoiceIntervals, tenorVoiceIntervals, altoVoiceIntervals, sopranoVoiceIntervals, chordBass, chordRoots);
+        fundamentalStateChordToFundamentalStateChord(*this, i, bassVoiceIntervals, tenorVoiceIntervals,
+                                                     altoVoiceIntervals, sopranoVoiceIntervals, chordBass, chordRoots);
     }
 
     //----------------------------------------------------------------------Branching----------------------------------------------------------------------
