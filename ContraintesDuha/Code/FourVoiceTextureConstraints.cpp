@@ -136,8 +136,8 @@ void fundamentalStateThreeNoteChord(Home home, IntVarArgs chordNotes, int chordR
     {
         if (chordRoot % 12 + 12 == chordBass % 12 + 12) // It is in fundamental position
         {
-            // doubler en priorité la basse
-            count(home, chordNotes, getAllGivenNote(chordRoot), IRT_EQ, 2); // Double the bass (mandatory and not preferred -> not ideal)
+            // doubler la basse
+            count(home, chordNotes, getAllGivenNote(chordRoot), IRT_EQ, 2);
         }
     }
     else if (chordQuality == DIMINISHED_CHORD)

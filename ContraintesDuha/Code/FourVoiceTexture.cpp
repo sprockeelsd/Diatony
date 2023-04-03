@@ -68,16 +68,27 @@ FourVoiceTexture::FourVoiceTexture(int size, Tonality &tonality, vector<int> cho
     {
         rel(*this, bassTenorIntervals[i] == chordsVoicings[(4 * i) + 1] - chordsVoicings[4 * i]);
         rel(*this, tenorAltoIntervals[i] == chordsVoicings[(4 * i) + 2] - chordsVoicings[(4 * i) + 1]);
-        rel(*this, altoSopranoIntervals[i] == chordsVoicings[(4 * i) + 3] - chordsVoicings[(4 * i) + 3]);
+        rel(*this, altoSopranoIntervals[i] == chordsVoicings[(4 * i) + 3] - chordsVoicings[(4 * i) + 2]);
     }
 
     // Posts the constraints on the domain of the different voices
     for (int i = 0; i < n; ++i)
     {
         IntVarArgs currentChord(chordsVoicings.slice(4 * i, 1, 4));
-        rel(*this, currentChord, IRT_LQ);     // bass[i] <= tenor[i] <= alto[i] <= soprano[i]
-        rel(*this, currentChord, IRT_GQ, 43); // >= G2
-        rel(*this, currentChord, IRT_LQ, 84); // <= C5
+        rel(*this, currentChord, IRT_LQ); // bass[i] <= tenor[i] <= alto[i] <= soprano[i]
+
+        // E2 <= bass <= C3
+        rel(*this, currentChord[0], IRT_GQ, 40);
+        rel(*this, currentChord[0], IRT_LQ, 60);
+        // C2 <= tenor <= A3
+        rel(*this, currentChord[1], IRT_GQ, 48);
+        rel(*this, currentChord[1], IRT_LQ, 69);
+        // G2 <= alto <= D3
+        rel(*this, currentChord[2], IRT_GQ, 55);
+        rel(*this, currentChord[2], IRT_LQ, 75);
+        // C3 <= soprano <= A4
+        rel(*this, currentChord[3], IRT_GQ, 60);
+        rel(*this, currentChord[3], IRT_LQ, 84);
     }
 
     //---------------------------------------------------------------------Constraints---------------------------------------------------------------------
