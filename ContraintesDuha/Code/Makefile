@@ -8,14 +8,14 @@ macOS:
 	./Main
 
 test:
-	g++ -std=c++11 -F/Library/Frameworks -c Utilities.cpp Tonality.cpp MajorTonality.cpp TonalityTest.cpp
+	g++ -std=c++11 -F/Library/Frameworks -c Utilities.cpp Tonality.cpp MajorTonality.cpp FourVoiceTextureConstraints.cpp FourVoiceTexture.cpp Tests.cpp
 
-	g++ -std=c++11 -F/Library/Frameworks -framework gecode -o TonalityTest Utilities.cpp Tonality.cpp MajorTonality.cpp TonalityTest.cpp
-	
-	./TonalityTest
+	g++ -std=c++11 -F/Library/Frameworks -framework gecode -o Tests Utilities.cpp Tonality.cpp MajorTonality.cpp FourVoiceTextureConstraints.cpp FourVoiceTexture.cpp Tests.cpp
+
+	./Tests
 
 run:
 	./Main
 
 clean:
-	rm -f *.o Main TonalityTest *.out
+	rm -f *.o Main Tests *.out
