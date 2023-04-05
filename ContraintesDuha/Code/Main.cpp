@@ -17,9 +17,12 @@
 int main(int argc, char *argv[])
 {
     // INPUT
-    vector<int> chordRoots = {C, G, A, E, F, C};
+/*    vector<int> chordRoots = {C, G, A, E, F, C};
     vector<vector<int>> chordQualities = {MAJOR_CHORD, MAJOR_CHORD, MINOR_CHORD, MINOR_CHORD, MAJOR_CHORD, MAJOR_CHORD};
-    vector<int> chordBass = {C, G, A, E, F, C};
+    vector<int> chordBass = {C, G, A, E, F, C};*/
+    vector<int> chordRoots = {B,B,G};
+    vector<vector<int>> chordQualities = {DIMINISHED_CHORD, DIMINISHED_CHORD, MAJOR_CHORD};
+    vector<int> chordBass = {B,B,B};
 
     MajorTonality majorTonality(C);
 
@@ -39,11 +42,11 @@ int main(int argc, char *argv[])
     while (FourVoiceTexture *s = e.next())
     {
         std::cout << " Solution " << nbSol + 1 << " : " << std::endl;
-        s->printForOM();
+        s->print();
         std::cout << std::endl;
         delete s;
         ++nbSol;
-        if (nbSol >= 10)
+        if (nbSol >= 100)
             break;
     }
 
