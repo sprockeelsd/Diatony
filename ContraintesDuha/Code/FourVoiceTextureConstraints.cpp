@@ -34,8 +34,19 @@ void dontDoubleTheSeventh(Home home, IntVarArgs chordNotes, IntSet sevenths)
  * checking for each chord if there is an interval of value interval between 2 adjacent voices. if there is, then this
  * interval cannot occur in the next chord between 2 adjacent voices unless both voices take the same value.
  *
- * @todo Develop this to include arguments + maybe explain it better. Also finish the function. Also figure out a way to make it work for octaves without adding +12 because it breaks the rest
- * @todo Idea : just forbid unissons and fifth since octaves are unissons an octave apart and that way the +12 can be removed
+ * @todo Develop this to include arguments + maybe explain it better. Also finish the function (add fifths)
+ *
+ * @param home The space of the problem
+ * @param forbiddenParallelInterval The interval that we don't want to happen in 2 chords successively
+ * @param currentPosition The id of the current chord
+ * @param bassMelodicIntervals The array of melodic intervals for the bass
+ * @param tenorMelodicIntervals The array of melodic intervals for the tenor
+ * @param altoMelodicIntervals The array of melodic intervals for the alto
+ * @param sopranoMelodicIntervals The array of melodic intervals for the soprano
+ * @param bassTenorIntervals The array of harmonic intervals between the bass and tenor
+ * @param tenorAltoIntervals The array of harmonic intervals between the tenor and alto
+ * @param altoSopranoIntervals The array of harmonic intervals between the alto and soprano
+ * @param chordVoicings The array of all notes of the chords
  */
 void forbidParallelIntervals(Home home, int forbiddenParallelInterval, int currentPosition, IntVarArray bassMelodicIntervals,
                              IntVarArray tenorMelodicIntervals, IntVarArray altoMelodicIntervals,
@@ -43,18 +54,19 @@ void forbidParallelIntervals(Home home, int forbiddenParallelInterval, int curre
                              IntVarArray tenorAltoIntervals, IntVarArray altoSopranoIntervals, IntVarArray chordVoicings){
     /**Bass and tenor**/
     BoolVar bassTenorIntervalForbidden(home, 0,1);
-    rel(home, bassTenorIntervalForbidden, IRT_EQ, expr(home, bassTenorIntervals[currentPosition] % 12 == forbiddenParallelInterval));
+    rel(home, bassTenorIntervalForbidden, IRT_EQ, expr(home, bassTenorIntervals[currentPosition] %
+                                                             perfectOctave == forbiddenParallelInterval));
 
     // If the interval between the bass and the tenor is the one we don't want to occur in the next chord,
     // it cannot occur between adjacent voices in the next chord unless it is in the same voices with the same values
-    rel(home, bassTenorIntervalForbidden, BOT_IMP, expr(home, tenorAltoIntervals[currentPosition + 1] % 12
-    != forbiddenParallelInterval), true);// cannot occur between tenor and alto
-    rel(home, bassTenorIntervalForbidden, BOT_IMP, expr(home, altoSopranoIntervals[currentPosition + 1]% 12
-    != forbiddenParallelInterval), true);// cannot occur between alto and soprano
+    rel(home, bassTenorIntervalForbidden, BOT_IMP, expr(home, tenorAltoIntervals[currentPosition + 1] %
+                                                              perfectOctave != forbiddenParallelInterval), true);// cannot occur between tenor and alto
+    rel(home, bassTenorIntervalForbidden, BOT_IMP, expr(home, altoSopranoIntervals[currentPosition + 1]%
+                                                              perfectOctave != forbiddenParallelInterval), true);// cannot occur between alto and soprano
 
     BoolVar bassAndTenorAreDifferentInBothChords(home, 0,1);
     rel(home, bassAndTenorAreDifferentInBothChords != expr(home, bassTenorIntervals[currentPosition] == bassTenorIntervals[currentPosition+1] &&
-    chordVoicings[currentPosition*4] == chordVoicings[(currentPosition+1)*4]));// The bass and tenor do not play the same notes for both chords
+                                                                 chordVoicings[currentPosition*4] == chordVoicings[(currentPosition+1)*4]));// The bass and tenor do not play the same notes for both chords
     rel(home, bassAndTenorAreDifferentInBothChords, BOT_IMP, expr(home, bassTenorIntervals[currentPosition+1] %12 != forbiddenParallelInterval), true);
 
     /**Tenor and alto**/
@@ -62,13 +74,13 @@ void forbidParallelIntervals(Home home, int forbiddenParallelInterval, int curre
     rel(home, tenorAltoIntervalForbidden, IRT_EQ, expr(home, tenorAltoIntervals[currentPosition] % 12 == forbiddenParallelInterval));
 
     rel(home, tenorAltoIntervalForbidden, BOT_IMP, expr(home, bassTenorIntervals[currentPosition+1] % 12
-    != forbiddenParallelInterval), true); // cannot occur between bass and tenor
+                                                              != forbiddenParallelInterval), true); // cannot occur between bass and tenor
     rel(home, tenorAltoIntervalForbidden, BOT_IMP, expr(home, altoSopranoIntervals[currentPosition+1] % 12
-    != forbiddenParallelInterval), true); // cannot occur between alto and soprano
+                                                              != forbiddenParallelInterval), true); // cannot occur between alto and soprano
 
     BoolVar tenorAndAltoAreDifferentInBothChords(home, 0,1);
     rel(home, tenorAndAltoAreDifferentInBothChords != expr(home, tenorAltoIntervals[currentPosition] == tenorAltoIntervals[currentPosition+1] &&
-    chordVoicings[currentPosition*4+1] == chordVoicings[(currentPosition+1)*4+1]));
+                                                                 chordVoicings[currentPosition*4+1] == chordVoicings[(currentPosition+1)*4+1]));
     rel(home, tenorAndAltoAreDifferentInBothChords, BOT_IMP, expr(home, tenorAltoIntervals[currentPosition+1] %12 != forbiddenParallelInterval), true);
 
     /**Alto and soprano**/
@@ -76,13 +88,13 @@ void forbidParallelIntervals(Home home, int forbiddenParallelInterval, int curre
     rel(home, altoSopranoIntervalForbidden, IRT_EQ, expr(home, altoSopranoIntervals[currentPosition] % 12 == forbiddenParallelInterval));
 
     rel(home, altoSopranoIntervalForbidden, BOT_IMP, expr(home, bassTenorIntervals[currentPosition+1] % 12
-    != forbiddenParallelInterval), true);
+                                                                != forbiddenParallelInterval), true);
     rel(home, altoSopranoIntervalForbidden, BOT_IMP, expr(home, tenorAltoIntervals[currentPosition+1] % 12
-    != forbiddenParallelInterval), true);
+                                                                != forbiddenParallelInterval), true);
 
     BoolVar altoAndTenorAreDifferentInBothChords(home, 0,1);
     rel(home, altoAndTenorAreDifferentInBothChords != expr(home, altoSopranoIntervals[currentPosition] == altoSopranoIntervals[currentPosition+1] &&
-    chordVoicings[currentPosition*4+2] == chordVoicings[(currentPosition+1)*4+2]));
+                                                                 chordVoicings[currentPosition*4+2] == chordVoicings[(currentPosition+1)*4+2]));
     rel(home, altoAndTenorAreDifferentInBothChords, BOT_IMP, expr(home, altoSopranoIntervals[currentPosition+1] % 12 != forbiddenParallelInterval), true);
 }
 

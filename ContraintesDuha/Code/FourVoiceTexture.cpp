@@ -115,8 +115,8 @@ FourVoiceTexture::FourVoiceTexture(int size, Tonality &tonality, vector<int> cho
     for (int i = 0; i < n; ++i)
     {
         // Never double the seventh
-/*        dontDoubleTheSeventh(*this, chordsVoicings.slice(4 * i, 1, 4),
-                             tonality.getScaleDegree(majorSeventh));*/
+        dontDoubleTheSeventh(*this, chordsVoicings.slice(4 * i, 1, 4),
+                             tonality.getScaleDegree(majorSeventh));
     }
     /**Constraints on voice leading between chords**/
     for (int j = 0; j < n - 1; ++j)
@@ -125,6 +125,10 @@ FourVoiceTexture::FourVoiceTexture(int size, Tonality &tonality, vector<int> cho
         forbidParallelIntervals(*this, unisson, j, bassMelodicIntervals, tenorMelodicIntervals, altoMelodicIntervals,
                                 sopranoMelodicIntervals, bassTenorIntervals, tenorAltoIntervals, altoSopranoIntervals,
                                 chordsVoicings);// unisson here is equivalent since we look at the absolute interval (within an octave)
+        // consecutive fifths are forbidden unless in the same voices with the same note values
+        forbidParallelIntervals(*this, perfectFifth, j, bassMelodicIntervals, tenorMelodicIntervals, altoMelodicIntervals,
+                                sopranoMelodicIntervals, bassTenorIntervals, tenorAltoIntervals, altoSopranoIntervals,
+                                chordsVoicings);
     }
 
 /**----------------------------------------- Chord related constraints ----------------------------------------------**/
@@ -164,10 +168,10 @@ FourVoiceTexture::FourVoiceTexture(int size, Tonality &tonality, vector<int> cho
 
 /**--------------------------Test constraints (used to test the correctness of constraints---------------------------**/
     // Test that the forbid parallel interval constraint works properly. It shouldn't find solutions
-    rel(*this, chordsVoicings[2], IRT_EQ, 60);
-    rel(*this, chordsVoicings[6], IRT_EQ, 67);
-    rel(*this, chordsVoicings[3], IRT_EQ, 72);
-    rel(*this, chordsVoicings[7], IRT_EQ, 79);
+    //rel(*this, chordsVoicings[0], IRT_EQ, 60);
+    //rel(*this, chordsVoicings[1], IRT_EQ, 67);
+    //rel(*this, chordsVoicings[4], IRT_EQ, 55);
+    //rel(*this, chordsVoicings[5], IRT_EQ, 62);
 
 
     /**********************************************************************
