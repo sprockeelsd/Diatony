@@ -16,7 +16,7 @@
  **********************************************************************/
 
 /**
- * @brief Posts the constraint that the seventh of the scale can never occur twice in a chord
+ * @brief Posts the constraint that the seventh of the scale can never occur twice in a chord.
  *
  * @param home The space of the problem
  * @param chordNotes The variables representing a given chord
@@ -30,69 +30,31 @@ void dontDoubleTheSeventh(Home home, IntVarArgs chordNotes, IntSet sevenths)
 }
 
 /**
- * @brief Ensures that if there is a tritone in the chord it resolves properly.
- * That is, the seventh should resolve upwards in the next chord and the fourth should resolve downwards.
+ * @brief Posts the constraint that there can not be parallel intervals of value interval. Practically, it works by
+ * checking for each chord if there is an interval of value interval between 2 adjacent voices. if there is, then this
+ * interval cannot occur in the next chord between 2 adjacent voices unless both voices take the same value.
  *
- * @param home the space of the problem
- * @param chordNotes the variables for the notes of the current chord
- * @param nOfSeventh the number of seventh present in the chord (should be <=1)
- * @param chordPosition the position of the chord in the big array
- * @param chordQuality the quality of the given chord (M/m/7/...)
  */
-void tritoneResolution(Home home, IntVarArray chords, Tonality &tonality, int chordPosition, vector<int> chordQuality, IntSet fourths, IntSet sevenths)
-{
-}
-/**
- * @brief
- *
- * @todo Check with Karim for the consecutive fourths thing. Also ask if the fact that its an octave higher matters of not (a parallel fifth an octave higher e.g).
- * @todo Also ask if its in 1 voice or any
- *
- * @param home The space of the problem
- * @param interval the parallel interval we wish to forbid
- * @param currentPosition The current chord which corresponds to the index in the interval arrays
- * @param bassIntervals The variable array for the bass
- * @param tenorIntervals The variable array for the tenor
- * @param altoIntervals The variable array for the alto
- * @param sopranoIntervals The variable array for the soprano
- */
-void forbidParallelIntervals(Home home, int interval, int currentPosition, IntVarArray bassIntervals, IntVarArray tenorIntervals, IntVarArray altoIntervals,
-                             IntVarArray sopranoIntervals)
-{
-    // if the interval between two voices is equal to interval (typically fifth/octave) and if the notes for both voices are not the same,
-    // then it cannot be in the next chord
-    // It is necessary to do it for all possible combinations because depending on the interval it may appear between different voices
+void forbidParallelIntervals(Home home, int forbiddenInterval, int currentPosition, IntVarArray bassMelodicIntervals,
+                             IntVarArray tenorMelodicIntervals, IntVarArray altoMelodicIntervals,
+                             IntVarArray sopranoMelodicIntervals, IntVarArray bassTenorIntervals,
+                             IntVarArray tenorAltoIntervals, IntVarArray altoSopranoIntervals, IntVarArray chordVoicings){
 
-    // If the interval between two voices is interval and the two voices don't have the same value in the next chord, then it can not have the same interval
+    BoolVar bassTenorIntervalForbidden(home, 0,1);
+    rel(home, bassTenorIntervalForbidden, IRT_EQ, expr(home, bassTenorIntervals[currentPosition] % 12 + 12 == forbiddenInterval));
 
-    // tenor - bass
+    // If the interval between the bass and the tenor is the one we don't want to occur in the next chord,
+    // it cannot occur between voices in the next chord between the different adjacent voices unless it is in the
+    // same voices with the same values
+    rel(home, bassTenorIntervalForbidden, BOT_IMP, expr(home, tenorAltoIntervals[currentPosition + 1] % 12 + 12
+    != forbiddenInterval), true);// cannot occur between tenor and alto
+    rel(home, bassTenorIntervalForbidden, BOT_IMP, expr(home, altoSopranoIntervals[currentPosition + 1]% 12 + 12
+    != forbiddenInterval), true);// cannot occur between alto and soprano
 
-/*     rel(home,
-        expr(home, expr(home, tenorIntervals[currentPosition] - bassIntervals[currentPosition] == interval) &&                // the interval between the tenor and bass is interval
-                       expr(home, chordsVoicings[currentPosition * 4] != chordsVoicings[(currentPosition + 1) * 4]) &&        // the bass doesn't have the same note in the current chord and the next
-                       expr(home, chordsVoicings[currentPosition * 4 + 1] != chordsVoicings[(currentPosition + 1) * 4 + 1])), // the tenor doesn't have the same note in the current chord and the next
-        // theoretically should be  !(expr1 && expr2) but they if one of them is not true then the intervals are different
-        BOT_IMP,                                                                                         // implies
-        expr(home, (tenorIntervals[currentPosition] - bassIntervals[currentPosition]) % 12 != interval), // the interval between the bass and tenor in the next chord cannot be interval
-        true); */
-
-    rel(home, expr(home, tenorIntervals[currentPosition] - bassIntervals[currentPosition] == interval), BOT_IMP,
-        expr(home, tenorIntervals[currentPosition] - bassIntervals[currentPosition] != interval), true);
-    // alto - bass
-    rel(home, expr(home, altoIntervals[currentPosition] - bassIntervals[currentPosition] == interval), BOT_IMP,
-        expr(home, altoIntervals[currentPosition] - bassIntervals[currentPosition] != interval), true);
-    // soprano - bass
-    rel(home, expr(home, sopranoIntervals[currentPosition] - bassIntervals[currentPosition] == interval), BOT_IMP,
-        expr(home, sopranoIntervals[currentPosition] - bassIntervals[currentPosition] != interval), true);
-    // alto - tenor
-    rel(home, expr(home, altoIntervals[currentPosition] - tenorIntervals[currentPosition] == interval), BOT_IMP,
-        expr(home, altoIntervals[currentPosition] - tenorIntervals[currentPosition] != interval), true);
-    // soprano - tenor
-    rel(home, expr(home, sopranoIntervals[currentPosition] - tenorIntervals[currentPosition] == interval), BOT_IMP,
-        expr(home, sopranoIntervals[currentPosition] - tenorIntervals[currentPosition] != interval), true);
-    // soprano - alto
-    rel(home, expr(home, sopranoIntervals[currentPosition] - altoIntervals[currentPosition] == interval), BOT_IMP,
-        expr(home, sopranoIntervals[currentPosition] - altoIntervals[currentPosition] != interval), true);
+    BoolVar temp(home, 0,1);
+    rel(home, temp != expr(home, bassTenorIntervals[currentPosition] == bassTenorIntervals[currentPosition+1] &&
+    chordVoicings[currentPosition*4] == chordVoicings[(currentPosition+1)*4]));// The bass and tenor play the same note for both chords
+    rel(home, temp, BOT_IMP, expr(home, bassTenorIntervals[currentPosition+1] %12 + 12 != forbiddenInterval), true);
 }
 
 /**********************************************************************

@@ -34,11 +34,11 @@
 FourVoiceTexture::FourVoiceTexture(int size, Tonality &tonality, vector<int> chordRoots,
                                    vector<vector<int>> chordQualities, vector<int> chordBass)
 {
-            /**********************************************************************
-            *                                                                     *
-            *                           Initialization                            *
-            *                                                                     *
-            **********************************************************************/
+    /**********************************************************************
+    *                                                                     *
+    *                           Initialization                            *
+    *                                                                     *
+    **********************************************************************/
     n = size; // number of chords
     tonality = tonality;
     chordRoots = chordRoots;
@@ -60,11 +60,11 @@ FourVoiceTexture::FourVoiceTexture(int size, Tonality &tonality, vector<int> cho
     tenorAltoIntervals = IntVarArray(*this, n, 0, perfectOctave);
     altoSopranoIntervals = IntVarArray(*this, n, 0, perfectOctave);
 
-                /**********************************************************************
-                *                                                                     *
-                *                        Linking the variables                        *
-                *                                                                     *
-                **********************************************************************/
+    /**********************************************************************
+    *                                                                     *
+    *                        Linking the variables                        *
+    *                                                                     *
+    **********************************************************************/
 
     // Link the melodic intervals for each voice to the corresponding notes
     for (int i = 0; i < n - 1; ++i)
@@ -84,11 +84,11 @@ FourVoiceTexture::FourVoiceTexture(int size, Tonality &tonality, vector<int> cho
     }
 
 
-                /**********************************************************************
-                 *                                                                    *
-                 *                             Constraints                            *
-                 *                                                                    *
-                 **********************************************************************/
+    /**********************************************************************
+     *                                                                    *
+     *                             Constraints                            *
+     *                                                                    *
+     **********************************************************************/
 
 /**------------------------------------------- Generic constraints --------------------------------------------------**/
 
@@ -111,26 +111,20 @@ FourVoiceTexture::FourVoiceTexture(int size, Tonality &tonality, vector<int> cho
         rel(*this, currentChord[3], IRT_GQ, 60);
         rel(*this, currentChord[3], IRT_LQ, 84);
     }
-
+    /**Constraints on chords**/
     for (int i = 0; i < n; ++i)
     {
         // Never double the seventh
-        dontDoubleTheSeventh(*this, chordsVoicings.slice(4 * i, 1, 4),
-                             tonality.getScaleDegree(majorSeventh));
+/*        dontDoubleTheSeventh(*this, chordsVoicings.slice(4 * i, 1, 4),
+                             tonality.getScaleDegree(majorSeventh));*/
     }
-
+    /**Constraints on voice leading between chords**/
     for (int j = 0; j < n - 1; ++j)
     {
-        // consecutive fifths/octaves/unissons are forbidden
-        /*forbidParallelIntervals(*this, unisson, j, bassMelodicIntervals,
-                                tenorMelodicIntervals,altoMelodicIntervals,
-                                sopranoMelodicIntervals);
-        forbidParallelIntervals(*this, perfectFifth, j, bassMelodicIntervals,
-                                tenorMelodicIntervals,altoMelodicIntervals,
-                                sopranoMelodicIntervals);
-        forbidParallelIntervals(*this, perfectOctave, j, bassMelodicIntervals,
-                                tenorMelodicIntervals,altoMelodicIntervals,
-                                sopranoMelodicIntervals);*/
+        // consecutive octaves are forbidden unless in the same voices with the same note values
+        forbidParallelIntervals(*this, perfectOctave, j, bassMelodicIntervals, tenorMelodicIntervals, altoMelodicIntervals,
+                                sopranoMelodicIntervals, bassTenorIntervals, tenorAltoIntervals, altoSopranoIntervals,
+                                chordsVoicings);
     }
 
 /**----------------------------------------- Chord related constraints ----------------------------------------------**/
@@ -168,11 +162,19 @@ FourVoiceTexture::FourVoiceTexture(int size, Tonality &tonality, vector<int> cho
                                                      altoMelodicIntervals, sopranoMelodicIntervals, chordBass, chordRoots);*/
     }
 
-            /**********************************************************************
-             *                                                                    *
-             *                             Branching                              *
-             *                                                                    *
-             **********************************************************************/
+/**--------------------------Test constraints (used to test the correctness of constraints---------------------------**/
+    // Test that the forbid parallel interval constraint works properly. It shouldn't find solutions
+    rel(*this, chordsVoicings[0], IRT_EQ, 48);
+    rel(*this, chordsVoicings[4], IRT_EQ, 48);
+    rel(*this, chordsVoicings[1], IRT_EQ, 60);
+    rel(*this, chordsVoicings[5], IRT_EQ, 60);
+
+
+    /**********************************************************************
+     *                                                                    *
+     *                             Branching                              *
+     *                                                                    *
+     **********************************************************************/
 
     Rnd r1(0);
     Rnd r2(1);
@@ -184,11 +186,11 @@ FourVoiceTexture::FourVoiceTexture(int size, Tonality &tonality, vector<int> cho
     branch(*this, bassMelodicIntervals, INT_VAR_RND(r1), INT_VAL_MIN());
 }
 
-            /**********************************************************************
-             *                                                                    *
-             *                          Support functions                         *
-             *                                                                    *
-             **********************************************************************/
+/**********************************************************************
+ *                                                                    *
+ *                          Support functions                         *
+ *                                                                    *
+ **********************************************************************/
 
 /**
  * @brief Print all the variables, used for development
