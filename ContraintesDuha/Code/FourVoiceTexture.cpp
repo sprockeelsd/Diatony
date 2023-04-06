@@ -164,10 +164,10 @@ FourVoiceTexture::FourVoiceTexture(int size, Tonality &tonality, vector<int> cho
 
 /**--------------------------Test constraints (used to test the correctness of constraints---------------------------**/
     // Test that the forbid parallel interval constraint works properly. It shouldn't find solutions
-    rel(*this, chordsVoicings[0], IRT_EQ, 48);
-    rel(*this, chordsVoicings[4], IRT_EQ, 48);
     rel(*this, chordsVoicings[1], IRT_EQ, 60);
-    rel(*this, chordsVoicings[5], IRT_EQ, 60);
+    rel(*this, chordsVoicings[5], IRT_EQ, 62);
+    rel(*this, chordsVoicings[2], IRT_EQ, 72);
+    rel(*this, chordsVoicings[6], IRT_EQ, 74);
 
 
     /**********************************************************************
