@@ -20,9 +20,9 @@ int main(int argc, char *argv[])
 /*    vector<int> chordRoots = {C, G, A, E, F, C};
     vector<vector<int>> chordQualities = {MAJOR_CHORD, MAJOR_CHORD, MINOR_CHORD, MINOR_CHORD, MAJOR_CHORD, MAJOR_CHORD};
     vector<int> chordBass = {C, G, A, E, F, C};*/
-    vector<int> chordRoots = {C,D,G};
-    vector<vector<int>> chordQualities = {MAJOR_CHORD, MINOR_CHORD, MAJOR_CHORD};
-    vector<int> chordBass = {E,F,G};
+    vector<int> chordRoots = {C,G,G};
+    vector<vector<int>> chordQualities = {MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD};
+    vector<int> chordBass = {E,B,G};
 
     MajorTonality majorTonality(C);
 

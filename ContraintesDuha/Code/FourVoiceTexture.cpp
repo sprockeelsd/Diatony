@@ -122,9 +122,9 @@ FourVoiceTexture::FourVoiceTexture(int size, Tonality &tonality, vector<int> cho
     for (int j = 0; j < n - 1; ++j)
     {
         // consecutive octaves are forbidden unless in the same voices with the same note values
-        forbidParallelIntervals(*this, perfectOctave, j, bassMelodicIntervals, tenorMelodicIntervals, altoMelodicIntervals,
+        forbidParallelIntervals(*this, unisson, j, bassMelodicIntervals, tenorMelodicIntervals, altoMelodicIntervals,
                                 sopranoMelodicIntervals, bassTenorIntervals, tenorAltoIntervals, altoSopranoIntervals,
-                                chordsVoicings);
+                                chordsVoicings);// unisson here is equivalent since we look at the absolute interval (within an octave)
     }
 
 /**----------------------------------------- Chord related constraints ----------------------------------------------**/
@@ -164,10 +164,10 @@ FourVoiceTexture::FourVoiceTexture(int size, Tonality &tonality, vector<int> cho
 
 /**--------------------------Test constraints (used to test the correctness of constraints---------------------------**/
     // Test that the forbid parallel interval constraint works properly. It shouldn't find solutions
-    rel(*this, chordsVoicings[1], IRT_EQ, 60);
-    rel(*this, chordsVoicings[5], IRT_EQ, 62);
-    rel(*this, chordsVoicings[2], IRT_EQ, 72);
-    rel(*this, chordsVoicings[6], IRT_EQ, 74);
+    rel(*this, chordsVoicings[2], IRT_EQ, 60);
+    rel(*this, chordsVoicings[6], IRT_EQ, 67);
+    rel(*this, chordsVoicings[3], IRT_EQ, 72);
+    rel(*this, chordsVoicings[7], IRT_EQ, 79);
 
 
     /**********************************************************************
