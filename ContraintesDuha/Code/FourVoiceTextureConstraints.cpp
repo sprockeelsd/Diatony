@@ -34,7 +34,7 @@ void dontDoubleTheSeventh(Home home, IntVarArgs chordNotes, IntSet sevenths)
  * checking for each chord if there is an interval of value interval between 2 adjacent voices. if there is, then this
  * interval cannot occur in the next chord between 2 adjacent voices unless both voices take the same value.
  *
- * @todo Develop this to include arguments + maybe explain it better. Also finish the function (add fifths)
+ * @todo Clean it up (maybe do it more efficiently)
  *
  * @param home The space of the problem
  * @param forbiddenParallelInterval The interval that we don't want to happen in 2 chords successively
