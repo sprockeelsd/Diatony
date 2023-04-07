@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
     vector<int> chordBass = {C, G, A, E, F, C};*/
     vector<int> chordRoots = {C,G,G};
     vector<vector<int>> chordQualities = {MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD};
-    vector<int> chordBass = {E,B,G};
+    vector<int> chordBass = {C,B,G};
 
     MajorTonality majorTonality(C);
 
