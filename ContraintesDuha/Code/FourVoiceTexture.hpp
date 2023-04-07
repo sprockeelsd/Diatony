@@ -48,10 +48,10 @@ protected:
 
     // Variable arrays for the melodic intervals of the different voices
     // Maybe change into Argument variables? Depending on whether we need to branch on them
-    IntVarArray sopranoVoiceIntervals;
-    IntVarArray altoVoiceIntervals;
-    IntVarArray tenorVoiceIntervals;
-    IntVarArray bassVoiceIntervals;
+    IntVarArray sopranoMelodicIntervals;
+    IntVarArray altoMelodicIntervals;
+    IntVarArray tenorMelodicIntervals;
+    IntVarArray bassMelodicIntervals;
 
     // Variable arrays for the harmonic intervals between adjacent voices for each chord
     IntVarArray bassTenorIntervals;
