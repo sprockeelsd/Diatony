@@ -7,6 +7,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <map>
 
 using namespace std;
 using namespace Gecode;
@@ -49,6 +50,21 @@ const int Bflat = 22;
 const int B = 23;
 const int Cflat = 23;
 
+/** Modes */
+// syntactic sugar for more commonly used modes
+const int major_mode = 0;
+const int minor_mode = 5;   // to correspond to the enum Mode
+
+enum Mode {
+    IONIAN,     // major mode
+    DORIAN,
+    PHRYGIAN,
+    LYDIAN,
+    MIXOLYDIAN,
+    AEOLIAN,    // natural minor mode
+    LOCRIAN
+};
+
 /** Intervals */
 // for now, no augmented or diminished intervals
 const int unisson = 0;
@@ -67,6 +83,9 @@ const int perfectOctave = 12;
 
 /** Scales */
 // defined by the intervals between their notes in semi-tones
+
+// turn this into a dictionnary with the name of the scale as key and the vector of intervals as value
+
 const vector<int> MAJOR_SCALE = {2, 2, 1, 2, 2, 2, 1};
 const vector<int> NATURAL_MINOR_SCALE = {2, 1, 2, 2, 1, 2, 2};
 const vector<int> HARMONIC_MINOR_SCALE = {2, 1, 2, 2, 1, 3, 1};

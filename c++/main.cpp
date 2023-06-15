@@ -1,4 +1,6 @@
 #include "headers/four_voice_texture.hpp"
+#include "headers/Utilities.hpp"
+#include "headers/Tonality.hpp"
 
 using namespace Gecode;
 using namespace std;
@@ -7,6 +9,7 @@ int main(int argc, char* argv[]) {
     int size = 3;
     int upper_bound_domain = 5;
     int lower_bound_domain = 1;
+
     // create a new problem
     FourVoiceTexture* p = new FourVoiceTexture(size, lower_bound_domain, upper_bound_domain);
 

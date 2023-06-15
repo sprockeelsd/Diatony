@@ -160,7 +160,7 @@
 		},
 		{
 			"backtrace" : 1,
-			"path" : "Utilities.hpp",
+			"path" : "headers/Utilities.hpp",
 			"sourceGroupIndex" : 0
 		},
 		{
