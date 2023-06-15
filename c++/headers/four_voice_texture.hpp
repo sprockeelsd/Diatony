@@ -26,10 +26,10 @@ enum {
 };
 
 /*****************
- * Problem class *
+ * FourVoiceTexture class *
  *****************/
  // This class represents a constraint problem to be solved
-class Problem: public Space {
+class FourVoiceTexture: public Space {
 protected:
     // solution related attributes
     IntVarArray vars; // The variables of interest
@@ -47,14 +47,14 @@ public:
      * @param l the lower bound of the domain of the variables
      * @param u the upper bound of the domain of the variables
      */
-    Problem(int s, int l, int u);
+    FourVoiceTexture(int s, int l, int u);
 
     /**
      * Copy constructor
-     * @param s an instance of the Problem class
+     * @param s an instance of the FourVoiceTexture class
      * @todo modify this copy constructor to also copy any additional attributes you add to the class
      */
-    Problem(Problem &s);
+    FourVoiceTexture(FourVoiceTexture &s);
 
     /**
      * Returns the size of the problem
@@ -71,14 +71,14 @@ public:
 
     /**
      * Copy method
-     * @return a copy of the current instance of the Problem class. Calls the copy constructor
+     * @return a copy of the current instance of the FourVoiceTexture class. Calls the copy constructor
      */
     virtual Space *copy(void);
 
     /**
      * Constrain method for bab search
      * @todo modify this function if you want to use branch and bound
-     * @param _b a space to constrain the current instance of the Problem class with upon finding a solution
+     * @param _b a space to constrain the current instance of the FourVoiceTexture class with upon finding a solution
      */
     virtual void constrain(const Space& _b);
 
@@ -89,8 +89,8 @@ public:
 
     /**
      * toString method
-     * @return a string representation of the current instance of the Problem class.
-     * Right now, it returns a string "Problem object. size = <size>"
+     * @return a string representation of the current instance of the FourVoiceTexture class.
+     * Right now, it returns a string "FourVoiceTexture object. size = <size>"
      * If a variable is not assigned when this function is called, it writes <not assigned> instead of the value
      * @todo modify this method to also print any additional attributes you add to the class
      */
@@ -105,18 +105,18 @@ public:
 /**
  * Creates a search engine for the given problem
  * @todo Modify this function to add search options etc
- * @param pb an instance of the Problem class representing a given problem
+ * @param pb an instance of the FourVoiceTexture class representing a given problem
  * @param type the type of search engine to create (see enumeration in headers/gecode_problem.hpp)
  * @return a search engine for the given problem
  */
-Search::Base<Problem>* make_solver(Problem* pb, int type);
+Search::Base<FourVoiceTexture>* make_solver(FourVoiceTexture* pb, int type);
 
 /**
  * Returns the next solution space for the problem
  * @param solver a solver for the problem
- * @return an instance of the Problem class representing the next solution to the problem
+ * @return an instance of the FourVoiceTexture class representing the next solution to the problem
  */
-Problem* get_next_solution_space(Search::Base<Problem>* solver);
+FourVoiceTexture* get_next_solution_space(Search::Base<FourVoiceTexture>* solver);
 
 
 /***********************

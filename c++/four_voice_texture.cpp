@@ -1,7 +1,7 @@
-#include "headers/gecode_problem.hpp"
+#include "headers/four_voice_texture.hpp"
 
 /***********************************************************************************************************************
- *                                          Problem class methods                                                      *
+ *                                          FourVoiceTexture class methods                                                      *
  ***********************************************************************************************************************/
 
 /**
@@ -12,7 +12,7 @@
  * @param l the lower bound of the domain of the variables
  * @param u the upper bound of the domain of the variables
  */
-Problem::Problem(int s, int l, int u) {
+FourVoiceTexture::FourVoiceTexture(int s, int l, int u) {
     string message = "WSpace object created. ";
     size = s;
     lower_bound_domain = l;
@@ -33,10 +33,10 @@ Problem::Problem(int s, int l, int u) {
 
 /**
  * Copy constructor
- * @param s an instance of the Problem class
+ * @param s an instance of the FourVoiceTexture class
  * @todo modify this copy constructor to also copy any additional attributes you add to the class
  */
-Problem::Problem(Problem& s): Space(s){
+FourVoiceTexture::FourVoiceTexture(FourVoiceTexture& s): Space(s){
     //IntVars update
     size = s.size;
     lower_bound_domain = s.lower_bound_domain;
@@ -48,7 +48,7 @@ Problem::Problem(Problem& s): Space(s){
  * Returns the size of the problem
  * @return an integer representing the size of the vars array
  */
-int Problem::getSize(){
+int FourVoiceTexture::getSize(){
     string message = "getSize function called. size = " + to_string(size) + "\n";
     writeToLogFile(message.c_str());
     return size;
@@ -59,7 +59,7 @@ int Problem::getSize(){
  * @todo Modify this to return the solution for your problem. This function uses @param size to generate an array of integers
  * @return an array of integers representing the values of the variables in a solution
  */
-int* Problem::return_solution(){
+int* FourVoiceTexture::return_solution(){
     string message = "return_solution method. Solution : [";
     int* solution = new int[size];
     for(int i = 0; i < size; i++){
@@ -73,10 +73,10 @@ int* Problem::return_solution(){
 
 /**
  * Copy method
- * @return a copy of the current instance of the Problem class. Calls the copy constructor
+ * @return a copy of the current instance of the FourVoiceTexture class. Calls the copy constructor
  */
-Space* Problem::copy(void) {
-    return new Problem(*this);
+Space* FourVoiceTexture::copy(void) {
+    return new FourVoiceTexture(*this);
 }
 
 /**
@@ -84,15 +84,15 @@ Space* Problem::copy(void) {
  * @todo modify this function if you want to use branch and bound
  * @param _b a solution to the problem from which we wish to add a constraint for the next solutions
  */
-void Problem::constrain(const Space& _b) {
-    const Problem &b = static_cast<const Problem &>(_b);
+void FourVoiceTexture::constrain(const Space& _b) {
+    const FourVoiceTexture &b = static_cast<const FourVoiceTexture &>(_b);
     rel(*this, vars, IRT_GQ, 2);
 }
 
 /**
  * Prints the solution in the console
  */
-void Problem::print_solution(){
+void FourVoiceTexture::print_solution(){
     for(int i = 0; i < size; i++){
         cout << vars[i].val() << " ";
     }
@@ -101,13 +101,13 @@ void Problem::print_solution(){
 
 /**
  * toString method
- * @return a string representation of the current instance of the Problem class.
- * Right now, it returns a string "Problem object. size = <size>"
+ * @return a string representation of the current instance of the FourVoiceTexture class.
+ * Right now, it returns a string "FourVoiceTexture object. size = <size>"
  * If a variable is not assigned when this function is called, it writes <not assigned> instead of the value
  * @todo modify this method to also print any additional attributes you add to the class
  */
-string Problem::toString(){
-    string message = "Problem object. \n";
+string FourVoiceTexture::toString(){
+    string message = "FourVoiceTexture object. \n";
     message += "size = " + to_string(size) + "\n" + "lower bound for the domain : " +
             to_string(lower_bound_domain) + "\n" + "upper bound for the domain : " + to_string(upper_bound_domain)
              + "\n" + "current values for vars: [";
@@ -129,11 +129,11 @@ string Problem::toString(){
 /**
  * Creates a search engine for the given problem
  * @todo Modify this function to add search options etc
- * @param pb an instance of the Problem class representing a given problem
+ * @param pb an instance of the FourVoiceTexture class representing a given problem
  * @param type the type of search engine to create (see enumeration in headers/gecode_problem.hpp)
  * @return a search engine for the given problem
  */
-Search::Base<Problem>* make_solver(Problem* pb, int type){
+Search::Base<FourVoiceTexture>* make_solver(FourVoiceTexture* pb, int type){
     string message = "make_solver function called. type of solver :\n" + to_string(type) + "\n";
     writeToLogFile(message.c_str());
 
@@ -141,19 +141,19 @@ Search::Base<Problem>* make_solver(Problem* pb, int type){
     /**@todo add here any options you want*/
 
     if (type == bab_solver)
-        return new BAB<Problem>(pb, opts);
+        return new BAB<FourVoiceTexture>(pb, opts);
     else // default case
-        return new DFS<Problem>(pb, opts);
+        return new DFS<FourVoiceTexture>(pb, opts);
 }
 
 /**
  * Returns the next solution space for the problem
  * @param solver a solver for the problem
- * @return an instance of the Problem class representing the next solution to the problem
+ * @return an instance of the FourVoiceTexture class representing the next solution to the problem
  */
-Problem* get_next_solution_space(Search::Base<Problem>* solver){
+FourVoiceTexture* get_next_solution_space(Search::Base<FourVoiceTexture>* solver){
     string message = "get_next_solution_space function called.\n";
-    Problem* sol_space = solver->next();
+    FourVoiceTexture* sol_space = solver->next();
     if (sol_space == nullptr)
         return NULL;
     message += sol_space->toString();

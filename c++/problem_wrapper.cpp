@@ -1,50 +1,50 @@
 #include "headers/problem_wrapper.hpp"
-#include "headers/gecode_problem.hpp"
+#include "headers/four_voice_texture.hpp"
 
 /**
- * Wraps the Problem constructor.
- * @todo modify this to include any parameters your Problem constructor requires
+ * Wraps the FourVoiceTexture constructor.
+ * @todo modify this to include any parameters your FourVoiceTexture constructor requires
  * @param size an integer representing the size of the problem
  * @param lower_bound_domain an integer representing the lower bound of the domain of the variables
  * @param upper_bound_domain an integer representing the upper bound of the domain of the variables
- * @return A pointer to a Problem object casted as a void*
+ * @return A pointer to a FourVoiceTexture object casted as a void*
  */
 void* create_new_problem(int size, int lower_bound_domain, int upper_bound_domain){
-    return (void*) new Problem(size, lower_bound_domain, upper_bound_domain);
+    return (void*) new FourVoiceTexture(size, lower_bound_domain, upper_bound_domain);
 }
 
 /**
  * returns the size of the problem
- * @param sp a void* pointer to a Problem object
+ * @param sp a void* pointer to a FourVoiceTexture object
  * @return an integer representing the size of the problem
  */
 int get_size(void* sp){
-    return static_cast<Problem*>(sp)->getSize();
+    return static_cast<FourVoiceTexture*>(sp)->getSize();
 }
 
 /**
  * returns the values of the variables for a solution
- * @param sp a void* pointer to a Problem object
+ * @param sp a void* pointer to a FourVoiceTexture object
  * @return an int* pointer representing the values of the variables
  */
 int* return_solution(void* sp){
-    return static_cast<Problem*>(sp)->return_solution();
+    return static_cast<FourVoiceTexture*>(sp)->return_solution();
 }
 
 /**
- * creates a search engine for Problem objects
- * @param sp a void* pointer to a Problem object
- * @return a void* cast of a Base<Problem>* pointer
+ * creates a search engine for FourVoiceTexture objects
+ * @param sp a void* pointer to a FourVoiceTexture object
+ * @return a void* cast of a Base<FourVoiceTexture>* pointer
  */
 void* create_solver(void* sp, int type){
-    return (void*) make_solver(static_cast<Problem*>(sp), type);
+    return (void*) make_solver(static_cast<FourVoiceTexture*>(sp), type);
 }
 
 /**
  * returns the next solution space, it should be bound. If not, it will return NULL.
- * @param solver a void* pointer to a Base<Problem>* pointer for the search engine of the problem
- * @return a void* cast of a Problem* pointer
+ * @param solver a void* pointer to a Base<FourVoiceTexture>* pointer for the search engine of the problem
+ * @return a void* cast of a FourVoiceTexture* pointer
  */
 void* return_next_solution_space(void* solver){
-    return (void*) get_next_solution_space(static_cast<DFS<Problem>*>(solver));
+    return (void*) get_next_solution_space(static_cast<DFS<FourVoiceTexture>*>(solver));
 }
