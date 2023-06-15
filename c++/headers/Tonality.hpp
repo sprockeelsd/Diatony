@@ -13,8 +13,9 @@ using namespace std;
 
 class Tonality { // abstract class
 protected:
-    int root;
-    int mode;
+    int tonic;
+    vector<int> mode;
+    
 public:
     // abstract methods are virtual
     Tonality();
