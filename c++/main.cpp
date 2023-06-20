@@ -1,6 +1,7 @@
 #include "headers/four_voice_texture.hpp"
 #include "headers/Utilities.hpp"
 #include "headers/Tonality.hpp"
+#include "headers/MajorTonality.hpp"
 
 using namespace Gecode;
 using namespace std;
@@ -12,6 +13,8 @@ int main(int argc, char* argv[]) {
 
     // create a new problem
     FourVoiceTexture* p = new FourVoiceTexture(size, lower_bound_domain, upper_bound_domain);
+
+    Tonality* tonality = new MajorTonality(C);
 
     // create a new search engine
     Search::Base<FourVoiceTexture>* e = make_solver(p, bab_solver);

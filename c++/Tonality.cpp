@@ -1,8 +1,10 @@
+#include "headers/Utilities.hpp"
 #include "headers/Tonality.hpp"
 
 Tonality::Tonality(int t, vector<int> m) {
-    tonic = t;
+    tonic = t % 12 + 12;    // bring it back to [12,21]
     mode = m;
+    tonality_notes = getAllNotesFromTonality(tonic, mode);
 }
 
 int Tonality::get_tonic() {
@@ -39,8 +41,4 @@ IntSet Tonality::get_submediants() {
 
 IntSet Tonality::get_leading_tones() {
     return leading_tones;
-}
-
-map<int, IntSet> Tonality::get_scale_degrees_chords() {
-    return scale_degrees_chords;
 }

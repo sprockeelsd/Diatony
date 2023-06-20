@@ -15,6 +15,8 @@ class Tonality { // abstract class
 protected:
     int tonic;
     vector<int> mode;
+    IntSet tonality_notes;
+
     // degrees of the scale
     IntSet tonics;                 // 1st degree of the scale
     IntSet supertonics;            // 2nd degree of the scale
@@ -35,14 +37,15 @@ public:
 
     int get_tonic();
     vector<int> get_mode();
+    IntSet get_tonality_notes();
 
-    virtual IntSet get_tonics() = 0;
-    virtual IntSet get_supertonics() = 0;
-    virtual IntSet get_mediants() = 0;
-    virtual IntSet get_subdominants() = 0;
-    virtual IntSet get_dominants() = 0;
-    virtual IntSet get_submediants() = 0;
-    virtual IntSet get_leading_tones() = 0;
+    IntSet get_tonics();
+    IntSet get_supertonics();
+    IntSet get_mediants();
+    IntSet get_subdominants();
+    IntSet get_dominants();
+    IntSet get_submediants();
+    IntSet get_leading_tones();
 
     virtual map<int, IntSet> get_scale_degrees_chords() = 0;
 };

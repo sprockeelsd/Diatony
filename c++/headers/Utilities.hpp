@@ -18,15 +18,6 @@ using namespace Gecode;
 
 const vector<std::string> noteNames = {"C", "C#", "D", "Eb", "E", "F", "F#", "G", "Ab", "A", "Bb", "B"};
 
-/** Types of chords represented by the intervals between their notes in root position up to an octave */
-const vector<int> MAJOR_CHORD = {4, 3, 5};
-const vector<int> MINOR_CHORD = {3, 4, 5};
-const vector<int> DIMINISHED_CHORD = {3, 3, 6};
-const vector<int> AUGMENTED_CHORD = {4, 4, 4};
-const vector<int> DOMINANT_SEVENTH_CHORD = {4, 3, 3, 2};
-const vector<int> MAJOR_SEVENTH_CHORD = {4, 3, 4, 1};
-const vector<int> MINOR_SEVENTH_CHORD = {3, 4, 3, 2};
-
 /** Notes */
 const int Bsharp = 12;
 const int C = 12;
@@ -50,21 +41,6 @@ const int Bflat = 22;
 const int B = 23;
 const int Cflat = 23;
 
-/** Modes */
-// syntactic sugar for more commonly used modes
-const int major_mode = 0;
-const int minor_mode = 5;   // to correspond to the enum Mode
-
-enum Mode {
-    IONIAN,     // major mode
-    DORIAN,
-    PHRYGIAN,
-    LYDIAN,
-    MIXOLYDIAN,
-    AEOLIAN,    // natural minor mode
-    LOCRIAN
-};
-
 /** Intervals */
 // for now, no augmented or diminished intervals
 const int unisson = 0;
@@ -80,6 +56,31 @@ const int majorSixth = 9;
 const int minorSeventh = 10;
 const int majorSeventh = 11;
 const int perfectOctave = 12;
+
+/** Chords */
+// Types of chords represented by the intervals between their notes in root position up to an octave
+const vector<int> MAJOR_CHORD = {4, 3, 5};
+const vector<int> MINOR_CHORD = {3, 4, 5};
+const vector<int> DIMINISHED_CHORD = {3, 3, 6};
+const vector<int> AUGMENTED_CHORD = {4, 4, 4};
+const vector<int> DOMINANT_SEVENTH_CHORD = {4, 3, 3, 2};
+const vector<int> MAJOR_SEVENTH_CHORD = {4, 3, 4, 1};
+const vector<int> MINOR_SEVENTH_CHORD = {3, 4, 3, 2};
+
+/** Modes */
+// syntactic sugar for more commonly used modes
+const int major_mode = 0;
+const int minor_mode = 5;   // to correspond to the enum Mode
+
+enum Mode {
+    IONIAN,     // major mode
+    DORIAN,
+    PHRYGIAN,
+    LYDIAN,
+    MIXOLYDIAN,
+    AEOLIAN,    // natural minor mode
+    LOCRIAN
+};
 
 /** Scales */
 // defined by the intervals between their notes in semi-tones

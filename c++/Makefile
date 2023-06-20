@@ -11,8 +11,8 @@ dylib: problem_wrapper.cpp
 
 #run the main.cpp file on macOS
 run_mac_os:
-	g++ -std=c++11 -F/Library/Frameworks -c Utilities.cpp Tonality.cpp four_voice_texture.cpp Main.cpp
-	g++ -std=c++11 -F/Library/Frameworks -framework gecode -o Main Utilities.cpp Tonality.cpp four_voice_texture.cpp Main.cpp
+	g++ -std=c++11 -F/Library/Frameworks -c Utilities.cpp Tonality.cpp MajorTonality.cpp four_voice_texture.cpp Main.cpp
+	g++ -std=c++11 -F/Library/Frameworks -framework gecode -o Main Utilities.cpp Tonality.cpp MajorTonality.cpp four_voice_texture.cpp Main.cpp
 	./Main
 
 #remove temporary files and dynamic library files
