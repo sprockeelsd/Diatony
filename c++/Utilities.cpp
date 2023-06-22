@@ -1,6 +1,29 @@
 #include "headers/Utilities.hpp"
 
 /**
+ * For a given set of intervals between notes that loops and a starting note, returns all the possible notes
+ * @param n the starting note
+ * @param intervals_loop the set of intervals between notes. It must make a loop. For example, to get all notes from a major
+ * scale from note, use {2, 2, 1, 2, 2, 2, 1}. To get all notes from a minor chord, use {3, 4, 5}.
+ * @return vector<int> all the notes
+ */
+IntSet getAllNotesFromIntervalLoop(int n, vector<int> intervals_loop)
+{
+    int note = n % 12 + 12; // bring the root back to [12,23] in case the argument is wrong
+    vector<int> notes;
+
+    int i = 0;
+    while (note <= 127)
+    {
+        notes.push_back(note);
+        note += intervals_loop[i % intervals_loop.size()];
+        ++i;
+    }
+    IntSet set((const vector<int>)notes);
+    return set;
+}
+
+/**
  * For a given tonality (root + mode), returns all the possible notes
  * @param root the root of the tonality (in [12,23])
  * @param scale the set of tones and semitones that define the scale
@@ -8,18 +31,7 @@
  */
 IntSet getAllNotesFromTonality(int root, vector<int> scale)
 {
-    int note = root % 12 + 12; // bring the root back to [12,23] in case the argument is wrong
-    vector<int> notes;
-
-    int i = 0;
-    while (note < 127)
-    {
-        notes.push_back(note);
-        note += scale[i % scale.size()];
-        ++i;
-    }
-    IntSet set((const vector<int>)notes);
-    return set;
+    return getAllNotesFromIntervalLoop(root, scale);
 }
 
 /**
@@ -30,18 +42,7 @@ IntSet getAllNotesFromTonality(int root, vector<int> scale)
  */
 IntSet getAllNotesFromChord(int root, vector<int> quality)
 {
-    int note = root % 12 + 12; // bring the root back to [12,23] in case the argument is wrong
-    vector<int> notes;
-
-    int i = 0;
-    while (note < 127)
-    {
-        notes.push_back(note);
-        note += quality[i % quality.size()];
-        ++i;
-    }
-    IntSet set((const vector<int>)notes);
-    return set;
+    return getAllNotesFromIntervalLoop(root, quality);
 }
 
 /**

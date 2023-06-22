@@ -41,6 +41,15 @@ const int Bflat = 22;
 const int B = 23;
 const int Cflat = 23;
 
+/** scale degrees */
+const int tonic = 1;
+const int supertonic = 2;
+const int mediant = 3;
+const int subdominant = 4;
+const int dominant = 5;
+const int submediant = 6;
+const int leadingTone = 7;
+
 /** Intervals */
 // for now, no augmented or diminished intervals
 const int unisson = 0;
@@ -95,6 +104,15 @@ const vector<int> MELODIC_MINOR_SCALE = {2, 1, 2, 2, 2, 2, 1};
 /***********************************************************************************************************************
  *                                                      Functions                                                      *
  ***********************************************************************************************************************/
+
+/**
+ * For a given set of intervals between notes that loops and a starting note, returns all the possible notes
+ * @param note the starting note
+ * @param intervals the set of intervals between notes. It must make a loop. For example, to get all notes from a major
+ * scale from note, use {2, 2, 1, 2, 2, 2, 1}. To get all notes from a minor chord, use {3, 4, 5}.
+ * @return vector<int> all the notes
+ */
+IntSet getAllNotesFromIntervalLoop(int root, vector<int> scale);
 
 /**
  * For a given tonality (root + mode), returns all the possible notes

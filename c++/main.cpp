@@ -15,6 +15,7 @@ int main(int argc, char* argv[]) {
     FourVoiceTexture* p = new FourVoiceTexture(size, lower_bound_domain, upper_bound_domain);
 
     Tonality* tonality = new MajorTonality(C);
+    std::cout << "tonics: " << tonality->get_modal_notes() << std::endl;
 
     // create a new search engine
     Search::Base<FourVoiceTexture>* e = make_solver(p, bab_solver);

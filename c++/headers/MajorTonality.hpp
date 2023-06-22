@@ -13,11 +13,8 @@ using namespace std;
 
 class MajorTonality : public Tonality {
 protected:
-
 public:
     MajorTonality(int t);
-
-    map<int, IntSet> get_scale_degrees_chords();
 };
 
 
