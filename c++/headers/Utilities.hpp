@@ -47,7 +47,7 @@ const int Bflat = 22;
 const int B = 23;
 const int Cflat = 23;
 
-/** scale degrees */
+/** scale degrees */ // @todo rename this into 1st to 7th degree, will be easier
 const int tonic = 1;
 const int supertonic = 2;
 const int mediant = 3;
@@ -86,6 +86,14 @@ const vector<int> AUGMENTED_CHORD = {majorThird, majorThird, majorThird};
 const vector<int> DOMINANT_SEVENTH_CHORD = {majorThird, minorThird, minorThird, majorSecond};
 const vector<int> MAJOR_SEVENTH_CHORD = {majorThird, minorThird, majorThird, minorSecond};
 const vector<int> MINOR_SEVENTH_CHORD = {minorThird, majorThird, minorThird, majorSecond};
+
+// Chord states
+enum{
+    fundamental_state,  //0
+    first_inversion,    //1
+    second_inversion,   //2
+    third_inversion     //3
+};
 
 /** Modes */
 // syntactic sugar for more commonly used modes

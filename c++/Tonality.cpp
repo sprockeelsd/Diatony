@@ -18,9 +18,7 @@ Tonality::Tonality(int t, vector<int> m) {
     // Set the list of degrees which are the notes of the scale
     int curr = tonic;
     for(int i = 0; i < mode.size(); ++i){
-        std::cout << "i+1 = " << i+1 << "; curr : " << curr << std::endl;
         degrees_notes[i+1] = curr;
-        std::cout << "degrees_notes[" << i+1 << "] = " << degrees_notes[i+1] << std::endl;
         curr += mode[i];
     }
 

@@ -21,22 +21,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="78063669-9d41-4950-9026-704cff767980" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/c++/testTonality.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c++/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c++/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c++/MajorTonality.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/MajorTonality.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c++/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/c++/Makefile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/c++/Tonality.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/Tonality.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c++/cmake-build-debug/.cmake/api/v1/reply/codemodel-v2-82e9322e0ef9ad0dbb55.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c++/cmake-build-debug/.cmake/api/v1/reply/codemodel-v2-a79bd3aef6369f068c85.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c++/cmake-build-debug/.cmake/api/v1/reply/index-2023-06-20T07-12-49-0544.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c++/cmake-build-debug/.cmake/api/v1/reply/index-2023-06-23T09-44-20-0188.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c++/cmake-build-debug/.cmake/api/v1/reply/target-damien-Debug-785329bcd67ac9f93fff.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c++/cmake-build-debug/.cmake/api/v1/reply/target-damien-Debug-81268b4f43f0f0ba2aae.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c++/cmake-build-debug/.ninja_deps" beforeDir="false" afterPath="$PROJECT_DIR$/c++/cmake-build-debug/.ninja_deps" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c++/cmake-build-debug/.ninja_log" beforeDir="false" afterPath="$PROJECT_DIR$/c++/cmake-build-debug/.ninja_log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c++/cmake-build-debug/Testing/Temporary/LastTest.log" beforeDir="false" afterPath="$PROJECT_DIR$/c++/cmake-build-debug/Testing/Temporary/LastTest.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c++/cmake-build-debug/build.ninja" beforeDir="false" afterPath="$PROJECT_DIR$/c++/cmake-build-debug/build.ninja" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c++/four_voice_texture.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/four_voice_texture.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c++/headers/Utilities.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/headers/Utilities.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c++/headers/four_voice_texture.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/headers/four_voice_texture.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c++/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/main.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

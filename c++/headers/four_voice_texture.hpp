@@ -26,31 +26,42 @@ using namespace std;
 /***********************************************************************************************************************
  *                                                FourVoiceTexture class                                               *
  ***********************************************************************************************************************/
- // This class represents a constraint problem to be solved
 class FourVoiceTexture: public Space {
 protected:
+    /** Data */
     int size; // The size of the variable array of interest
     Tonality* tonality; // The tonality of the piece
-    int lower_bound_domain;
-    int upper_bound_domain;
-    IntVarArray vars; // The variables of interest
-    /* @todo Add here any additional attributes you need to represent your problem */
+    vector<int> chordDegrees; // The degrees of the chord of the chord progression
+    vector<int> chordStates; // The states of the chord of the chord progression (fundamental, 1st inversion,...)
+
+    /** Variables */
+    // variable arrays for melodic intervals for each voice
+    IntVarArray bassMelodicIntervals;
+    IntVarArray tenorMelodicIntervals;
+    IntVarArray altoMelodicIntervals;
+    IntVarArray sopranoMelodicIntervals;
+
+    // variable arrays for harmonic intervals between adjacent voices (in absolute value)
+    IntVarArray bassTenorHarmonicIntervals;
+    IntVarArray tenorAltoHarmonicIntervals;
+    IntVarArray altoSopranoHarmonicIntervals;
+
+    // global array for all the notes for all voices
+    IntVarArray FullChordsVoicing; // [bass0, alto0, tenor0, soprano0, bass1, alto1, tenor1, soprano1, ...]
 
 public:
     /**
      * Constructor
-     * @todo Modify this constructor depending on your problem. This constructor is where the problem is defined
-     * @todo (variables, constraints, branching, ...)
      * @param s the size of the array of variables
-     * @param l the lower bound of the domain of the variables
-     * @param u the upper bound of the domain of the variables
+     * @param *t a pointer to a Tonality object
+     * @param chordDegs the degrees of the chord of the chord progression
+     * @param chordStas the states of the chord of the chord progression (fundamental, 1st inversion,...)
      */
-    FourVoiceTexture(int s, int l, int u);
+    FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, vector<int> chordStas);
 
     /**
      * Copy constructor
      * @param s an instance of the FourVoiceTexture class
-     * @todo modify this copy constructor to also copy any additional attributes you add to the class
      */
     FourVoiceTexture(FourVoiceTexture &s);
 
@@ -62,7 +73,6 @@ public:
 
     /**
      * Returns the values taken by the variables vars in a solution
-     * @todo Modify this to return the solution for your problem. This function uses @param size to generate an array of integers
      * @return an array of integers representing the values of the variables in a solution
      */
     int* return_solution();
@@ -75,7 +85,6 @@ public:
 
     /**
      * Constrain method for bab search
-     * @todo modify this function if you want to use branch and bound
      * @param _b a space to constrain the current instance of the FourVoiceTexture class with upon finding a solution
      */
     virtual void constrain(const Space& _b);
@@ -90,7 +99,6 @@ public:
      * @return a string representation of the current instance of the FourVoiceTexture class.
      * Right now, it returns a string "FourVoiceTexture object. size = <size>"
      * If a variable is not assigned when this function is called, it writes <not assigned> instead of the value
-     * @todo modify this method to also print any additional attributes you add to the class
      */
     string toString();
 };
@@ -102,7 +110,6 @@ public:
 
 /**
  * Creates a search engine for the given problem
- * @todo Modify this function to add search options etc
  * @param pb an instance of the FourVoiceTexture class representing a given problem
  * @param type the type of search engine to create (see enumeration in headers/gecode_problem.hpp)
  * @return a search engine for the given problem

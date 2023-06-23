@@ -8,28 +8,28 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
     int size = 3;
-    int upper_bound_domain = 5;
-    int lower_bound_domain = 1;
+    Tonality* tonality = new MajorTonality(C);
 
     // create a new problem
-    FourVoiceTexture* p = new FourVoiceTexture(size, lower_bound_domain, upper_bound_domain);
+    FourVoiceTexture* p = new FourVoiceTexture(size, tonality, {subdominant,dominant,tonic},
+                                               {fundamental_state,fundamental_state,fundamental_state});
 
-    Tonality* tonality = new MajorTonality(C);
-    std::cout << "Chord : " << tonality->get_scale_degree_chord(leadingTone) << std::endl;
 
     // create a new search engine
-    Search::Base<FourVoiceTexture>* e = make_solver(p, bab_solver);
+    Search::Base<FourVoiceTexture>* e = make_solver(p, dfs_solver);
     delete p;
 
     int nb_sol = 0;
-
+    std::cout << std::endl;
     while(FourVoiceTexture * sol = get_next_solution_space(e)){
         nb_sol++;
         cout << "Solution " << nb_sol << ": " << endl;
         sol->print_solution();
         delete sol;
+        if (nb_sol > 10)
+            break;
     }
-    cout << "No (more) solutions." << endl;
+    cout << "No (more) solutions.\n" << endl;
     return 0;
 }
 

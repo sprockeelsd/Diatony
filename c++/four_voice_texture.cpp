@@ -6,38 +6,48 @@
 
 /**
  * Constructor
- * @todo Modify this constructor depending on your problem. This constructor is where the problem is defined
- * @todo (variables, constraints, branching, ...)
- * @param size the size of the array of variables
- * @param l the lower bound of the domain of the variables
- * @param u the upper bound of the domain of the variables
+ * @param s the size of the array of variables
+ * @param *t a pointer to a Tonality object
+ * @param chordDegs the degrees of the chord of the chord progression
+ * @param chordStas the states of the chord of the chord progression (fundamental, 1st inversion,...)
  */
-FourVoiceTexture::FourVoiceTexture(int s, int l, int u) {
+FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, vector<int> chordStas){
     size = s;
-    lower_bound_domain = l;
-    upper_bound_domain = u;
+    tonality = t;
+    chordDegrees = chordDegs;
+    chordStates = chordStas;
 
     // variable initialization
-    vars = IntVarArray(*this, size, l, u);
+    FullChordsVoicing = IntVarArray(*this, 4*size, tonality->get_tonality_notes());
+
+    bassMelodicIntervals = IntVarArray(*this, size-1, -perfectOctave, perfectOctave);
+    tenorMelodicIntervals = IntVarArray(*this, size-1, -perfectOctave, perfectOctave);
+    altoMelodicIntervals = IntVarArray(*this, size-1, -perfectOctave, perfectOctave);
+    sopranoMelodicIntervals = IntVarArray(*this, size-1, -perfectOctave, perfectOctave);
+
+    // variable arrays for harmonic intervals between adjacent voices
+    bassTenorHarmonicIntervals = IntVarArray(*this, size, 0, perfectOctave + perfectFifth);
+    tenorAltoHarmonicIntervals = IntVarArray(*this, size, 0, perfectOctave);
+    altoSopranoHarmonicIntervals = IntVarArray(*this, size, 0, perfectOctave);
+
+    //@todo next steps: link the arrays together (constraint in another file) + make the bridge with om so that its possible to see the results in om
 
     //constraints
-    distinct(*this, vars);
+    //distinct(*this, FullChordsVoicing);
 
     //branching
-    branch(*this, vars, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
+    branch(*this, FullChordsVoicing, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
 }
 
 /**
  * Copy constructor
  * @param s an instance of the FourVoiceTexture class
- * @todo modify this copy constructor to also copy any additional attributes you add to the class
  */
 FourVoiceTexture::FourVoiceTexture(FourVoiceTexture& s): Space(s){
     //IntVars update
     size = s.size;
-    lower_bound_domain = s.lower_bound_domain;
-    upper_bound_domain = s.upper_bound_domain;
-    vars.update(*this, s.vars);
+    tonality = s.tonality;
+    FullChordsVoicing.update(*this, s.FullChordsVoicing);
 }
 
 /**
@@ -50,13 +60,12 @@ int FourVoiceTexture::getSize(){
 
 /**
  * Returns the values taken by the variables vars in a solution
- * @todo Modify this to return the solution for your problem. This function uses @param size to generate an array of integers
  * @return an array of integers representing the values of the variables in a solution
  */
 int* FourVoiceTexture::return_solution(){
     int* solution = new int[size];
     for(int i = 0; i < size; i++){
-        solution[i] = vars[i].val();
+        solution[i] = FullChordsVoicing[i].val();
     }
     return solution;
 }
@@ -71,20 +80,18 @@ Space* FourVoiceTexture::copy(void) {
 
 /**
  * Constrain method for bab search
- * @todo modify this function if you want to use branch and bound
  * @param _b a solution to the problem from which we wish to add a constraint for the next solutions
  */
 void FourVoiceTexture::constrain(const Space& _b) {
     const FourVoiceTexture &b = static_cast<const FourVoiceTexture &>(_b);
-    rel(*this, vars, IRT_GQ, 2);
 }
 
 /**
  * Prints the solution in the console
  */
 void FourVoiceTexture::print_solution(){
-    for(int i = 0; i < size; i++){
-        cout << vars[i].val() << " ";
+    for(int i = 0; i < 4*size; i++){
+        cout << FullChordsVoicing[i].val() << " ";
     }
     cout << endl;
 }
@@ -94,20 +101,17 @@ void FourVoiceTexture::print_solution(){
  * @return a string representation of the current instance of the FourVoiceTexture class.
  * Right now, it returns a string "FourVoiceTexture object. size = <size>"
  * If a variable is not assigned when this function is called, it writes <not assigned> instead of the value
- * @todo modify this method to also print any additional attributes you add to the class
  */
 string FourVoiceTexture::toString(){
     string message = "FourVoiceTexture object. \n";
-    message += "size = " + to_string(size) + "\n" + "lower bound for the domain : " +
-            to_string(lower_bound_domain) + "\n" + "upper bound for the domain : " + to_string(upper_bound_domain)
-             + "\n" + "current values for vars: [";
-    for(int i = 0; i < size; i++){
-        if (vars[i].assigned())
-            message += to_string(vars[i].val()) + " ";
-        else
-            message += "<not assigned> ";
-    }
-    message += "]\n\n";
+//    message += "size = " + to_string(size) + "\n" + "lower bound for the domain : ";
+//    for(int i = 0; i < size; i++){
+//        if (vars[i].assigned())
+//            message += to_string(vars[i].val()) + " ";
+//        else
+//            message += "<not assigned> ";
+//    }
+//    message += "]\n\n";
     return message;
 }
 
@@ -117,7 +121,6 @@ string FourVoiceTexture::toString(){
 
 /**
  * Creates a search engine for the given problem
- * @todo Modify this function to add search options etc
  * @param pb an instance of the FourVoiceTexture class representing a given problem
  * @param type the type of search engine to create (see enumeration in headers/gecode_problem.hpp)
  * @return a search engine for the given problem
@@ -125,7 +128,6 @@ string FourVoiceTexture::toString(){
 Search::Base<FourVoiceTexture>* make_solver(FourVoiceTexture* pb, int type){
 
     Gecode::Search::Options opts;
-    /**@todo add here any options you want*/
 
     if (type == bab_solver)
         return new BAB<FourVoiceTexture>(pb, opts);
