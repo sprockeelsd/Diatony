@@ -15,27 +15,25 @@
 #include "gecode/minimodel.hh"
 #include "gecode/set.hh"
 
+#include "Utilities.hpp"
+#include "Tonality.hpp"
+#include "MajorTonality.hpp"
+
 using namespace Gecode;
 using namespace Gecode::Search;
 using namespace std;
 
-/** Types of search engines */
-enum {
-    dfs_solver, //0
-    bab_solver, //1
-};
-
 /***********************************************************************************************************************
- *                                          FourVoiceTexture class methods                                             *
+ *                                                FourVoiceTexture class                                               *
  ***********************************************************************************************************************/
  // This class represents a constraint problem to be solved
 class FourVoiceTexture: public Space {
 protected:
-    // solution related attributes
-    IntVarArray vars; // The variables of interest
     int size; // The size of the variable array of interest
+    Tonality* tonality; // The tonality of the piece
     int lower_bound_domain;
     int upper_bound_domain;
+    IntVarArray vars; // The variables of interest
     /* @todo Add here any additional attributes you need to represent your problem */
 
 public:

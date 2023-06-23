@@ -22,11 +22,16 @@
   <component name="ChangeListManager">
     <list default="true" id="78063669-9d41-4950-9026-704cff767980" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c++/MajorTonality.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/MajorTonality.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/c++/Tonality.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/Tonality.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c++/Utilities.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/Utilities.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c++/cmake-build-debug/.ninja_deps" beforeDir="false" afterPath="$PROJECT_DIR$/c++/cmake-build-debug/.ninja_deps" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c++/cmake-build-debug/.ninja_log" beforeDir="false" afterPath="$PROJECT_DIR$/c++/cmake-build-debug/.ninja_log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c++/four_voice_texture.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/four_voice_texture.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c++/headers/MajorTonality.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/headers/MajorTonality.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/c++/headers/Tonality.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/headers/Tonality.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/c++/headers/Utilities.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/headers/Utilities.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c++/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c++/headers/four_voice_texture.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/headers/four_voice_texture.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c++/problem_wrapper.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/problem_wrapper.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

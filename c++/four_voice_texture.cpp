@@ -13,12 +13,9 @@
  * @param u the upper bound of the domain of the variables
  */
 FourVoiceTexture::FourVoiceTexture(int s, int l, int u) {
-    string message = "WSpace object created. ";
     size = s;
     lower_bound_domain = l;
     upper_bound_domain = u;
-    message += "size = " + to_string(size) +  " domain : [" + to_string(lower_bound_domain) + "," +
-            to_string(upper_bound_domain) + "].\n";
 
     // variable initialization
     vars = IntVarArray(*this, size, l, u);
@@ -28,7 +25,6 @@ FourVoiceTexture::FourVoiceTexture(int s, int l, int u) {
 
     //branching
     branch(*this, vars, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
-    writeToLogFile(message.c_str());
 }
 
 /**
@@ -49,8 +45,6 @@ FourVoiceTexture::FourVoiceTexture(FourVoiceTexture& s): Space(s){
  * @return an integer representing the size of the vars array
  */
 int FourVoiceTexture::getSize(){
-    string message = "getSize function called. size = " + to_string(size) + "\n";
-    writeToLogFile(message.c_str());
     return size;
 }
 
@@ -60,14 +54,10 @@ int FourVoiceTexture::getSize(){
  * @return an array of integers representing the values of the variables in a solution
  */
 int* FourVoiceTexture::return_solution(){
-    string message = "return_solution method. Solution : [";
     int* solution = new int[size];
     for(int i = 0; i < size; i++){
         solution[i] = vars[i].val();
-        message += to_string(solution[i]) + " ";
     }
-    message += "]\n";
-    writeToLogFile(message.c_str());
     return solution;
 }
 
@@ -118,7 +108,6 @@ string FourVoiceTexture::toString(){
             message += "<not assigned> ";
     }
     message += "]\n\n";
-    writeToLogFile(message.c_str());
     return message;
 }
 
@@ -134,8 +123,6 @@ string FourVoiceTexture::toString(){
  * @return a search engine for the given problem
  */
 Search::Base<FourVoiceTexture>* make_solver(FourVoiceTexture* pb, int type){
-    string message = "make_solver function called. type of solver :\n" + to_string(type) + "\n";
-    writeToLogFile(message.c_str());
 
     Gecode::Search::Options opts;
     /**@todo add here any options you want*/
@@ -152,12 +139,9 @@ Search::Base<FourVoiceTexture>* make_solver(FourVoiceTexture* pb, int type){
  * @return an instance of the FourVoiceTexture class representing the next solution to the problem
  */
 FourVoiceTexture* get_next_solution_space(Search::Base<FourVoiceTexture>* solver){
-    string message = "get_next_solution_space function called.\n";
     FourVoiceTexture* sol_space = solver->next();
-    if (sol_space == nullptr)
+    if (sol_space == nullptr) // handle the case of no solution or time out, necessary when sending the data to OM
         return NULL;
-    message += sol_space->toString();
-    writeToLogFile(message.c_str());
     return sol_space;
 }
 
@@ -167,6 +151,7 @@ FourVoiceTexture* get_next_solution_space(Search::Base<FourVoiceTexture>* solver
 
 /**
  * Write a text into a log file
+ * Useful for debugging in the OM environment
  * @param message the text to write
  */
 void writeToLogFile(const char* message){

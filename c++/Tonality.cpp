@@ -17,10 +17,10 @@ Tonality::Tonality(int t, vector<int> m) {
 
     // Set the list of degrees which are the notes of the scale
     int curr = tonic;
-    degrees_notes.push_back(curr);
+    degrees_notes[1] = curr;
     for (int i = 0; i < mode.size()-1; ++i) {
         curr += mode[i];
-        degrees_notes.push_back(curr);
+        degrees_notes[i+2] = curr;
     }
 
     // Set the list of all the notes in the tonality
@@ -58,16 +58,17 @@ vector<int> Tonality::get_mode() {
  * Get the notes corresponding to the degrees of the scale (first elem = tonic, second_elem = second degree, etc.)
  * @return a vector containing the notes for each of the scale degrees
  */
-vector<int> Tonality::get_degrees_notes() {
+map<int,int> Tonality::get_degrees_notes() {
     return degrees_notes;
 }
 
 /**
- * Get the chord quality for each degree
- * @return a map of [degree, chord_quality] for each degree of the scale (1 to 7)
+ * Get the note for a given degree
+ * @param degree the degree of the scale [1,7]
+ * @return the note for the given degree
  */
-map<int, vector<int>> Tonality::get_chord_qualities(){
-    return chord_qualities;
+int Tonality::get_degree_note(int degree){
+    return degrees_notes[degree];
 }
 
 /**
@@ -109,21 +110,4 @@ IntSet Tonality::get_tonal_notes() {
  */
 IntSet Tonality::get_modal_notes() {
     return modal_notes;
-}
-
-/**
- * Get the chord notes for each degree
- * @return a map of [degree, chord] for each degree of the scale (1 to 7)
- */
-map<int, IntSet> Tonality::get_scale_degrees_chords(){
-    return scale_degrees_chords;
-}
-
-/**
- * Get the chord notes for a given degree
- * @param degree a degree of the scale [1,7]
- * @return an IntSet containing the chord notes for the given degree
- */
-IntSet Tonality::get_scale_degree_chord(int degree){
-    return scale_degrees_chords[degree];
 }

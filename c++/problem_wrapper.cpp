@@ -1,5 +1,5 @@
-#include "headers/problem_wrapper.hpp"
 #include "headers/four_voice_texture.hpp"
+#include "headers/problem_wrapper.hpp"
 
 /**
  * Wraps the FourVoiceTexture constructor.

@@ -16,7 +16,13 @@ using namespace Gecode;
  *                                                  Useful constants                                                   *
  ***********************************************************************************************************************/
 
-const vector<std::string> noteNames = {"C", "C#", "D", "Eb", "E", "F", "F#", "G", "Ab", "A", "Bb", "B"};
+/** Types of search engines */
+enum {
+    dfs_solver, //0
+    bab_solver, //1
+};
+
+const vector<std::string> noteNames = {"C", "C#", "D", "Eb", "E", "F", "F#", "G", "Ab", "A", "Bb", "B"}; // @todo turn into a map
 
 /** Notes */
 const int Bsharp = 12;
@@ -51,31 +57,35 @@ const int submediant = 6;
 const int leadingTone = 7;
 
 /** Intervals */
+// "classic" intervals
 enum{
-    unisson,
-    minorSecond,
-    majorSecond,
-    minorThird,
-    majorThird,
-    perfectFourth,
-    tritone,
-    perfectFifth,
-    minorSixth,
-    majorSixth,
-    minorSeventh,
-    majorSeventh,
-    perfectOctave
+    unisson,        //0
+    minorSecond,    //1
+    majorSecond,    //2
+    minorThird,     //3
+    majorThird,     //4
+    perfectFourth,  //5
+    tritone,        //6
+    perfectFifth,   //7
+    minorSixth,     //8
+    majorSixth,     //9
+    minorSeventh,   //10
+    majorSeventh,   //11
+    perfectOctave   //12
 };
+
+// augmented/diminished intervals
+const int augmentedSecond = 3;
 
 /** Chords */
 // Types of chords represented by the intervals between their notes in root position up to an octave
-const vector<int> MAJOR_CHORD = {4, 3, 5};
-const vector<int> MINOR_CHORD = {3, 4, 5};
-const vector<int> DIMINISHED_CHORD = {3, 3, 6};
-const vector<int> AUGMENTED_CHORD = {4, 4, 4};
-const vector<int> DOMINANT_SEVENTH_CHORD = {4, 3, 3, 2};
-const vector<int> MAJOR_SEVENTH_CHORD = {4, 3, 4, 1};
-const vector<int> MINOR_SEVENTH_CHORD = {3, 4, 3, 2};
+const vector<int> MAJOR_CHORD = {majorThird, minorThird, perfectFourth};
+const vector<int> MINOR_CHORD = {minorThird, majorThird, perfectFourth};
+const vector<int> DIMINISHED_CHORD = {minorThird, minorThird, tritone};
+const vector<int> AUGMENTED_CHORD = {majorThird, majorThird, majorThird};
+const vector<int> DOMINANT_SEVENTH_CHORD = {majorThird, minorThird, minorThird, majorSecond};
+const vector<int> MAJOR_SEVENTH_CHORD = {majorThird, minorThird, majorThird, minorSecond};
+const vector<int> MINOR_SEVENTH_CHORD = {minorThird, majorThird, minorThird, majorSecond};
 
 /** Modes */
 // syntactic sugar for more commonly used modes
@@ -83,24 +93,24 @@ const int major_mode = 0;
 const int minor_mode = 5;   // to correspond to the enum Mode
 
 enum Mode {
-    IONIAN,     // major mode
-    DORIAN,
-    PHRYGIAN,
-    LYDIAN,
-    MIXOLYDIAN,
-    AEOLIAN,    // natural minor mode
-    LOCRIAN
+    IONIAN,     //0 , major mode
+    DORIAN,     //1
+    PHRYGIAN,   //2
+    LYDIAN,     //3
+    MIXOLYDIAN, //4
+    AEOLIAN,    //5 , natural minor mode
+    LOCRIAN     //6
 };
 
 /** Scales */
 // defined by the intervals between their notes in semi-tones
 
-// turn this into a dictionnary with the name of the scale as key and the vector of intervals as value
+// turn this into a dictionary with the name of the scale as key and the vector of intervals as value
 
-const vector<int> MAJOR_SCALE = {2, 2, 1, 2, 2, 2, 1};
-const vector<int> NATURAL_MINOR_SCALE = {2, 1, 2, 2, 1, 2, 2};
-const vector<int> HARMONIC_MINOR_SCALE = {2, 1, 2, 2, 1, 3, 1};
-const vector<int> MELODIC_MINOR_SCALE = {2, 1, 2, 2, 2, 2, 1};
+const vector<int> MAJOR_SCALE = {majorSecond, majorSecond, minorSecond, majorSecond, majorSecond, majorSecond, minorSecond};
+const vector<int> NATURAL_MINOR_SCALE = {majorSecond, minorSecond, majorSecond, majorSecond, minorSecond, majorSecond, majorSecond};
+const vector<int> HARMONIC_MINOR_SCALE = {majorSecond, minorSecond, majorSecond, majorSecond, minorSecond, augmentedSecond, minorSecond};
+const vector<int> MELODIC_MINOR_SCALE = {majorSecond, minorSecond, majorSecond, majorSecond, majorSecond, majorSecond, minorSecond};
 
 /***********************************************************************************************************************
  *                                                      Functions                                                      *

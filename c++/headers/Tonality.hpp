@@ -16,20 +16,19 @@ using namespace std;
  */
 class Tonality { // abstract class
 protected:
-    int tonic;                  // tonic of the tonality
-    vector<int> mode;           // mode of the tonality
-    vector<int> degrees_notes;  // notes corresponding to the degrees of the scale (first elem = tonic, second_elem = second degree, etc.) @todo change into a map as well so it is easier to acces
-    map<int, vector<int>> chord_qualities; // map of [degree, chord_quality] for each degree of the scale (1 to 7)
+    int tonic;                              // tonic of the tonality
+    vector<int> mode;                       // mode of the tonality
+    map<int, int> degrees_notes;            // notes corresponding to the degrees of the scale
+    map<int, vector<int>> chord_qualities;  // map of [degree, chord_quality] for each degree of the scale (1 to 7) (set by child classes)
 
     map<int, IntSet> scale_degrees;         // map of [degree, all_notes] for each degree of the scale (1 to 7)
     IntSet tonality_notes;                  // all the notes in the tonality
-    IntSet tonal_notes;            // notes that don't change in major or minor mode (1,4,5 degrees)
-    IntSet modal_notes;            // notes that change in major or minor mode (3,6,7 degrees)
+    IntSet tonal_notes;                     // notes that don't change in major or minor mode (1,4,5 degrees)
+    IntSet modal_notes;                     // notes that change in major or minor mode (3,6,7 degrees)
 
-    map<int, IntSet> scale_degrees_chords; // map of [degree, chord] for each degree of the scale (1 to 7) @todo add in constructor
+    map<int, IntSet> scale_degrees_chords;  // map of [degree, chord] for each degree of the scale (1 to 7) (set by child classes)
 
 public:
-    // abstract methods are virtual
     /**
      * Constructor
      * @param t the tonic of the tonality
@@ -53,13 +52,14 @@ public:
      * Get the notes corresponding to the degrees of the scale (first elem = tonic, second_elem = second degree, etc.)
      * @return a vector containing the notes for each of the scale degrees
      */
-    vector<int> get_degrees_notes();
+    map<int,int> get_degrees_notes();
 
     /**
-     * Get the chord quality for each degree
-     * @return a map of [degree, chord_quality] for each degree of the scale (1 to 7)
+     * Get the note for a given degree
+     * @param degree the degree of the scale [1,7]
+     * @return the note for the given degree
      */
-    virtual map<int, vector<int>> get_chord_qualities();// = 0; // @todo maybe make it abstract, otherwise there is no point in having it virtual
+    int get_degree_note(int degree);
 
     /**
      * Get all the notes for each scale degree
@@ -92,18 +92,26 @@ public:
      */
     IntSet get_modal_notes();
 
+    /** ABSTRACT METHODS */
+
+    /**
+     * Get the chord quality for each degree
+     * @return a map of [degree, chord_quality] for each degree of the scale (1 to 7)
+     */
+    virtual map<int, vector<int>> get_chord_qualities() = 0;
+
     /**
      * Get the chord notes for each degree
      * @return a map of [degree, chord] for each degree of the scale (1 to 7)
      */
-    virtual map<int, IntSet> get_scale_degrees_chords(); // = 0; // @todo maybe make it abstract, otherwise there is currently no interest in having this class
+    virtual map<int, IntSet> get_scale_degrees_chords() = 0;
 
     /**
      * Get the chord notes for a given degree
      * @param degree a degree of the scale [1,7]
      * @return an IntSet containing the chord notes for the given degree
      */
-    virtual IntSet get_scale_degree_chord(int degree); // = 0; // @todo maybe make it abstract, otherwise there is currently no interest in having this class
+    virtual IntSet get_scale_degree_chord(int degree) = 0;
 };
 
 #endif
