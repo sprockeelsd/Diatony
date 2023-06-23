@@ -64,16 +64,16 @@ IntSet getAllGivenNote(int note)
 }
 
 /**
- * Print a dynamic array of integers
- * @param v a dynamic array of integers
+ * Transforms a vector of integers into a string
+ * @param vector a vector of integers
+ * @return string the string representation of the vector
  */
-void printIntVector(vector<int> v)
-{
-    for (int i = 0; i < v.size(); ++i)
-    {
-        std::cout << v.at(i) << " ";
+string int_vector_to_string(vector<int> vector){
+    string s = "{";
+    for (int i = 0; i < vector.size(); ++i) {
+        s += to_string(vector[i]) + " ";
     }
-    std::cout << std::endl;
+    return s + "}";
 }
 
 /**

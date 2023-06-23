@@ -34,6 +34,8 @@ Tonality::Tonality(int t, vector<int> m) {
     // Set tonal notes and modal notes
     tonal_notes = getAllNotesFromIntervalLoop(tonic, {perfectFourth, majorSecond,perfectFourth}); // 1, 4 and 5 degrees
     modal_notes = getAllNotesFromIntervalLoop(get_degrees_notes()[2], {perfectFourth, majorSecond, perfectFourth}); // 3, 6 and 7 degrees
+
+    // chord qualities and scale degrees chords are set in the child classes
 }
 
 /**
@@ -69,14 +71,6 @@ map<int, vector<int>> Tonality::get_chord_qualities(){
 }
 
 /**
- * Get all the notes in the tonality
- * @return an IntSet containing all the notes in the tonality
- */
-IntSet Tonality::get_tonality_notes() {
-    return tonality_notes;
-}
-
-/**
  * Get all the notes for each scale degree
  * @return a map of [degree, all_notes] for each degree of the scale (1 to 7)
  */
@@ -91,6 +85,14 @@ map<int, IntSet> Tonality::get_scale_degrees() {
  */
 IntSet Tonality::get_scale_degree(int degree) {
     return scale_degrees[degree];
+}
+
+/**
+ * Get all the notes in the tonality
+ * @return an IntSet containing all the notes in the tonality
+ */
+IntSet Tonality::get_tonality_notes() {
+    return tonality_notes;
 }
 
 /**
@@ -113,7 +115,7 @@ IntSet Tonality::get_modal_notes() {
  * Get the chord notes for each degree
  * @return a map of [degree, chord] for each degree of the scale (1 to 7)
  */
-map<int, IntSet> Tonality::get_scale_degrees_chords(){ // @todo maybe move to child classes
+map<int, IntSet> Tonality::get_scale_degrees_chords(){
     return scale_degrees_chords;
 }
 
@@ -125,19 +127,3 @@ map<int, IntSet> Tonality::get_scale_degrees_chords(){ // @todo maybe move to ch
 IntSet Tonality::get_scale_degree_chord(int degree){
     return scale_degrees_chords[degree];
 }
-
-/**
- * Creates a string representing the tonality object
- * @return a string representing the tonality object
- */
-string Tonality::to_string() const{
-    return "";
-}
-
-/**
- * Overload of the << operator for Tonality objects
- */
-//std::ostream& operator<<(std::ostream& os, const Tonality& t){
-//    os << t.to_string();
-//    return os;
-//}

@@ -59,13 +59,7 @@ public:
      * Get the chord quality for each degree
      * @return a map of [degree, chord_quality] for each degree of the scale (1 to 7)
      */
-    map<int, vector<int>> get_chord_qualities();
-
-    /**
-     * Get all the notes in the tonality
-     * @return an IntSet containing all the notes in the tonality
-     */
-    IntSet get_tonality_notes();
+    virtual map<int, vector<int>> get_chord_qualities();// = 0; // @todo maybe make it abstract, otherwise there is no point in having it virtual
 
     /**
      * Get all the notes for each scale degree
@@ -79,6 +73,12 @@ public:
      * @return an IntSet containing all the notes for the given scale degree
      */
     IntSet get_scale_degree(int degree);
+
+    /**
+     * Get all the notes in the tonality
+     * @return an IntSet containing all the notes in the tonality
+     */
+    IntSet get_tonality_notes();
 
     /**
      * Get the notes that don't change in major or minor mode (1,4,5 degrees)
@@ -104,17 +104,6 @@ public:
      * @return an IntSet containing the chord notes for the given degree
      */
     virtual IntSet get_scale_degree_chord(int degree); // = 0; // @todo maybe make it abstract, otherwise there is currently no interest in having this class
-
-    /**
-     * Creates a string representing the tonality object
-     * @return a string representing the tonality object
-     */
-    string to_string() const;
-
-    /**
-     * Overload of the << operator for Tonality objects
-     */
-    // friend std::ostream& operator<<(std::ostream& os, const Tonality& t);
 };
 
 #endif

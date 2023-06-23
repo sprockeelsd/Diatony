@@ -22,9 +22,8 @@
   <component name="ChangeListManager">
     <list default="true" id="78063669-9d41-4950-9026-704cff767980" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c++/MajorTonality.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/MajorTonality.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/c++/Tonality.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/Tonality.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c++/cmake-build-debug/Testing/Temporary/LastTest.log" beforeDir="false" afterPath="$PROJECT_DIR$/c++/cmake-build-debug/Testing/Temporary/LastTest.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c++/Utilities.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/Utilities.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/c++/headers/Tonality.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/headers/Tonality.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/c++/headers/Utilities.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/headers/Utilities.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/c++/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/main.cpp" afterDir="false" />
@@ -99,7 +98,7 @@
       <workItem from="1687332187308" duration="3812000" />
       <workItem from="1687350043211" duration="5062000" />
       <workItem from="1687420762782" duration="820000" />
-      <workItem from="1687506442906" duration="3968000" />
+      <workItem from="1687506442906" duration="5949000" />
     </task>
     <servers />
   </component>
