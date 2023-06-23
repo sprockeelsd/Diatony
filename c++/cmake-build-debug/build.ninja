@@ -84,6 +84,13 @@ build CMakeFiles/damien.dir/MajorTonality.cpp.o: CXX_COMPILER__damien_Debug /Use
   OBJECT_DIR = CMakeFiles/damien.dir
   OBJECT_FILE_DIR = CMakeFiles/damien.dir
 
+build CMakeFiles/damien.dir/testTonality.cpp.o: CXX_COMPILER__damien_Debug /Users/sprockeelsd/Documents/Doctorat/MusicalConstraints/MusicConstraints/c++/testTonality.cpp || cmake_object_order_depends_target_damien
+  DEP_FILE = CMakeFiles/damien.dir/testTonality.cpp.o.d
+  FLAGS = -g -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk -fcolor-diagnostics -F/Library/Frameworks  -std=gnu++11
+  INCLUDES = -I/Library/Frameworks/Gecode.framework/Headers -I/Users/sprockeelsd/Documents/Doctorat/MusicalConstraints/MusicConstraints/c++/headers
+  OBJECT_DIR = CMakeFiles/damien.dir
+  OBJECT_FILE_DIR = CMakeFiles/damien.dir
+
 build CMakeFiles/damien.dir/problem_wrapper.cpp.o: CXX_COMPILER__damien_Debug /Users/sprockeelsd/Documents/Doctorat/MusicalConstraints/MusicConstraints/c++/problem_wrapper.cpp || cmake_object_order_depends_target_damien
   DEP_FILE = CMakeFiles/damien.dir/problem_wrapper.cpp.o.d
   FLAGS = -g -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk -fcolor-diagnostics -F/Library/Frameworks  -std=gnu++11
@@ -99,7 +106,7 @@ build CMakeFiles/damien.dir/problem_wrapper.cpp.o: CXX_COMPILER__damien_Debug /U
 #############################################
 # Link the static library libdamien.a
 
-build libdamien.a: CXX_STATIC_LIBRARY_LINKER__damien_Debug CMakeFiles/damien.dir/four_voice_texture.cpp.o CMakeFiles/damien.dir/main.cpp.o CMakeFiles/damien.dir/Tonality.cpp.o CMakeFiles/damien.dir/Utilities.cpp.o CMakeFiles/damien.dir/MajorTonality.cpp.o CMakeFiles/damien.dir/problem_wrapper.cpp.o
+build libdamien.a: CXX_STATIC_LIBRARY_LINKER__damien_Debug CMakeFiles/damien.dir/four_voice_texture.cpp.o CMakeFiles/damien.dir/main.cpp.o CMakeFiles/damien.dir/Tonality.cpp.o CMakeFiles/damien.dir/Utilities.cpp.o CMakeFiles/damien.dir/MajorTonality.cpp.o CMakeFiles/damien.dir/testTonality.cpp.o CMakeFiles/damien.dir/problem_wrapper.cpp.o
   ARCH_FLAGS = -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk
   LANGUAGE_COMPILE_FLAGS = -g
   OBJECT_DIR = CMakeFiles/damien.dir

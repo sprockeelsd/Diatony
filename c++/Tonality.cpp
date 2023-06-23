@@ -17,10 +17,11 @@ Tonality::Tonality(int t, vector<int> m) {
 
     // Set the list of degrees which are the notes of the scale
     int curr = tonic;
-    degrees_notes[1] = curr;
-    for (int i = 0; i < mode.size()-1; ++i) {
+    for(int i = 0; i < mode.size(); ++i){
+        std::cout << "i+1 = " << i+1 << "; curr : " << curr << std::endl;
+        degrees_notes[i+1] = curr;
+        std::cout << "degrees_notes[" << i+1 << "] = " << degrees_notes[i+1] << std::endl;
         curr += mode[i];
-        degrees_notes[i+2] = curr;
     }
 
     // Set the list of all the notes in the tonality
@@ -28,12 +29,12 @@ Tonality::Tonality(int t, vector<int> m) {
 
     // Create the dictionary of degrees and all occurrences of that notes
     for (int i = 0; i < degrees_notes.size(); ++i) {
-        scale_degrees[i+1] = getAllGivenNote(degrees_notes[i]);
+        scale_degrees[i+1] = getAllGivenNote(degrees_notes[i+1]);
     }
 
     // Set tonal notes and modal notes
     tonal_notes = getAllNotesFromIntervalLoop(tonic, {perfectFourth, majorSecond,perfectFourth}); // 1, 4 and 5 degrees
-    modal_notes = getAllNotesFromIntervalLoop(get_degrees_notes()[2], {perfectFourth, majorSecond, perfectFourth}); // 3, 6 and 7 degrees
+    modal_notes = getAllNotesFromIntervalLoop(get_degrees_notes()[3], {perfectFourth, majorSecond, perfectFourth}); // 3, 6 and 7 degrees
 
     // chord qualities and scale degrees chords are set in the child classes
 }

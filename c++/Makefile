@@ -15,6 +15,11 @@ run_mac_os:
 	g++ -std=c++11 -F/Library/Frameworks -framework gecode -o Main Utilities.cpp Tonality.cpp MajorTonality.cpp four_voice_texture.cpp Main.cpp
 	./Main
 
+test_tonality:
+	g++ -std=c++11 -F/Library/Frameworks -c Utilities.cpp Tonality.cpp MajorTonality.cpp testTonality.cpp
+	g++ -std=c++11 -F/Library/Frameworks -framework gecode -o testTonality Utilities.cpp Tonality.cpp MajorTonality.cpp testTonality.cpp
+	./testTonality
+
 #remove temporary files and dynamic library files
 clean:
 	rm -f *.o *.so *.dylib ../sources/*.so ../sources/*.dylib Main
