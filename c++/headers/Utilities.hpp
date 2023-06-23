@@ -51,20 +51,21 @@ const int submediant = 6;
 const int leadingTone = 7;
 
 /** Intervals */
-// for now, no augmented or diminished intervals
-const int unisson = 0;
-const int minorSecond = 1;
-const int majorSecond = 2;
-const int minorThird = 3;
-const int majorThird = 4;
-const int perfectFourth = 5;
-const int tritone = 6;
-const int perfectFifth = 7;
-const int minorSixth = 8;
-const int majorSixth = 9;
-const int minorSeventh = 10;
-const int majorSeventh = 11;
-const int perfectOctave = 12;
+enum{
+    unisson,
+    minorSecond,
+    majorSecond,
+    minorThird,
+    majorThird,
+    perfectFourth,
+    tritone,
+    perfectFifth,
+    minorSixth,
+    majorSixth,
+    minorSeventh,
+    majorSeventh,
+    perfectOctave
+};
 
 /** Chords */
 // Types of chords represented by the intervals between their notes in root position up to an octave

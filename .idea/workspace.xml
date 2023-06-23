@@ -24,11 +24,7 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/c++/MajorTonality.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/MajorTonality.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/c++/Tonality.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/Tonality.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c++/Utilities.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/Utilities.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c++/cmake-build-debug/.ninja_deps" beforeDir="false" afterPath="$PROJECT_DIR$/c++/cmake-build-debug/.ninja_deps" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c++/cmake-build-debug/.ninja_log" beforeDir="false" afterPath="$PROJECT_DIR$/c++/cmake-build-debug/.ninja_log" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/c++/cmake-build-debug/Testing/Temporary/LastTest.log" beforeDir="false" afterPath="$PROJECT_DIR$/c++/cmake-build-debug/Testing/Temporary/LastTest.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c++/headers/MajorTonality.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/headers/MajorTonality.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/c++/headers/Tonality.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/headers/Tonality.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/c++/headers/Utilities.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/headers/Utilities.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/c++/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/main.cpp" afterDir="false" />
@@ -71,6 +67,7 @@
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;project.propVCSSupport.DirectoryMappings&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
@@ -101,6 +98,8 @@
       <workItem from="1687245164198" duration="8726000" />
       <workItem from="1687332187308" duration="3812000" />
       <workItem from="1687350043211" duration="5062000" />
+      <workItem from="1687420762782" duration="820000" />
+      <workItem from="1687506442906" duration="3968000" />
     </task>
     <servers />
   </component>
