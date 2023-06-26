@@ -17,7 +17,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     chordDegrees = chordDegs;
     chordStates = chordStas;
 
-    // variable initialization
+    /** variable initialization */
     FullChordsVoicing = IntVarArray(*this, 4*size, tonality->get_tonality_notes());
 
     bassMelodicIntervals = IntVarArray(*this, size-1, -perfectOctave, perfectOctave);
@@ -30,10 +30,23 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     tenorAltoHarmonicIntervals = IntVarArray(*this, size, 0, perfectOctave);
     altoSopranoHarmonicIntervals = IntVarArray(*this, size, 0, perfectOctave);
 
-    //@todo next steps: link the arrays together (constraint in another file) + make the bridge with om so that its possible to see the results in om
+    /** constraints */
 
-    //constraints
-    //distinct(*this, FullChordsVoicing);
+    // link the arrays together
+    link_melodic_arrays(*this, size, FullChordsVoicing, bassMelodicIntervals, tenorMelodicIntervals, altoMelodicIntervals, sopranoMelodicIntervals);
+    link_harmonic_arrays(*this, size, FullChordsVoicing, bassTenorHarmonicIntervals, tenorAltoHarmonicIntervals, altoSopranoHarmonicIntervals);
+
+    // restrain the domain of the voices to their range + state that bass <= tenor <= alto <= soprano
+    restrain_voices_domains(*this, size, FullChordsVoicing);
+
+    /**------------------------------------------chord related constraints --------------------------------------------*/
+    for(int i = 0; i < size; i++){
+        IntVarArgs currentChord(FullChordsVoicing.slice(4 * i, 1, 4));
+
+        setToChord(*this, tonality, chordDegrees[i], currentChord);
+        setBass(*this, tonality, chordDegrees[i], chordStates[i], currentChord);
+        // @todo check why OM doesn't find solutions (probably a MIDIcent problem?)
+    }
 
     //branching
     branch(*this, FullChordsVoicing, INT_VAR_SIZE_MIN(), INT_VAL_MIN());

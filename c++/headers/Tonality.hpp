@@ -3,6 +3,8 @@
 
 #include <gecode/int.hh>
 
+#include "Utilities.hpp"
+
 #include <iostream>
 #include <vector>
 #include <string>

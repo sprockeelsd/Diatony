@@ -1,7 +1,3 @@
-#include "headers/Utilities.hpp"
-#include "headers/Tonality.hpp"
-#include "headers/MajorTonality.hpp"
-#include "headers/four_voice_texture.hpp"
 #include "headers/problem_wrapper.hpp"
 
 /**

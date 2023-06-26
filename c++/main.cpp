@@ -26,7 +26,7 @@ int main(int argc, char* argv[]) {
         cout << "Solution " << nb_sol << ": " << endl;
         sol->print_solution();
         delete sol;
-        if (nb_sol > 10)
+        if (nb_sol >= 10)
             break;
     }
     cout << "No (more) solutions.\n" << endl;

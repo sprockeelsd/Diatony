@@ -18,6 +18,7 @@
 #include "Utilities.hpp"
 #include "Tonality.hpp"
 #include "MajorTonality.hpp"
+#include "Constraints.hpp"
 
 using namespace Gecode;
 using namespace Gecode::Search;
@@ -35,16 +36,22 @@ protected:
     vector<int> chordStates; // The states of the chord of the chord progression (fundamental, 1st inversion,...)
 
     /** Variables */
-    // variable arrays for melodic intervals for each voice
+    // variable arrays for melodic intervals for each voice (not absolute value)
     IntVarArray bassMelodicIntervals;
     IntVarArray tenorMelodicIntervals;
     IntVarArray altoMelodicIntervals;
     IntVarArray sopranoMelodicIntervals;
 
-    // variable arrays for harmonic intervals between adjacent voices (in absolute value)
+    // @todo maybe absolute value intervals?
+
+    // variable arrays for harmonic intervals between adjacent voices (not absolute value)
     IntVarArray bassTenorHarmonicIntervals;
     IntVarArray tenorAltoHarmonicIntervals;
     IntVarArray altoSopranoHarmonicIntervals;
+
+    // @todo maybe absolute value intervals?
+
+    // @todo maybe harmonic movement array?
 
     // global array for all the notes for all voices
     IntVarArray FullChordsVoicing; // [bass0, alto0, tenor0, soprano0, bass1, alto1, tenor1, soprano1, ...]

@@ -3,6 +3,9 @@
 
 #include <gecode/int.hh>
 
+#include "Utilities.hpp"
+#include "Tonality.hpp"
+
 #include <iostream>
 #include <vector>
 #include <string>
