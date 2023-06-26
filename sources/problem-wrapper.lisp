@@ -20,12 +20,25 @@
 ;; Problem methods ;;
 ;;;;;;;;;;;;;;;;;;;;;
 
+(defun new-4-voice (chord-degrees chord-states)
+    (let (
+        (x (cffi::foreign-alloc :int :initial-contents chord-degrees))
+        (y (cffi::foreign-alloc :int :initial-contents chord-states))
+        )
+        (print x)
+        (print y)
+        (print chord-degrees)
+        (print chord-states)
+        (print (length chord-degrees))
+        (new-problem (length chord-degrees) x y)
+    )
+)
+
 (cffi::defcfun ("create_new_problem" new-problem) :pointer
     "Creates a new instance of the problem. Returns a void* cast of a Problem*."
     (size :int) ; an integer representing the size
-    (lower-bound-domain :int) ; an integer representing the lower bound of the domain
-    (upper-bound-domain :int) ; an integer representing the upper bound of the domain
-    ; TODO add here any additional arguments that your Problem constructor takes
+    (chord-degrees :pointer :int) ; a void* cast of a int* that are the chord degrees
+    (chord-states :pointer :int)  ; a void* cast of a int* that are the chord states
 )
 
 (cffi::defcfun ("get_size" get-size) :int
@@ -68,7 +81,7 @@
             (size (get-size sp))
             (ptr (return-solution sp))
         )
-        (loop for i from 0 below size
+        (loop for i from 0 below (* size 4)
             collect (cffi::mem-aref ptr :int i)
         )
     )

@@ -1,3 +1,6 @@
+#include "headers/Utilities.hpp"
+#include "headers/Tonality.hpp"
+#include "headers/MajorTonality.hpp"
 #include "headers/four_voice_texture.hpp"
 #include "headers/problem_wrapper.hpp"
 
@@ -9,8 +12,14 @@
  * @param upper_bound_domain an integer representing the upper bound of the domain of the variables
  * @return A pointer to a FourVoiceTexture object casted as a void*
  */
-void* create_new_problem(int size, int lower_bound_domain, int upper_bound_domain){
-    return (void*) new FourVoiceTexture(size, lower_bound_domain, upper_bound_domain);
+void* create_new_problem(int size, int* chord_degrees, int* chord_states){
+    Tonality* t = new MajorTonality(C);
+    vector<int> degrees(chord_degrees, chord_degrees+ sizeof(chord_degrees) / sizeof(chord_degrees[0]));
+    vector<int> states(chord_states, chord_states+ sizeof(chord_states) / sizeof(chord_states[0]));
+    string message = "Creating new problem with size = " + to_string(size) +  "and chord degrees = " +
+            int_vector_to_string(degrees) + "and chord states = " + int_vector_to_string(states);
+    writeToLogFile(message.c_str());
+    return (void*) new FourVoiceTexture(size, t,degrees, states);
 }
 
 /**

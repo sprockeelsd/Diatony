@@ -11,11 +11,11 @@ extern "C" {
  * Wraps the FourVoiceTexture constructor.
  * @todo modify this to include any parameters your FourVoiceTexture constructor requires
  * @param size an integer representing the size of the problem
- * @param lower_bound_domain an integer representing the lower bound of the domain of the variables
- * @param upper_bound_domain an integer representing the upper bound of the domain of the variables
+ * @param chord_degrees an integer array representing the chord degrees
+ * @param chord_positions an integer array representing the chord positions
  * @return A pointer to a FourVoiceTexture object casted as a void*
  */
-void* create_new_problem(int size, int lower_bound_domain, int upper_bound_domain);
+void* create_new_problem(int size, int* chord_degrees, int* chord_positions);
 
 /**
  * returns the size of the problem

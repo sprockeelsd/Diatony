@@ -63,8 +63,8 @@ int FourVoiceTexture::getSize(){
  * @return an array of integers representing the values of the variables in a solution
  */
 int* FourVoiceTexture::return_solution(){
-    int* solution = new int[size];
-    for(int i = 0; i < size; i++){
+    int* solution = new int[size*4];
+    for(int i = 0; i < 4*size; i++){
         solution[i] = FullChordsVoicing[i].val();
     }
     return solution;
