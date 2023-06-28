@@ -10,12 +10,11 @@
  */
 void* create_new_problem(int size, int* chord_degrees, int* chord_states){
     Tonality* t = new MajorTonality(C);
-    vector<int> degrees(chord_degrees, chord_degrees+ sizeof(chord_degrees) / sizeof(chord_degrees[0]));
-    vector<int> states(chord_states, chord_states+ sizeof(chord_states) / sizeof(chord_states[0]));
-    string message = "Creating new problem with size = " + to_string(size) +  "and chord degrees = " +
-            int_vector_to_string(degrees) + "and chord states = " + int_vector_to_string(states);
-    writeToLogFile(message.c_str());
-    return (void*) new FourVoiceTexture(size, t,degrees, states);
+    vector<int> degrees(int_pointer_to_vector(chord_degrees, size));
+    vector<int> states(int_pointer_to_vector(chord_states, size));
+    FourVoiceTexture* pb = new FourVoiceTexture(size, t, degrees, states);
+    writeToLogFile(pb->toString().c_str());
+    return (void*) pb;
 }
 
 /**

@@ -175,4 +175,6 @@ void printNoteInLetter(IntVar var);
  */
 void printNoteForOM(IntVar var);
 
+vector<int> int_pointer_to_vector(int* ptr, int size);
+
 #endif

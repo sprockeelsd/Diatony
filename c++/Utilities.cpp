@@ -92,3 +92,11 @@ void printNoteInLetter(IntVar var){
 void printNoteForOM(IntVar var){
     std::cout << var.val() * 100 << " ";
 }
+
+vector<int> int_pointer_to_vector(int* ptr, int size){
+    vector<int> v;
+    for(int i = 0; i < size; i++){
+        v.push_back(ptr[i]);
+    }
+    return v;
+}

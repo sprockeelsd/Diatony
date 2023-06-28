@@ -196,7 +196,7 @@
 		},
 		{
 			"backtrace" : 1,
-			"path" : "Constraints.hpp",
+			"path" : "headers/Constraints.hpp",
 			"sourceGroupIndex" : 0
 		},
 		{

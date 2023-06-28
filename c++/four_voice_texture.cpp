@@ -117,14 +117,19 @@ void FourVoiceTexture::print_solution(){
  */
 string FourVoiceTexture::toString(){
     string message = "FourVoiceTexture object. \n";
-//    message += "size = " + to_string(size) + "\n" + "lower bound for the domain : ";
-//    for(int i = 0; i < size; i++){
-//        if (vars[i].assigned())
-//            message += to_string(vars[i].val()) + " ";
-//        else
-//            message += "<not assigned> ";
-//    }
-//    message += "]\n\n";
+    message += "size = " + to_string(size) + "\n.";
+    message += "chord degrees = " + int_vector_to_string(chordDegrees) + "\n";
+    message += "chord states = " + int_vector_to_string(chordStates) + "\n";
+    message += "FullChordsVoicing = {";
+    for(int i = 0; i < 4*size; i++){
+        if(FullChordsVoicing[i].assigned())
+            message += to_string(FullChordsVoicing[i].val());
+        else
+            message += "<not assigned>";
+        if(i != 4*size - 1)
+            message += ", ";
+    }
+    message += "}\n\n";
     return message;
 }
 

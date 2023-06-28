@@ -13,6 +13,7 @@ int main(int argc, char* argv[]) {
     // create a new problem
     FourVoiceTexture* p = new FourVoiceTexture(size, tonality, {subdominant,dominant,tonic},
                                                {fundamental_state,fundamental_state,fundamental_state});
+    std::cout << p->toString() << std::endl;
 
 
     // create a new search engine
@@ -29,7 +30,7 @@ int main(int argc, char* argv[]) {
         if (nb_sol >= 10)
             break;
     }
-    cout << "No (more) solutions.\n" << endl;
+    cout << "No (more) solutions or solution cap reached.\n" << endl;
     return 0;
 }
 
