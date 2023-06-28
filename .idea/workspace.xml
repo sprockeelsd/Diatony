@@ -21,18 +21,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="78063669-9d41-4950-9026-704cff767980" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/c++/Utilities.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/Utilities.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c++/cmake-build-debug/.cmake/api/v1/reply/codemodel-v2-2ab1b66693e38350e964.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c++/cmake-build-debug/.cmake/api/v1/reply/index-2023-06-26T13-06-39-0128.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c++/cmake-build-debug/.cmake/api/v1/reply/target-damien-Debug-08de7f1856030265fc3c.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c++/cmake-build-debug/Testing/Temporary/LastTest.log" beforeDir="false" afterPath="$PROJECT_DIR$/c++/cmake-build-debug/Testing/Temporary/LastTest.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c++/four_voice_texture.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/four_voice_texture.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/c++/headers/Utilities.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/headers/Utilities.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c++/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c++/problem_wrapper.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/problem_wrapper.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/reference-pages/ind-alpha.html" beforeDir="false" afterPath="$PROJECT_DIR$/reference-pages/ind-alpha.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/reference-pages/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/reference-pages/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -110,7 +100,7 @@
       <workItem from="1687768458304" duration="978000" />
       <workItem from="1687769536787" duration="9981000" />
       <workItem from="1687850880603" duration="1502000" />
-      <workItem from="1687939478753" duration="3536000" />
+      <workItem from="1687939478753" duration="3833000" />
     </task>
     <servers />
   </component>

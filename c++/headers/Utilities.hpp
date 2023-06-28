@@ -164,6 +164,14 @@ IntSet getAllGivenNote(int note);
 string int_vector_to_string(vector<int> vector);
 
 /**
+ * Transforms an int* into a vector<int>
+ * @param ptr an int* pointer
+ * @param size the size of the array
+ * @return
+ */
+vector<int> int_pointer_to_vector(int* ptr, int size);
+
+/**
  * Prints A note with its name (e.g. 60 = C)
  * @param var an integer variable
  */
@@ -174,7 +182,5 @@ void printNoteInLetter(IntVar var);
  * @param var an integer variable
  */
 void printNoteForOM(IntVar var);
-
-vector<int> int_pointer_to_vector(int* ptr, int size);
 
 #endif
