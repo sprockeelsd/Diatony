@@ -86,3 +86,14 @@
         )
     )
 )
+
+; turns a list into a list of 4 element lists to make chords.
+; for example: (1 2 3 4 5 6 7 8) -> ((1 2 3 4) (5 6 7 8))
+(defun solution-to-chord-list (raw-solution)
+    (print raw-solution)
+    (if (<= (length raw-solution) 4)
+        (list raw-solution)
+        (cons (subseq raw-solution 0 4) (solution-to-chord-list (subseq raw-solution 4)))
+    )
+
+)
