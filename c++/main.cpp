@@ -11,7 +11,7 @@ int main(int argc, char* argv[]) {
     Tonality* tonality = new MajorTonality(C);
 
     // create a new problem
-    FourVoiceTexture* p = new FourVoiceTexture(size, tonality, {subdominant,dominant,tonic},
+    FourVoiceTexture* p = new FourVoiceTexture(size, tonality, {fourthDegree,fifthDegree,firstDegree},
                                                {fundamental_state,fundamental_state,fundamental_state});
     std::cout << p->toString() << std::endl;
 

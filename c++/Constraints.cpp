@@ -103,7 +103,7 @@ void setToChord(Home home, Tonality* tonality, int degree, IntVarArgs currentCho
  * @param currentChord the array containing a chord in the form [bass, alto, tenor, soprano]
  */
 void setBass(Home home, Tonality *tonality, int degree, int state, IntVarArgs currentChord){
-    dom(home, currentChord[0], tonality->get_scale_degree((degree + 2*state) % 8));
+    dom(home, currentChord[0], tonality->get_scale_degree((degree + 2*state) % 7));
 }
 
 /** ---------------------------------------------Fundamental state chords--------------------------------------------- */
@@ -118,9 +118,8 @@ void setBass(Home home, Tonality *tonality, int degree, int state, IntVarArgs cu
  */
 void chordNoteOccurrenceFundamentalState(Home home, Tonality *tonality, int degree, IntVarArgs currentChord){
     count(home, currentChord, tonality->get_scale_degree(degree), IRT_EQ,2); // double the bass which is also the tonic
-    //count(home, currentChord, tonality->get_scale_degree((degree + 2) % 8), IRT_EQ,1); // the third should be present once
-    std::cout << "fifth : " << (degree + 4) % 8 << std::endl;
-    count(home, currentChord, tonality->get_degree_note((degree + 4) % 8), IRT_EQ, 1); // the fifth should be present once
+    count(home, currentChord, tonality->get_scale_degree((degree + 2) % 7), IRT_EQ,1); // the third should be present once
+    count(home, currentChord, tonality->get_scale_degree((degree + 4) % 7), IRT_EQ, 1); // the fifth should be present once
 }
 
 /***********************************************************************************************************************

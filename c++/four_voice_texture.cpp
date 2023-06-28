@@ -48,7 +48,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
 
         if(chordStas[i] == fundamental_state){
             // @todo change this to take into account c/i chords (see cst def)
-            //chordN@oteOccurrenceFundamentalState(*this, tonality, chordDegrees[i], currentChord);
+            chordNoteOccurrenceFundamentalState(*this, tonality, chordDegrees[i], currentChord);
         }
         else if(chordStas[i] == first_inversion){
 
