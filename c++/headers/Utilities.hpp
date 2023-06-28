@@ -48,13 +48,16 @@ const int B = 23;
 const int Cflat = 23;
 
 /** scale degrees */ // @todo rename this into 1st to 7th degree, will be easier
-const int tonic = 1;
-const int supertonic = 2;
-const int mediant = 3;
-const int subdominant = 4;
-const int dominant = 5;
-const int submediant = 6;
-const int leadingTone = 7;
+
+enum{
+    firstDegree,
+    secondDegree,
+    thirdDegree,
+    fourthDegree,
+    fifthDegree,
+    sixthDegree,
+    seventhDegree
+};
 
 /** Intervals */
 // "classic" intervals

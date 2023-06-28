@@ -94,8 +94,33 @@ void setToChord(Home home, Tonality* tonality, int degree, IntVarArgs currentCho
     dom(home, currentChord, tonality->get_scale_degree_chord(degree));
 }
 
+/**
+ * Set the bass of the chord to be the given note
+ * @param home the instance of the problem
+ * @param tonality the tonality of the piece
+ * @param degree the degree of the chord
+ * @param state the state of the chord
+ * @param currentChord the array containing a chord in the form [bass, alto, tenor, soprano]
+ */
 void setBass(Home home, Tonality *tonality, int degree, int state, IntVarArgs currentChord){
-    dom(home, currentChord[0], tonality->get_scale_degree(degree + 2*state % 8));
+    dom(home, currentChord[0], tonality->get_scale_degree((degree + 2*state) % 8));
+}
+
+/** ---------------------------------------------Fundamental state chords--------------------------------------------- */
+
+/**
+ * @todo change this for complete and incomplete chords later (third must be <=1 depending on the chord before and after if they are 5->1 and complete/incomplete)
+ * Sets the number of times each note of the notes of the chord are present in the chord
+ * @param home the instance of the problem
+ * @param tonality the tonality of the piece
+ * @param degree the degree of the chord
+ * @param currentChord the array containing a chord in the form [bass, alto, tenor, soprano]
+ */
+void chordNoteOccurrenceFundamentalState(Home home, Tonality *tonality, int degree, IntVarArgs currentChord){
+    count(home, currentChord, tonality->get_scale_degree(degree), IRT_EQ,2); // double the bass which is also the tonic
+    //count(home, currentChord, tonality->get_scale_degree((degree + 2) % 8), IRT_EQ,1); // the third should be present once
+    std::cout << "fifth : " << (degree + 4) % 8 << std::endl;
+    count(home, currentChord, tonality->get_degree_note((degree + 4) % 8), IRT_EQ, 1); // the fifth should be present once
 }
 
 /***********************************************************************************************************************

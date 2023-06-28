@@ -45,7 +45,17 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
 
         setToChord(*this, tonality, chordDegrees[i], currentChord);
         setBass(*this, tonality, chordDegrees[i], chordStates[i], currentChord);
-        // @todo check why OM doesn't find solutions (probably a MIDIcent problem?)
+
+        if(chordStas[i] == fundamental_state){
+            // @todo change this to take into account c/i chords (see cst def)
+            //chordN@oteOccurrenceFundamentalState(*this, tonality, chordDegrees[i], currentChord);
+        }
+        else if(chordStas[i] == first_inversion){
+
+        }
+        else if(chordStas[i] == second_inversion){
+
+        }
     }
 
     //branching

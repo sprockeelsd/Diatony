@@ -21,8 +21,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="78063669-9d41-4950-9026-704cff767980" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/c++/Utilities.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/Utilities.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c++/Constraints.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/Constraints.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c++/MajorTonality.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/MajorTonality.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c++/Tonality.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/Tonality.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c++/four_voice_texture.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/four_voice_texture.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c++/headers/Constraints.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/headers/Constraints.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c++/headers/Tonality.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/headers/Tonality.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/c++/headers/Utilities.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/headers/Utilities.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c++/testTonality" beforeDir="false" afterPath="$PROJECT_DIR$/c++/testTonality" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c++/testTonality.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/testTonality.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sources/problem-wrapper.lisp" beforeDir="false" afterPath="$PROJECT_DIR$/sources/problem-wrapper.lisp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -100,7 +109,7 @@
       <workItem from="1687768458304" duration="978000" />
       <workItem from="1687769536787" duration="9981000" />
       <workItem from="1687850880603" duration="1502000" />
-      <workItem from="1687939478753" duration="3833000" />
+      <workItem from="1687939478753" duration="9763000" />
     </task>
     <servers />
   </component>

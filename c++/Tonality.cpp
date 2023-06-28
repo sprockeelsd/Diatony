@@ -17,7 +17,7 @@ Tonality::Tonality(int t, vector<int> m) {
     // Set the list of degrees which are the notes of the scale
     int curr = tonic;
     for(int i = 0; i < mode.size(); ++i){
-        degrees_notes[i+1] = curr;
+        degrees_notes[i] = curr;
         curr += mode[i];
     }
 
@@ -26,12 +26,12 @@ Tonality::Tonality(int t, vector<int> m) {
 
     // Create the dictionary of degrees and all occurrences of that notes
     for (int i = 0; i < degrees_notes.size(); ++i) {
-        scale_degrees[i+1] = getAllGivenNote(degrees_notes[i+1]);
+        scale_degrees[i] = getAllGivenNote(degrees_notes[i]);
     }
 
     // Set tonal notes and modal notes
     tonal_notes = getAllNotesFromIntervalLoop(tonic, {perfectFourth, majorSecond,perfectFourth}); // 1, 4 and 5 degrees
-    modal_notes = getAllNotesFromIntervalLoop(get_degrees_notes()[3], {perfectFourth, majorSecond, perfectFourth}); // 3, 6 and 7 degrees
+    modal_notes = getAllNotesFromIntervalLoop(get_degrees_notes()[thirdDegree], {perfectFourth, majorSecond, perfectFourth}); // 3, 6 and 7 degrees
 
     // chord qualities and scale degrees chords are set in the child classes
 }
@@ -54,7 +54,7 @@ vector<int> Tonality::get_mode() {
 
 /**
  * Get the notes corresponding to the degrees of the scale (first elem = tonic, second_elem = second degree, etc.)
- * @return a vector containing the notes for each of the scale degrees
+ * @return a map containing the notes for each of the scale degrees
  */
 map<int,int> Tonality::get_degrees_notes() {
     return degrees_notes;
@@ -62,7 +62,7 @@ map<int,int> Tonality::get_degrees_notes() {
 
 /**
  * Get the note for a given degree
- * @param degree the degree of the scale [1,7]
+ * @param degree the degree of the scale [0,6]
  * @return the note for the given degree
  */
 int Tonality::get_degree_note(int degree){
@@ -71,7 +71,7 @@ int Tonality::get_degree_note(int degree){
 
 /**
  * Get all the notes for each scale degree
- * @return a map of [degree, all_notes] for each degree of the scale (1 to 7)
+ * @return a map of [degree, all_notes] for each degree of the scale (0 to 6)
  */
 map<int, IntSet> Tonality::get_scale_degrees() {
     return scale_degrees;
@@ -79,7 +79,7 @@ map<int, IntSet> Tonality::get_scale_degrees() {
 
 /**
  * Get all the notes for a given scale degree
- * @param degree a degree of the scale [1,7]
+ * @param degree a degree of the scale [0,6]
  * @return an IntSet containing all the notes for the given scale degree
  */
 IntSet Tonality::get_scale_degree(int degree) {

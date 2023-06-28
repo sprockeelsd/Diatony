@@ -79,14 +79,24 @@ void restrain_voices_domains(Home home, int n, IntVarArray FullChordsVoicing);
 void setToChord(Home home, Tonality* tonality, int degree, IntVarArgs currentChord);
 
 /**
- *
- * @param home
- * @param tonality
- * @param degree
- * @param state
- * @param currentChord
+ * Set the bass of the chord to be the given note
+ * @param home the instance of the problem
+ * @param tonality the tonality of the piece
+ * @param degree the degree of the chord
+ * @param state the state of the chord
+ * @param currentChord the array containing a chord in the form [bass, alto, tenor, soprano]
  */
 void setBass(Home home, Tonality *tonality, int degree, int state, IntVarArgs currentChord);
+
+/**
+ * @todo change this for complete and incomplete chords later (third must be <=1 depending on the chord before and after if they are 5->1 and complete/incomplete)
+ * Sets the number of times each note of the notes of the chord are present in the chord
+ * @param home the instance of the problem
+ * @param tonality the tonality of the piece
+ * @param degree the degree of the chord
+ * @param currentChord the array containing a chord in the form [bass, alto, tenor, soprano]
+ */
+void chordNoteOccurrenceFundamentalState(Home home, Tonality *tonality, int degree, IntVarArgs currentChord);
 
 
 /***********************************************************************************************************************
