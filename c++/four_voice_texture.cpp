@@ -26,6 +26,8 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     sopranoMelodicIntervals = IntVarArray(*this, size-1, -perfectOctave, perfectOctave);
 
     // variable arrays for harmonic intervals between adjacent voices
+    // @todo check why it allows intervals bigger than an octave (probably because we don't branch on these and the domains aren't constraints)
+    // @todo make it prefer chords with 4 different notes to avoid duplicates
     bassTenorHarmonicIntervals = IntVarArray(*this, size, 0, perfectOctave + perfectFifth);
     tenorAltoHarmonicIntervals = IntVarArray(*this, size, 0, perfectOctave);
     altoSopranoHarmonicIntervals = IntVarArray(*this, size, 0, perfectOctave);
@@ -38,6 +40,14 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
 
     // restrain the domain of the voices to their range + state that bass <= tenor <= alto <= soprano
     restrain_voices_domains(*this, size, FullChordsVoicing);
+
+    /**-------------------------------------------- generic constraints -----------------------------------------------*/
+
+    for(int i = 0; i < size-1; i++){
+        forbid_parallel_intervals(*this, perfectFifth, i, 0,
+                                  bassMelodicIntervals, tenorMelodicIntervals,
+                                  bassTenorHarmonicIntervals, FullChordsVoicing);
+    }
 
     /**------------------------------------------chord related constraints --------------------------------------------*/
     for(int i = 0; i < size; i++){
@@ -58,7 +68,19 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
         }
     }
 
-    //branching
+    /**--------------------------------------------melodic constraints ------------------------------------------------*/
+    for(int i = 0; i < size-1; i++){
+
+    }
+
+    /**------------------------------------------------branching-------------------------------------------------------*/
+    branch(*this, bassTenorHarmonicIntervals, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
+    branch(*this, tenorAltoHarmonicIntervals, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
+    branch(*this, altoSopranoHarmonicIntervals, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
+    branch(*this, bassMelodicIntervals, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
+    branch(*this, tenorMelodicIntervals, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
+    branch(*this, altoMelodicIntervals, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
+    branch(*this, sopranoMelodicIntervals, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
     branch(*this, FullChordsVoicing, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
 }
 

@@ -77,6 +77,42 @@ void restrain_voices_domains(Home home, int n, IntVarArray FullChordsVoicing){
     }
 }
 
+// @ todo change to argument variables later
+void forbid_parallel_intervals(Home home, int forbiddenParallelInterval, int currentPosition, int lowerVoiceID,
+                               IntVarArray lowerVoiceMelodicIntervals, IntVarArray upperVoiceMelodicIntervals,
+                               IntVarArray voicesHarmonicIntervals, IntVarArray FullChordsVoicing){
+    //bassTenorIntervalForbidden is true if the interval is forbiddenParallelInterval
+    BoolVar harmonicIntervalForbidden(home, 0, 1);
+    rel(home, harmonicIntervalForbidden, IRT_EQ, expr(home, voicesHarmonicIntervals[currentPosition] %
+                                                             perfectOctave == forbiddenParallelInterval));
+
+    // is true if lower voice is the same note in both chords
+    BoolVar notesLowerVoiceEqual(home, 0, 1);
+    rel(home, notesLowerVoiceEqual, IRT_EQ, expr(home, FullChordsVoicing[currentPosition * 4 + lowerVoiceID]
+                                                        == FullChordsVoicing[(currentPosition + 1) *4 + lowerVoiceID]));
+
+    // is true if upper voice is the same note in both chords
+    BoolVar notesUpperVoiceEqual(home,0,1);
+    rel(home, notesUpperVoiceEqual, IRT_EQ, expr(home, FullChordsVoicing[currentPosition * 4 + lowerVoiceID + 1]
+                                                    == FullChordsVoicing[(currentPosition + 1) *4 + lowerVoiceID + 1]));
+
+    // is true if both voices are the same in both chords
+    BoolVar bothVoicesEqual(home, 0, 1); // @todo causes problems here
+    rel(home, notesLowerVoiceEqual, BOT_AND, notesUpperVoiceEqual, bothVoicesEqual);
+
+    // is true if the harmonic interval between the voices is not forbidden
+    BoolVar nextIntervalNotParallel(home, 0,1);
+    rel(home, nextIntervalNotParallel, IRT_EQ, expr(home, voicesHarmonicIntervals[currentPosition+1] %
+                                                                perfectOctave != forbiddenParallelInterval));
+
+    BoolVar isNextIntervalValid(home,0,1);
+    rel(home, bothVoicesEqual, BOT_OR, nextIntervalNotParallel, isNextIntervalValid); // ok
+
+    rel(home, harmonicIntervalForbidden, BOT_IMP, isNextIntervalValid, true);
+
+}
+
+
 /***********************************************************************************************************************
  *                                                                                                                     *
  *                                               Chord-related constraints                                             *
@@ -110,6 +146,7 @@ void setBass(Home home, Tonality *tonality, int degree, int state, IntVarArgs cu
 
 /**
  * @todo change this for complete and incomplete chords later (third must be <=1 depending on the chord before and after if they are 5->1 and complete/incomplete)
+ * @todo maybe make it a preference later
  * Sets the number of times each note of the notes of the chord are present in the chord
  * @param home the instance of the problem
  * @param tonality the tonality of the piece

@@ -62,6 +62,9 @@ void restrain_voices_domains(Home home, int n, IntVarArray FullChordsVoicing);
  *                                                                                                                     *
  ***********************************************************************************************************************/
 
+void forbid_parallel_intervals(Home home, int forbiddenParallelInterval, int currentPosition, int lowerVoiceID,
+                               IntVarArray lowerVoiceMelodicIntervals, IntVarArray upperVoiceMelodicIntervals,
+                               IntVarArray voicesHarmonicIntervals, IntVarArray FullChordsVoicing);
 
 /***********************************************************************************************************************
  *                                                                                                                     *
