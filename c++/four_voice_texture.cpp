@@ -1,3 +1,5 @@
+#include <utility>
+
 #include "headers/four_voice_texture.hpp"
 
 /***********************************************************************************************************************
@@ -14,12 +16,13 @@
 FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, vector<int> chordStas){
     size = s;
     tonality = t;
-    chordDegrees = chordDegs;
+    chordDegrees = std::move(chordDegs);
     chordStates = chordStas;
 
     /** variable initialization */
     FullChordsVoicing = IntVarArray(*this, 4*size, tonality->get_tonality_notes());
 
+    // variable arrays for melodic intervals for each voice
     bassMelodicIntervals = IntVarArray(*this, size-1, -perfectOctave, perfectOctave);
     tenorMelodicIntervals = IntVarArray(*this, size-1, -perfectOctave, perfectOctave);
     altoMelodicIntervals = IntVarArray(*this, size-1, -perfectOctave, perfectOctave);
@@ -33,8 +36,10 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     /** constraints */
 
     // link the arrays together
-    link_melodic_arrays(*this, size, FullChordsVoicing, bassMelodicIntervals, tenorMelodicIntervals, altoMelodicIntervals, sopranoMelodicIntervals);
-    link_harmonic_arrays(*this, size, FullChordsVoicing, bassTenorHarmonicIntervals, tenorAltoHarmonicIntervals, altoSopranoHarmonicIntervals);
+    link_melodic_arrays(*this, size, FullChordsVoicing, bassMelodicIntervals, tenorMelodicIntervals,
+                        altoMelodicIntervals, sopranoMelodicIntervals);
+    link_harmonic_arrays(*this, size, FullChordsVoicing, bassTenorHarmonicIntervals,
+                         tenorAltoHarmonicIntervals, altoSopranoHarmonicIntervals);
 
     // restrain the domain of the voices to their range + state that bass <= tenor <= alto <= soprano
     restrain_voices_domains(*this, size, FullChordsVoicing);
@@ -43,36 +48,27 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
 
     for(int i = 0; i < size-1; i++){
         // fifths
-        forbid_parallel_intervals(*this, perfectFifth, i, 0,
-                                  bassMelodicIntervals, tenorMelodicIntervals,
+        forbid_parallel_intervals(*this, perfectFifth, i, bass,
                                   bassTenorHarmonicIntervals, FullChordsVoicing); // between bass and tenor
-        forbid_parallel_intervals(*this, perfectFifth, i, 0,
-                                  tenorMelodicIntervals, altoMelodicIntervals,
+        forbid_parallel_intervals(*this, perfectFifth, i, tenor,
                                   tenorAltoHarmonicIntervals, FullChordsVoicing); // between tenor and alto
-        forbid_parallel_intervals(*this, perfectFifth, i, 0,
-                                  altoMelodicIntervals, sopranoMelodicIntervals,
+        forbid_parallel_intervals(*this, perfectFifth, i, alto,
                                   altoSopranoHarmonicIntervals, FullChordsVoicing); // between alto and soprano
 
         //octaves
-        forbid_parallel_intervals(*this, perfectOctave, i, 0,
-                                  bassMelodicIntervals, tenorMelodicIntervals,
+        forbid_parallel_intervals(*this, perfectOctave, i, bass,
                                   bassTenorHarmonicIntervals, FullChordsVoicing); // between bass and tenor
-        forbid_parallel_intervals(*this, perfectOctave, i, 0,
-                                  tenorMelodicIntervals, altoMelodicIntervals,
+        forbid_parallel_intervals(*this, perfectOctave, i, tenor,
                                   tenorAltoHarmonicIntervals, FullChordsVoicing); // between tenor and alto
-        forbid_parallel_intervals(*this, perfectOctave, i, 0,
-                                  altoMelodicIntervals, sopranoMelodicIntervals,
+        forbid_parallel_intervals(*this, perfectOctave, i, alto,
                                   altoSopranoHarmonicIntervals, FullChordsVoicing); // between alto and soprano
 
         //unissons
-        forbid_parallel_intervals(*this, unisson, i, 0,
-                                  bassMelodicIntervals, tenorMelodicIntervals,
+        forbid_parallel_intervals(*this, unisson, i, bass,
                                   bassTenorHarmonicIntervals, FullChordsVoicing); // between bass and tenor
-        forbid_parallel_intervals(*this, unisson, i, 0,
-                                  tenorMelodicIntervals, altoMelodicIntervals,
+        forbid_parallel_intervals(*this, unisson, i, tenor,
                                   tenorAltoHarmonicIntervals, FullChordsVoicing); // between tenor and alto
-        forbid_parallel_intervals(*this, unisson, i, 0,
-                                  altoMelodicIntervals, sopranoMelodicIntervals,
+        forbid_parallel_intervals(*this, unisson, i, alto,
                                   altoSopranoHarmonicIntervals, FullChordsVoicing); // between alto and soprano
     }
 
@@ -87,17 +83,23 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
             // @todo change this to take into account c/i chords (see cst def)
             chordNoteOccurrenceFundamentalState(*this, tonality, chordDegrees[i], currentChord);
         }
-        else if(chordStas[i] == first_inversion){
-
-        }
-        else if(chordStas[i] == second_inversion){
+        else{ // first or second inversion
 
         }
     }
 
     /**--------------------------------------------melodic constraints ------------------------------------------------*/
     for(int i = 0; i < size-1; i++){
+        if (chordStas[i] == fundamental_state){
+            if (chordStas[i+1] == fundamental_state){
+                fundamentalStateChordToFundamentalStateChord(*this, i, chordDegrees,
+                                                             bassMelodicIntervals[i],
+                                                             tenorMelodicIntervals[i],
+                                                              altoMelodicIntervals[i],
+                                                              sopranoMelodicIntervals[i]);
+            }
 
+        }
     }
 
     /**------------------------------------------------branching-------------------------------------------------------*/
@@ -132,7 +134,7 @@ FourVoiceTexture::FourVoiceTexture(FourVoiceTexture& s): Space(s){
  * Returns the size of the problem
  * @return an integer representing the size of the vars array
  */
-int FourVoiceTexture::getSize(){
+int FourVoiceTexture::getSize() const{
     return size;
 }
 
@@ -152,16 +154,31 @@ int* FourVoiceTexture::return_solution(){
  * Copy method
  * @return a copy of the current instance of the FourVoiceTexture class. Calls the copy constructor
  */
-Space* FourVoiceTexture::copy(void) {
+Space* FourVoiceTexture::copy() {
     return new FourVoiceTexture(*this);
 }
 
 /**
  * Constrain method for bab search
+ * Ensures that exactly 2*b.size notes are identical to the ones in the previous solution
  * @param _b a solution to the problem from which we wish to add a constraint for the next solutions
  */
 void FourVoiceTexture::constrain(const Space& _b) {
-    const FourVoiceTexture &b = static_cast<const FourVoiceTexture &>(_b);
+    const auto &b = dynamic_cast<const FourVoiceTexture &>(_b);
+
+    IntVar nOfIdenticalNotes(*this, 0, 4*b.size);
+
+    vector<int> prevSol;
+    prevSol.reserve(4*b.size); // preallocate memory
+
+    for(int i = 0; i < 4*b.size; i++){
+        prevSol.push_back(b.FullChordsVoicing[i].val());
+    }
+
+    IntArgs previousSolution(prevSol); // cast vector to IntArgs
+
+    count(*this, FullChordsVoicing, previousSolution, IRT_EQ, nOfIdenticalNotes);
+    rel(*this, nOfIdenticalNotes, IRT_LE, 2*b.size);
 }
 
 /**
@@ -298,7 +315,7 @@ Search::Base<FourVoiceTexture>* make_solver(FourVoiceTexture* pb, int type){
 FourVoiceTexture* get_next_solution_space(Search::Base<FourVoiceTexture>* solver){
     FourVoiceTexture* sol_space = solver->next();
     if (sol_space == nullptr) // handle the case of no solution or time out, necessary when sending the data to OM
-        return NULL;
+        return nullptr;
     return sol_space;
 }
 

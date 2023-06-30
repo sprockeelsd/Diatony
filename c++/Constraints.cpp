@@ -16,7 +16,7 @@
  * @param altoMelodicIntervals the melodic intervals of the alto
  * @param sopranoMelodicIntervals the melodic intervals of the soprano
  */
-void link_melodic_arrays(Home home, int n, IntVarArray FullChordsVoicing, IntVarArray bassMelodicIntervals,
+void link_melodic_arrays(const Home& home, int n, IntVarArray FullChordsVoicing, IntVarArray bassMelodicIntervals,
                          IntVarArray tenorMelodicIntervals, IntVarArray altoMelodicIntervals,
                          IntVarArray sopranoMelodicIntervals){
     for (int i = 0; i < n - 1; ++i)
@@ -37,7 +37,7 @@ void link_melodic_arrays(Home home, int n, IntVarArray FullChordsVoicing, IntVar
  * @param tenorAltoHarmonicIntervals the harmonic intervals between tenor and alto
  * @param altoSopranoHarmonicIntervals the harmonic intervals between alto and soprano
  */
-void link_harmonic_arrays(Home home, int n, IntVarArray FullChordsVoicing, IntVarArray bassTenorHarmonicIntervals,
+void link_harmonic_arrays(const Home& home, int n, IntVarArray FullChordsVoicing, IntVarArray bassTenorHarmonicIntervals,
                           IntVarArray tenorAltoHarmonicIntervals, IntVarArray altoSopranoHarmonicIntervals){
     for(int i = 0; i < n; ++i){
         rel(home, bassTenorHarmonicIntervals[i] == FullChordsVoicing[(4 * i) + 1] - FullChordsVoicing[4 * i]);
@@ -56,7 +56,7 @@ void link_harmonic_arrays(Home home, int n, IntVarArray FullChordsVoicing, IntVa
  * @param n the number of chords
  * @param FullChordsVoicing the array containing all the chords in the form [bass0, alto0, tenor0, soprano0, bass1, alto1, tenor1, soprano1, ...]
  */
-void restrain_voices_domains(Home home, int n, IntVarArray FullChordsVoicing){
+void restrain_voices_domains(const Home& home, int n, IntVarArray FullChordsVoicing){
     for (int i = 0; i < n; ++i)
     {
         IntVarArgs currentChord(FullChordsVoicing.slice(4 * i, 1, 4));
@@ -77,9 +77,17 @@ void restrain_voices_domains(Home home, int n, IntVarArray FullChordsVoicing){
     }
 }
 
-// @ todo change to argument variables later
+/**
+ * Forbids parallel intervals between two chords in the same voices
+ * @todo change to argument variables later + maybe make it cleaner
+ * @param home the instance of the problem
+ * @param forbiddenParallelInterval the interval to forbid
+ * @param currentPosition the current chord position
+ * @param lowerVoiceID the ID of the lower voice (0 -> bass, 1 -> tenor, 2 -> alto, 3 -> soprano)
+ * @param voicesHarmonicIntervals The variable array containing the harmonic intervals between the two voices
+ * @param FullChordsVoicing the variable array containing all the chords in the form [bass0, alto0, tenor0, soprano0, bass1, alto1, tenor1, soprano1, ...]
+ */
 void forbid_parallel_intervals(Home home, int forbiddenParallelInterval, int currentPosition, int lowerVoiceID,
-                               IntVarArray lowerVoiceMelodicIntervals, IntVarArray upperVoiceMelodicIntervals,
                                IntVarArray voicesHarmonicIntervals, IntVarArray FullChordsVoicing){
     //bassTenorIntervalForbidden is true if the interval is forbiddenParallelInterval
     BoolVar harmonicIntervalForbidden(home, 0, 1);
@@ -126,7 +134,7 @@ void forbid_parallel_intervals(Home home, int forbiddenParallelInterval, int cur
  * @param degree the degree of the chord
  * @param currentChord the array containing a chord in the form [bass, alto, tenor, soprano]
  */
-void setToChord(Home home, Tonality* tonality, int degree, IntVarArgs currentChord){
+void setToChord(const Home& home, Tonality* tonality, int degree, const IntVarArgs& currentChord){
     dom(home, currentChord, tonality->get_scale_degree_chord(degree));
 }
 
@@ -138,7 +146,7 @@ void setToChord(Home home, Tonality* tonality, int degree, IntVarArgs currentCho
  * @param state the state of the chord
  * @param currentChord the array containing a chord in the form [bass, alto, tenor, soprano]
  */
-void setBass(Home home, Tonality *tonality, int degree, int state, IntVarArgs currentChord){
+void setBass(const Home& home, Tonality *tonality, int degree, int state, IntVarArgs currentChord){
     dom(home, currentChord[0], tonality->get_scale_degree((degree + 2*state) % 7));
 }
 
@@ -153,7 +161,7 @@ void setBass(Home home, Tonality *tonality, int degree, int state, IntVarArgs cu
  * @param degree the degree of the chord
  * @param currentChord the array containing a chord in the form [bass, alto, tenor, soprano]
  */
-void chordNoteOccurrenceFundamentalState(Home home, Tonality *tonality, int degree, IntVarArgs currentChord){
+void chordNoteOccurrenceFundamentalState(const Home& home, Tonality *tonality, int degree, const IntVarArgs& currentChord){
     count(home, currentChord, tonality->get_scale_degree(degree), IRT_EQ,2); // double the bass which is also the tonic
     count(home, currentChord, tonality->get_scale_degree((degree + 2) % 7), IRT_EQ,1); // the third should be present once
     count(home, currentChord, tonality->get_scale_degree((degree + 4) % 7), IRT_EQ, 1); // the fifth should be present once
@@ -164,3 +172,31 @@ void chordNoteOccurrenceFundamentalState(Home home, Tonality *tonality, int degr
  *                                            Voice leading related constraints                                        *
  *                                                                                                                     *
  ***********************************************************************************************************************/
+
+/**
+ * Sets the rules for the melodic movements between chords in fundamental state
+ * For chords that are 1 degree apart, the other voices must move in contrary motion to the bass
+ * @param home the instance of the problem
+ * @param currentPosition the current position in the chord progression
+ * @param chordDegrees the array containing the degrees of the chords in the progression
+ * @param bassMelodicInterval The melodic interval of the bass between the current position and the next
+ * @param tenorMelodicInterval the melodic interval of the tenor between the current position and the next
+ * @param altoMelodicInterval the melodic interval of the alto between the current position and the next
+ * @param sopranoMelodicInterval the melodic interval of the soprano between the current position and the next
+ */
+void fundamentalStateChordToFundamentalStateChord(const Home& home, int currentPosition, vector<int> chordDegrees,
+                                                  const IntVar& bassMelodicInterval, const IntVar& tenorMelodicInterval,
+                                                  const IntVar& altoMelodicInterval, const IntVar& sopranoMelodicInterval){
+    int degreeDifference = abs(chordDegrees[currentPosition+1] - chordDegrees[currentPosition]);
+
+    if(degreeDifference == minorSecond || degreeDifference == majorSecond){
+        // other voices need to move by contrary motion to the bass
+        rel(home, expr(home, bassMelodicInterval > 0), BOT_EQV, expr(home, tenorMelodicInterval < 0), true);
+        rel(home, expr(home, bassMelodicInterval > 0), BOT_EQV, expr(home, altoMelodicInterval < 0), true);
+        rel(home, expr(home, bassMelodicInterval > 0), BOT_EQV, expr(home, sopranoMelodicInterval < 0), true);
+
+        rel(home, expr(home, bassMelodicInterval < 0), BOT_EQV, expr(home, tenorMelodicInterval > 0), true);
+        rel(home, expr(home, bassMelodicInterval < 0), BOT_EQV, expr(home, altoMelodicInterval > 0), true);
+        rel(home, expr(home, bassMelodicInterval < 0), BOT_EQV, expr(home, sopranoMelodicInterval > 0), true);
+    }
+}

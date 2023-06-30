@@ -76,7 +76,7 @@ public:
      * Returns the size of the problem
      * @return an integer representing the size of the vars array
      */
-    int getSize();
+    int getSize() const;
 
     /**
      * Returns the values taken by the variables vars in a solution

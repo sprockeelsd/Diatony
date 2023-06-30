@@ -17,7 +17,7 @@ int main(int argc, char* argv[]) {
 
 
     // create a new search engine
-    Search::Base<FourVoiceTexture>* e = make_solver(p, dfs_solver);
+    Search::Base<FourVoiceTexture>* e = make_solver(p, bab_solver);
     delete p;
 
     int nb_sol = 0;

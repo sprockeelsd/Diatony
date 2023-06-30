@@ -17,7 +17,7 @@ using namespace Gecode;
  ***********************************************************************************************************************/
 
 /** Types of search engines */
-enum {
+enum solver_types{
     dfs_solver, //0
     bab_solver, //1
 };
@@ -47,7 +47,14 @@ const int Bflat = 22;
 const int B = 23;
 const int Cflat = 23;
 
-enum{
+enum voices{
+    bass,
+    tenor,
+    alto,
+    soprano
+};
+
+enum degrees{
     firstDegree,
     secondDegree,
     thirdDegree,
@@ -59,7 +66,7 @@ enum{
 
 /** Intervals */
 // "classic" intervals
-enum{
+enum intervals{
     unisson,        //0
     minorSecond,    //1
     majorSecond,    //2
@@ -89,7 +96,7 @@ const vector<int> MAJOR_SEVENTH_CHORD = {majorThird, minorThird, majorThird, min
 const vector<int> MINOR_SEVENTH_CHORD = {minorThird, majorThird, minorThird, majorSecond};
 
 // Chord states
-enum{
+enum chordStates{
     fundamental_state,  //0
     first_inversion,    //1
     second_inversion,   //2
