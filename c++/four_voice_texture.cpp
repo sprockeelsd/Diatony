@@ -26,8 +26,6 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     sopranoMelodicIntervals = IntVarArray(*this, size-1, -perfectOctave, perfectOctave);
 
     // variable arrays for harmonic intervals between adjacent voices
-    // @todo check why it allows intervals bigger than an octave (probably because we don't branch on these and the domains aren't constraints)
-    // @todo make it prefer chords with 4 different notes to avoid duplicates
     bassTenorHarmonicIntervals = IntVarArray(*this, size, 0, perfectOctave + perfectFifth);
     tenorAltoHarmonicIntervals = IntVarArray(*this, size, 0, perfectOctave);
     altoSopranoHarmonicIntervals = IntVarArray(*this, size, 0, perfectOctave);
@@ -44,9 +42,38 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     /**-------------------------------------------- generic constraints -----------------------------------------------*/
 
     for(int i = 0; i < size-1; i++){
+        // fifths
         forbid_parallel_intervals(*this, perfectFifth, i, 0,
                                   bassMelodicIntervals, tenorMelodicIntervals,
-                                  bassTenorHarmonicIntervals, FullChordsVoicing);
+                                  bassTenorHarmonicIntervals, FullChordsVoicing); // between bass and tenor
+        forbid_parallel_intervals(*this, perfectFifth, i, 0,
+                                  tenorMelodicIntervals, altoMelodicIntervals,
+                                  tenorAltoHarmonicIntervals, FullChordsVoicing); // between tenor and alto
+        forbid_parallel_intervals(*this, perfectFifth, i, 0,
+                                  altoMelodicIntervals, sopranoMelodicIntervals,
+                                  altoSopranoHarmonicIntervals, FullChordsVoicing); // between alto and soprano
+
+        //octaves
+        forbid_parallel_intervals(*this, perfectOctave, i, 0,
+                                  bassMelodicIntervals, tenorMelodicIntervals,
+                                  bassTenorHarmonicIntervals, FullChordsVoicing); // between bass and tenor
+        forbid_parallel_intervals(*this, perfectOctave, i, 0,
+                                  tenorMelodicIntervals, altoMelodicIntervals,
+                                  tenorAltoHarmonicIntervals, FullChordsVoicing); // between tenor and alto
+        forbid_parallel_intervals(*this, perfectOctave, i, 0,
+                                  altoMelodicIntervals, sopranoMelodicIntervals,
+                                  altoSopranoHarmonicIntervals, FullChordsVoicing); // between alto and soprano
+
+        //unissons
+        forbid_parallel_intervals(*this, unisson, i, 0,
+                                  bassMelodicIntervals, tenorMelodicIntervals,
+                                  bassTenorHarmonicIntervals, FullChordsVoicing); // between bass and tenor
+        forbid_parallel_intervals(*this, unisson, i, 0,
+                                  tenorMelodicIntervals, altoMelodicIntervals,
+                                  tenorAltoHarmonicIntervals, FullChordsVoicing); // between tenor and alto
+        forbid_parallel_intervals(*this, unisson, i, 0,
+                                  altoMelodicIntervals, sopranoMelodicIntervals,
+                                  altoSopranoHarmonicIntervals, FullChordsVoicing); // between alto and soprano
     }
 
     /**------------------------------------------chord related constraints --------------------------------------------*/
@@ -74,13 +101,6 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     }
 
     /**------------------------------------------------branching-------------------------------------------------------*/
-    branch(*this, bassTenorHarmonicIntervals, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
-    branch(*this, tenorAltoHarmonicIntervals, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
-    branch(*this, altoSopranoHarmonicIntervals, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
-    branch(*this, bassMelodicIntervals, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
-    branch(*this, tenorMelodicIntervals, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
-    branch(*this, altoMelodicIntervals, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
-    branch(*this, sopranoMelodicIntervals, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
     branch(*this, FullChordsVoicing, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
 }
 
@@ -92,6 +112,19 @@ FourVoiceTexture::FourVoiceTexture(FourVoiceTexture& s): Space(s){
     //IntVars update
     size = s.size;
     tonality = s.tonality;
+
+    chordDegrees = s.chordDegrees;
+    chordStates = s.chordStates;
+
+    bassMelodicIntervals.update(*this, s.bassMelodicIntervals);
+    tenorMelodicIntervals.update(*this, s.tenorMelodicIntervals);
+    altoMelodicIntervals.update(*this, s.altoMelodicIntervals);
+    sopranoMelodicIntervals.update(*this, s.sopranoMelodicIntervals);
+
+    bassTenorHarmonicIntervals.update(*this, s.bassTenorHarmonicIntervals);
+    tenorAltoHarmonicIntervals.update(*this, s.tenorAltoHarmonicIntervals);
+    altoSopranoHarmonicIntervals.update(*this, s.altoSopranoHarmonicIntervals);
+
     FullChordsVoicing.update(*this, s.FullChordsVoicing);
 }
 
@@ -161,7 +194,79 @@ string FourVoiceTexture::toString(){
         if(i != 4*size - 1)
             message += ", ";
     }
-    message += "}\n\n";
+    message += "}\n";
+    message += "BassTenorHarmonicIntervals = {";
+    for(int i = 0; i < size; i++){
+        if(bassTenorHarmonicIntervals[i].assigned()){
+            message += to_string(bassTenorHarmonicIntervals[i].val());
+        }
+        else
+            message += "<not assigned>";
+        if(i != size - 1)
+            message += ", ";
+    }
+    message += "}\n";
+    message += "TenorAltoHarmonicIntervals = {";
+    for(int i = 0; i < size; i++){
+        if(tenorAltoHarmonicIntervals[i].assigned())
+            message += to_string(tenorAltoHarmonicIntervals[i].val());
+        else
+            message += "<not assigned>";
+        if(i != size - 1)
+            message += ", ";
+    }
+    message += "}\n";
+    message += "AltoSopranoHarmonicIntervals = {";
+    for(int i = 0; i < size; i++){
+        if(altoSopranoHarmonicIntervals[i].assigned())
+            message += to_string(altoSopranoHarmonicIntervals[i].val());
+        else
+            message += "<not assigned>";
+        if(i != size - 1)
+            message += ", ";
+    }
+    message += "}\n";
+    message += "BassMelodicIntervals = {";
+    for(int i = 0; i < size-1; i++){
+        if(bassMelodicIntervals[i].assigned())
+            message += to_string(bassMelodicIntervals[i].val());
+        else
+            message += "<not assigned>";
+        if(i != size - 2)
+            message += ", ";
+    }
+    message += "}\n";
+    message += "TenorMelodicIntervals = {";
+    for(int i = 0; i < size-1; i++){
+        if(tenorMelodicIntervals[i].assigned())
+            message += to_string(tenorMelodicIntervals[i].val());
+        else
+            message += "<not assigned>";
+        if(i != size - 2)
+            message += ", ";
+    }
+    message += "}\n";
+    message += "AltoMelodicIntervals = {";
+    for(int i = 0; i < size-1; i++){
+        if(altoMelodicIntervals[i].assigned())
+            message += to_string(altoMelodicIntervals[i].val());
+        else
+            message += "<not assigned>";
+        if(i != size - 2)
+            message += ", ";
+    }
+    message += "}\n";
+    message += "SopranoMelodicIntervals = {";
+    for(int i = 0; i < size-1; i++){
+        if(sopranoMelodicIntervals[i].assigned())
+            message += to_string(sopranoMelodicIntervals[i].val());
+        else
+            message += "<not assigned>";
+        if(i != size - 2)
+            message += ", ";
+    }
+    message += "}\n";
+    message += "\n";
     return message;
 }
 

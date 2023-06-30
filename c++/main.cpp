@@ -13,7 +13,7 @@ int main(int argc, char* argv[]) {
     // create a new problem
     FourVoiceTexture* p = new FourVoiceTexture(size, tonality, {fourthDegree,fifthDegree,firstDegree},
                                                {fundamental_state,fundamental_state,fundamental_state});
-    std::cout << p->toString() << std::endl;
+    //std::cout << p->toString() << std::endl;
 
 
     // create a new search engine
@@ -25,7 +25,8 @@ int main(int argc, char* argv[]) {
     while(FourVoiceTexture * sol = get_next_solution_space(e)){
         nb_sol++;
         cout << "Solution " << nb_sol << ": " << endl;
-        sol->print_solution();
+        //sol->print_solution();
+        std::cout << sol->toString() <<std::endl;
         delete sol;
         if (nb_sol >= 10)
             break;

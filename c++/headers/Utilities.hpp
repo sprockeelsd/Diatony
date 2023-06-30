@@ -47,8 +47,6 @@ const int Bflat = 22;
 const int B = 23;
 const int Cflat = 23;
 
-/** scale degrees */ // @todo rename this into 1st to 7th degree, will be easier
-
 enum{
     firstDegree,
     secondDegree,

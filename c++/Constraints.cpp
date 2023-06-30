@@ -39,7 +39,7 @@ void link_melodic_arrays(Home home, int n, IntVarArray FullChordsVoicing, IntVar
  */
 void link_harmonic_arrays(Home home, int n, IntVarArray FullChordsVoicing, IntVarArray bassTenorHarmonicIntervals,
                           IntVarArray tenorAltoHarmonicIntervals, IntVarArray altoSopranoHarmonicIntervals){
-    for(int i = 0; i < n - 1; ++i){
+    for(int i = 0; i < n; ++i){
         rel(home, bassTenorHarmonicIntervals[i] == FullChordsVoicing[(4 * i) + 1] - FullChordsVoicing[4 * i]);
         rel(home, tenorAltoHarmonicIntervals[i] == FullChordsVoicing[(4 * i) + 2] - FullChordsVoicing[(4 * i) + 1]);
         rel(home, altoSopranoHarmonicIntervals[i] == FullChordsVoicing[(4 * i) + 3] - FullChordsVoicing[(4 * i) + 2]);
@@ -97,7 +97,7 @@ void forbid_parallel_intervals(Home home, int forbiddenParallelInterval, int cur
                                                     == FullChordsVoicing[(currentPosition + 1) *4 + lowerVoiceID + 1]));
 
     // is true if both voices are the same in both chords
-    BoolVar bothVoicesEqual(home, 0, 1); // @todo causes problems here
+    BoolVar bothVoicesEqual(home, 0, 1);
     rel(home, notesLowerVoiceEqual, BOT_AND, notesUpperVoiceEqual, bothVoicesEqual);
 
     // is true if the harmonic interval between the voices is not forbidden
