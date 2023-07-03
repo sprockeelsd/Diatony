@@ -1,0 +1,218 @@
+#include "headers/Constraints.hpp"
+
+/***********************************************************************************************************************
+ *                                                                                                                     *
+ *                                                  Generic constraints                                                *
+ *                                                                                                                     *
+ ***********************************************************************************************************************/
+
+/**
+ * Link the melodic intervals arrays to the FullChordsVoicing array
+ * @param home The instance of the problem
+ * @param n the number of chords
+ * @param FullChordsVoicing the array containing all the chords in the form [bass0, alto0, tenor0, soprano0, bass1, alto1, tenor1, soprano1, ...]
+ * @param bassMelodicIntervals the melodic intervals of the bass
+ * @param tenorMelodicIntervals the melodic intervals of the tenor
+ * @param altoMelodicIntervals the melodic intervals of the alto
+ * @param sopranoMelodicIntervals the melodic intervals of the soprano
+ */
+void link_melodic_arrays(const Home& home, int n, IntVarArray FullChordsVoicing, IntVarArray bassMelodicIntervals,
+                         IntVarArray tenorMelodicIntervals, IntVarArray altoMelodicIntervals,
+                         IntVarArray sopranoMelodicIntervals){
+    for (int i = 0; i < n - 1; ++i)
+    {
+        rel(home, bassMelodicIntervals[i] == FullChordsVoicing[(i + 1) * 4] - FullChordsVoicing[i * 4]);
+        rel(home, tenorMelodicIntervals[i] == FullChordsVoicing[((i + 1) * 4) + 1] - FullChordsVoicing[(i * 4) + 1]);
+        rel(home, altoMelodicIntervals[i] == FullChordsVoicing[((i + 1) * 4) + 2] - FullChordsVoicing[(i * 4) + 2]);
+        rel(home, sopranoMelodicIntervals[i] == FullChordsVoicing[((i + 1) * 4) + 3] - FullChordsVoicing[(i * 4) + 3]);
+    }
+}
+
+/**
+ * Link the harmonic intervals arrays to the FullChordsVoicing array
+ * @param home the instance of the problem
+ * @param n the number of chords
+ * @param FullChordsVoicing the array containing all the chords in the form [bass0, alto0, tenor0, soprano0, bass1, alto1, tenor1, soprano1, ...]
+ * @param bassTenorHarmonicIntervals the harmonic intervals between bass and tenor
+ * @param tenorAltoHarmonicIntervals the harmonic intervals between tenor and alto
+ * @param altoSopranoHarmonicIntervals the harmonic intervals between alto and soprano
+ */
+void link_harmonic_arrays(const Home& home, int n, IntVarArray FullChordsVoicing, IntVarArray bassTenorHarmonicIntervals,
+                          IntVarArray tenorAltoHarmonicIntervals, IntVarArray altoSopranoHarmonicIntervals){
+    for(int i = 0; i < n; ++i){
+        rel(home, bassTenorHarmonicIntervals[i] == FullChordsVoicing[(4 * i) + 1] - FullChordsVoicing[4 * i]);
+        rel(home, tenorAltoHarmonicIntervals[i] == FullChordsVoicing[(4 * i) + 2] - FullChordsVoicing[(4 * i) + 1]);
+        rel(home, altoSopranoHarmonicIntervals[i] == FullChordsVoicing[(4 * i) + 3] - FullChordsVoicing[(4 * i) + 2]);
+    }
+}
+
+/**
+ * Fixes the domains of the different voices to their range
+ *      bass: [40, 60] E2 -> C3
+ *      tenor: [48, 69] C2 -> A3
+ *      alto: [55, 75] G2 -> D3
+ *      soprano: [60, 84] C3 -> A4
+ * @param home the instance of the problem
+ * @param n the number of chords
+ * @param FullChordsVoicing the array containing all the chords in the form [bass0, alto0, tenor0, soprano0, bass1, alto1, tenor1, soprano1, ...]
+ */
+void restrain_voices_domains(const Home& home, int n, IntVarArray FullChordsVoicing){
+    for (int i = 0; i < n; ++i)
+    {
+        IntVarArgs currentChord(FullChordsVoicing.slice(4 * i, 1, 4));
+        rel(home, currentChord, IRT_LQ); // bass[i] <= tenor[i] <= alto[i] <= soprano[i]
+
+        // E2 <= bass <= C3
+        rel(home, currentChord[0], IRT_GQ, 40);
+        rel(home, currentChord[0], IRT_LQ, 60);
+        // C2 <= tenor <= A3
+        rel(home, currentChord[1], IRT_GQ, 48);
+        rel(home, currentChord[1], IRT_LQ, 69);
+        // G2 <= alto <= D3
+        rel(home, currentChord[2], IRT_GQ, 55);
+        rel(home, currentChord[2], IRT_LQ, 75);
+        // C3 <= soprano <= A4
+        rel(home, currentChord[3], IRT_GQ, 60);
+        rel(home, currentChord[3], IRT_LQ, 84);
+    }
+}
+
+/**
+ * Forbids parallel intervals between two chords in the same voices
+ * @todo change to argument variables later + maybe make it cleaner
+ * @param home the instance of the problem
+ * @param forbiddenParallelInterval the interval to forbid
+ * @param currentPosition the current chord position
+ * @param lowerVoiceID the ID of the lower voice (0 -> bass, 1 -> tenor, 2 -> alto, 3 -> soprano)
+ * @param voicesHarmonicIntervals The variable array containing the harmonic intervals between the two voices
+ * @param FullChordsVoicing the variable array containing all the chords in the form [bass0, alto0, tenor0, soprano0, bass1, alto1, tenor1, soprano1, ...]
+ */
+void forbid_parallel_intervals(Home home, int forbiddenParallelInterval, int currentPosition, int lowerVoiceID,
+                               IntVarArray voicesHarmonicIntervals, IntVarArray FullChordsVoicing){
+    //bassTenorIntervalForbidden is true if the interval is forbiddenParallelInterval
+    BoolVar harmonicIntervalForbidden(home, 0, 1);
+    rel(home, harmonicIntervalForbidden, IRT_EQ, expr(home, voicesHarmonicIntervals[currentPosition] %
+                                                             perfectOctave == forbiddenParallelInterval));
+
+    // is true if lower voice is the same note in both chords
+    BoolVar notesLowerVoiceEqual(home, 0, 1);
+    rel(home, notesLowerVoiceEqual, IRT_EQ, expr(home, FullChordsVoicing[currentPosition * 4 + lowerVoiceID]
+                                                        == FullChordsVoicing[(currentPosition + 1) *4 + lowerVoiceID]));
+
+    // is true if upper voice is the same note in both chords
+    BoolVar notesUpperVoiceEqual(home,0,1);
+    rel(home, notesUpperVoiceEqual, IRT_EQ, expr(home, FullChordsVoicing[currentPosition * 4 + lowerVoiceID + 1]
+                                                    == FullChordsVoicing[(currentPosition + 1) *4 + lowerVoiceID + 1]));
+
+    // is true if both voices are the same in both chords
+    BoolVar bothVoicesEqual(home, 0, 1);
+    rel(home, notesLowerVoiceEqual, BOT_AND, notesUpperVoiceEqual, bothVoicesEqual);
+
+    // is true if the harmonic interval between the voices is not forbidden
+    BoolVar nextIntervalNotParallel(home, 0,1);
+    rel(home, nextIntervalNotParallel, IRT_EQ, expr(home, voicesHarmonicIntervals[currentPosition+1] %
+                                                                perfectOctave != forbiddenParallelInterval));
+
+    BoolVar isNextIntervalValid(home,0,1);
+    rel(home, bothVoicesEqual, BOT_OR, nextIntervalNotParallel, isNextIntervalValid); // ok
+
+    rel(home, harmonicIntervalForbidden, BOT_IMP, isNextIntervalValid, true);
+
+}
+
+
+/***********************************************************************************************************************
+ *                                                                                                                     *
+ *                                               Chord-related constraints                                             *
+ *                                                                                                                     *
+ ***********************************************************************************************************************/
+
+/**
+ * Set the notes of the FullChordsVoicing array to the notes of the given chord
+ * @param home the instance of the problem
+ * @param tonality the tonality of the piece
+ * @param degree the degree of the chord
+ * @param currentChord the array containing a chord in the form [bass, alto, tenor, soprano]
+ */
+void setToChord(const Home& home, Tonality* tonality, int degree, const IntVarArgs& currentChord){
+    dom(home, currentChord, tonality->get_scale_degree_chord(degree));
+}
+
+/**
+ * Set the bass of the chord to be the given note
+ * @param home the instance of the problem
+ * @param tonality the tonality of the piece
+ * @param degree the degree of the chord
+ * @param state the state of the chord
+ * @param currentChord the array containing a chord in the form [bass, alto, tenor, soprano]
+ */
+void setBass(const Home& home, Tonality *tonality, int degree, int state, IntVarArgs currentChord){
+    dom(home, currentChord[0], tonality->get_scale_degree((degree + 2*state) % 7));
+}
+
+/** ---------------------------------------------Fundamental state chords--------------------------------------------- */
+
+/**
+ * @todo change this for complete and incomplete chords later (third must be <=1 depending on the chord before and after if they are 5->1 and complete/incomplete)
+ * @todo maybe make it a preference later
+ * Sets the number of times each note of the notes of the chord are present in the chord
+ * @param home the instance of the problem
+ * @param tonality the tonality of the piece
+ * @param degree the degree of the chord
+ * @param currentChord the array containing a chord in the form [bass, alto, tenor, soprano]
+ */
+void chordNoteOccurrenceFundamentalState(const Home& home, Tonality *tonality, int degree, const IntVarArgs& currentChord){
+    count(home, currentChord, tonality->get_scale_degree(degree), IRT_EQ,2); // double the bass which is also the tonic
+    count(home, currentChord, tonality->get_scale_degree((degree + 2) % 7), IRT_EQ,1); // the third should be present once
+    count(home, currentChord, tonality->get_scale_degree((degree + 4) % 7), IRT_EQ, 1); // the fifth should be present once
+}
+
+/***********************************************************************************************************************
+ *                                                                                                                     *
+ *                                            Voice leading related constraints                                        *
+ *                                                                                                                     *
+ ***********************************************************************************************************************/
+
+/**
+ * Sets the rules for the melodic movements between chords in fundamental state
+ * For chords that are 1 degree apart, the other voices must move in contrary motion to the bass
+ * @param home the instance of the problem
+ * @param currentPosition the current position in the chord progression
+ * @param chordDegrees the array containing the degrees of the chords in the progression
+ * @param bassMelodicInterval The melodic interval of the bass between the current position and the next
+ * @param tenorMelodicInterval the melodic interval of the tenor between the current position and the next
+ * @param altoMelodicInterval the melodic interval of the alto between the current position and the next
+ * @param sopranoMelodicInterval the melodic interval of the soprano between the current position and the next
+ */
+void fundamentalStateChordToFundamentalStateChord(const Home& home, int currentPosition, vector<int> chordDegrees,
+                                                  Tonality& tonality,
+                                                  const IntVar& bassMelodicInterval, const IntVar& tenorMelodicInterval,
+                                                  const IntVar& altoMelodicInterval, const IntVar& sopranoMelodicInterval,
+                                                  IntVarArray fullChordsVoicing){
+    int degreeDifference = abs(chordDegrees[currentPosition+1] - chordDegrees[currentPosition]);
+
+    if(degreeDifference == minorSecond || degreeDifference == majorSecond){
+        // other voices need to move by contrary motion to the bass
+        rel(home, expr(home, bassMelodicInterval > 0), BOT_EQV, expr(home, tenorMelodicInterval < 0), true);
+        rel(home, expr(home, bassMelodicInterval > 0), BOT_EQV, expr(home, altoMelodicInterval < 0), true);
+        rel(home, expr(home, bassMelodicInterval > 0), BOT_EQV, expr(home, sopranoMelodicInterval < 0), true);
+
+        rel(home, expr(home, bassMelodicInterval < 0), BOT_EQV, expr(home, tenorMelodicInterval > 0), true);
+        rel(home, expr(home, bassMelodicInterval < 0), BOT_EQV, expr(home, altoMelodicInterval > 0), true);
+        rel(home, expr(home, bassMelodicInterval < 0), BOT_EQV, expr(home, sopranoMelodicInterval > 0), true);
+    }
+    else{ // there is at least one common note in the 2 chords -> keep that (these) notes in the same voices and move the other to the closest one
+        IntVarArgs currentChord(fullChordsVoicing.slice(4 * currentPosition, 1, 4)); // get the current chord
+        IntVarArgs nextChord(fullChordsVoicing.slice(4 * (currentPosition + 1), 1, 4)); // get the next chord
+        for(int i = 0; i < 4; i++){ // for each voice in the chord
+            IntVar note(currentChord[i]); // get the note of the current voice in the current chord
+            for(IntSetValues it(tonality.get_scale_degree_chord(chordDegrees[currentPosition + 1])); it(); ++it){ // for each possible value of the next chord
+                rel(home, note, IRT_EQ, it.val()); // @todo make this reified (the note is equal to that value -> the note in the next chord in the same voice must be the same)
+            }
+        }
+        // for note in chord1: if note in chord2 -> same voice = same note
+
+        //façon dégueu de le faire : check si la note est dans l'accord suivant en regardant chaque valeur
+        // autre façon : minimiser les intervalles mélodiques (somme de tous)
+    }
+}
