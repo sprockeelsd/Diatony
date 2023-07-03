@@ -44,6 +44,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     // restrain the domain of the voices to their range + state that bass <= tenor <= alto <= soprano
     restrain_voices_domains(*this, size, FullChordsVoicing);
 
+
     /**-------------------------------------------- generic constraints -----------------------------------------------*/
 
     for(int i = 0; i < size-1; i++){
@@ -96,7 +97,8 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
                                                              bassMelodicIntervals[i],
                                                              tenorMelodicIntervals[i],
                                                               altoMelodicIntervals[i],
-                                                              sopranoMelodicIntervals[i]);
+                                                              sopranoMelodicIntervals[i],
+                                                              FullChordsVoicing);
             }
 
         }

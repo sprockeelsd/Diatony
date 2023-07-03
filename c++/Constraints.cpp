@@ -185,8 +185,10 @@ void chordNoteOccurrenceFundamentalState(const Home& home, Tonality *tonality, i
  * @param sopranoMelodicInterval the melodic interval of the soprano between the current position and the next
  */
 void fundamentalStateChordToFundamentalStateChord(const Home& home, int currentPosition, vector<int> chordDegrees,
+                                                  Tonality& tonality,
                                                   const IntVar& bassMelodicInterval, const IntVar& tenorMelodicInterval,
-                                                  const IntVar& altoMelodicInterval, const IntVar& sopranoMelodicInterval){
+                                                  const IntVar& altoMelodicInterval, const IntVar& sopranoMelodicInterval,
+                                                  IntVarArray fullChordsVoicing){
     int degreeDifference = abs(chordDegrees[currentPosition+1] - chordDegrees[currentPosition]);
 
     if(degreeDifference == minorSecond || degreeDifference == majorSecond){
@@ -198,5 +200,19 @@ void fundamentalStateChordToFundamentalStateChord(const Home& home, int currentP
         rel(home, expr(home, bassMelodicInterval < 0), BOT_EQV, expr(home, tenorMelodicInterval > 0), true);
         rel(home, expr(home, bassMelodicInterval < 0), BOT_EQV, expr(home, altoMelodicInterval > 0), true);
         rel(home, expr(home, bassMelodicInterval < 0), BOT_EQV, expr(home, sopranoMelodicInterval > 0), true);
+    }
+    else{ // there is at least one common note in the 2 chords -> keep that (these) notes in the same voices and move the other to the closest one
+        IntVarArgs currentChord(fullChordsVoicing.slice(4 * currentPosition, 1, 4)); // get the current chord
+        IntVarArgs nextChord(fullChordsVoicing.slice(4 * (currentPosition + 1), 1, 4)); // get the next chord
+        for(int i = 0; i < 4; i++){ // for each voice in the chord
+            IntVar note(currentChord[i]); // get the note of the current voice in the current chord
+            for(IntSetValues it(tonality.get_scale_degree_chord(chordDegrees[currentPosition + 1])); it(); ++it){ // for each possible value of the next chord
+                rel(home, note, IRT_EQ, it.val()); // @todo make this reified (the note is equal to that value -> the note in the next chord in the same voice must be the same)
+            }
+        }
+        // for note in chord1: if note in chord2 -> same voice = same note
+
+        //façon dégueu de le faire : check si la note est dans l'accord suivant en regardant chaque valeur
+        // autre façon : minimiser les intervalles mélodiques (somme de tous)
     }
 }

@@ -129,7 +129,8 @@ void chordNoteOccurrenceFundamentalState(const Home& home, Tonality *tonality, i
  */
 void fundamentalStateChordToFundamentalStateChord(const Home& home, int currentPosition, vector<int> chordDegrees,
                                                   const IntVar& bassMelodicInterval, const IntVar& tenorMelodicInterval,
-                                                  const IntVar& altoMelodicInterval, const IntVar& sopranoMelodicInterval);
+                                                  const IntVar& altoMelodicInterval, const IntVar& sopranoMelodicInterval,
+                                                  IntVarArray fullChordsVoicing);
 
 
 #endif
