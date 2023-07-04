@@ -28,7 +28,13 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     altoMelodicIntervals = IntVarArray(*this, size-1, -perfectOctave, perfectOctave);
     sopranoMelodicIntervals = IntVarArray(*this, size-1, -perfectOctave, perfectOctave);
 
-    // variable arrays for harmonic intervals between adjacent voices
+    // variable arrays for absolute melodic intervals for each voice
+    absoluteBassMelodicIntervals = IntVarArray(*this, size-1, 0, perfectOctave);
+    absoluteTenorMelodicIntervals = IntVarArray(*this, size-1, 0, perfectOctave);
+    absoluteAltoMelodicIntervals = IntVarArray(*this, size-1, 0, perfectOctave);
+    absoluteSopranoMelodicIntervals = IntVarArray(*this, size-1, 0, perfectOctave);
+
+    // variable arrays for harmonic intervals between adjacent voices (only positive because there is no direction
     bassTenorHarmonicIntervals = IntVarArray(*this, size, 0, perfectOctave + perfectFifth);
     tenorAltoHarmonicIntervals = IntVarArray(*this, size, 0, perfectOctave);
     altoSopranoHarmonicIntervals = IntVarArray(*this, size, 0, perfectOctave);
@@ -38,6 +44,11 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     // link the arrays together
     link_melodic_arrays(*this, size, FullChordsVoicing, bassMelodicIntervals, tenorMelodicIntervals,
                         altoMelodicIntervals, sopranoMelodicIntervals);
+
+    link_absolute_melodic_arrays(*this, bassMelodicIntervals, tenorMelodicIntervals, altoMelodicIntervals,
+                                 sopranoMelodicIntervals, absoluteBassMelodicIntervals, absoluteTenorMelodicIntervals,
+                                 absoluteAltoMelodicIntervals, absoluteSopranoMelodicIntervals);
+
     link_harmonic_arrays(*this, size, FullChordsVoicing, bassTenorHarmonicIntervals,
                          tenorAltoHarmonicIntervals, altoSopranoHarmonicIntervals);
 
@@ -94,6 +105,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
         if (chordStas[i] == fundamental_state){
             if (chordStas[i+1] == fundamental_state){
                 fundamentalStateChordToFundamentalStateChord(*this, i, chordDegrees,
+                                                             *tonality,
                                                              bassMelodicIntervals[i],
                                                              tenorMelodicIntervals[i],
                                                               altoMelodicIntervals[i],
@@ -105,6 +117,11 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     }
 
     /**------------------------------------------------branching-------------------------------------------------------*/
+    // this order because the inner voices are supposed to move the least, bass and soprano is less important
+    branch(*this, absoluteTenorMelodicIntervals, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
+    branch(*this, absoluteAltoMelodicIntervals, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
+    branch(*this, absoluteSopranoMelodicIntervals, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
+    branch(*this, absoluteBassMelodicIntervals, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
     branch(*this, FullChordsVoicing, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
 }
 
@@ -124,6 +141,11 @@ FourVoiceTexture::FourVoiceTexture(FourVoiceTexture& s): Space(s){
     tenorMelodicIntervals.update(*this, s.tenorMelodicIntervals);
     altoMelodicIntervals.update(*this, s.altoMelodicIntervals);
     sopranoMelodicIntervals.update(*this, s.sopranoMelodicIntervals);
+
+    absoluteBassMelodicIntervals.update(*this, s.absoluteBassMelodicIntervals);
+    absoluteTenorMelodicIntervals.update(*this, s.absoluteTenorMelodicIntervals);
+    absoluteAltoMelodicIntervals.update(*this, s.absoluteAltoMelodicIntervals);
+    absoluteSopranoMelodicIntervals.update(*this, s.absoluteSopranoMelodicIntervals);
 
     bassTenorHarmonicIntervals.update(*this, s.bassTenorHarmonicIntervals);
     tenorAltoHarmonicIntervals.update(*this, s.tenorAltoHarmonicIntervals);
@@ -195,6 +217,7 @@ void FourVoiceTexture::print_solution(){
 
 /**
  * toString method
+ * @todo make a toString method for IntVarArrays so the code here is cleaner
  * @return a string representation of the current instance of the FourVoiceTexture class.
  * Right now, it returns a string "FourVoiceTexture object. size = <size>"
  * If a variable is not assigned when this function is called, it writes <not assigned> instead of the value
@@ -282,6 +305,46 @@ string FourVoiceTexture::toString(){
         else
             message += "<not assigned>";
         if(i != size - 2)
+            message += ", ";
+    }
+    message += "}\n";
+    message += "absoluteBassMelodicIntervals = {";
+    for(int i = 0; i < absoluteBassMelodicIntervals.size(); i++){
+        if(absoluteBassMelodicIntervals[i].assigned())
+            message += to_string(absoluteBassMelodicIntervals[i].val());
+        else
+            message += "<not assigned>";
+        if(i != absoluteBassMelodicIntervals.size() - 1)
+            message += ", ";
+    }
+    message += "}\n";
+    message += "absoluteTenorMelodicIntervals = {";
+    for(int i = 0; i < absoluteTenorMelodicIntervals.size(); i++){
+        if(absoluteTenorMelodicIntervals[i].assigned())
+            message += to_string(absoluteTenorMelodicIntervals[i].val());
+        else
+            message += "<not assigned>";
+        if(i != absoluteTenorMelodicIntervals.size() - 1)
+            message += ", ";
+    }
+    message += "}\n";
+    message += "absoluteAltoMelodicIntervals = {";
+    for(int i = 0; i < absoluteAltoMelodicIntervals.size(); i++){
+        if(absoluteAltoMelodicIntervals[i].assigned())
+            message += to_string(absoluteAltoMelodicIntervals[i].val());
+        else
+            message += "<not assigned>";
+        if(i != absoluteAltoMelodicIntervals.size() - 1)
+            message += ", ";
+    }
+    message += "}\n";
+    message += "absoluteSopranoMelodicIntervals = {";
+    for(int i = 0; i < absoluteSopranoMelodicIntervals.size(); i++){
+        if(absoluteSopranoMelodicIntervals[i].assigned())
+            message += to_string(absoluteSopranoMelodicIntervals[i].val());
+        else
+            message += "<not assigned>";
+        if(i != absoluteSopranoMelodicIntervals.size() - 1)
             message += ", ";
     }
     message += "}\n";

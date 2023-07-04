@@ -29,6 +29,30 @@ void link_melodic_arrays(const Home& home, int n, IntVarArray FullChordsVoicing,
 }
 
 /**
+ * Link the absolute melodic intervals arrays to the corresponding melodic interval arrays
+ * @param home the instance of the problem
+ * @param bassMelodicIntervals the melodic intervals of the bass
+ * @param tenorMelodicIntervals the melodic intervals of the tenor
+ * @param altoMelodicIntervals the melodic intervals of the alto
+ * @param sopranoMelodicIntervals the melodic intervals of the soprano
+ * @param absoluteBassMelodicIntervals the absolute melodic intervals of the bass
+ * @param absoluteTenorMelodicIntervals the absolute melodic intervals of the tenor
+ * @param absoluteAltoMelodicIntervals the absolute melodic intervals of the alto
+ * @param absoluteSopranoMelodicIntervals the absolute melodic intervals of the soprano
+ */
+void link_absolute_melodic_arrays(const Home& home, IntVarArray bassMelodicIntervals, IntVarArray tenorMelodicIntervals,
+                                  IntVarArray altoMelodicIntervals, IntVarArray sopranoMelodicIntervals,
+                                  IntVarArray absoluteBassMelodicIntervals, IntVarArray absoluteTenorMelodicIntervals,
+                                  IntVarArray absoluteAltoMelodicIntervals, IntVarArray absoluteSopranoMelodicIntervals){
+    for(int i = 0; i < bassMelodicIntervals.size(); ++i){
+        abs(home, bassMelodicIntervals[i], absoluteBassMelodicIntervals[i]);
+        abs(home, tenorMelodicIntervals[i], absoluteTenorMelodicIntervals[i]);
+        abs(home, altoMelodicIntervals[i], absoluteAltoMelodicIntervals[i]);
+        abs(home, sopranoMelodicIntervals[i], absoluteSopranoMelodicIntervals[i]);
+    }
+}
+
+/**
  * Link the harmonic intervals arrays to the FullChordsVoicing array
  * @param home the instance of the problem
  * @param n the number of chords
@@ -185,7 +209,7 @@ void chordNoteOccurrenceFundamentalState(const Home& home, Tonality *tonality, i
  * @param sopranoMelodicInterval the melodic interval of the soprano between the current position and the next
  */
 void fundamentalStateChordToFundamentalStateChord(const Home& home, int currentPosition, vector<int> chordDegrees,
-                                                  Tonality& tonality,
+                                                  Tonality &tonality,
                                                   const IntVar& bassMelodicInterval, const IntVar& tenorMelodicInterval,
                                                   const IntVar& altoMelodicInterval, const IntVar& sopranoMelodicInterval,
                                                   IntVarArray fullChordsVoicing){
@@ -202,15 +226,6 @@ void fundamentalStateChordToFundamentalStateChord(const Home& home, int currentP
         rel(home, expr(home, bassMelodicInterval < 0), BOT_EQV, expr(home, sopranoMelodicInterval > 0), true);
     }
     else{ // there is at least one common note in the 2 chords -> keep that (these) notes in the same voices and move the other to the closest one
-        IntVarArgs currentChord(fullChordsVoicing.slice(4 * currentPosition, 1, 4)); // get the current chord
-        IntVarArgs nextChord(fullChordsVoicing.slice(4 * (currentPosition + 1), 1, 4)); // get the next chord
-        for(int i = 0; i < 4; i++){ // for each voice in the chord
-            IntVar note(currentChord[i]); // get the note of the current voice in the current chord
-            for(IntSetValues it(tonality.get_scale_degree_chord(chordDegrees[currentPosition + 1])); it(); ++it){ // for each possible value of the next chord
-                rel(home, note, IRT_EQ, it.val()); // @todo make this reified (the note is equal to that value -> the note in the next chord in the same voice must be the same)
-            }
-        }
-        // for note in chord1: if note in chord2 -> same voice = same note
 
         //façon dégueu de le faire : check si la note est dans l'accord suivant en regardant chaque valeur
         // autre façon : minimiser les intervalles mélodiques (somme de tous)

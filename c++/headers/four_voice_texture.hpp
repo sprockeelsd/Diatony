@@ -42,14 +42,16 @@ protected:
     IntVarArray altoMelodicIntervals;
     IntVarArray sopranoMelodicIntervals;
 
-    // @todo maybe absolute value intervals?
+    // absolute intervals
+    IntVarArray absoluteBassMelodicIntervals;
+    IntVarArray absoluteTenorMelodicIntervals;
+    IntVarArray absoluteAltoMelodicIntervals;
+    IntVarArray absoluteSopranoMelodicIntervals;
 
     // variable arrays for harmonic intervals between adjacent voices (not absolute value)
     IntVarArray bassTenorHarmonicIntervals;
     IntVarArray tenorAltoHarmonicIntervals;
     IntVarArray altoSopranoHarmonicIntervals;
-
-    // @todo maybe absolute value intervals?
 
     // @todo maybe harmonic movement array?
 

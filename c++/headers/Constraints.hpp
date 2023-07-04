@@ -33,6 +33,23 @@ void link_melodic_arrays(const Home& home, int n, IntVarArray FullChordsVoicing,
                          IntVarArray sopranoMelodicIntervals);
 
 /**
+ * Link the absolute melodic intervals arrays to the corresponding melodic interval arrays
+ * @param home the instance of the problem
+ * @param bassMelodicIntervals the melodic intervals of the bass
+ * @param tenorMelodicIntervals the melodic intervals of the tenor
+ * @param altoMelodicIntervals the melodic intervals of the alto
+ * @param sopranoMelodicIntervals the melodic intervals of the soprano
+ * @param absoluteBassMelodicIntervals the absolute melodic intervals of the bass
+ * @param absoluteTenorMelodicIntervals the absolute melodic intervals of the tenor
+ * @param absoluteAltoMelodicIntervals the absolute melodic intervals of the alto
+ * @param absoluteSopranoMelodicIntervals the absolute melodic intervals of the soprano
+ */
+void link_absolute_melodic_arrays(const Home& home, IntVarArray bassMelodicIntervals, IntVarArray tenorMelodicIntervals,
+                                  IntVarArray altoMelodicIntervals, IntVarArray sopranoMelodicIntervals,
+                                  IntVarArray absoluteBassMelodicIntervals, IntVarArray absoluteTenorMelodicIntervals,
+                                  IntVarArray absoluteAltoMelodicIntervals, IntVarArray absoluteSopranoMelodicIntervals);
+
+/**
  * Link the harmonic intervals arrays to the FullChordsVoicing array
  * @param home the instance of the problem
  * @param n the number of chords
@@ -128,6 +145,7 @@ void chordNoteOccurrenceFundamentalState(const Home& home, Tonality *tonality, i
  * @param sopranoMelodicInterval the melodic interval of the soprano between the current position and the next
  */
 void fundamentalStateChordToFundamentalStateChord(const Home& home, int currentPosition, vector<int> chordDegrees,
+                                                  Tonality& tonality,
                                                   const IntVar& bassMelodicInterval, const IntVar& tenorMelodicInterval,
                                                   const IntVar& altoMelodicInterval, const IntVar& sopranoMelodicInterval,
                                                   IntVarArray fullChordsVoicing);
