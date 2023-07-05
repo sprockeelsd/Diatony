@@ -18,8 +18,8 @@ using namespace Gecode;
 
 /** Types of search engines */
 enum solver_types{
-    dfs_solver, //0
-    bab_solver, //1
+    DFS_SOLVER, //0
+    BAB_SOLVER, //1
 };
 
 const vector<std::string> noteNames = {"C", "C#", "D", "Eb", "E", "F", "F#", "G", "Ab", "A", "Bb", "B"}; // @todo turn into a map
@@ -48,65 +48,65 @@ const int B = 23;
 const int Cflat = 23;
 
 enum voices{
-    bass,
-    tenor,
-    alto,
-    soprano
+    BASS,
+    TENOR,
+    ALTO,
+    SOPRANO
 };
 
 enum degrees{
-    firstDegree,
-    secondDegree,
-    thirdDegree,
-    fourthDegree,
-    fifthDegree,
-    sixthDegree,
-    seventhDegree
+    FIRST_DEGREE,
+    SECOND_DEGREE,
+    THIRD_DEGREE,
+    FOURTH_DEGREE,
+    FIFTH_DEGREE,
+    SIXTH_DEGREE,
+    SEVENTH_DEGREE
 };
 
 /** Intervals */
 // "classic" intervals
 enum intervals{
-    unisson,        //0
-    minorSecond,    //1
-    majorSecond,    //2
-    minorThird,     //3
-    majorThird,     //4
-    perfectFourth,  //5
-    tritone,        //6
-    perfectFifth,   //7
-    minorSixth,     //8
-    majorSixth,     //9
-    minorSeventh,   //10
-    majorSeventh,   //11
-    perfectOctave   //12
+    UNISSON,            //0
+    MINOR_SECOND,       //1
+    MAJOR_SECOND,       //2
+    MINOR_THIRD,        //3
+    MAJOR_THIRD,        //4
+    PERFECT_FOURTH,     //5
+    TRITONE,            //6
+    PERFECT_FIFTH,      //7
+    MINOR_SIXTH,        //8
+    MAJOR_SIXTH,        //9
+    MINOR_SEVENTH,      //10
+    MAJOR_SEVENTH,      //11
+    PERFECT_OCTAVE      //12
 };
 
 // augmented/diminished intervals
-const int augmentedSecond = 3;
+const int augmented_second = 3;
 
 /** Chords */
 // Types of chords represented by the intervals between their notes in root position up to an octave
-const vector<int> MAJOR_CHORD = {majorThird, minorThird, perfectFourth};
-const vector<int> MINOR_CHORD = {minorThird, majorThird, perfectFourth};
-const vector<int> DIMINISHED_CHORD = {minorThird, minorThird, tritone};
-const vector<int> AUGMENTED_CHORD = {majorThird, majorThird, majorThird};
-const vector<int> DOMINANT_SEVENTH_CHORD = {majorThird, minorThird, minorThird, majorSecond};
-const vector<int> MAJOR_SEVENTH_CHORD = {majorThird, minorThird, majorThird, minorSecond};
-const vector<int> MINOR_SEVENTH_CHORD = {minorThird, majorThird, minorThird, majorSecond};
+const vector<int> MAJOR_CHORD = {MAJOR_THIRD, MINOR_THIRD, PERFECT_FOURTH};
+const vector<int> MINOR_CHORD = {MINOR_THIRD, MAJOR_THIRD, PERFECT_FOURTH};
+const vector<int> DIMINISHED_CHORD = {MINOR_THIRD, MINOR_THIRD, TRITONE};
+const vector<int> AUGMENTED_CHORD = {MAJOR_THIRD, MAJOR_THIRD, MAJOR_THIRD};
+const vector<int> DOMINANT_SEVENTH_CHORD = {MAJOR_THIRD, MINOR_THIRD, MINOR_THIRD, MAJOR_SECOND};
+const vector<int> MAJOR_SEVENTH_CHORD = {MAJOR_THIRD, MINOR_THIRD, MAJOR_THIRD, MINOR_SECOND};
+const vector<int> MINOR_SEVENTH_CHORD = {MINOR_THIRD, MAJOR_THIRD, MINOR_THIRD, MAJOR_SECOND};
 
 // Chord states
 enum chordStates{
-    fundamental_state,  //0
-    first_inversion,    //1
-    second_inversion,   //2
-    third_inversion     //3
+    FUNDAMENTAL_STATE,  //0
+    FIRST_INVERSION,    //1
+    SECOND_INVERSION,   //2
+    THIRD_INVERSION     //3
 };
 
 /** Modes */
 // syntactic sugar for more commonly used modes
-const int major_mode = 0;
-const int minor_mode = 5;   // to correspond to the enum Mode
+const int MAJOR_MODE = 0;
+const int MINOR_MODE = 5;   // to correspond to the enum Mode
 
 enum Mode {
     IONIAN,     //0 , major mode
@@ -123,10 +123,10 @@ enum Mode {
 
 // turn this into a dictionary with the name of the scale as key and the vector of intervals as value
 
-const vector<int> MAJOR_SCALE = {majorSecond, majorSecond, minorSecond, majorSecond, majorSecond, majorSecond, minorSecond};
-const vector<int> NATURAL_MINOR_SCALE = {majorSecond, minorSecond, majorSecond, majorSecond, minorSecond, majorSecond, majorSecond};
-const vector<int> HARMONIC_MINOR_SCALE = {majorSecond, minorSecond, majorSecond, majorSecond, minorSecond, augmentedSecond, minorSecond};
-const vector<int> MELODIC_MINOR_SCALE = {majorSecond, minorSecond, majorSecond, majorSecond, majorSecond, majorSecond, minorSecond};
+const vector<int> MAJOR_SCALE = {MAJOR_SECOND, MAJOR_SECOND, MINOR_SECOND, MAJOR_SECOND, MAJOR_SECOND, MAJOR_SECOND, MINOR_SECOND};
+const vector<int> NATURAL_MINOR_SCALE = {MAJOR_SECOND, MINOR_SECOND, MAJOR_SECOND, MAJOR_SECOND, MINOR_SECOND, MAJOR_SECOND, MAJOR_SECOND};
+const vector<int> HARMONIC_MINOR_SCALE = {MAJOR_SECOND, MINOR_SECOND, MAJOR_SECOND, MAJOR_SECOND, MINOR_SECOND, augmented_second, MINOR_SECOND};
+const vector<int> MELODIC_MINOR_SCALE = {MAJOR_SECOND, MINOR_SECOND, MAJOR_SECOND, MAJOR_SECOND, MAJOR_SECOND, MAJOR_SECOND, MINOR_SECOND};
 
 /***********************************************************************************************************************
  *                                                      Functions                                                      *

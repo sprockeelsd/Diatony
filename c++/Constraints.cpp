@@ -71,7 +71,7 @@ void link_harmonic_arrays(const Home& home, int n, IntVarArray FullChordsVoicing
 }
 
 /**
- * Fixes the domains of the different voices to their range
+ * Sets the domains of the different voices to their range
  *      bass: [40, 60] E2 -> C3
  *      tenor: [48, 69] C2 -> A3
  *      alto: [55, 75] G2 -> D3
@@ -116,7 +116,7 @@ void forbid_parallel_intervals(Home home, int forbiddenParallelInterval, int cur
     //bassTenorIntervalForbidden is true if the interval is forbiddenParallelInterval
     BoolVar harmonicIntervalForbidden(home, 0, 1);
     rel(home, harmonicIntervalForbidden, IRT_EQ, expr(home, voicesHarmonicIntervals[currentPosition] %
-                                                             perfectOctave == forbiddenParallelInterval));
+                                                             PERFECT_OCTAVE == forbiddenParallelInterval));
 
     // is true if lower voice is the same note in both chords
     BoolVar notesLowerVoiceEqual(home, 0, 1);
@@ -135,7 +135,7 @@ void forbid_parallel_intervals(Home home, int forbiddenParallelInterval, int cur
     // is true if the harmonic interval between the voices is not forbidden
     BoolVar nextIntervalNotParallel(home, 0,1);
     rel(home, nextIntervalNotParallel, IRT_EQ, expr(home, voicesHarmonicIntervals[currentPosition+1] %
-                                                                perfectOctave != forbiddenParallelInterval));
+                                                                PERFECT_OCTAVE != forbiddenParallelInterval));
 
     BoolVar isNextIntervalValid(home,0,1);
     rel(home, bothVoicesEqual, BOT_OR, nextIntervalNotParallel, isNextIntervalValid); // ok
@@ -179,6 +179,7 @@ void setBass(const Home& home, Tonality *tonality, int degree, int state, IntVar
 /**
  * @todo change this for complete and incomplete chords later (third must be <=1 depending on the chord before and after if they are 5->1 and complete/incomplete)
  * @todo maybe make it a preference later
+ * @todo override this for the 5-6 fundamental state move that behaves differently
  * Sets the number of times each note of the notes of the chord are present in the chord
  * @param home the instance of the problem
  * @param tonality the tonality of the piece
@@ -213,22 +214,75 @@ void chordNoteOccurrenceFundamentalState(const Home& home, Tonality *tonality, i
  */
 void fundamentalStateChordToFundamentalStateChord(const Home& home, int currentPosition, vector<int> chordDegrees,
                                                   Tonality &tonality,
-                                                  const IntVar& bassMelodicInterval, const IntVar& tenorMelodicInterval,
-                                                  const IntVar& altoMelodicInterval, const IntVar& sopranoMelodicInterval,
+                                                  const IntVarArray& bassMelodicInterval, const IntVarArray& tenorMelodicInterval,
+                                                  const IntVarArray& altoMelodicInterval, const IntVarArray& sopranoMelodicInterval,
                                                   IntVarArray fullChordsVoicing){
     int degreeDifference = abs(chordDegrees[currentPosition+1] - chordDegrees[currentPosition]);
 
-    if(degreeDifference == minorSecond || degreeDifference == majorSecond){
+    /** First, corner cases that differ from the general rules */
+    if(chordDegrees[currentPosition] == FIFTH_DEGREE && chordDegrees[currentPosition+1] == SIXTH_DEGREE){
+        fifthDegreeFSToSixthDegreeFS(home, currentPosition, tonality, tenorMelodicInterval, altoMelodicInterval, sopranoMelodicInterval, fullChordsVoicing);
+    }
+    /** general cases */
+    else if(degreeDifference == MINOR_SECOND || degreeDifference == MAJOR_SECOND){
         // other voices need to move by contrary motion to the bass
-        rel(home, expr(home, bassMelodicInterval > 0), BOT_EQV, expr(home, tenorMelodicInterval < 0), true);
-        rel(home, expr(home, bassMelodicInterval > 0), BOT_EQV, expr(home, altoMelodicInterval < 0), true);
-        rel(home, expr(home, bassMelodicInterval > 0), BOT_EQV, expr(home, sopranoMelodicInterval < 0), true);
+        rel(home, expr(home, bassMelodicInterval[currentPosition] > 0), BOT_EQV, expr(home, tenorMelodicInterval[currentPosition] < 0), true);
+        rel(home, expr(home, bassMelodicInterval[currentPosition] > 0), BOT_EQV, expr(home, altoMelodicInterval[currentPosition] < 0), true);
+        rel(home, expr(home, bassMelodicInterval[currentPosition] > 0), BOT_EQV, expr(home, sopranoMelodicInterval[currentPosition] < 0), true);
 
-        rel(home, expr(home, bassMelodicInterval < 0), BOT_EQV, expr(home, tenorMelodicInterval > 0), true);
-        rel(home, expr(home, bassMelodicInterval < 0), BOT_EQV, expr(home, altoMelodicInterval > 0), true);
-        rel(home, expr(home, bassMelodicInterval < 0), BOT_EQV, expr(home, sopranoMelodicInterval > 0), true);
+        rel(home, expr(home, bassMelodicInterval[currentPosition] < 0), BOT_EQV, expr(home, tenorMelodicInterval[currentPosition] > 0), true);
+        rel(home, expr(home, bassMelodicInterval[currentPosition] < 0), BOT_EQV, expr(home, altoMelodicInterval[currentPosition] > 0), true);
+        rel(home, expr(home, bassMelodicInterval[currentPosition] < 0), BOT_EQV, expr(home, sopranoMelodicInterval[currentPosition] > 0), true);
     }
     else{ // there is at least one common note in the 2 chords -> keep that (these) notes in the same voices and move the other to the closest one
             //@todo calculer l'intersection des domaines et si la valeur est dedans => la suivante doit l'être aussi (sauf à la basse) -> dom cst reified
     }
+}
+
+/**
+ * Sets the constraint for a fifth degree followed by a sixth degree in fundamental state
+ *      the seventh of the scale must rise to the tonic and the other voices are going down (except for the bass)
+ * @param home the instance of the problem
+ * @param currentPosition the current position in the chord progression
+ * @param tonality the tonality of the piece
+ * @param tenorMelodicInterval the melodic intervals of the tenor
+ * @param altoMelodicInterval the melodic intervals of the alto
+ * @param sopranoMelodicInterval the melodic intervals of the soprano
+ * @param fullChordsVoicing the array containing the notes of the chords in the progression
+ */
+void fifthDegreeFSToSixthDegreeFS(const Home& home, int currentPosition, Tonality& tonality,
+                                  const IntVarArray& tenorMelodicInterval, const IntVarArray& altoMelodicInterval,
+                                  const IntVarArray& sopranoMelodicInterval, IntVarArray fullChordsVoicing){
+
+    // @todo : check that it actually doubles the third of the sixth chord which is the tonic + do the M/m thing (first we need to model minor tonalities as well)
+
+    // tenor note is the seventh of the scale
+    // -> that voice must raise to the tonic by a minor second
+    rel(home, expr(home, fullChordsVoicing[currentPosition +  TENOR] % PERFECT_OCTAVE + PERFECT_OCTAVE == tonality.get_degree_note(SEVENTH_DEGREE)),
+        BOT_IMP,expr(home, tenorMelodicInterval[currentPosition] ==1 ), true);
+    //other voices must go down
+    rel(home, expr(home, fullChordsVoicing[currentPosition +  TENOR] % PERFECT_OCTAVE + PERFECT_OCTAVE == tonality.get_degree_note(SEVENTH_DEGREE)),
+        BOT_IMP,expr(home, altoMelodicInterval[currentPosition] < 0), true);
+    rel(home, expr(home, fullChordsVoicing[currentPosition +  TENOR] % PERFECT_OCTAVE + PERFECT_OCTAVE == tonality.get_degree_note(SEVENTH_DEGREE)),
+        BOT_IMP,expr(home, sopranoMelodicInterval[currentPosition] < 0), true);
+
+    // alto note is the seventh of the scale
+    // -> that voice must raise to the tonic by a minor second
+    rel(home, expr(home, fullChordsVoicing[currentPosition +  ALTO] % PERFECT_OCTAVE + PERFECT_OCTAVE == tonality.get_degree_note(SEVENTH_DEGREE)),
+        BOT_IMP, expr(home, altoMelodicInterval[currentPosition] ==1 ), true);
+    // other voices must go down
+    rel(home, expr(home, fullChordsVoicing[currentPosition +  ALTO] % PERFECT_OCTAVE + PERFECT_OCTAVE == tonality.get_degree_note(SEVENTH_DEGREE)),
+        BOT_IMP, expr(home, tenorMelodicInterval[currentPosition] < 0), true);
+    rel(home, expr(home, fullChordsVoicing[currentPosition +  ALTO] % PERFECT_OCTAVE + PERFECT_OCTAVE == tonality.get_degree_note(SEVENTH_DEGREE)),
+        BOT_IMP, expr(home, sopranoMelodicInterval[currentPosition] < 0), true);
+
+    // soprano note is the seventh of the scale
+    // -> that voice must raise to the tonic by a minor second
+    rel(home, expr(home, fullChordsVoicing[currentPosition +  SOPRANO] % PERFECT_OCTAVE + PERFECT_OCTAVE == tonality.get_degree_note(SEVENTH_DEGREE)),
+        BOT_IMP, expr(home, sopranoMelodicInterval[currentPosition] ==1 ), true);
+    // other voices must go down
+    rel(home, expr(home, fullChordsVoicing[currentPosition +  SOPRANO] % PERFECT_OCTAVE + PERFECT_OCTAVE == tonality.get_degree_note(SEVENTH_DEGREE)),
+        BOT_IMP, expr(home, tenorMelodicInterval[currentPosition] < 0), true);
+    rel(home, expr(home, fullChordsVoicing[currentPosition +  SOPRANO] % PERFECT_OCTAVE + PERFECT_OCTAVE == tonality.get_degree_note(SEVENTH_DEGREE)),
+        BOT_IMP, expr(home, altoMelodicInterval[currentPosition] < 0), true);
 }

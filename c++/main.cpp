@@ -7,17 +7,19 @@ using namespace Gecode;
 using namespace std;
 
 int main(int argc, char* argv[]) {
-    int size = 3;
+    int size = 2;
     Tonality* tonality = new MajorTonality(C);
 
+    // @todo fix the problem that solutions are modified in OM
+
     // create a new problem
-    FourVoiceTexture* p = new FourVoiceTexture(size, tonality, {fourthDegree,fifthDegree,firstDegree},
-                                               {fundamental_state,fundamental_state,fundamental_state});
+    FourVoiceTexture* p = new FourVoiceTexture(size, tonality, {FIFTH_DEGREE, SIXTH_DEGREE},
+                                               {FUNDAMENTAL_STATE,FUNDAMENTAL_STATE});
     //std::cout << p->toString() << std::endl;
 
 
     // create a new search engine
-    Search::Base<FourVoiceTexture>* e = make_solver(p, dfs_solver);
+    Search::Base<FourVoiceTexture>* e = make_solver(p, DFS_SOLVER);
     delete p;
 
     std::cout << "Solver type : DFS " << std::endl;
@@ -31,7 +33,7 @@ int main(int argc, char* argv[]) {
         std::cout << sol->toString() <<std::endl;
         std::cout << statistics_to_string(e->statistics()) << std::endl;
         delete sol;
-        if (nb_sol >= 10000)
+        if (nb_sol >= 10)
             break;
     }
     cout << "No (more) solutions or solution cap reached.\n" << endl;

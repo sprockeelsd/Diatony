@@ -30,8 +30,8 @@ Tonality::Tonality(int t, vector<int> m) {
     }
 
     // Set tonal notes and modal notes
-    tonal_notes = getAllNotesFromIntervalLoop(tonic, {perfectFourth, majorSecond,perfectFourth}); // 1, 4 and 5 degrees
-    modal_notes = getAllNotesFromIntervalLoop(get_degrees_notes()[thirdDegree], {perfectFourth, majorSecond, perfectFourth}); // 3, 6 and 7 degrees
+    tonal_notes = getAllNotesFromIntervalLoop(tonic, {PERFECT_FOURTH, MAJOR_SECOND,PERFECT_FOURTH}); // 1, 4 and 5 degrees
+    modal_notes = getAllNotesFromIntervalLoop(get_degrees_notes()[THIRD_DEGREE], {PERFECT_FOURTH, MAJOR_SECOND, PERFECT_FOURTH}); // 3, 6 and 7 degrees
 
     // chord qualities and scale degrees chords are set in the child classes
 }
