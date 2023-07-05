@@ -17,8 +17,10 @@ int main(int argc, char* argv[]) {
 
 
     // create a new search engine
-    Search::Base<FourVoiceTexture>* e = make_solver(p, bab_solver);
+    Search::Base<FourVoiceTexture>* e = make_solver(p, dfs_solver);
     delete p;
+
+    std::cout << "Solver type : DFS " << std::endl;
 
     int nb_sol = 0;
     std::cout << std::endl;
@@ -27,8 +29,9 @@ int main(int argc, char* argv[]) {
         cout << "Solution " << nb_sol << ": " << endl;
         //sol->print_solution();
         std::cout << sol->toString() <<std::endl;
+        std::cout << statistics_to_string(e->statistics()) << std::endl;
         delete sol;
-        if (nb_sol >= 10)
+        if (nb_sol >= 10000)
             break;
     }
     cout << "No (more) solutions or solution cap reached.\n" << endl;

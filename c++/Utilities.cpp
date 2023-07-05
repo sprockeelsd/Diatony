@@ -84,6 +84,16 @@ vector<int> int_pointer_to_vector(int* ptr, int size){
     return v;
 }
 
+string statistics_to_string(Search::Statistics stats){
+    string s = "Nodes traversed: " + to_string(stats.node) + "\n";
+    s += "Failed nodes explored: " + to_string(stats.fail) + "\n";
+    s += "Restarts performed: " + to_string(stats.restart) + "\n";
+    s += "Propagators executed: " + to_string(stats.propagate) + "\n";
+    s += "No goods generated: " + to_string(stats.nogood) + "\n";
+    s += "Maximal depth of explored tree: " + to_string(stats.depth) + "\n";
+    return s;
+}
+
 /**
  * Prints A note with its name (e.g. 60 = C)
  * @param var an integer variable

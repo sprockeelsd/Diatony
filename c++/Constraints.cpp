@@ -226,8 +226,6 @@ void fundamentalStateChordToFundamentalStateChord(const Home& home, int currentP
         rel(home, expr(home, bassMelodicInterval < 0), BOT_EQV, expr(home, sopranoMelodicInterval > 0), true);
     }
     else{ // there is at least one common note in the 2 chords -> keep that (these) notes in the same voices and move the other to the closest one
-
-        //façon dégueu de le faire : check si la note est dans l'accord suivant en regardant chaque valeur
-        // autre façon : minimiser les intervalles mélodiques (somme de tous)
+            //@todo calculer l'intersection des domaines et si la valeur est dedans => la suivante doit l'être aussi (sauf à la basse) -> dom cst reified
     }
 }

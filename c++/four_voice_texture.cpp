@@ -118,11 +118,12 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
 
     /**------------------------------------------------branching-------------------------------------------------------*/
     // this order because the inner voices are supposed to move the least, bass and soprano is less important
-    branch(*this, absoluteTenorMelodicIntervals, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
-    branch(*this, absoluteAltoMelodicIntervals, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
-    branch(*this, absoluteSopranoMelodicIntervals, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
-    branch(*this, absoluteBassMelodicIntervals, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
-    branch(*this, FullChordsVoicing, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
+    // @todo figure out the branching, the variables below make search slower and might not be necessary
+//    branch(*this, absoluteTenorMelodicIntervals, INT_VAR_DEGREE_MAX(), INT_VAL_MIN());
+//    branch(*this, absoluteAltoMelodicIntervals, INT_VAR_DEGREE_MAX(), INT_VAL_MIN());
+//    branch(*this, absoluteSopranoMelodicIntervals, INT_VAR_DEGREE_MAX(), INT_VAL_MIN());
+//    branch(*this, absoluteBassMelodicIntervals, INT_VAR_DEGREE_MAX(), INT_VAL_MIN());
+    branch(*this, FullChordsVoicing, INT_VAR_DEGREE_MAX(), INT_VAL_MIN());
 }
 
 /**

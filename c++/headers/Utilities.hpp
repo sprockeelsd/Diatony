@@ -179,6 +179,8 @@ string int_vector_to_string(vector<int> vector);
  */
 vector<int> int_pointer_to_vector(int* ptr, int size);
 
+string statistics_to_string(Search::Statistics stats);
+
 /**
  * Prints A note with its name (e.g. 60 = C)
  * @param var an integer variable

@@ -23,10 +23,11 @@
     <list default="true" id="78063669-9d41-4950-9026-704cff767980" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/c++/Constraints.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/Constraints.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c++/Utilities.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/Utilities.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/c++/cmake-build-debug/Testing/Temporary/LastTest.log" beforeDir="false" afterPath="$PROJECT_DIR$/c++/cmake-build-debug/Testing/Temporary/LastTest.log" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/c++/four_voice_texture.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/four_voice_texture.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c++/headers/Constraints.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/headers/Constraints.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c++/headers/four_voice_texture.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/headers/four_voice_texture.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c++/headers/Utilities.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/headers/Utilities.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c++/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/main.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -114,7 +115,8 @@
       <workItem from="1688114482502" duration="11717000" />
       <workItem from="1688369226754" duration="7728000" />
       <workItem from="1688387581132" duration="5343000" />
-      <workItem from="1688456185876" duration="3283000" />
+      <workItem from="1688456185876" duration="6972000" />
+      <workItem from="1688543117824" duration="1534000" />
     </task>
     <servers />
   </component>
