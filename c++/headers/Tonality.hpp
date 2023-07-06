@@ -19,7 +19,8 @@ using namespace std;
 class Tonality { // abstract class
 protected:
     int tonic;                              // tonic of the tonality
-    vector<int> mode;                       // mode of the tonality
+    int mode;                               // mode of the tonality
+    vector<int> scale;                      // scale of the tonality
     map<int, int> degrees_notes;            // notes corresponding to the degrees of the scale
     map<int, vector<int>> chord_qualities;  // map of [degree, chord_quality] for each degree of the scale (0 to 6) (set by child classes)
 
@@ -35,8 +36,9 @@ public:
      * Constructor
      * @param t the tonic of the tonality
      * @param m the mode of the tonality
+     * @param s the scale of the tonality
      */
-    Tonality(int t, vector<int> m);
+    Tonality(int t, int m, vector<int> s);
 
     /**
      * Get the tonic of the tonality
@@ -48,7 +50,13 @@ public:
      * Get the mode of the tonality
      * @return the mode of the tonality
      */
-    vector<int> get_mode();
+    int get_mode();
+
+    /**
+     * Get the mode of the tonality
+     * @return the mode of the tonality
+     */
+    vector<int> get_scale();
 
     /**
      * Get the notes corresponding to the degrees of the scale (first elem = tonic, second_elem = second degree, etc.)

@@ -21,10 +21,22 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="78063669-9d41-4950-9026-704cff767980" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/c++/MinorTonality.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/c++/headers/MinorTonality.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c++/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/c++/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c++/Constraints.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/Constraints.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c++/MajorTonality.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/MajorTonality.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c++/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/c++/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c++/Tonality.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/Tonality.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c++/cmake-build-debug/.cmake/api/v1/reply/codemodel-v2-f1476029ac5525992078.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c++/cmake-build-debug/.cmake/api/v1/reply/index-2023-06-27T07-28-00-0231.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/c++/cmake-build-debug/.cmake/api/v1/reply/target-damien-Debug-29647a490705c48bdbba.json" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/c++/cmake-build-debug/Testing/Temporary/LastTest.log" beforeDir="false" afterPath="$PROJECT_DIR$/c++/cmake-build-debug/Testing/Temporary/LastTest.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c++/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c++/problem_wrapper.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/problem_wrapper.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c++/cmake-build-debug/build.ninja" beforeDir="false" afterPath="$PROJECT_DIR$/c++/cmake-build-debug/build.ninja" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c++/headers/Tonality.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/headers/Tonality.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c++/testTonality" beforeDir="false" afterPath="$PROJECT_DIR$/c++/testTonality" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c++/testTonality.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/testTonality.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -75,6 +87,11 @@
     </key>
   </component>
   <component name="RunManager">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="damien" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="MyProject" TARGET_NAME="damien" CONFIG_NAME="Debug" RUN_PATH="$PROJECT_DIR$/c++/Main">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -114,7 +131,7 @@
       <workItem from="1688387581132" duration="5343000" />
       <workItem from="1688456185876" duration="6972000" />
       <workItem from="1688543117824" duration="14115000" />
-      <workItem from="1688629178910" duration="2173000" />
+      <workItem from="1688629178910" duration="6831000" />
     </task>
     <servers />
   </component>

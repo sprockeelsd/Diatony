@@ -9,20 +9,22 @@
  * Constructor
  * @param t the tonic of the tonality
  * @param m the mode of the tonality
+ * @param s the scale of the tonality
  */
-Tonality::Tonality(int t, vector<int> m) {
+Tonality::Tonality(int t, int m, vector<int> s) {
     tonic = t % 12 + 12;    // bring it back to [12,21]
     mode = m;
+    scale = s;
 
     // Set the list of degrees which are the notes of the scale
     int curr = tonic;
-    for(int i = 0; i < mode.size(); ++i){
+    for(int i = 0; i < scale.size(); ++i){
         degrees_notes[i] = curr;
-        curr += mode[i];
+        curr += scale[i];
     }
 
     // Set the list of all the notes in the tonality
-    tonality_notes = getAllNotesFromTonality(tonic, mode);
+    tonality_notes = getAllNotesFromTonality(tonic, scale);
 
     // Create the dictionary of degrees and all occurrences of that notes
     for (int i = 0; i < degrees_notes.size(); ++i) {
@@ -48,8 +50,16 @@ int Tonality::get_tonic() {
  * Get the mode of the tonality
  * @return the mode of the tonality
  */
-vector<int> Tonality::get_mode() {
+int Tonality::get_mode(){
     return mode;
+}
+
+/**
+ * Get the scale of the tonality
+ * @return the scale of the tonality
+ */
+vector<int> Tonality::get_scale() {
+    return scale;
 }
 
 /**
@@ -95,7 +105,7 @@ IntSet Tonality::get_tonality_notes() {
 }
 
 /**
- * Get the notes that don't change in major or minor mode (1,4,5 degrees)
+ * Get the notes that don't change in major or minor scale (1,4,5 degrees)
  * @return an IntSet containing the tonal notes
  */
 IntSet Tonality::get_tonal_notes() {
@@ -103,7 +113,7 @@ IntSet Tonality::get_tonal_notes() {
 }
 
 /**
- * Get the notes that change in major or minor mode (3,6,7 degrees)
+ * Get the notes that change in major or minor scale (3,6,7 degrees)
  * @return an IntSet containing the modal notes
  */
 IntSet Tonality::get_modal_notes() {

@@ -187,6 +187,8 @@ void setBass(const Home& home, Tonality *tonality, int degree, int state, IntVar
  * @param currentChord the array containing a chord in the form [bass, alto, tenor, soprano]
  */
 void chordNoteOccurrenceFundamentalState(const Home& home, Tonality *tonality, int degree, const IntVarArgs& currentChord){
+    // exceptions
+    //@todo if 5 -> 6, then double the tonic of the tonality in the sixth degree chord
     count(home, currentChord, tonality->get_scale_degree(degree), IRT_EQ,2); // double the bass which is also the tonic
     count(home, currentChord, tonality->get_scale_degree((degree + 2) % 7), IRT_EQ,1); // the third should be present once
     count(home, currentChord, tonality->get_scale_degree((degree + 4) % 7), IRT_EQ, 1); // the fifth should be present once
@@ -254,30 +256,11 @@ void fifthDegreeFSToSixthDegreeFS(const Home& home, int currentPosition, Tonalit
                                   const IntVarArray& tenorMelodicInterval, const IntVarArray& altoMelodicInterval,
                                   const IntVarArray& sopranoMelodicInterval, IntVarArray fullChordsVoicing){
 
-    // @todo : check that it actually doubles the third of the sixth chord which is the tonic + do the M/m thing (first we need to model minor tonalities as well)
-
-    // tenor note is the seventh of the scale
-    // -> that voice must raise to the tonic by a minor second
-    rel(home, expr(home, fullChordsVoicing[currentPosition +  TENOR] % PERFECT_OCTAVE + PERFECT_OCTAVE == tonality.get_degree_note(SEVENTH_DEGREE)),
-        BOT_IMP,expr(home, tenorMelodicInterval[currentPosition] ==1 ), true);
-    //other voices must go down
-    rel(home, expr(home, fullChordsVoicing[currentPosition +  TENOR] % PERFECT_OCTAVE + PERFECT_OCTAVE == tonality.get_degree_note(SEVENTH_DEGREE)),
-        BOT_IMP,expr(home, altoMelodicInterval[currentPosition] < 0), true);
-    rel(home, expr(home, fullChordsVoicing[currentPosition +  TENOR] % PERFECT_OCTAVE + PERFECT_OCTAVE == tonality.get_degree_note(SEVENTH_DEGREE)),
-        BOT_IMP,expr(home, sopranoMelodicInterval[currentPosition] < 0), true);
-
-    // alto note is the seventh of the scale
-    // -> that voice must raise to the tonic by a minor second
-    rel(home, expr(home, fullChordsVoicing[currentPosition +  ALTO] % PERFECT_OCTAVE + PERFECT_OCTAVE == tonality.get_degree_note(SEVENTH_DEGREE)),
-        BOT_IMP, expr(home, altoMelodicInterval[currentPosition] ==1 ), true);
-    // other voices must go down
-    rel(home, expr(home, fullChordsVoicing[currentPosition +  ALTO] % PERFECT_OCTAVE + PERFECT_OCTAVE == tonality.get_degree_note(SEVENTH_DEGREE)),
-        BOT_IMP, expr(home, tenorMelodicInterval[currentPosition] < 0), true);
-    rel(home, expr(home, fullChordsVoicing[currentPosition +  ALTO] % PERFECT_OCTAVE + PERFECT_OCTAVE == tonality.get_degree_note(SEVENTH_DEGREE)),
-        BOT_IMP, expr(home, sopranoMelodicInterval[currentPosition] < 0), true);
+    // @todo : check that it actually doubles the third of the sixth chord which is the tonic
 
     // soprano note is the seventh of the scale
     // -> that voice must raise to the tonic by a minor second
+    // Always the case regardless of the mode
     rel(home, expr(home, fullChordsVoicing[currentPosition +  SOPRANO] % PERFECT_OCTAVE + PERFECT_OCTAVE == tonality.get_degree_note(SEVENTH_DEGREE)),
         BOT_IMP, expr(home, sopranoMelodicInterval[currentPosition] ==1 ), true);
     // other voices must go down
@@ -285,4 +268,27 @@ void fifthDegreeFSToSixthDegreeFS(const Home& home, int currentPosition, Tonalit
         BOT_IMP, expr(home, tenorMelodicInterval[currentPosition] < 0), true);
     rel(home, expr(home, fullChordsVoicing[currentPosition +  SOPRANO] % PERFECT_OCTAVE + PERFECT_OCTAVE == tonality.get_degree_note(SEVENTH_DEGREE)),
         BOT_IMP, expr(home, altoMelodicInterval[currentPosition] < 0), true);
+
+    // only if minor mode
+    if(tonality.get_mode() == MINOR_MODE){
+        // tenor note is the seventh of the scale
+        // -> that voice must raise to the tonic by a minor second
+        rel(home, expr(home, fullChordsVoicing[currentPosition +  TENOR] % PERFECT_OCTAVE + PERFECT_OCTAVE == tonality.get_degree_note(SEVENTH_DEGREE)),
+            BOT_IMP,expr(home, tenorMelodicInterval[currentPosition] ==1 ), true);
+        //other voices must go down
+        rel(home, expr(home, fullChordsVoicing[currentPosition +  TENOR] % PERFECT_OCTAVE + PERFECT_OCTAVE == tonality.get_degree_note(SEVENTH_DEGREE)),
+            BOT_IMP,expr(home, altoMelodicInterval[currentPosition] < 0), true);
+        rel(home, expr(home, fullChordsVoicing[currentPosition +  TENOR] % PERFECT_OCTAVE + PERFECT_OCTAVE == tonality.get_degree_note(SEVENTH_DEGREE)),
+            BOT_IMP,expr(home, sopranoMelodicInterval[currentPosition] < 0), true);
+
+        // alto note is the seventh of the scale
+        // -> that voice must raise to the tonic by a minor second
+        rel(home, expr(home, fullChordsVoicing[currentPosition +  ALTO] % PERFECT_OCTAVE + PERFECT_OCTAVE == tonality.get_degree_note(SEVENTH_DEGREE)),
+            BOT_IMP, expr(home, altoMelodicInterval[currentPosition] ==1 ), true);
+        // other voices must go down
+        rel(home, expr(home, fullChordsVoicing[currentPosition +  ALTO] % PERFECT_OCTAVE + PERFECT_OCTAVE == tonality.get_degree_note(SEVENTH_DEGREE)),
+            BOT_IMP, expr(home, tenorMelodicInterval[currentPosition] < 0), true);
+        rel(home, expr(home, fullChordsVoicing[currentPosition +  ALTO] % PERFECT_OCTAVE + PERFECT_OCTAVE == tonality.get_degree_note(SEVENTH_DEGREE)),
+            BOT_IMP, expr(home, sopranoMelodicInterval[currentPosition] < 0), true);
+    }
 }
