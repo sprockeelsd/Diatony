@@ -10,8 +10,6 @@ int main(int argc, char* argv[]) {
     int size = 2;
     Tonality* tonality = new MajorTonality(C);
 
-    // @todo fix the problem that solutions are modified in OM
-
     // create a new problem
     FourVoiceTexture* p = new FourVoiceTexture(size, tonality, {FIFTH_DEGREE, SIXTH_DEGREE},
                                                {FUNDAMENTAL_STATE,FUNDAMENTAL_STATE});
@@ -31,9 +29,10 @@ int main(int argc, char* argv[]) {
         cout << "Solution " << nb_sol << ": " << endl;
         //sol->print_solution();
         std::cout << sol->toString() <<std::endl;
+        writeToLogFile(sol->toString().c_str());
         std::cout << statistics_to_string(e->statistics()) << std::endl;
         delete sol;
-        if (nb_sol >= 10)
+        if (nb_sol >= 1)
             break;
     }
     cout << "No (more) solutions or solution cap reached.\n" << endl;

@@ -32,7 +32,10 @@ int get_size(void* sp){
  * @return an int* pointer representing the values of the variables
  */
 int* return_solution(void* sp){
-    return static_cast<FourVoiceTexture*>(sp)->return_solution();
+    FourVoiceTexture* pb = static_cast<FourVoiceTexture*>(sp);
+    int* sol = pb->return_solution();
+    writeToLogFile(pb->toString().c_str());
+    return sol;
 }
 
 /**
