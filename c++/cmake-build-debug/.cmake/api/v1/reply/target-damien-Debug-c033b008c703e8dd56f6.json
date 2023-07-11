@@ -210,7 +210,7 @@
 		},
 		{
 			"backtrace" : 1,
-			"path" : "MinorTonality.hpp",
+			"path" : "headers/MinorTonality.hpp",
 			"sourceGroupIndex" : 0
 		},
 		{

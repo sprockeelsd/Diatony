@@ -5,13 +5,14 @@
  */
 MinorTonality::MinorTonality(int t) : Tonality(t, MINOR_MODE, NATURAL_MINOR_SCALE){ // calls super() constructor
     // set the chord qualities for major tonalities
-    chord_qualities[0] = MAJOR_CHORD;
-    chord_qualities[1] = MINOR_CHORD;
-    chord_qualities[2] = MINOR_CHORD;
-    chord_qualities[3] = MAJOR_CHORD;
+    chord_qualities[0] = MINOR_CHORD;
+    chord_qualities[1] = DIMINISHED_CHORD;
+    chord_qualities[2] = MAJOR_CHORD;
+    chord_qualities[3] = MINOR_CHORD;
     chord_qualities[4] = MAJOR_CHORD;
-    chord_qualities[5] = MINOR_CHORD;
+    chord_qualities[5] = MAJOR_CHORD;
     chord_qualities[6] = DIMINISHED_CHORD;
+    // @todo override les notes de la tonalité pour le mode mineur + ajouter le mode dans les paramètres passés depuis om
 
     for (int i = 0; i < chord_qualities.size(); i++){
         scale_degrees_chords[i] = getAllNotesFromChord(degrees_notes[i], chord_qualities[i]); // @todo change when degrees_notes is a map

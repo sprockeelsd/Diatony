@@ -256,7 +256,7 @@ void fifthDegreeFSToSixthDegreeFS(const Home& home, int currentPosition, Tonalit
                                   const IntVarArray& tenorMelodicInterval, const IntVarArray& altoMelodicInterval,
                                   const IntVarArray& sopranoMelodicInterval, IntVarArray fullChordsVoicing){
 
-    // @todo : check that it actually doubles the third of the sixth chord which is the tonic
+    // @todo : check that it actually doubles the third of the sixth chord which is the tonic + make it cleaner with loops
 
     // soprano note is the seventh of the scale
     // -> that voice must raise to the tonic by a minor second

@@ -2,17 +2,18 @@
 #include "headers/Utilities.hpp"
 #include "headers/Tonality.hpp"
 #include "headers/MajorTonality.hpp"
+#include "headers/MinorTonality.hpp"
 
 using namespace Gecode;
 using namespace std;
 
 int main(int argc, char* argv[]) {
     int size = 2;
-    Tonality* tonality = new MajorTonality(C);
+    Tonality* tonality = new MinorTonality(C);
 
     // create a new problem
-    FourVoiceTexture* p = new FourVoiceTexture(size, tonality, {FIFTH_DEGREE, SIXTH_DEGREE},
-                                               {FUNDAMENTAL_STATE,FUNDAMENTAL_STATE});
+    FourVoiceTexture* p = new FourVoiceTexture(size, tonality, {FIRST_DEGREE},
+                                               {FUNDAMENTAL_STATE});
     //std::cout << p->toString() << std::endl;
 
 

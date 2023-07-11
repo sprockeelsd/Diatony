@@ -13,7 +13,7 @@
 
 using namespace Gecode;
 using namespace std;
-class MinorTonality : Tonality{
+class MinorTonality : public Tonality{
 protected:
 public:
     /**
