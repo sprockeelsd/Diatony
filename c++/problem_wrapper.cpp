@@ -9,7 +9,7 @@
  * @return A pointer to a FourVoiceTexture object casted as a void*
  */
 void* create_new_problem(int size, int* chord_degrees, int* chord_states){
-    Tonality* t = new MajorTonality(C);
+    Tonality* t = new MinorTonality(C);
     vector<int> degrees(int_pointer_to_vector(chord_degrees, size));
     vector<int> states(int_pointer_to_vector(chord_states, size));
     FourVoiceTexture* pb = new FourVoiceTexture(size, t, degrees, states);

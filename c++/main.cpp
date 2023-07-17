@@ -8,13 +8,13 @@ using namespace Gecode;
 using namespace std;
 
 int main(int argc, char* argv[]) {
-    int size = 2;
+    int size = 1;
     Tonality* tonality = new MinorTonality(C);
 
     // create a new problem
-    FourVoiceTexture* p = new FourVoiceTexture(size, tonality, {FIRST_DEGREE},
+    FourVoiceTexture* p = new FourVoiceTexture(size, tonality, {FIFTH_DEGREE},
                                                {FUNDAMENTAL_STATE});
-    //std::cout << p->toString() << std::endl;
+    // std::cout << p->toString() << std::endl;
 
 
     // create a new search engine

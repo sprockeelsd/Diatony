@@ -28,7 +28,13 @@ Tonality::Tonality(int t, int m, vector<int> s) {
 
     // Create the dictionary of degrees and all occurrences of that notes
     for (int i = 0; i < degrees_notes.size(); ++i) {
-        scale_degrees[i] = getAllGivenNote(degrees_notes[i]);
+        vector<int> temp = getAllGivenNote(degrees_notes[i]);
+        if(i == SEVENTH_DEGREE && mode == MINOR_MODE){
+            vector<int> temp2 = getAllGivenNote(degrees_notes[i] + 1);
+            temp.insert(temp.end(), temp2.begin(), temp2.end());
+        }
+        IntSet set((const vector<int>) temp);
+        scale_degrees[i] = set;
     }
 
     // Set tonal notes and modal notes

@@ -50,7 +50,7 @@ IntSet getAllNotesFromChord(int root, vector<int> quality)
  * @param note a note
  * @return const vector<int> a vector containing all the given notes
  */
-IntSet getAllGivenNote(int note)
+vector<int> getAllGivenNote(int note)
 {
     int current = note % 12 + 12;
     vector<int> notes;
@@ -59,8 +59,7 @@ IntSet getAllGivenNote(int note)
         notes.push_back(current);
         current += 12;
     }
-    IntSet set((const vector<int>)notes);
-    return set;
+    return notes;
 }
 
 /**

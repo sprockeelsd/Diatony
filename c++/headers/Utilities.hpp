@@ -162,7 +162,7 @@ IntSet getAllNotesFromChord(int root, vector<int> quality);
  * @param note a note
  * @return const vector<int> a vector containing all the given notes
  */
-IntSet getAllGivenNote(int note);
+vector<int> getAllGivenNote(int note);
 
 /**
  * Transforms a vector of integers into a string

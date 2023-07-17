@@ -20,7 +20,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     chordStates = chordStas;
 
     /** variable initialization */
-    FullChordsVoicing = IntVarArray(*this, 4*size, tonality->get_tonality_notes());
+    FullChordsVoicing = IntVarArray(*this, 4*size, 0,127); // tonality->get_tonality_notes()
 
     // variable arrays for melodic intervals for each voice
     bassMelodicIntervals = IntVarArray(*this, size-1, -PERFECT_OCTAVE, PERFECT_OCTAVE);
@@ -112,7 +112,6 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
                                                               sopranoMelodicIntervals,
                                                               FullChordsVoicing);
             }
-
         }
     }
 

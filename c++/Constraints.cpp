@@ -159,6 +159,7 @@ void forbid_parallel_intervals(Home home, int forbiddenParallelInterval, int cur
  * @param currentChord the array containing a chord in the form [bass, alto, tenor, soprano]
  */
 void setToChord(const Home& home, Tonality* tonality, int degree, const IntVarArgs& currentChord){
+    std::cout << "chord : " << tonality->get_scale_degree_chord(degree) << std::endl;
     dom(home, currentChord, tonality->get_scale_degree_chord(degree));
 }
 
@@ -189,6 +190,7 @@ void setBass(const Home& home, Tonality *tonality, int degree, int state, IntVar
 void chordNoteOccurrenceFundamentalState(const Home& home, Tonality *tonality, int degree, const IntVarArgs& currentChord){
     // exceptions
     //@todo if 5 -> 6, then double the tonic of the tonality in the sixth degree chord
+    //@todo this causes problems for the minor mode because the seventh degree can be 2 notes
     count(home, currentChord, tonality->get_scale_degree(degree), IRT_EQ,2); // double the bass which is also the tonic
     count(home, currentChord, tonality->get_scale_degree((degree + 2) % 7), IRT_EQ,1); // the third should be present once
     count(home, currentChord, tonality->get_scale_degree((degree + 4) % 7), IRT_EQ, 1); // the fifth should be present once

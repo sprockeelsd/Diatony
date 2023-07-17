@@ -23,16 +23,13 @@
     <list default="true" id="78063669-9d41-4950-9026-704cff767980" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/c++/Constraints.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/Constraints.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c++/MinorTonality.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/MinorTonality.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c++/cmake-build-debug/.cmake/api/v1/reply/codemodel-v2-57e3c386b8d8cd74f0bc.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c++/cmake-build-debug/.cmake/api/v1/reply/index-2023-07-06T13-20-42-0225.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c++/cmake-build-debug/.cmake/api/v1/reply/target-damien-Debug-7e78c0de3cd10f9cfe6a.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/c++/cmake-build-debug/.ninja_deps" beforeDir="false" afterPath="$PROJECT_DIR$/c++/cmake-build-debug/.ninja_deps" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c++/cmake-build-debug/.ninja_log" beforeDir="false" afterPath="$PROJECT_DIR$/c++/cmake-build-debug/.ninja_log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c++/Tonality.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/Tonality.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c++/Utilities.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/Utilities.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/c++/cmake-build-debug/Testing/Temporary/LastTest.log" beforeDir="false" afterPath="$PROJECT_DIR$/c++/cmake-build-debug/Testing/Temporary/LastTest.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c++/headers/MinorTonality.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/headers/MinorTonality.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c++/headers/problem_wrapper.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/headers/problem_wrapper.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c++/four_voice_texture.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/four_voice_texture.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c++/headers/Utilities.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/headers/Utilities.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/c++/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/c++/problem_wrapper.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/problem_wrapper.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,6 +42,9 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/c++/MinorTonality.cpp" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -125,7 +125,11 @@
       <workItem from="1688629178910" duration="7409000" />
       <workItem from="1688716552351" duration="610000" />
       <workItem from="1688819419546" duration="103000" />
-      <workItem from="1689087852767" duration="659000" />
+      <workItem from="1689087852767" duration="714000" />
+      <workItem from="1689582757694" duration="119000" />
+      <workItem from="1689582953211" duration="1916000" />
+      <workItem from="1689600797511" duration="545000" />
+      <workItem from="1689601348092" duration="2614000" />
     </task>
     <servers />
   </component>
