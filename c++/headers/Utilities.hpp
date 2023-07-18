@@ -25,27 +25,27 @@ enum solver_types{
 const vector<std::string> noteNames = {"C", "C#", "D", "Eb", "E", "F", "F#", "G", "Ab", "A", "Bb", "B"}; // @todo turn into a map
 
 /** Notes */
-const int Bsharp = 12;
-const int C = 12;
-const int Csharp = 13;
-const int Dflat = 13;
-const int D = 14;
-const int Dsharp = 15;
-const int Eflat = 15;
-const int E = 16;
-const int Fflat = 16;
-const int Esharp = 17;
-const int F = 17;
-const int Fsharp = 18;
-const int Gflat = 18;
-const int G = 19;
-const int Gsharp = 20;
-const int Aflat = 20;
-const int A = 21;
-const int Asharp = 22;
-const int Bflat = 22;
-const int B = 23;
-const int Cflat = 23;
+const int Bsharp = 0;
+const int C = 0;
+const int Csharp = 1;
+const int Dflat = 1;
+const int D = 2;
+const int Dsharp = 3;
+const int Eflat = 3;
+const int E = 4;
+const int Fflat = 4;
+const int Esharp = 5;
+const int F = 5;
+const int Fsharp = 6;
+const int Gflat = 6;
+const int G = 7;
+const int Gsharp = 8;
+const int Aflat = 8;
+const int A = 9;
+const int Asharp = 10;
+const int Bflat = 10;
+const int B = 11;
+const int Cflat = 11;
 
 enum voices{
     BASS,

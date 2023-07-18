@@ -9,7 +9,7 @@
  */
 vector<int> getAllNotesFromIntervalLoop(int n, vector<int> intervals_loop)
 {
-    int note = n % 12 + 12; // bring the root back to [12,23] in case the argument is wrong
+    int note = n % PERFECT_OCTAVE; // bring the root back to [12,23] in case the argument is wrong
     vector<int> notes;
 
     int i = 0;
@@ -51,7 +51,7 @@ vector<int> getAllNotesFromChord(int root, vector<int> quality)
  */
 vector<int> getAllGivenNote(int note)
 {
-    int current = note % 12 + 12;
+    int current = note % PERFECT_OCTAVE;
     vector<int> notes;
     while (current < 127)
     {
@@ -97,7 +97,7 @@ string statistics_to_string(Search::Statistics stats){
  * @param var an integer variable
  */
 void printNoteInLetter(IntVar var){
-    std::cout << noteNames[var.val() % 12] << var.val() / 12 << " ";
+    std::cout << noteNames[var.val() % PERFECT_OCTAVE] << var.val() / PERFECT_OCTAVE << " ";
 }
 
 /**

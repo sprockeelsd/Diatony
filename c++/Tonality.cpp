@@ -12,7 +12,7 @@
  * @param s the scale of the tonality
  */
 Tonality::Tonality(int t, int m, vector<int> s) {
-    tonic = t % PERFECT_OCTAVE + PERFECT_OCTAVE;    // bring it back to [12,21]
+    tonic = t % PERFECT_OCTAVE;    // bring it back to [12,21]
     mode = m;
     scale = s;
 
@@ -37,8 +37,12 @@ Tonality::Tonality(int t, int m, vector<int> s) {
     // Set tonal notes and modal notes
     IntSet set(getAllNotesFromIntervalLoop(tonic, {PERFECT_FOURTH, MAJOR_SECOND,PERFECT_FOURTH}));
     tonal_notes = set; // 1, 4 and 5 degrees
-    // @todo modify so the flat seventh is also in that set
-    IntSet set2(getAllNotesFromIntervalLoop(get_degrees_notes()[THIRD_DEGREE], {PERFECT_FOURTH, MAJOR_SECOND, PERFECT_FOURTH}));
+    vector<int> vec(getAllNotesFromIntervalLoop(get_degrees_notes()[THIRD_DEGREE], {PERFECT_FOURTH, MAJOR_SECOND, PERFECT_FOURTH}));
+    if(mode == MINOR_MODE){
+        vector<int> flatSeventh = getAllGivenNote(degrees_notes[SEVENTH_DEGREE]); // add the minor seventh if minor mode
+        vec.insert(vec.end(), flatSeventh.begin(), flatSeventh.end()); // merge the 2 vectors together
+    }
+    IntSet set2((const vector<int>) vec);
     modal_notes = set2; // 3, 6 and 7 degrees
 
     // chord qualities and scale degrees chords are set in the child classes

@@ -13,10 +13,10 @@
 void* create_new_problem(int size, int key, int mode, int* chord_degrees, int* chord_states){
     Tonality *t;
     if(mode == MAJOR_MODE){
-        t = new MinorTonality(key % PERFECT_OCTAVE + PERFECT_OCTAVE);
+        t = new MinorTonality(key % PERFECT_OCTAVE);
     }
     else{ // @todo add other modes here if needed
-        t = new MinorTonality(key % PERFECT_OCTAVE + PERFECT_OCTAVE);
+        t = new MinorTonality(key % PERFECT_OCTAVE);
     }
     vector<int> degrees(int_pointer_to_vector(chord_degrees, size));
     vector<int> states(int_pointer_to_vector(chord_states, size));
