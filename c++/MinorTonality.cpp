@@ -15,7 +15,8 @@ MinorTonality::MinorTonality(int t) : Tonality(t, MINOR_MODE, HARMONIC_MINOR_SCA
     // @todo override les notes de la tonalité pour le mode mineur + ajouter le mode dans les paramètres passés depuis om
 
     for (int i = 0; i < chord_qualities.size(); i++){
-        scale_degrees_chords[i] = getAllNotesFromChord(degrees_notes[i], chord_qualities[i]); // @todo change when degrees_notes is a map
+        IntSet set(getAllNotesFromChord(degrees_notes[i], chord_qualities[i]));
+        scale_degrees_chords[i] = set; // @todo change when degrees_notes is a map
     }
 }
 

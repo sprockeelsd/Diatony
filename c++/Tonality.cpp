@@ -35,9 +35,11 @@ Tonality::Tonality(int t, int m, vector<int> s) {
     }
 
     // Set tonal notes and modal notes
-    tonal_notes = getAllNotesFromIntervalLoop(tonic, {PERFECT_FOURTH, MAJOR_SECOND,PERFECT_FOURTH}); // 1, 4 and 5 degrees
+    IntSet set(getAllNotesFromIntervalLoop(tonic, {PERFECT_FOURTH, MAJOR_SECOND,PERFECT_FOURTH}));
+    tonal_notes = set; // 1, 4 and 5 degrees
     // @todo modify so the flat seventh is also in that set
-    modal_notes = getAllNotesFromIntervalLoop(get_degrees_notes()[THIRD_DEGREE], {PERFECT_FOURTH, MAJOR_SECOND, PERFECT_FOURTH}); // 3, 6 and 7 degrees
+    IntSet set2(getAllNotesFromIntervalLoop(get_degrees_notes()[THIRD_DEGREE], {PERFECT_FOURTH, MAJOR_SECOND, PERFECT_FOURTH}));
+    modal_notes = set2; // 3, 6 and 7 degrees
 
     // chord qualities and scale degrees chords are set in the child classes
 }

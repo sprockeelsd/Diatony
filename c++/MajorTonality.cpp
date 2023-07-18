@@ -15,7 +15,8 @@ MajorTonality::MajorTonality(int t) : Tonality(t, MAJOR_MODE, MAJOR_SCALE){ // c
     chord_qualities[6] = DIMINISHED_CHORD;
 
     for (int i = 0; i < chord_qualities.size(); i++){
-        scale_degrees_chords[i] = getAllNotesFromChord(degrees_notes[i], chord_qualities[i]); // @todo change when degrees_notes is a map
+        IntSet set(getAllNotesFromChord(degrees_notes[i], chord_qualities[i]));
+        scale_degrees_chords[i] = set; // @todo change when degrees_notes is a map
     }
 }
 

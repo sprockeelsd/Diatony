@@ -7,7 +7,7 @@
  * scale from note, use {2, 2, 1, 2, 2, 2, 1}. To get all notes from a minor chord, use {3, 4, 5}.
  * @return vector<int> all the notes
  */
-IntSet getAllNotesFromIntervalLoop(int n, vector<int> intervals_loop)
+vector<int> getAllNotesFromIntervalLoop(int n, vector<int> intervals_loop)
 {
     int note = n % 12 + 12; // bring the root back to [12,23] in case the argument is wrong
     vector<int> notes;
@@ -19,8 +19,7 @@ IntSet getAllNotesFromIntervalLoop(int n, vector<int> intervals_loop)
         note += intervals_loop[i % intervals_loop.size()];
         ++i;
     }
-    IntSet set((const vector<int>)notes);
-    return set;
+    return notes;
 }
 
 /**
@@ -29,7 +28,7 @@ IntSet getAllNotesFromIntervalLoop(int n, vector<int> intervals_loop)
  * @param scale the set of tones and semitones that define the scale
  * @return vector<int> all the possible notes from that tonality
  */
-IntSet getAllNotesFromTonality(int root, vector<int> scale)
+vector<int> getAllNotesFromTonality(int root, vector<int> scale)
 {
     return getAllNotesFromIntervalLoop(root, scale);
 }
@@ -40,7 +39,7 @@ IntSet getAllNotesFromTonality(int root, vector<int> scale)
  * @param quality the set of tones and semitones that define the chord
  * @return vector<int> all the possible notes from that chord
  */
-IntSet getAllNotesFromChord(int root, vector<int> quality)
+vector<int> getAllNotesFromChord(int root, vector<int> quality)
 {
     return getAllNotesFromIntervalLoop(root, quality);
 }

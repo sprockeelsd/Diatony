@@ -139,7 +139,7 @@ const vector<int> MELODIC_MINOR_SCALE = {MAJOR_SECOND, MINOR_SECOND, MAJOR_SECON
  * scale from note, use {2, 2, 1, 2, 2, 2, 1}. To get all notes from a minor chord, use {3, 4, 5}.
  * @return vector<int> all the notes
  */
-IntSet getAllNotesFromIntervalLoop(int root, vector<int> scale);
+vector<int> getAllNotesFromIntervalLoop(int root, vector<int> scale);
 
 /**
  * For a given tonality (root + mode), returns all the possible notes
@@ -147,7 +147,7 @@ IntSet getAllNotesFromIntervalLoop(int root, vector<int> scale);
  * @param scale the set of tones and semitones that define the scale
  * @return vector<int> all the possible notes from that tonality
  */
-IntSet getAllNotesFromTonality(int root, vector<int> scale);
+vector<int> getAllNotesFromTonality(int root, vector<int> scale);
 
 /**
  * For a given chord (root + mode), returns all the possible notes
@@ -155,7 +155,7 @@ IntSet getAllNotesFromTonality(int root, vector<int> scale);
  * @param quality the set of tones and semitones that define the chord
  * @return vector<int> all the possible notes from that chord
  */
-IntSet getAllNotesFromChord(int root, vector<int> quality);
+vector<int> getAllNotesFromChord(int root, vector<int> quality);
 
 /**
  * Get all values for a given note
