@@ -3,7 +3,7 @@
  * Constructor
  * @param t the tonic of the tonality
  */
-MinorTonality::MinorTonality(int t) : Tonality(t, MINOR_MODE, NATURAL_MINOR_SCALE){ // calls super() constructor
+MinorTonality::MinorTonality(int t) : Tonality(t, MINOR_MODE, HARMONIC_MINOR_SCALE){ // calls super() constructor
     // set the chord qualities for major tonalities
     chord_qualities[0] = MINOR_CHORD;
     chord_qualities[1] = DIMINISHED_CHORD;

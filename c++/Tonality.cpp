@@ -12,7 +12,7 @@
  * @param s the scale of the tonality
  */
 Tonality::Tonality(int t, int m, vector<int> s) {
-    tonic = t % 12 + 12;    // bring it back to [12,21]
+    tonic = t % PERFECT_OCTAVE + PERFECT_OCTAVE;    // bring it back to [12,21]
     mode = m;
     scale = s;
 
@@ -23,22 +23,20 @@ Tonality::Tonality(int t, int m, vector<int> s) {
         curr += scale[i];
     }
 
-    // Set the list of all the notes in the tonality
-    tonality_notes = getAllNotesFromTonality(tonic, scale);
-
     // Create the dictionary of degrees and all occurrences of that notes
     for (int i = 0; i < degrees_notes.size(); ++i) {
         vector<int> temp = getAllGivenNote(degrees_notes[i]);
         if(i == SEVENTH_DEGREE && mode == MINOR_MODE){
-            vector<int> temp2 = getAllGivenNote(degrees_notes[i] + 1);
-            temp.insert(temp.end(), temp2.begin(), temp2.end());
+            vector<int> temp2 = getAllGivenNote(degrees_notes[i] - 1); // to also get the flat seventh because it is used in third degree chord
+            temp.insert(temp.end(), temp2.begin(), temp2.end()); // merge the 2 vectors together
         }
-        IntSet set((const vector<int>) temp);
+        IntSet set((const vector<int>) temp); // cast into IntSet
         scale_degrees[i] = set;
     }
 
     // Set tonal notes and modal notes
     tonal_notes = getAllNotesFromIntervalLoop(tonic, {PERFECT_FOURTH, MAJOR_SECOND,PERFECT_FOURTH}); // 1, 4 and 5 degrees
+    // @todo modify so the flat seventh is also in that set
     modal_notes = getAllNotesFromIntervalLoop(get_degrees_notes()[THIRD_DEGREE], {PERFECT_FOURTH, MAJOR_SECOND, PERFECT_FOURTH}); // 3, 6 and 7 degrees
 
     // chord qualities and scale degrees chords are set in the child classes
@@ -100,14 +98,6 @@ map<int, IntSet> Tonality::get_scale_degrees() {
  */
 IntSet Tonality::get_scale_degree(int degree) {
     return scale_degrees[degree];
-}
-
-/**
- * Get all the notes in the tonality
- * @return an IntSet containing all the notes in the tonality
- */
-IntSet Tonality::get_tonality_notes() {
-    return tonality_notes;
 }
 
 /**

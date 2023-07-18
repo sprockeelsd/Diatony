@@ -19,8 +19,6 @@ int main(int argc, char* argv[]) {
     std::cout << "\n Tonic values : " << tonality->get_scale_degree(FIRST_DEGREE) << ", degrees_notes[" << FIFTH_DEGREE + 1 << " : "
     << tonality->get_scale_degree(FIFTH_DEGREE) << "]" << std::endl;
 
-    std::cout << "\n Tonality notes :" << tonality->get_tonality_notes() << std::endl;
-
     std::cout << "\n Tonal notes : " << tonality->get_tonal_notes() << std::endl;
 
     std::cout << "\n Modal notes : " << tonality->get_modal_notes() << std::endl;

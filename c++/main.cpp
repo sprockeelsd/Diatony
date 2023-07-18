@@ -12,7 +12,7 @@ int main(int argc, char* argv[]) {
     Tonality* tonality = new MinorTonality(C);
 
     // create a new problem
-    FourVoiceTexture* p = new FourVoiceTexture(size, tonality, {FIFTH_DEGREE},
+    FourVoiceTexture* p = new FourVoiceTexture(size, tonality, {SEVENTH_DEGREE},
                                                {FUNDAMENTAL_STATE});
     // std::cout << p->toString() << std::endl;
 

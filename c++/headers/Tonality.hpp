@@ -15,6 +15,7 @@ using namespace std;
 
 /**
  * This class models a tonality
+ * @todo move note values to [0,11] instead of [12,23]
  */
 class Tonality { // abstract class
 protected:
@@ -25,7 +26,6 @@ protected:
     map<int, vector<int>> chord_qualities;  // map of [degree, chord_quality] for each degree of the scale (0 to 6) (set by child classes)
 
     map<int, IntSet> scale_degrees;         // map of [degree, all_notes] for each degree of the scale (0 to 6)
-    IntSet tonality_notes;                  // all the notes in the tonality
     IntSet tonal_notes;                     // notes that don't change in major or minor mode (1,4,5 degrees)
     IntSet modal_notes;                     // notes that change in major or minor mode (3,6,7 degrees)
 
@@ -68,6 +68,7 @@ public:
      * Get the note for a given degree
      * @param degree the degree of the scale [0,6]
      * @return the note for the given degree
+     * @todo change when the minor thing is done
      */
     int get_degree_note(int degree);
 
@@ -83,12 +84,6 @@ public:
      * @return an IntSet containing all the notes for the given scale degree
      */
     IntSet get_scale_degree(int degree);
-
-    /**
-     * Get all the notes in the tonality
-     * @return an IntSet containing all the notes in the tonality
-     */
-    IntSet get_tonality_notes();
 
     /**
      * Get the notes that don't change in major or minor mode (1,4,5 degrees)
