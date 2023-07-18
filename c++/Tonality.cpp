@@ -12,21 +12,22 @@
  * @param s the scale of the tonality
  */
 Tonality::Tonality(int t, int m, vector<int> s) {
-    tonic = t % PERFECT_OCTAVE;    // bring it back to [12,21]
+    tonic = t % PERFECT_OCTAVE;    // bring it back to [0,11]
     mode = m;
     scale = s;
 
-    // Set the list of degrees which are the notes of the scale
+    /// Set the list of degrees which are the notes of the scale
     int curr = tonic;
     for(int i = 0; i < scale.size(); ++i){
         degrees_notes[i] = curr;
         curr += scale[i];
     }
 
-    // Create the dictionary of degrees and all occurrences of that notes
+    /// Create the dictionary of degrees and all possible values of that (those) note(s)
     for (int i = 0; i < degrees_notes.size(); ++i) {
         vector<int> temp = getAllGivenNote(degrees_notes[i]);
-        if(i == SEVENTH_DEGREE && mode == MINOR_MODE){
+        if(i == SEVENTH_DEGREE && mode == MINOR_MODE){ // @todo move this to minor tonality somehow
+            // @todo maybe add flat sixth as well? for now not necessary
             vector<int> temp2 = getAllGivenNote(degrees_notes[i] - 1); // to also get the flat seventh because it is used in third degree chord
             temp.insert(temp.end(), temp2.begin(), temp2.end()); // merge the 2 vectors together
         }

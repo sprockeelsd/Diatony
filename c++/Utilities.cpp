@@ -3,11 +3,11 @@
 /**
  * For a given set of intervals between notes that loops and a starting note, returns all the possible notes
  * @param n the starting note
- * @param intervals_loop the set of intervals between notes. It must make a loop. For example, to get all notes from a major
+ * @param intervals the set of intervals between notes. It must make a loop. For example, to get all notes from a major
  * scale from note, use {2, 2, 1, 2, 2, 2, 1}. To get all notes from a minor chord, use {3, 4, 5}.
  * @return vector<int> all the notes
  */
-vector<int> getAllNotesFromIntervalLoop(int n, vector<int> intervals_loop)
+vector<int> getAllNotesFromIntervalLoop(int n, vector<int> intervals)
 {
     int note = n % PERFECT_OCTAVE; // bring the root back to [12,23] in case the argument is wrong
     vector<int> notes;
@@ -16,7 +16,7 @@ vector<int> getAllNotesFromIntervalLoop(int n, vector<int> intervals_loop)
     while (note <= 127)
     {
         notes.push_back(note);
-        note += intervals_loop[i % intervals_loop.size()];
+        note += intervals[i % intervals.size()];
         ++i;
     }
     return notes;
@@ -47,7 +47,7 @@ vector<int> getAllNotesFromChord(int root, vector<int> quality)
 /**
  * Get all values for a given note
  * @param note a note
- * @return const vector<int> a vector containing all the given notes
+ * @return vector<int> a vector containing all the given notes
  */
 vector<int> getAllGivenNote(int note)
 {
