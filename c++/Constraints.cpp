@@ -180,20 +180,29 @@ void setBass(const Home& home, Tonality *tonality, int degree, int state, IntVar
 /**
  * @todo change this for complete and incomplete chords later (third must be <=1 depending on the chord before and after if they are 5->1 and complete/incomplete)
  * @todo maybe make it a preference later
- * @todo override this for the 5-6 fundamental state move that behaves differently
  * Sets the number of times each note of the notes of the chord are present in the chord
  * @param home the instance of the problem
  * @param tonality the tonality of the piece
  * @param degree the degree of the chord
+ * @param previous_chord_degree the degree of the following chord
  * @param currentChord the array containing a chord in the form [bass, alto, tenor, soprano]
  */
-void chordNoteOccurrenceFundamentalState(const Home& home, Tonality *tonality, int degree, const IntVarArgs& currentChord){
-    // exceptions
-    //@todo if 5 -> 6, then double the tonic of the tonality in the sixth degree chord
-    //@todo this causes problems for the minor mode because the seventh degree can be 2 notes
-    count(home, currentChord, tonality->get_scale_degree(degree), IRT_EQ,2); // double the bass which is also the tonic
-    count(home, currentChord, tonality->get_scale_degree((degree + 2) % 7), IRT_EQ,1); // the third should be present once
-    count(home, currentChord, tonality->get_scale_degree((degree + 4) % 7), IRT_EQ, 1); // the fifth should be present once
+void chordNoteOccurrenceFundamentalState(const Home& home, Tonality *tonality, int degree, int previous_chord_degree,
+                                         const IntVarArgs& currentChord){
+    /// exceptions
+    //@todo see what Karim says about this
+    if(degree == SIXTH_DEGREE && previous_chord_degree == FIFTH_DEGREE){ // 5->6 degree in fundamental state (broken cadence)
+        count(home, currentChord, tonality->get_scale_degree(degree), IRT_EQ,1); // the fundamental should be present once
+        count(home, currentChord, tonality->get_scale_degree((degree + 2) % 7), IRT_EQ,2); // double the third
+        count(home, currentChord, tonality->get_scale_degree((degree + 4) % 7), IRT_EQ, 1); // the fifth should be present once
+    }
+    /// default = double the fundamental
+    else{
+        count(home, currentChord, tonality->get_scale_degree(degree), IRT_EQ,2); // double the bass which is also the tonic
+        count(home, currentChord, tonality->get_scale_degree((degree + 2) % 7), IRT_EQ,1); // the third should be present once
+        count(home, currentChord, tonality->get_scale_degree((degree + 4) % 7), IRT_EQ, 1); // the fifth should be present once
+    }
+    /// exceptions that add on top of the rest
     if(tonality->get_chord_qualities()[degree] == DIMINISHED_CHORD){
         nvalues(home, currentChord, IRT_EQ,3); // there should only be 3 different notes
     }
@@ -262,7 +271,7 @@ void fifthDegreeFSToSixthDegreeFS(const Home& home, int currentPosition, Tonalit
 
     // soprano note is the seventh of the scale
     // -> that voice must raise to the tonic by a minor second
-    // Always the case regardless of the mode
+    /// If the leading tone is in the soprano, it must rise to the tonic regardless of the mode
     rel(home, expr(home, fullChordsVoicing[currentPosition +  SOPRANO] % PERFECT_OCTAVE + PERFECT_OCTAVE == tonality.get_degree_note(SEVENTH_DEGREE)),
         BOT_IMP, expr(home, sopranoMelodicInterval[currentPosition] ==1 ), true);
     // other voices must go down
@@ -271,7 +280,7 @@ void fifthDegreeFSToSixthDegreeFS(const Home& home, int currentPosition, Tonalit
     rel(home, expr(home, fullChordsVoicing[currentPosition +  SOPRANO] % PERFECT_OCTAVE + PERFECT_OCTAVE == tonality.get_degree_note(SEVENTH_DEGREE)),
         BOT_IMP, expr(home, altoMelodicInterval[currentPosition] < 0), true);
 
-    // only if minor mode
+    /// If the mode is minor, then the leading tone always has to rise to the tonic
     if(tonality.get_mode() == MINOR_MODE){
         // tenor note is the seventh of the scale
         // -> that voice must raise to the tonic by a minor second

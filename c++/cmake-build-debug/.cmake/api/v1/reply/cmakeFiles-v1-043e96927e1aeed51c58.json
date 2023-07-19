@@ -1163,8 +1163,8 @@
 	"kind" : "cmakeFiles",
 	"paths" : 
 	{
-		"build" : "/Users/sprockeelsd/Documents/MusicConstraints/c++/cmake-build-debug",
-		"source" : "/Users/sprockeelsd/Documents/MusicConstraints/c++"
+		"build" : "/Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++/cmake-build-debug",
+		"source" : "/Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++"
 	},
 	"version" : 
 	{

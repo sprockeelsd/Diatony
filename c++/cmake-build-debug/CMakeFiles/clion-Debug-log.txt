@@ -1,4 +1,4 @@
-/Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/Applications/CLion.app/Contents/bin/ninja/mac/ninja -G Ninja -S /Users/sprockeelsd/Documents/MusicConstraints/c++ -B /Users/sprockeelsd/Documents/MusicConstraints/c++/cmake-build-debug
+/Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/Applications/CLion.app/Contents/bin/ninja/mac/ninja -G Ninja -S /Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++ -B /Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++/cmake-build-debug
 -- The C compiler identification is AppleClang 14.0.0.14000029
 -- The CXX compiler identification is AppleClang 14.0.0.14000029
 -- Detecting C compiler ABI info
@@ -14,4 +14,4 @@
 -- Gecode library: /Library/Frameworks/Gecode.framework
 -- Configuring done
 -- Generating done
--- Build files have been written to: /Users/sprockeelsd/Documents/MusicConstraints/c++/cmake-build-debug
+-- Build files have been written to: /Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++/cmake-build-debug

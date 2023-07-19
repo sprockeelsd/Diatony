@@ -93,7 +93,11 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
 
         if(chordStas[i] == FUNDAMENTAL_STATE){
             // @todo change this to take into account c/i chords (see cst def)
-            chordNoteOccurrenceFundamentalState(*this, tonality, chordDegrees[i], currentChord);
+            if(i == 0)// handle the case where there is no previous chord
+                chordNoteOccurrenceFundamentalState(*this, tonality, chordDegrees[i],
+                                                    chordDegrees[i], currentChord);
+            chordNoteOccurrenceFundamentalState(*this, tonality, chordDegrees[i],
+                                                chordDegrees[i-1], currentChord);
         }
         else{ // first or second inversion
 

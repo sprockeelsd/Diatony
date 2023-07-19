@@ -8,6 +8,9 @@
 
 (defparameter DFS 0)
 (defparameter BAB 1)
+
+(defparameter MAJOR 0)
+(defparameter MINOR 5)
 ; corresponds to enum values in gecode_problem.h, but can be used graphically in om
 (defun bab ()
     BAB
@@ -15,6 +18,14 @@
 (defun dfs ()
     DFS
 )
+
+(defun major ()
+    MAJOR
+)
+(defun minor ()
+    MINOR
+)
+
 
 ;;;;;;;;;;;;;;;;;;;;;
 ;; Problem methods ;;

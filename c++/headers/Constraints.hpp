@@ -118,13 +118,16 @@ void setBass(const Home& home, Tonality *tonality, int degree, int state, IntVar
 
 /**
  * @todo change this for complete and incomplete chords later (third must be <=1 depending on the chord before and after if they are 5->1 and complete/incomplete)
+ * @todo maybe make it a preference later
  * Sets the number of times each note of the notes of the chord are present in the chord
  * @param home the instance of the problem
  * @param tonality the tonality of the piece
  * @param degree the degree of the chord
+ * @param previous_chord_degree the degree of the following chord
  * @param currentChord the array containing a chord in the form [bass, alto, tenor, soprano]
  */
-void chordNoteOccurrenceFundamentalState(const Home& home, Tonality *tonality, int degree, const IntVarArgs& currentChord);
+void chordNoteOccurrenceFundamentalState(const Home& home, Tonality *tonality, int degree, int previous_chord_degree,
+                                         const IntVarArgs& currentChord);
 
 
 /***********************************************************************************************************************
