@@ -7,6 +7,7 @@
 
 /**
  * Constructor
+ * Creates a tonality object based on the tonality (tonic and mode)
  * @param t the tonic of the tonality
  * @param m the mode of the tonality
  * @param s the scale of the tonality
@@ -16,7 +17,7 @@ Tonality::Tonality(int t, int m, vector<int> s) {
     mode = m;
     scale = s;
 
-    /// Set the list of degrees which are the notes of the scale
+    /// Set the list of degrees on which chords are built, based on the tonic and the scale
     int curr = tonic;
     for(int i = 0; i < scale.size(); ++i){
         degrees_notes[i] = curr;
@@ -25,28 +26,28 @@ Tonality::Tonality(int t, int m, vector<int> s) {
 
     /// Create the dictionary of degrees and all possible values of that (those) note(s)
     for (int i = 0; i < degrees_notes.size(); ++i) {
-        vector<int> temp = getAllGivenNote(degrees_notes[i]);
+        vector<int> notes = getAllGivenNote(degrees_notes[i]);          //vector to store all notes for a given degree
         if(i == SEVENTH_DEGREE && mode == MINOR_MODE){ // @todo move this to minor tonality somehow
-            // @todo maybe add flat sixth as well? for now not necessary
-            vector<int> temp2 = getAllGivenNote(degrees_notes[i] - 1); // to also get the flat seventh because it is used in third degree chord
-            temp.insert(temp.end(), temp2.begin(), temp2.end()); // merge the 2 vectors together
+            // @todo maybe add sharp sixth as well? for now not necessary
+            vector<int> additional_notes = getAllGivenNote(degrees_notes[i] - 1); // to also get the flat seventh because it is used in third degree chord
+            notes.insert(notes.end(), additional_notes.begin(), additional_notes.end()); // merge the 2 vectors together
         }
-        IntSet set((const vector<int>) temp); // cast into IntSet
+        IntSet set((const vector<int>) notes); // cast into IntSet
         scale_degrees[i] = set;
     }
 
     // Set tonal notes and modal notes
-    IntSet set(getAllNotesFromIntervalLoop(tonic, {PERFECT_FOURTH, MAJOR_SECOND,PERFECT_FOURTH}));
-    tonal_notes = set; // 1, 4 and 5 degrees
-    vector<int> vec(getAllNotesFromIntervalLoop(get_degrees_notes()[THIRD_DEGREE], {PERFECT_FOURTH, MAJOR_SECOND, PERFECT_FOURTH}));
-    if(mode == MINOR_MODE){
+    IntSet t_notes(getAllNotesFromIntervalLoop(tonic, {PERFECT_FOURTH, MAJOR_SECOND,PERFECT_FOURTH}));
+    tonal_notes = t_notes; // 1, 4 and 5 degrees
+    vector<int> notes(getAllNotesFromIntervalLoop(get_degrees_notes()[THIRD_DEGREE], {PERFECT_FOURTH, MAJOR_SECOND, PERFECT_FOURTH}));
+    if(mode == MINOR_MODE){ // @todo move this to minor tonality somehow
         vector<int> flatSeventh = getAllGivenNote(degrees_notes[SEVENTH_DEGREE]); // add the minor seventh if minor mode
-        vec.insert(vec.end(), flatSeventh.begin(), flatSeventh.end()); // merge the 2 vectors together
+        notes.insert(notes.end(), flatSeventh.begin(), flatSeventh.end()); // merge the 2 vectors together
     }
-    IntSet set2((const vector<int>) vec);
-    modal_notes = set2; // 3, 6 and 7 degrees
+    IntSet m_notes((const vector<int>) notes);
+    modal_notes = m_notes; // 3, 6 and 7 degrees
 
-    // chord qualities and scale degrees chords are set in the child classes
+    /// chord qualities and scale degrees chords are set in the child classes
 }
 
 /**
@@ -74,7 +75,7 @@ vector<int> Tonality::get_scale() {
 }
 
 /**
- * Get the notes corresponding to the degrees of the scale (first elem = tonic, second_elem = second degree, etc.)
+ * Get the notes corresponding to the degrees of the scale on which chords are built
  * @return a map containing the notes for each of the scale degrees
  */
 map<int,int> Tonality::get_degrees_notes() {
@@ -82,7 +83,7 @@ map<int,int> Tonality::get_degrees_notes() {
 }
 
 /**
- * Get the note for a given degree
+ * Get the note on which the chord is built for a given degree
  * @param degree the degree of the scale [0,6]
  * @return the note for the given degree
  */

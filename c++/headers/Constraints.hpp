@@ -14,7 +14,7 @@ using namespace std;
 
 /***********************************************************************************************************************
  *                                                                                                                     *
- *                                                  Initial constraints                                                *
+ *                                                  Generic constraints                                                *
  *                                                                                                                     *
  ***********************************************************************************************************************/
 
@@ -142,10 +142,12 @@ void chordNoteOccurrenceFundamentalState(const Home& home, Tonality *tonality, i
  * @param home the instance of the problem
  * @param currentPosition the current position in the chord progression
  * @param chordDegrees the array containing the degrees of the chords in the progression
+ * @param tonality the tonality of the piece
  * @param bassMelodicInterval The melodic interval of the bass between the current position and the next
  * @param tenorMelodicInterval the melodic interval of the tenor between the current position and the next
  * @param altoMelodicInterval the melodic interval of the alto between the current position and the next
  * @param sopranoMelodicInterval the melodic interval of the soprano between the current position and the next
+ * @param fullChordsVoicing the array containing all the notes of the chords in the progression
  */
 void fundamentalStateChordToFundamentalStateChord(const Home& home, int currentPosition, vector<int> chordDegrees,
                                                   Tonality &tonality,
@@ -155,11 +157,10 @@ void fundamentalStateChordToFundamentalStateChord(const Home& home, int currentP
 
 /**
  * Sets the constraint for a fifth degree followed by a sixth degree in fundamental state
- * the seventh of the scale must rise to the tonic and the other voices are going down (except for the bass)
+ *      the seventh of the scale must rise to the tonic and the other voices are going down (except for the bass)
  * @param home the instance of the problem
  * @param currentPosition the current position in the chord progression
  * @param tonality the tonality of the piece
- * @param bassMelodicInterval the melodic intervals of the bass
  * @param tenorMelodicInterval the melodic intervals of the tenor
  * @param altoMelodicInterval the melodic intervals of the alto
  * @param sopranoMelodicInterval the melodic intervals of the soprano

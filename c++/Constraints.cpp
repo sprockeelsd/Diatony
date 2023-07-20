@@ -2,7 +2,7 @@
 
 /***********************************************************************************************************************
  *                                                                                                                     *
- *                                                  Generic constraints                                                *
+ *                                                  Initial constraints                                                *
  *                                                                                                                     *
  ***********************************************************************************************************************/
 
@@ -100,6 +100,12 @@ void restrain_voices_domains(const Home& home, int n, IntVarArray FullChordsVoic
         rel(home, currentChord[3], IRT_LQ, 84);
     }
 }
+
+/***********************************************************************************************************************
+ *                                                                                                                     *
+ *                                                  Initial constraints                                                *
+ *                                                                                                                     *
+ ***********************************************************************************************************************/
 
 /**
  * Forbids parallel intervals between two chords in the same voices
@@ -220,10 +226,12 @@ void chordNoteOccurrenceFundamentalState(const Home& home, Tonality *tonality, i
  * @param home the instance of the problem
  * @param currentPosition the current position in the chord progression
  * @param chordDegrees the array containing the degrees of the chords in the progression
+ * @param tonality the tonality of the piece
  * @param bassMelodicInterval The melodic interval of the bass between the current position and the next
  * @param tenorMelodicInterval the melodic interval of the tenor between the current position and the next
  * @param altoMelodicInterval the melodic interval of the alto between the current position and the next
  * @param sopranoMelodicInterval the melodic interval of the soprano between the current position and the next
+ * @param fullChordsVoicing the array containing all the notes of the chords in the progression
  */
 void fundamentalStateChordToFundamentalStateChord(const Home& home, int currentPosition, vector<int> chordDegrees,
                                                   Tonality &tonality,
