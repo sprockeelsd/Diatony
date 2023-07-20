@@ -8,12 +8,16 @@ using namespace Gecode;
 using namespace std;
 
 int main(int argc, char* argv[]) {
-    int size = 1;
+    int size = 3;
     Tonality* tonality = new MinorTonality(C);
 
     // create a new problem
-    FourVoiceTexture* p = new FourVoiceTexture(size, tonality, {THIRD_DEGREE},
-                                               {FUNDAMENTAL_STATE});
+    FourVoiceTexture* p = new FourVoiceTexture(size, tonality, {FIRST_DEGREE, FOURTH_DEGREE, SEVENTH_DEGREE,
+                                                                THIRD_DEGREE, SIXTH_DEGREE, SECOND_DEGREE,
+                                                                FIFTH_DEGREE, FIRST_DEGREE},
+                                               {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE,
+                                                FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE,
+                                                FUNDAMENTAL_STATE, FUNDAMENTAL_STATE});
     // std::cout << p->toString() << std::endl;
 
 
@@ -22,7 +26,6 @@ int main(int argc, char* argv[]) {
     delete p;
 
     std::cout << "Solver type : DFS " << std::endl;
-
     int nb_sol = 0;
     std::cout << std::endl;
     while(FourVoiceTexture * sol = get_next_solution_space(e)){
@@ -33,7 +36,7 @@ int main(int argc, char* argv[]) {
         writeToLogFile(sol->toString().c_str());
         std::cout << statistics_to_string(e->statistics()) << std::endl;
         delete sol;
-        if (nb_sol >= 1)
+        if (nb_sol >= 10)
             break;
     }
     cout << "No (more) solutions or solution cap reached.\n" << endl;

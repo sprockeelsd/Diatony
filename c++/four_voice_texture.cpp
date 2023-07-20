@@ -121,7 +121,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
 
     /**------------------------------------------------branching-------------------------------------------------------*/
     // this order because the inner voices are supposed to move the least, bass and soprano is less important
-    // @todo figure out the branching, the variables below make search slower and might not be necessary
+    // @todo figure out the branching, the variables below make search slower and might not be necessary (maybe branch on absolute intervals to find a solution quickly)
 //    branch(*this, absoluteTenorMelodicIntervals, INT_VAR_DEGREE_MAX(), INT_VAL_MIN());
 //    branch(*this, absoluteAltoMelodicIntervals, INT_VAR_DEGREE_MAX(), INT_VAL_MIN());
 //    branch(*this, absoluteSopranoMelodicIntervals, INT_VAR_DEGREE_MAX(), INT_VAL_MIN());
@@ -133,11 +133,10 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
  * Copy constructor
  * @param s an instance of the FourVoiceTexture class
  */
-FourVoiceTexture::FourVoiceTexture(FourVoiceTexture& s): Space(s){
+FourVoiceTexture::FourVoiceTexture(FourVoiceTexture& s): IntLexMinimizeSpace(s){
     //IntVars update
     size = s.size;
     tonality = s.tonality;
-
     chordDegrees = s.chordDegrees;
     chordStates = s.chordStates;
 
@@ -208,6 +207,11 @@ void FourVoiceTexture::constrain(const Space& _b) {
     // number of identical notes <= half of the notes @todo change that probably
     count(*this, FullChordsVoicing, previousSolution, IRT_EQ, nOfIdenticalNotes);
     rel(*this, nOfIdenticalNotes, IRT_LE, 2*b.size);
+}
+
+IntVarArgs FourVoiceTexture::cost(void) const {
+    // tenor melodic intervals are minimized in priority, then alto melodic intervals etc
+    return IntVarArgs() << absoluteTenorMelodicIntervals << absoluteAltoMelodicIntervals << absoluteSopranoMelodicIntervals << absoluteBassMelodicIntervals;
 }
 
 /**
@@ -353,6 +357,22 @@ string FourVoiceTexture::toString(){
             message += ", ";
     }
     message += "}\n";
+    message += "Minimized array = {";
+    int somme = 0;
+    for(IntVarArray vars : {absoluteTenorMelodicIntervals, absoluteAltoMelodicIntervals, absoluteSopranoMelodicIntervals, absoluteBassMelodicIntervals}){
+        for(int i = 0; i < vars.size(); i++){
+            if(vars[i].assigned()){
+                message += to_string(vars[i].val());
+                somme += vars[i].val();
+            }
+            else
+                message += "<not assigned>";
+            if(i != vars.size() - 1)
+                message += ", ";
+        }
+        message += ", ";
+    }
+    message += "}; total cost = " + to_string(somme) + "\n";
     message += "\n";
     return message;
 }

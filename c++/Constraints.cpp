@@ -119,6 +119,7 @@ void restrain_voices_domains(const Home& home, int n, IntVarArray FullChordsVoic
  */
 void forbid_parallel_intervals(Home home, int forbiddenParallelInterval, int currentPosition, int lowerVoiceID,
                                IntVarArray voicesHarmonicIntervals, IntVarArray FullChordsVoicing){
+    //@todo check si il faut pas les interdire entre chaque voix même si elles sont pas adjacentes. Si oui, peut-être faire une fonction auxiliaire pour que ce soit pas dégueu
     //bassTenorIntervalForbidden is true if the interval is forbiddenParallelInterval
     BoolVar harmonicIntervalForbidden(home, 0, 1);
     rel(home, harmonicIntervalForbidden, IRT_EQ, expr(home, voicesHarmonicIntervals[currentPosition] %
@@ -257,6 +258,7 @@ void fundamentalStateChordToFundamentalStateChord(const Home& home, int currentP
     }
     else{ // there is at least one common note in the 2 chords -> keep that (these) notes in the same voices and move the other to the closest one
             //@todo calculer l'intersection des domaines et si la valeur est dedans => la suivante doit l'être aussi (sauf à la basse) -> dom cst reified
+            //@todo ok pour les mouvements les plus proches possibles
     }
 }
 

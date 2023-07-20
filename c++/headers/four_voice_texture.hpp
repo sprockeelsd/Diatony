@@ -27,7 +27,7 @@ using namespace std;
 /***********************************************************************************************************************
  *                                                FourVoiceTexture class                                               *
  ***********************************************************************************************************************/
-class FourVoiceTexture: public Space {
+class FourVoiceTexture: public IntLexMinimizeSpace {
 protected:
     /** Data */
     int size; // The size of the variable array of interest
@@ -97,6 +97,8 @@ public:
      * @param _b a space to constrain the current instance of the FourVoiceTexture class with upon finding a solution
      */
     virtual void constrain(const Space& _b);
+
+    virtual IntVarArgs cost(void) const;
 
     /**
      * Prints the solution in the console
