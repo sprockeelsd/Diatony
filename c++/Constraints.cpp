@@ -1,3 +1,4 @@
+#include <set>
 #include "headers/Constraints.hpp"
 
 /***********************************************************************************************************************
@@ -239,15 +240,17 @@ void fundamentalStateChordToFundamentalStateChord(const Home& home, int currentP
                                                   const IntVarArray& bassMelodicInterval, const IntVarArray& tenorMelodicInterval,
                                                   const IntVarArray& altoMelodicInterval, const IntVarArray& sopranoMelodicInterval,
                                                   IntVarArray fullChordsVoicing){
-    int degreeDifference = abs(chordDegrees[currentPosition+1] - chordDegrees[currentPosition]);
 
-    /** First, corner cases that differ from the general rules */
+    int degreeDifference = abs(chordDegrees[currentPosition+1] - chordDegrees[currentPosition]);
+    std::cout << "degree difference : " << degreeDifference << std::endl;
+
+    /// First, corner cases that differ from the general rules
     if(chordDegrees[currentPosition] == FIFTH_DEGREE && chordDegrees[currentPosition+1] == SIXTH_DEGREE){
         fifthDegreeFSToSixthDegreeFS(home, currentPosition, tonality, tenorMelodicInterval, altoMelodicInterval, sopranoMelodicInterval, fullChordsVoicing);
     }
-    /** general cases */
-    else if(degreeDifference == MINOR_SECOND || degreeDifference == MAJOR_SECOND){
-        // other voices need to move by contrary motion to the bass
+    /// general cases
+    else if(degreeDifference == 1){ // the chords are 1 degree apart
+        /// other voices need to move by contrary motion to the bass
         rel(home, expr(home, bassMelodicInterval[currentPosition] > 0), BOT_EQV, expr(home, tenorMelodicInterval[currentPosition] < 0), true);
         rel(home, expr(home, bassMelodicInterval[currentPosition] > 0), BOT_EQV, expr(home, altoMelodicInterval[currentPosition] < 0), true);
         rel(home, expr(home, bassMelodicInterval[currentPosition] > 0), BOT_EQV, expr(home, sopranoMelodicInterval[currentPosition] < 0), true);
@@ -256,9 +259,41 @@ void fundamentalStateChordToFundamentalStateChord(const Home& home, int currentP
         rel(home, expr(home, bassMelodicInterval[currentPosition] < 0), BOT_EQV, expr(home, altoMelodicInterval[currentPosition] > 0), true);
         rel(home, expr(home, bassMelodicInterval[currentPosition] < 0), BOT_EQV, expr(home, sopranoMelodicInterval[currentPosition] > 0), true);
     }
-    else{ // there is at least one common note in the 2 chords -> keep that (these) notes in the same voices and move the other to the closest one
-            //@todo calculer l'intersection des domaines et si la valeur est dedans => la suivante doit l'être aussi (sauf à la basse) -> dom cst reified
-            //@todo ok pour les mouvements les plus proches possibles
+    else{ /// there is at least one common note in the 2 chords -> keep that (these) notes in the same voices and move the other to the closest one
+        // chord qualities
+        vector<int> thisChordQuality = tonality.get_chord_qualities()[chordDegrees[currentPosition]];
+        std::cout << "this chord quality : " << int_vector_to_string(thisChordQuality) << std::endl;
+        vector<int> nextChordQuality = tonality.get_chord_qualities()[chordDegrees[currentPosition+1]];
+        std::cout << "next chord quality : " << int_vector_to_string(nextChordQuality) << std::endl;
+
+        // notes of the current chord @todo maybe add sets in the tonality class with the notes for each chord
+        int new_note = tonality.get_degree_note(chordDegrees[currentPosition]);
+        set<int> thisChord = {new_note}; // notes of the chord
+        for(int i = 0; i < thisChordQuality.size() - 1; ++i){ // -1 because the last note is the same as the first
+            new_note = (new_note + thisChordQuality[i]) % PERFECT_OCTAVE;
+            thisChord.insert(new_note);
+        }
+
+        // notes of the next chord
+        int new_note_new_chord = tonality.get_degree_note(chordDegrees[currentPosition+1]);
+        set<int> nextChord = {new_note_new_chord};
+        for(int i = 0; i < nextChordQuality.size() - 1; ++i){ // -1 because the last note is the same as the first
+            new_note_new_chord = (new_note_new_chord + nextChordQuality[i]) % PERFECT_OCTAVE;
+            nextChord.insert(new_note_new_chord);
+        }
+
+        for(auto it : thisChord){ // for each note in the current chord domain
+            std::cout << "note first chord: " << it << std::endl;
+            if(nextChord.find(it) != nextChord.end()){ // if the note is in the next chord as well
+                std::cout << "matched with second chord" << std::endl;
+                for(int i = TENOR; i <= SOPRANO; ++i){ // for all voices except the bass
+                    std::cout << "voice " << i << std::endl;
+                    /// the note in the current chord in the voice i must be the same in the next chord, works both ways
+                    rel(home, expr(home, fullChordsVoicing[currentPosition * 4 + i] % 12 == it), BOT_IMP,
+                        expr(home, fullChordsVoicing[(currentPosition + 1) * 4 + i] == fullChordsVoicing[currentPosition * 4 + i]), true);
+                }
+            }
+        }
     }
 }
 

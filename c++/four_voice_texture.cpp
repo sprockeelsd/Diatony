@@ -116,7 +116,9 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     /**--------------------------------------------melodic constraints ------------------------------------------------*/
     for(int i = 0; i < size-1; i++){
         if (chordStas[i] == FUNDAMENTAL_STATE){
+            std::cout << "fundamental state 1" << std::endl;
             if (chordStas[i+1] == FUNDAMENTAL_STATE){
+                std::cout << "fundamental state 2" << std::endl;
                 fundamentalStateChordToFundamentalStateChord(*this, i, chordDegrees,
                                                              *tonality,
                                                              bassMelodicIntervals,
@@ -215,7 +217,7 @@ void FourVoiceTexture::constrain(const Space& _b) {
 
     IntArgs previousSolution(prevSol); // cast vector to IntArgs
 
-    rel(*this, sumOfMelodicIntervals, IRT_LE, b.sumOfMelodicIntervals.val()); // sum of melodic intervals is minimized
+    rel(*this, sumOfMelodicIntervals, IRT_LQ, b.sumOfMelodicIntervals.val()); // sum of melodic intervals is minimized
 
 //    // number of identical notes <= half of the notes @todo change that probably
 //    count(*this, FullChordsVoicing, previousSolution, IRT_EQ, nOfIdenticalNotes);
