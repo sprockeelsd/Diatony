@@ -27,7 +27,7 @@ using namespace std;
 /***********************************************************************************************************************
  *                                                FourVoiceTexture class                                               *
  ***********************************************************************************************************************/
-class FourVoiceTexture: public Space {
+class FourVoiceTexture: public IntMinimizeSpace {
 protected:
     /** Data */
     int size; // The size of the variable array of interest
@@ -42,19 +42,24 @@ protected:
     IntVarArray altoMelodicIntervals;
     IntVarArray sopranoMelodicIntervals;
 
-    // @todo maybe absolute value intervals?
+    // absolute intervals
+    IntVarArray absoluteBassMelodicIntervals;
+    IntVarArray absoluteTenorMelodicIntervals;
+    IntVarArray absoluteAltoMelodicIntervals;
+    IntVarArray absoluteSopranoMelodicIntervals;
 
     // variable arrays for harmonic intervals between adjacent voices (not absolute value)
     IntVarArray bassTenorHarmonicIntervals;
     IntVarArray tenorAltoHarmonicIntervals;
     IntVarArray altoSopranoHarmonicIntervals;
 
-    // @todo maybe absolute value intervals?
-
     // @todo maybe harmonic movement array?
 
     // global array for all the notes for all voices
     IntVarArray FullChordsVoicing; // [bass0, alto0, tenor0, soprano0, bass1, alto1, tenor1, soprano1, ...]
+
+    // cost variables
+    IntVar sumOfMelodicIntervals;
 
 public:
     /**
@@ -95,6 +100,8 @@ public:
      * @param _b a space to constrain the current instance of the FourVoiceTexture class with upon finding a solution
      */
     virtual void constrain(const Space& _b);
+
+    virtual IntVar cost(void) const;
 
     /**
      * Prints the solution in the console

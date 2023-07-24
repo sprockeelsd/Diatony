@@ -8,6 +8,9 @@
 
 (defparameter DFS 0)
 (defparameter BAB 1)
+
+(defparameter MAJOR 0)
+(defparameter MINOR 5)
 ; corresponds to enum values in gecode_problem.h, but can be used graphically in om
 (defun bab ()
     BAB
@@ -16,11 +19,19 @@
     DFS
 )
 
+(defun major ()
+    MAJOR
+)
+(defun minor ()
+    MINOR
+)
+
+
 ;;;;;;;;;;;;;;;;;;;;;
 ;; Problem methods ;;
 ;;;;;;;;;;;;;;;;;;;;;
 
-(defun new-4-voice (chord-degrees chord-states)
+(defun new-4-voice (key mode chord-degrees chord-states)
     (let (
         (x (cffi::foreign-alloc :int :initial-contents chord-degrees))
         (y (cffi::foreign-alloc :int :initial-contents chord-states))
@@ -30,13 +41,15 @@
         (print chord-degrees)
         (print chord-states)
         (print (length chord-degrees))
-        (new-problem (length chord-degrees) x y)
+        (new-problem (length chord-degrees) key mode x y)
     )
 )
 
 (cffi::defcfun ("create_new_problem" new-problem) :pointer
     "Creates a new instance of the problem. Returns a void* cast of a Problem*."
     (size :int) ; an integer representing the size
+    (key :int) ; the key of the tonality
+    (mode :int) ; the mode of the tonality
     (chord-degrees :pointer :int) ; a void* cast of a int* that are the chord degrees
     (chord-states :pointer :int)  ; a void* cast of a int* that are the chord states
 )

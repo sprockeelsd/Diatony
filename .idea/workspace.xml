@@ -22,10 +22,7 @@
   <component name="ChangeListManager">
     <list default="true" id="78063669-9d41-4950-9026-704cff767980" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c++/Constraints.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/Constraints.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/c++/cmake-build-debug/Testing/Temporary/LastTest.log" beforeDir="false" afterPath="$PROJECT_DIR$/c++/cmake-build-debug/Testing/Temporary/LastTest.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c++/four_voice_texture.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/four_voice_texture.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/c++/headers/Constraints.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/c++/headers/Constraints.hpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,6 +35,9 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/c++/MinorTonality.cpp" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -112,7 +112,18 @@
       <workItem from="1688114450538" duration="19000" />
       <workItem from="1688114482502" duration="11717000" />
       <workItem from="1688369226754" duration="7728000" />
-      <workItem from="1688387581132" duration="5009000" />
+      <workItem from="1688387581132" duration="5343000" />
+      <workItem from="1688456185876" duration="6972000" />
+      <workItem from="1688543117824" duration="14115000" />
+      <workItem from="1688629178910" duration="7409000" />
+      <workItem from="1688716552351" duration="610000" />
+      <workItem from="1688819419546" duration="103000" />
+      <workItem from="1689087852767" duration="714000" />
+      <workItem from="1689582757694" duration="119000" />
+      <workItem from="1689582953211" duration="1916000" />
+      <workItem from="1689600797511" duration="545000" />
+      <workItem from="1689601348092" duration="3210000" />
+      <workItem from="1689665374417" duration="811000" />
     </task>
     <servers />
   </component>

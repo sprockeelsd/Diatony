@@ -39,7 +39,7 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "damien::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-damien-Debug-29647a490705c48bdbba.json",
+					"jsonFile" : "target-damien-Debug-dec61badfe925da32f56.json",
 					"name" : "damien",
 					"projectIndex" : 0
 				}
@@ -49,8 +49,8 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "/Users/sprockeelsd/Documents/Doctorat/MusicalConstraints/MusicConstraints/c++/cmake-build-debug",
-		"source" : "/Users/sprockeelsd/Documents/Doctorat/MusicalConstraints/MusicConstraints/c++"
+		"build" : "/Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++/cmake-build-debug",
+		"source" : "/Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++"
 	},
 	"version" : 
 	{

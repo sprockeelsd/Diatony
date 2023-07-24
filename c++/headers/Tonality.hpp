@@ -14,17 +14,18 @@ using namespace Gecode;
 using namespace std;
 
 /**
- * This class models a tonality
+ * This class is an abstract class modeling a tonality
+ * @todo develop this comment section once the class is finished
  */
 class Tonality { // abstract class
 protected:
     int tonic;                              // tonic of the tonality
-    vector<int> mode;                       // mode of the tonality
-    map<int, int> degrees_notes;            // notes corresponding to the degrees of the scale
+    int mode;                               // mode of the tonality
+    vector<int> scale;                      // scale of the tonality
+    map<int, int> degrees_notes;            // notes corresponding to the degrees of the scale on which the chords are based
     map<int, vector<int>> chord_qualities;  // map of [degree, chord_quality] for each degree of the scale (0 to 6) (set by child classes)
 
-    map<int, IntSet> scale_degrees;         // map of [degree, all_notes] for each degree of the scale (0 to 6)
-    IntSet tonality_notes;                  // all the notes in the tonality
+    map<int, IntSet> scale_degrees;         // map of [degree, all_notes] for each degree of the scale (0 to 6). May contain multiple notes per degree depending on the mode
     IntSet tonal_notes;                     // notes that don't change in major or minor mode (1,4,5 degrees)
     IntSet modal_notes;                     // notes that change in major or minor mode (3,6,7 degrees)
 
@@ -33,10 +34,12 @@ protected:
 public:
     /**
      * Constructor
+     * Creates a tonality object based on the tonality (tonic and mode)
      * @param t the tonic of the tonality
      * @param m the mode of the tonality
+     * @param s the scale of the tonality
      */
-    Tonality(int t, vector<int> m);
+    Tonality(int t, int m, vector<int> s);
 
     /**
      * Get the tonic of the tonality
@@ -48,16 +51,22 @@ public:
      * Get the mode of the tonality
      * @return the mode of the tonality
      */
-    vector<int> get_mode();
+    int get_mode();
 
     /**
-     * Get the notes corresponding to the degrees of the scale (first elem = tonic, second_elem = second degree, etc.)
+     * Get the scale of the tonality
+     * @return the scale of the tonality
+     */
+    vector<int> get_scale();
+
+    /**
+     * Get the notes corresponding to the degrees of the scale on which chords are built
      * @return a map containing the notes for each of the scale degrees
      */
     map<int,int> get_degrees_notes();
 
     /**
-     * Get the note for a given degree
+     * Get the note on which the chord is built for a given degree
      * @param degree the degree of the scale [0,6]
      * @return the note for the given degree
      */
@@ -75,12 +84,6 @@ public:
      * @return an IntSet containing all the notes for the given scale degree
      */
     IntSet get_scale_degree(int degree);
-
-    /**
-     * Get all the notes in the tonality
-     * @return an IntSet containing all the notes in the tonality
-     */
-    IntSet get_tonality_notes();
 
     /**
      * Get the notes that don't change in major or minor mode (1,4,5 degrees)

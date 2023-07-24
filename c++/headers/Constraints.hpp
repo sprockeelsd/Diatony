@@ -14,7 +14,7 @@ using namespace std;
 
 /***********************************************************************************************************************
  *                                                                                                                     *
- *                                                  Initial constraints                                                *
+ *                                                  Generic constraints                                                *
  *                                                                                                                     *
  ***********************************************************************************************************************/
 
@@ -33,6 +33,23 @@ void link_melodic_arrays(const Home& home, int n, IntVarArray FullChordsVoicing,
                          IntVarArray sopranoMelodicIntervals);
 
 /**
+ * Link the absolute melodic intervals arrays to the corresponding melodic interval arrays
+ * @param home the instance of the problem
+ * @param bassMelodicIntervals the melodic intervals of the bass
+ * @param tenorMelodicIntervals the melodic intervals of the tenor
+ * @param altoMelodicIntervals the melodic intervals of the alto
+ * @param sopranoMelodicIntervals the melodic intervals of the soprano
+ * @param absoluteBassMelodicIntervals the absolute melodic intervals of the bass
+ * @param absoluteTenorMelodicIntervals the absolute melodic intervals of the tenor
+ * @param absoluteAltoMelodicIntervals the absolute melodic intervals of the alto
+ * @param absoluteSopranoMelodicIntervals the absolute melodic intervals of the soprano
+ */
+void link_absolute_melodic_arrays(const Home& home, IntVarArray bassMelodicIntervals, IntVarArray tenorMelodicIntervals,
+                                  IntVarArray altoMelodicIntervals, IntVarArray sopranoMelodicIntervals,
+                                  IntVarArray absoluteBassMelodicIntervals, IntVarArray absoluteTenorMelodicIntervals,
+                                  IntVarArray absoluteAltoMelodicIntervals, IntVarArray absoluteSopranoMelodicIntervals);
+
+/**
  * Link the harmonic intervals arrays to the FullChordsVoicing array
  * @param home the instance of the problem
  * @param n the number of chords
@@ -45,7 +62,7 @@ void link_harmonic_arrays(const Home& home, int n, IntVarArray FullChordsVoicing
                           IntVarArray tenorAltoHarmonicIntervals, IntVarArray altoSopranoHarmonicIntervals);
 
 /**
- * Fixes the domains of the different voices to their range
+ * Sets the domains of the different voices to their range
  *      bass: [40, 60] E2 -> C3
  *      tenor: [48, 69] C2 -> A3
  *      alto: [55, 75] G2 -> D3
@@ -101,13 +118,16 @@ void setBass(const Home& home, Tonality *tonality, int degree, int state, IntVar
 
 /**
  * @todo change this for complete and incomplete chords later (third must be <=1 depending on the chord before and after if they are 5->1 and complete/incomplete)
+ * @todo maybe make it a preference later
  * Sets the number of times each note of the notes of the chord are present in the chord
  * @param home the instance of the problem
  * @param tonality the tonality of the piece
  * @param degree the degree of the chord
+ * @param previous_chord_degree the degree of the following chord
  * @param currentChord the array containing a chord in the form [bass, alto, tenor, soprano]
  */
-void chordNoteOccurrenceFundamentalState(const Home& home, Tonality *tonality, int degree, const IntVarArgs& currentChord);
+void chordNoteOccurrenceFundamentalState(const Home& home, Tonality *tonality, int degree, int previous_chord_degree,
+                                         const IntVarArgs& currentChord);
 
 
 /***********************************************************************************************************************
@@ -122,15 +142,33 @@ void chordNoteOccurrenceFundamentalState(const Home& home, Tonality *tonality, i
  * @param home the instance of the problem
  * @param currentPosition the current position in the chord progression
  * @param chordDegrees the array containing the degrees of the chords in the progression
+ * @param tonality the tonality of the piece
  * @param bassMelodicInterval The melodic interval of the bass between the current position and the next
  * @param tenorMelodicInterval the melodic interval of the tenor between the current position and the next
  * @param altoMelodicInterval the melodic interval of the alto between the current position and the next
  * @param sopranoMelodicInterval the melodic interval of the soprano between the current position and the next
+ * @param fullChordsVoicing the array containing all the notes of the chords in the progression
  */
 void fundamentalStateChordToFundamentalStateChord(const Home& home, int currentPosition, vector<int> chordDegrees,
-                                                  const IntVar& bassMelodicInterval, const IntVar& tenorMelodicInterval,
-                                                  const IntVar& altoMelodicInterval, const IntVar& sopranoMelodicInterval,
+                                                  Tonality &tonality,
+                                                  const IntVarArray& bassMelodicInterval, const IntVarArray& tenorMelodicInterval,
+                                                  const IntVarArray& altoMelodicInterval, const IntVarArray& sopranoMelodicInterval,
                                                   IntVarArray fullChordsVoicing);
+
+/**
+ * Sets the constraint for a fifth degree followed by a sixth degree in fundamental state
+ *      the seventh of the scale must rise to the tonic and the other voices are going down (except for the bass)
+ * @param home the instance of the problem
+ * @param currentPosition the current position in the chord progression
+ * @param tonality the tonality of the piece
+ * @param tenorMelodicInterval the melodic intervals of the tenor
+ * @param altoMelodicInterval the melodic intervals of the alto
+ * @param sopranoMelodicInterval the melodic intervals of the soprano
+ * @param fullChordsVoicing the array containing the notes of the chords in the progression
+ */
+void fifthDegreeFSToSixthDegreeFS(const Home& home, int currentPosition, Tonality& tonality,
+                                  const IntVarArray& tenorMelodicInterval, const IntVarArray& altoMelodicInterval,
+                                  const IntVarArray& sopranoMelodicInterval, IntVarArray fullChordsVoicing);
 
 
 #endif

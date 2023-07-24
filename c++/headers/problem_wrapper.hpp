@@ -6,6 +6,7 @@
 #include "Utilities.hpp"
 #include "Tonality.hpp"
 #include "MajorTonality.hpp"
+#include "MinorTonality.hpp"
 #include "four_voice_texture.hpp"
 
 #ifdef __cplusplus
@@ -20,7 +21,7 @@ extern "C" {
  * @param chord_positions an integer array representing the chord positions
  * @return A pointer to a FourVoiceTexture object casted as a void*
  */
-void* create_new_problem(int size, int* chord_degrees, int* chord_positions);
+void* create_new_problem(int size, int key, int mode, int* chord_degrees, int* chord_positions);
 
 /**
  * returns the size of the problem

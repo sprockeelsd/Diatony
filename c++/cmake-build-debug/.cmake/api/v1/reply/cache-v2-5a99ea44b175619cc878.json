@@ -55,7 +55,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/Users/sprockeelsd/Documents/Doctorat/MusicalConstraints/MusicConstraints/c++/cmake-build-debug"
+			"value" : "/Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++/cmake-build-debug"
 		},
 		{
 			"name" : "CMAKE_CACHE_MAJOR_VERSION",
@@ -479,7 +479,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/Users/sprockeelsd/Documents/Doctorat/MusicalConstraints/MusicConstraints/c++/cmake-build-debug/CMakeFiles/pkgRedirects"
+			"value" : "/Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++/cmake-build-debug/CMakeFiles/pkgRedirects"
 		},
 		{
 			"name" : "CMAKE_GENERATOR",
@@ -539,7 +539,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/Users/sprockeelsd/Documents/Doctorat/MusicalConstraints/MusicConstraints/c++"
+			"value" : "/Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++"
 		},
 		{
 			"name" : "CMAKE_INSTALL_NAME_TOOL",
@@ -1123,7 +1123,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/Users/sprockeelsd/Documents/Doctorat/MusicalConstraints/MusicConstraints/c++/cmake-build-debug"
+			"value" : "/Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++/cmake-build-debug"
 		},
 		{
 			"name" : "MyProject_IS_TOP_LEVEL",
@@ -1147,7 +1147,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/Users/sprockeelsd/Documents/Doctorat/MusicalConstraints/MusicConstraints/c++"
+			"value" : "/Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++"
 		},
 		{
 			"name" : "damien_LIB_DEPENDS",
