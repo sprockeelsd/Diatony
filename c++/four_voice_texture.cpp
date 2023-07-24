@@ -19,8 +19,6 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     chordDegrees = std::move(chordDegs);
     chordStates = chordStas;
 
-    //@todo add a variable for the sum of the absolute intervals so it is easy to select better solutions + bab can use it too
-
     /** variable initialization */
     FullChordsVoicing = IntVarArray(*this, 4*size, 0,127); // tonality->get_tonality_notes()
 
@@ -45,7 +43,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
 
     /** constraints */
 
-    // link the arrays together
+    /// link the arrays together
     link_melodic_arrays(*this, size, FullChordsVoicing, bassMelodicIntervals, tenorMelodicIntervals,
                         altoMelodicIntervals, sopranoMelodicIntervals);
 
@@ -56,10 +54,10 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     link_harmonic_arrays(*this, size, FullChordsVoicing, bassTenorHarmonicIntervals,
                          tenorAltoHarmonicIntervals, altoSopranoHarmonicIntervals);
 
-    // restrain the domain of the voices to their range + state that bass <= tenor <= alto <= soprano
+    /// restrain the domain of the voices to their range + state that bass <= tenor <= alto <= soprano
     restrain_voices_domains(*this, size, FullChordsVoicing);
 
-    // set the cost variable
+    /// set the cost variable
     linear(*this, IntVarArgs() << absoluteTenorMelodicIntervals << absoluteAltoMelodicIntervals <<
                                absoluteSopranoMelodicIntervals << absoluteBassMelodicIntervals,
            IRT_EQ, sumOfMelodicIntervals); // sumOfMelodicIntervals is the sum of the absolute melodic intervals

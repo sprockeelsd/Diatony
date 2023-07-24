@@ -20,6 +20,7 @@ using namespace Gecode;
 enum solver_types{
     DFS_SOLVER, //0
     BAB_SOLVER, //1
+    LDS_SOLVER  //2
 };
 
 const vector<std::string> noteNames = {"C", "C#", "D", "Eb", "E", "F", "F#", "G", "Ab", "A", "Bb", "B"}; // @todo turn into a bi-directional map
