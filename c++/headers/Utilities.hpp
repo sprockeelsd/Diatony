@@ -186,6 +186,10 @@ vector<int> int_pointer_to_vector(int* ptr, int size);
  */
 string statistics_to_string(Search::Statistics stats);
 
+string intVarArrayToString(IntVarArray vars);
+
+string intVarToString(IntVar var);
+
 /**
  * Prints A note with its name (e.g. 60 = C)
  * @param var an integer variable

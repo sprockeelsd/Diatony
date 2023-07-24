@@ -27,7 +27,7 @@ using namespace std;
 /***********************************************************************************************************************
  *                                                FourVoiceTexture class                                               *
  ***********************************************************************************************************************/
-class FourVoiceTexture: public IntLexMinimizeSpace {
+class FourVoiceTexture: public IntMinimizeSpace {
 protected:
     /** Data */
     int size; // The size of the variable array of interest
@@ -57,6 +57,9 @@ protected:
 
     // global array for all the notes for all voices
     IntVarArray FullChordsVoicing; // [bass0, alto0, tenor0, soprano0, bass1, alto1, tenor1, soprano1, ...]
+
+    // cost variables
+    IntVar sumOfMelodicIntervals;
 
 public:
     /**
@@ -98,7 +101,7 @@ public:
      */
     virtual void constrain(const Space& _b);
 
-    virtual IntVarArgs cost(void) const;
+    virtual IntVar cost(void) const;
 
     /**
      * Prints the solution in the console

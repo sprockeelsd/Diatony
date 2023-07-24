@@ -22,7 +22,7 @@ int main(int argc, char* argv[]) {
 
 
     // create a new search engine
-    Search::Base<FourVoiceTexture>* e = make_solver(p, DFS_SOLVER);
+    Search::Base<FourVoiceTexture>* e = make_solver(p, BAB_SOLVER);
     delete p;
 
     std::cout << "Solver type : DFS " << std::endl;
@@ -36,7 +36,7 @@ int main(int argc, char* argv[]) {
         writeToLogFile(sol->toString().c_str());
         std::cout << statistics_to_string(e->statistics()) << std::endl;
         delete sol;
-        if (nb_sol >= 10)
+        if (nb_sol >= 100)
             break;
     }
     cout << "No (more) solutions or solution cap reached.\n" << endl;

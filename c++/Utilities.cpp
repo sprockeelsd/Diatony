@@ -104,6 +104,35 @@ string statistics_to_string(Search::Statistics stats){
 }
 
 /**
+ * Returns the value of a variable as a string
+ * @param var an integer variable
+ * @return a string representing the value of the variable
+ */
+string intVarToString(IntVar var){
+    if (var.assigned())
+        return to_string(var.val());
+    return "<not assigned>";
+}
+
+/**
+ * Returns the values of an array of variables as a string
+ * @param vars an array of integer variables
+ * @return a string representing the values of the variables
+ */
+string intVarArrayToString(IntVarArray vars){
+    int s = vars.size();
+    string res = "{";
+    for(int i = 0; i < s; i++){
+        res += intVarToString(vars[i]);
+        if(i != s - 1)
+            res += ", ";
+    }
+    res += "}";
+    return res;
+}
+
+
+/**
  * Prints A note with its name (e.g. 60 = C)
  * @param var an integer variable
  */
