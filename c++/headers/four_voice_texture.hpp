@@ -50,7 +50,10 @@ protected:
 
     // variable arrays for harmonic intervals between adjacent voices (not absolute value)
     IntVarArray bassTenorHarmonicIntervals;
+    IntVarArray bassAltoHarmonicIntervals;
+    IntVarArray bassSopranoHarmonicIntervals;
     IntVarArray tenorAltoHarmonicIntervals;
+    IntVarArray tenorSopranoHarmonicIntervals;
     IntVarArray altoSopranoHarmonicIntervals;
 
     // @todo maybe harmonic movement array?

@@ -63,11 +63,18 @@ void link_absolute_melodic_arrays(const Home& home, IntVarArray bassMelodicInter
  * @param altoSopranoHarmonicIntervals the harmonic intervals between alto and soprano
  */
 void link_harmonic_arrays(const Home& home, int n, IntVarArray FullChordsVoicing, IntVarArray bassTenorHarmonicIntervals,
-                          IntVarArray tenorAltoHarmonicIntervals, IntVarArray altoSopranoHarmonicIntervals){
+                          IntVarArray bassAltoHarmonicIntervals, IntVarArray bassSopranoHarmonicIntervals,
+                          IntVarArray tenorAltoHarmonicIntervals, IntVarArray tenorSopranoHarmonicIntervals,
+                          IntVarArray altoSopranoHarmonicIntervals){
     for(int i = 0; i < n; ++i){
-        rel(home, bassTenorHarmonicIntervals[i] == FullChordsVoicing[(4 * i) + 1] - FullChordsVoicing[4 * i]);
-        rel(home, tenorAltoHarmonicIntervals[i] == FullChordsVoicing[(4 * i) + 2] - FullChordsVoicing[(4 * i) + 1]);
-        rel(home, altoSopranoHarmonicIntervals[i] == FullChordsVoicing[(4 * i) + 3] - FullChordsVoicing[(4 * i) + 2]);
+        rel(home, bassTenorHarmonicIntervals[i] == FullChordsVoicing[(4 * i) + TENOR] - FullChordsVoicing[4 * i + BASS]);
+        rel(home, bassAltoHarmonicIntervals[i] == FullChordsVoicing[(4 * i) + ALTO] - FullChordsVoicing[4 * i + BASS]);
+        rel(home, bassSopranoHarmonicIntervals[i] == FullChordsVoicing[(4 * i) + SOPRANO] - FullChordsVoicing[4 * i + BASS]);
+
+        rel(home, tenorAltoHarmonicIntervals[i] == FullChordsVoicing[(4 * i) + ALTO] - FullChordsVoicing[(4 * i) + TENOR]);
+        rel(home, tenorSopranoHarmonicIntervals[i] == FullChordsVoicing[(4 * i) + SOPRANO] - FullChordsVoicing[(4 * i) + TENOR]);
+
+        rel(home, altoSopranoHarmonicIntervals[i] == FullChordsVoicing[(4 * i) + SOPRANO] - FullChordsVoicing[(4 * i) + ALTO]);
     }
 }
 
@@ -118,30 +125,29 @@ void restrain_voices_domains(const Home& home, int n, IntVarArray FullChordsVoic
  * @param voicesHarmonicIntervals The variable array containing the harmonic intervals between the two voices
  * @param FullChordsVoicing the variable array containing all the chords in the form [bass0, alto0, tenor0, soprano0, bass1, alto1, tenor1, soprano1, ...]
  */
-void forbid_parallel_intervals(Home home, int forbiddenParallelInterval, int currentPosition, int lowerVoiceID,
+void forbid_parallel_intervals(Home home, int forbiddenParallelInterval, int currentPosition, int voice1ID, int voice2ID,
                                IntVarArray voicesHarmonicIntervals, IntVarArray FullChordsVoicing){
-    //@todo check si il faut pas les interdire entre chaque voix même si elles sont pas adjacentes.
-    // // @todo Si oui, peut-être faire une fonction auxiliaire pour que ce soit pas dégueu
-    //bassTenorIntervalForbidden is true if the interval is forbiddenParallelInterval
+
+    /// harmonicIntervalForbidden is true if the interval is forbiddenParallelInterval
     BoolVar harmonicIntervalForbidden(home, 0, 1);
     rel(home, harmonicIntervalForbidden, IRT_EQ, expr(home, voicesHarmonicIntervals[currentPosition] %
                                                              PERFECT_OCTAVE == forbiddenParallelInterval));
 
-    // is true if lower voice is the same note in both chords
+    /// is true if lower voice is the same note in both chords
     BoolVar notesLowerVoiceEqual(home, 0, 1);
-    rel(home, notesLowerVoiceEqual, IRT_EQ, expr(home, FullChordsVoicing[currentPosition * 4 + lowerVoiceID]
-                                                        == FullChordsVoicing[(currentPosition + 1) *4 + lowerVoiceID]));
+    rel(home, notesLowerVoiceEqual, IRT_EQ, expr(home, FullChordsVoicing[currentPosition * 4 + voice1ID]
+                                                        == FullChordsVoicing[(currentPosition + 1) *4 + voice1ID]));
 
-    // is true if upper voice is the same note in both chords
+    /// is true if upper voice is the same note in both chords
     BoolVar notesUpperVoiceEqual(home,0,1);
-    rel(home, notesUpperVoiceEqual, IRT_EQ, expr(home, FullChordsVoicing[currentPosition * 4 + lowerVoiceID + 1]
-                                                    == FullChordsVoicing[(currentPosition + 1) *4 + lowerVoiceID + 1]));
+    rel(home, notesUpperVoiceEqual, IRT_EQ, expr(home, FullChordsVoicing[currentPosition * 4 + voice2ID]
+                                                    == FullChordsVoicing[(currentPosition + 1) *4 + voice2ID]));
 
-    // is true if both voices are the same in both chords
+    /// is true if both voices are the same in both chords
     BoolVar bothVoicesEqual(home, 0, 1);
     rel(home, notesLowerVoiceEqual, BOT_AND, notesUpperVoiceEqual, bothVoicesEqual);
 
-    // is true if the harmonic interval between the voices is not forbidden
+    /// is true if the harmonic interval between the voices is not forbidden
     BoolVar nextIntervalNotParallel(home, 0,1);
     rel(home, nextIntervalNotParallel, IRT_EQ, expr(home, voicesHarmonicIntervals[currentPosition+1] %
                                                                 PERFECT_OCTAVE != forbiddenParallelInterval));

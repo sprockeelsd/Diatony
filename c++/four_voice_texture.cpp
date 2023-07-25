@@ -36,7 +36,10 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
 
     // variable arrays for harmonic intervals between adjacent voices (only positive because there is no direction
     bassTenorHarmonicIntervals = IntVarArray(*this, size, 0, PERFECT_OCTAVE + PERFECT_FIFTH);
+    bassAltoHarmonicIntervals = IntVarArray(*this, size, 0, PERFECT_OCTAVE + PERFECT_FIFTH);
+    bassSopranoHarmonicIntervals = IntVarArray(*this, size, 0, PERFECT_OCTAVE + PERFECT_FIFTH);
     tenorAltoHarmonicIntervals = IntVarArray(*this, size, 0, PERFECT_OCTAVE);
+    tenorSopranoHarmonicIntervals = IntVarArray(*this, size, 0, PERFECT_OCTAVE);
     altoSopranoHarmonicIntervals = IntVarArray(*this, size, 0, PERFECT_OCTAVE);
 
     sumOfMelodicIntervals = IntVar(*this, 0, PERFECT_OCTAVE * 4 * size + 1);
@@ -51,8 +54,9 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
                                  sopranoMelodicIntervals, absoluteBassMelodicIntervals, absoluteTenorMelodicIntervals,
                                  absoluteAltoMelodicIntervals, absoluteSopranoMelodicIntervals);
 
-    link_harmonic_arrays(*this, size, FullChordsVoicing, bassTenorHarmonicIntervals,
-                         tenorAltoHarmonicIntervals, altoSopranoHarmonicIntervals);
+    link_harmonic_arrays(*this, size, FullChordsVoicing, bassTenorHarmonicIntervals, bassAltoHarmonicIntervals,
+                         bassSopranoHarmonicIntervals, tenorAltoHarmonicIntervals, tenorSopranoHarmonicIntervals,
+                         altoSopranoHarmonicIntervals);
 
     /// restrain the domain of the voices to their range + state that bass <= tenor <= alto <= soprano
     restrain_voices_domains(*this, size, FullChordsVoicing);
@@ -66,29 +70,23 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     /**-------------------------------------------- generic constraints -----------------------------------------------*/
 
     for(int i = 0; i < size-1; i++){
-        // fifths
-        forbid_parallel_intervals(*this, PERFECT_FIFTH, i, BASS,
-                                  bassTenorHarmonicIntervals, FullChordsVoicing); // between bass and tenor
-        forbid_parallel_intervals(*this, PERFECT_FIFTH, i, TENOR,
-                                  tenorAltoHarmonicIntervals, FullChordsVoicing); // between tenor and alto
-        forbid_parallel_intervals(*this, PERFECT_FIFTH, i, ALTO,
-                                  altoSopranoHarmonicIntervals, FullChordsVoicing); // between alto and soprano
-
-        //octaves
-        forbid_parallel_intervals(*this, PERFECT_OCTAVE, i, BASS,
-                                  bassTenorHarmonicIntervals, FullChordsVoicing); // between bass and tenor
-        forbid_parallel_intervals(*this, PERFECT_OCTAVE, i, TENOR,
-                                  tenorAltoHarmonicIntervals, FullChordsVoicing); // between tenor and alto
-        forbid_parallel_intervals(*this, PERFECT_OCTAVE, i, ALTO,
-                                  altoSopranoHarmonicIntervals, FullChordsVoicing); // between alto and soprano
-
-        //unissons
-        forbid_parallel_intervals(*this, UNISSON, i, BASS,
-                                  bassTenorHarmonicIntervals, FullChordsVoicing); // between bass and tenor
-        forbid_parallel_intervals(*this, UNISSON, i, TENOR,
-                                  tenorAltoHarmonicIntervals, FullChordsVoicing); // between tenor and alto
-        forbid_parallel_intervals(*this, UNISSON, i, ALTO,
-                                  altoSopranoHarmonicIntervals, FullChordsVoicing); // between alto and soprano
+        for(int interval : {PERFECT_FIFTH, PERFECT_OCTAVE, UNISSON}){
+            /// from bass
+            forbid_parallel_intervals(*this, interval, i, BASS,
+                                      TENOR,bassTenorHarmonicIntervals, FullChordsVoicing); // between bass and tenor
+            forbid_parallel_intervals(*this, interval, i, BASS,
+                                      ALTO,bassAltoHarmonicIntervals, FullChordsVoicing); // between tenor and alto
+            forbid_parallel_intervals(*this, interval, i, BASS,
+                                      SOPRANO,bassSopranoHarmonicIntervals, FullChordsVoicing); // between alto and soprano
+            /// from tenor
+            forbid_parallel_intervals(*this, interval, i, TENOR,
+                                      ALTO, tenorAltoHarmonicIntervals, FullChordsVoicing); // between tenor and alto
+            forbid_parallel_intervals(*this, interval, i, TENOR,
+                                      SOPRANO, tenorSopranoHarmonicIntervals, FullChordsVoicing); // between tenor and soprano
+            /// from alto
+            forbid_parallel_intervals(*this, interval, i, ALTO,
+                                      SOPRANO, altoSopranoHarmonicIntervals, FullChordsVoicing); // between alto and soprano
+        }
     }
 
     /**------------------------------------------chord related constraints --------------------------------------------*/

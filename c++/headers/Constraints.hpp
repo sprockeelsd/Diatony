@@ -59,7 +59,9 @@ void link_absolute_melodic_arrays(const Home& home, IntVarArray bassMelodicInter
  * @param altoSopranoHarmonicIntervals the harmonic intervals between alto and soprano
  */
 void link_harmonic_arrays(const Home& home, int n, IntVarArray FullChordsVoicing, IntVarArray bassTenorHarmonicIntervals,
-                          IntVarArray tenorAltoHarmonicIntervals, IntVarArray altoSopranoHarmonicIntervals);
+                          IntVarArray bassAltoHarmonicIntervals, IntVarArray bassSopranoHarmonicIntervals,
+                          IntVarArray tenorAltoHarmonicIntervals, IntVarArray tenorSopranoHarmonicIntervals,
+                          IntVarArray altoSopranoHarmonicIntervals);
 
 /**
  * Sets the domains of the different voices to their range
@@ -81,6 +83,7 @@ void restrain_voices_domains(const Home& home, int n, IntVarArray FullChordsVoic
 
 /**
  * Forbids parallel intervals between two chords in the same voices
+ * @todo change to argument variables later + maybe make it cleaner
  * @param home the instance of the problem
  * @param forbiddenParallelInterval the interval to forbid
  * @param currentPosition the current chord position
@@ -88,7 +91,7 @@ void restrain_voices_domains(const Home& home, int n, IntVarArray FullChordsVoic
  * @param voicesHarmonicIntervals The variable array containing the harmonic intervals between the two voices
  * @param FullChordsVoicing the variable array containing all the chords in the form [bass0, alto0, tenor0, soprano0, bass1, alto1, tenor1, soprano1, ...]
  */
-void forbid_parallel_intervals(Home home, int forbiddenParallelInterval, int currentPosition, int lowerVoiceID,
+void forbid_parallel_intervals(Home home, int forbiddenParallelInterval, int currentPosition, int voice1ID, int voice2ID,
                                IntVarArray voicesHarmonicIntervals, IntVarArray FullChordsVoicing);
 
 /***********************************************************************************************************************
