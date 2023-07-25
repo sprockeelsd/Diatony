@@ -219,7 +219,9 @@ void chordNoteOccurrenceFundamentalState(const Home& home, Tonality *tonality, i
 
     /// number of different note values in the chord
     if(tonality->get_chord_qualities()[degree] == DIMINISHED_CHORD){
-        nvalues(home, currentChord, IRT_EQ,3); // there should only be 3 different notes
+        if( not (degree == SECOND_DEGREE && previous_chord_degree == SIXTH_DEGREE && tonality->get_mode() == MINOR_MODE)){ /// this is the only case where it is not possible (for now)
+            nvalues(home, currentChord, IRT_EQ,3); // there should only be 3 different notes
+        }
     }
     else{
         distinct(home, currentChord); // all notes should be different
