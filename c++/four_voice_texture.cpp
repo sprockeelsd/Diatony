@@ -104,6 +104,9 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
             chordNoteOccurrenceFundamentalState(*this, tonality, chordDegrees[i],
                                                 chordDegrees[i-1], currentChord);
         }
+        else if(chordStas[i] == FIRST_INVERSION){
+            chordNoteOccurrenceFirstInversion(*this, tonality, chordDegrees[i], currentChord);
+        }
         else{ // first or second inversion
 
         }

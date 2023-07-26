@@ -67,4 +67,13 @@ void chordNoteOccurrenceFundamentalState(const Home& home, Tonality *tonality, i
  *                                                                                                                     *
  ***********************************************************************************************************************/
 
+/**
+ * Sets the number of time each note of the chord are present in the chord
+ * @param home the instance of the problem
+ * @param tonality the tonality of the piece
+ * @param degree the degree of the chord
+ * @param currentChord the array containing a chord in the form [bass, alto, tenor, soprano]
+ */
+void chordNoteOccurrenceFirstInversion(const Home& home, Tonality *tonality, int degree, const IntVarArgs& currentChord);
+
 #endif

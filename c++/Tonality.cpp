@@ -36,16 +36,12 @@ Tonality::Tonality(int t, int m, vector<int> s) {
         scale_degrees[i] = set;
     }
 
-    // Set tonal notes and modal notes
-    IntSet t_notes(getAllNotesFromIntervalLoop(tonic, {PERFECT_FOURTH, MAJOR_SECOND,PERFECT_FOURTH}));
-    tonal_notes = t_notes; // 1, 4 and 5 degrees
-    vector<int> notes(getAllNotesFromIntervalLoop(get_degrees_notes()[THIRD_DEGREE], {PERFECT_FOURTH, MAJOR_SECOND, PERFECT_FOURTH}));
-    if(mode == MINOR_MODE){ // @todo move this to minor tonality somehow
-        vector<int> flatSeventh = getAllGivenNote(degrees_notes[SEVENTH_DEGREE]); // add the minor seventh if minor mode
-        notes.insert(notes.end(), flatSeventh.begin(), flatSeventh.end()); // merge the 2 vectors together
-    }
-    IntSet m_notes((const vector<int>) notes);
-    modal_notes = m_notes; // 3, 6 and 7 degrees
+    /// Set tonal notes and modal notes
+    tonal_notes = {degrees_notes[FIRST_DEGREE], degrees_notes[FOURTH_DEGREE], degrees_notes[FIFTH_DEGREE]}; // 1, 4 and 5 degrees
+    modal_notes = {degrees_notes[THIRD_DEGREE], degrees_notes[SIXTH_DEGREE], degrees_notes[SEVENTH_DEGREE]}; // 3, 6 and 7 degrees
+    if (mode == MINOR_MODE)
+        modal_notes.insert(degrees_notes[SEVENTH_DEGREE] - 1); // add the minor seventh if minor mode
+
 
     /// chord qualities and scale degrees chords are set in the child classes
 }
@@ -112,7 +108,7 @@ IntSet Tonality::get_scale_degree(int degree) {
  * Get the notes that don't change in major or minor scale (1,4,5 degrees)
  * @return an IntSet containing the tonal notes
  */
-IntSet Tonality::get_tonal_notes() {
+set<int> Tonality::get_tonal_notes() {
     return tonal_notes;
 }
 
@@ -120,6 +116,6 @@ IntSet Tonality::get_tonal_notes() {
  * Get the notes that change in major or minor scale (3,6,7 degrees)
  * @return an IntSet containing the modal notes
  */
-IntSet Tonality::get_modal_notes() {
+set<int> Tonality::get_modal_notes() {
     return modal_notes;
 }

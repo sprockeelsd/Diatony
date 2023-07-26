@@ -82,3 +82,28 @@ void chordNoteOccurrenceFundamentalState(const Home& home, Tonality *tonality, i
  *                                            First inversion chord constraints                                        *
  *                                                                                                                     *
  ***********************************************************************************************************************/
+
+/**
+ * Sets the number of time each note of the chord are present in the chord
+ * @param home the instance of the problem
+ * @param tonality the tonality of the piece
+ * @param degree the degree of the chord
+ * @param currentChord the array containing a chord in the form [bass, alto, tenor, soprano]
+ */
+void chordNoteOccurrenceFirstInversion(const Home& home, Tonality *tonality, int degree, const IntVarArgs& currentChord){
+    // @todo simplify this
+    /// exceptions
+    // if the degree is a tonal note (1 4 5) then it can be doubled
+    if(tonality->get_tonal_notes().find(degree) != tonality->get_tonal_notes().end()){
+        count(home, currentChord, tonality->get_scale_degree(degree + FIRST_DEGREE), IRT_GQ, 1); // the fundamental should be present at least once
+        count(home, currentChord, tonality->get_scale_degree((degree + THIRD_DEGREE) % 7), IRT_GQ,1); // the third should be present exactly once
+        count(home, currentChord, tonality->get_scale_degree((degree + FIFTH_DEGREE) % 7), IRT_GQ, 1); // the fifth should be present at least once
+    }
+    else{ /// default case: double the fundamental or the fifth of the chord
+        count(home, currentChord, tonality->get_scale_degree(degree + FIRST_DEGREE), IRT_GQ, 1); // the fundamental should be present at least once
+        count(home, currentChord, tonality->get_scale_degree((degree + THIRD_DEGREE) % 7), IRT_EQ,1); // the third should be present exactly once
+        count(home, currentChord, tonality->get_scale_degree((degree + FIFTH_DEGREE) % 7), IRT_GQ, 1); // the fifth should be present at least once
+    }
+    /// @todo temporary to make all notes different, but there might be exceptions to this
+    distinct(home, currentChord);
+}

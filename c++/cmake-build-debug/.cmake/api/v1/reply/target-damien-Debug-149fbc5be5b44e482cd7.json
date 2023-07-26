@@ -238,7 +238,7 @@
 		},
 		{
 			"backtrace" : 1,
-			"path" : "VoiceLeadingConstraints.hpp",
+			"path" : "headers/VoiceLeadingConstraints.hpp",
 			"sourceGroupIndex" : 0
 		},
 		{
