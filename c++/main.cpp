@@ -9,16 +9,21 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
     int size = 2;
-    Tonality* tonality = new MajorTonality(C);
+    Tonality* tonality = new MinorTonality(C);
 
     // create a new problem
-    FourVoiceTexture* p = new FourVoiceTexture(size, tonality, {FIRST_DEGREE, THIRD_DEGREE},
+//    FourVoiceTexture* p = new FourVoiceTexture(size, tonality, {FIRST_DEGREE, FOURTH_DEGREE, SEVENTH_DEGREE,
+//                                                                THIRD_DEGREE, SIXTH_DEGREE, SECOND_DEGREE, FIFTH_DEGREE,
+//                                                                FIRST_DEGREE},
+//                                               {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE,
+//                                                FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE});
+    FourVoiceTexture *p = new FourVoiceTexture(size, tonality, {FIFTH_DEGREE, SIXTH_DEGREE},
                                                {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE});
     // std::cout << p->toString() << std::endl;
 
 
     // create a new search engine
-    Search::Base<FourVoiceTexture>* e = make_solver(p, BAB_SOLVER);
+    Search::Base<FourVoiceTexture>* e = make_solver(p, DFS_SOLVER);
     delete p;
 
     std::cout << "Solver type : DFS " << std::endl;
@@ -32,7 +37,7 @@ int main(int argc, char* argv[]) {
         writeToLogFile(sol->toString().c_str());
         std::cout << statistics_to_string(e->statistics()) << std::endl;
         delete sol;
-        if (nb_sol >= 2)
+        if (nb_sol >= 10)
             break;
     }
     cout << "No (more) solutions or solution cap reached.\n" << endl;
