@@ -20,7 +20,7 @@ Tonality::Tonality(int t, int m, vector<int> s) {
     /// Set the list of degrees on which chords are built, based on the tonic and the scale
     int curr = tonic;
     for(int i = 0; i < scale.size(); ++i){
-        degrees_notes[i] = curr;
+        degrees_notes[i] = curr % PERFECT_OCTAVE;
         curr += scale[i];
     }
 
