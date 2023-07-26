@@ -18,7 +18,9 @@
 #include "Utilities.hpp"
 #include "Tonality.hpp"
 #include "MajorTonality.hpp"
-#include "Constraints.hpp"
+#include "GeneralConstraints.hpp"
+#include "HarmonicConstraints.hpp"
+#include "VoiceLeadingConstraints.hpp"
 
 using namespace Gecode;
 using namespace Gecode::Search;
