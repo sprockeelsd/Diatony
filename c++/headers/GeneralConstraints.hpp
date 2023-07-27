@@ -70,6 +70,8 @@ void link_harmonic_arrays(const Home& home, int n, IntVarArray FullChordsVoicing
                           IntVarArray tenorAltoHarmonicIntervals, IntVarArray tenorSopranoHarmonicIntervals,
                           IntVarArray altoSopranoHarmonicIntervals);
 
+void link_diminished_chords_cost(Home home, int size, Tonality &tonality, vector<int> chordDegs, IntVarArray fullChordsVoicing, IntVarArray nOfDifferentNotes, IntVar costVar);
+
 /**
  * Sets the domains of the different voices to their range
  *      bass: [40, 60] E2 -> C3

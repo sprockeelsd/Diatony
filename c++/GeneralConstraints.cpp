@@ -84,6 +84,20 @@ void link_harmonic_arrays(const Home& home, int n, IntVarArray FullChordsVoicing
     }
 }
 
+void link_diminished_chords_cost(Home home, int size, Tonality &tonality, vector<int> chordDegs, IntVarArray fullChordsVoicing, IntVarArray nOfDifferentNotes, IntVar costVar){
+    for(int i = 0; i < size; ++i){
+        if(tonality.get_chord_qualities()[chordDegs[i]] == DIMINISHED_CHORD){
+            IntVarArgs currentChord(fullChordsVoicing.slice(4 * i, 1, 4));
+            // nOfDiffVals in current chord > 3 => cost += 1
+            nvalues(home, currentChord, IRT_EQ, nOfDifferentNotes[i]); // nOfDifferentNotes[i] = nOfDiffVals in current chord
+        }
+        else{
+            rel(home, nOfDifferentNotes[i], IRT_EQ, 0); // does not matter then
+        }
+        count(home, nOfDifferentNotes, 4, IRT_EQ, costVar); // costVar = number of diminished chords with 4 notes
+    }
+}
+
 /**
  * Sets the domains of the different voices to their range
  *      bass: [40, 60] E2 -> C3

@@ -21,6 +21,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
 
     /** variable initialization */
     FullChordsVoicing = IntVarArray(*this, 4*size, 0,127); // tonality->get_tonality_notes()
+    nDifferentValuesInDiminishedChord = IntVarArray(*this, size, 0, 4);
 
     // variable arrays for melodic intervals for each voice
     bassMelodicIntervals = IntVarArray(*this, size-1, -PERFECT_OCTAVE, PERFECT_OCTAVE);
@@ -43,6 +44,8 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     altoSopranoHarmonicIntervals = IntVarArray(*this, size, 0, PERFECT_OCTAVE);
 
     sumOfMelodicIntervals = IntVar(*this, 0, PERFECT_OCTAVE * 4 * size + 1);
+    nOfDiminishedChordsWith4notes = IntVar(*this, 0, size);
+    nOfFundamentalStateChordsWithoutDoubledBass = IntVar(*this, 0, size);
 
     /** constraints */
 
@@ -61,10 +64,13 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     /// restrain the domain of the voices to their range + state that bass <= tenor <= alto <= soprano
     restrain_voices_domains(*this, size, FullChordsVoicing);
 
-    /// set the cost variable
+    /// set the cost variables
     linear(*this, IntVarArgs() << absoluteTenorMelodicIntervals << absoluteAltoMelodicIntervals <<
                                absoluteSopranoMelodicIntervals << absoluteBassMelodicIntervals,
            IRT_EQ, sumOfMelodicIntervals); // sumOfMelodicIntervals is the sum of the absolute melodic intervals
+
+    link_diminished_chords_cost(*this, size, *tonality, chordDegrees, FullChordsVoicing,
+                                nDifferentValuesInDiminishedChord, nOfDiminishedChordsWith4notes);
 
 
     /**-------------------------------------------- generic constraints -----------------------------------------------*/
@@ -130,12 +136,6 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     }
 
     /**------------------------------------------------branching-------------------------------------------------------*/
-    // this order because the inner voices are supposed to move the least, bass and soprano is less important
-    // @todo figure out the branching, the variables below make search slower and might not be necessary (maybe branch on absolute intervals to find a solution quickly)
-//    branch(*this, absoluteTenorMelodicIntervals, INT_VAR_DEGREE_MAX(), INT_VAL_MIN());
-//    branch(*this, absoluteAltoMelodicIntervals, INT_VAR_DEGREE_MAX(), INT_VAL_MIN());
-//    branch(*this, absoluteSopranoMelodicIntervals, INT_VAR_DEGREE_MAX(), INT_VAL_MIN());
-//    branch(*this, absoluteBassMelodicIntervals, INT_VAR_DEGREE_MAX(), INT_VAL_MIN());
     branch(*this, FullChordsVoicing, INT_VAR_DEGREE_MAX(), INT_VAL_MIN());
 }
 
@@ -143,7 +143,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
  * Copy constructor
  * @param s an instance of the FourVoiceTexture class
  */
-FourVoiceTexture::FourVoiceTexture(FourVoiceTexture& s): IntMinimizeSpace(s){
+FourVoiceTexture::FourVoiceTexture(FourVoiceTexture& s): IntLexMinimizeSpace(s){
     //IntVars update
     size = s.size;
     tonality = s.tonality;
@@ -165,8 +165,11 @@ FourVoiceTexture::FourVoiceTexture(FourVoiceTexture& s): IntMinimizeSpace(s){
     altoSopranoHarmonicIntervals.update(*this, s.altoSopranoHarmonicIntervals);
 
     FullChordsVoicing.update(*this, s.FullChordsVoicing);
+    nDifferentValuesInDiminishedChord.update(*this, s.nDifferentValuesInDiminishedChord);
 
     sumOfMelodicIntervals.update(*this, s.sumOfMelodicIntervals);
+    nOfDiminishedChordsWith4notes.update(*this, s.nOfDiminishedChordsWith4notes);
+    nOfFundamentalStateChordsWithoutDoubledBass.update(*this, s.nOfFundamentalStateChordsWithoutDoubledBass);
 }
 
 /**
@@ -202,34 +205,16 @@ Space* FourVoiceTexture::copy() {
  * Ensures that exactly 2*b.size notes are identical to the ones in the previous solution
  * @param _b a solution to the problem from which we wish to add a constraint for the next solutions
  */
-void FourVoiceTexture::constrain(const Space& _b) {
-    const auto &b = dynamic_cast<const FourVoiceTexture &>(_b);
-
-//    IntVar nOfIdenticalNotes(*this, 0, 4*b.size);
-
-    vector<int> prevSol;
-    prevSol.reserve(4*b.size); // preallocate memory
-
-    for(int i = 0; i < 4*b.size; i++){// copy the previous solution in an int vector
-        prevSol.push_back(b.FullChordsVoicing[i].val());
-    }
-
-    IntArgs previousSolution(prevSol); // cast vector to IntArgs
-
-    rel(*this, sumOfMelodicIntervals, IRT_LQ, b.sumOfMelodicIntervals.val()); // sum of melodic intervals is minimized
-
-//    // number of identical notes <= half of the notes @todo change that probably
-//    count(*this, FullChordsVoicing, previousSolution, IRT_EQ, nOfIdenticalNotes);
-//    rel(*this, nOfIdenticalNotes, IRT_LE, 2*b.size);
-}
-
-IntVar FourVoiceTexture::cost() const {
-    return sumOfMelodicIntervals;
-}
-//IntVarArgs FourVoiceTexture::cost(void) const {
-//    // tenor melodic intervals are minimized in priority, then alto melodic intervals etc
-//    return IntVarArgs() << absoluteTenorMelodicIntervals << absoluteAltoMelodicIntervals << absoluteSopranoMelodicIntervals << absoluteBassMelodicIntervals;
+//void FourVoiceTexture::constrain(const Space& _b) {
+//    const auto &b = dynamic_cast<const FourVoiceTexture &>(_b);
 //}
+/**
+ * Cost function for lexical minimization
+ * @return the cost variables in order of importance
+ */
+IntVarArgs FourVoiceTexture::cost() const {
+    return {sumOfMelodicIntervals, nOfDiminishedChordsWith4notes}; //@todo add nOfFundamentalStateChordsWithoutDoubledBass
+}
 
 /**
  * Prints the solution in the console
@@ -249,28 +234,41 @@ void FourVoiceTexture::print_solution(){
  * If a variable is not assigned when this function is called, it writes <not assigned> instead of the value
  */
 string FourVoiceTexture::toString(){
-    string message = "FourVoiceTexture object. \n";
+    string message = "";
+    message += "******************************************\n";
+    message += "*        FourVoiceTexture object.        *\n";
+    message += "******************************************\n";
+    message += "----------------parameters----------------\n";
     message += "size = " + to_string(size) + "\n.";
     message += "chord degrees = " + int_vector_to_string(chordDegrees) + "\n";
     message += "chord states = " + int_vector_to_string(chordStates) + "\n";
 
-    message += "FullChordsVoicing = " + intVarArrayToString(FullChordsVoicing) + "\n";
+    message += "----------------variables-----------------\n";
 
     message += "BassTenorHarmonicIntervals = " + intVarArrayToString(bassTenorHarmonicIntervals) + "\n";
     message += "TenorAltoHarmonicIntervals = " + intVarArrayToString(tenorAltoHarmonicIntervals) + "\n";
-    message += "AltoSopranoHarmonicIntervals = " + intVarArrayToString(altoSopranoHarmonicIntervals) + "\n";
+    message += "AltoSopranoHarmonicIntervals = " + intVarArrayToString(altoSopranoHarmonicIntervals) + "\n\n";
 
     message += "BassMelodicIntervals = " + intVarArrayToString(bassMelodicIntervals) + "\n";
     message += "TenorMelodicIntervals = " + intVarArrayToString(tenorMelodicIntervals) + "\n";
     message += "AltoMelodicIntervals = " + intVarArrayToString(altoMelodicIntervals) + "\n";
-    message += "SopranoMelodicIntervals = " + intVarArrayToString(sopranoMelodicIntervals) + "\n";
+    message += "SopranoMelodicIntervals = " + intVarArrayToString(sopranoMelodicIntervals) + "\n\n";
 
     message += "absoluteBassMelodicIntervals = " + intVarArrayToString(absoluteBassMelodicIntervals) + "\n";
     message += "absoluteTenorMelodicIntervals = " + intVarArrayToString(absoluteTenorMelodicIntervals) + "\n";
     message += "absoluteAltoMelodicIntervals = " + intVarArrayToString(absoluteAltoMelodicIntervals) + "\n";
-    message += "absoluteSopranoMelodicIntervals = " + intVarArrayToString(absoluteSopranoMelodicIntervals) + "\n";
+    message += "absoluteSopranoMelodicIntervals = " + intVarArrayToString(absoluteSopranoMelodicIntervals) + "\n\n";
 
-    message += "sumOfMelodicIntervals = " + intVarToString(sumOfMelodicIntervals) + "\n";
+    message += "----------------solution-----------------\n\n";
+
+    message += "FullChordsVoicing = " + intVarArrayToString(FullChordsVoicing) + "\n\n";
+    message += "-----------------------------------------\n\n";
+
+    message += "-------------cost variables--------------\n";
+
+    message += "sumOfMelodicIntervals = " + intVarToString(sumOfMelodicIntervals) + "\n\n";
+    message += "nDifferentValuesInChord" + intVarArrayToString(nDifferentValuesInDiminishedChord) + "\n";
+    message += "nOfDiminishedChordsWith4notes = " + intVarToString(nOfDiminishedChordsWith4notes) + "\n";
 
     message += "\n";
     return message;

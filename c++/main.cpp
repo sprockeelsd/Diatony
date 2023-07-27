@@ -17,13 +17,13 @@ int main(int argc, char* argv[]) {
 //                                                                FIRST_DEGREE},
 //                                               {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE,
 //                                                FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE});
-    FourVoiceTexture *p = new FourVoiceTexture(size, tonality, {FIFTH_DEGREE, SIXTH_DEGREE},
+    FourVoiceTexture *p = new FourVoiceTexture(size, tonality, {SEVENTH_DEGREE, SIXTH_DEGREE},
                                                {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE});
     // std::cout << p->toString() << std::endl;
 
 
     // create a new search engine
-    Search::Base<FourVoiceTexture>* e = make_solver(p, DFS_SOLVER);
+    Search::Base<FourVoiceTexture>* e = make_solver(p, BAB_SOLVER);
     delete p;
 
     std::cout << "Solver type : DFS " << std::endl;
