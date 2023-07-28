@@ -45,7 +45,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
 
     /// cost variables auxiliary arrays
     nDifferentValuesInDiminishedChord = IntVarArray(*this, size, 0, 4);
-    nDifferentValuesAllChords = IntVarArray(*this, size, 0, 4); // @todo make this with domain 3-4 or add cst saying it must be >= 3
+    nDifferentValuesAllChords = IntVarArray(*this, size, 0, 4);
     nOccurrencesBassInFundamentalState = IntVarArray(*this, size, 0, 4);
 
     /// cost variables
@@ -71,19 +71,20 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     /// restrain the domain of the voices to their range + state that bass <= tenor <= alto <= soprano
     restrain_voices_domains(*this, size, FullChordsVoicing);
 
-    /** cost variables */
+    /** ------------------------------------------cost variables----------------------------------------------------- */
 
     /// sum of melodic intervals
     linear(*this, IntVarArgs() << absoluteTenorMelodicIntervals << absoluteAltoMelodicIntervals <<
                                absoluteSopranoMelodicIntervals << absoluteBassMelodicIntervals,
-           IRT_EQ, sumOfMelodicIntervals); // sumOfMelodicIntervals is the sum of the absolute melodic intervals
+           IRT_EQ, sumOfMelodicIntervals);
 
     /// number of diminished chords with more than 3 notes
     compute_diminished_chords_cost(*this, size, *tonality, chordDegrees, FullChordsVoicing,
                                 nDifferentValuesInDiminishedChord, nOfDiminishedChordsWith4notes);
 
-    /// number of chords with less than 4 notes
-    computeNOfNotesInChordCost(*this, size, tonality, FullChordsVoicing, nDifferentValuesAllChords, nOfChordsWithLessThan4notes);
+    /// number of chords with less than 4 note values
+    computeNOfNotesInChordCost(*this, size, tonality, FullChordsVoicing, nDifferentValuesAllChords,
+                               nOfChordsWithLessThan4notes);
 
     /// number of fundamental state chords without doubled bass @todo maybe add suggestion to which note to double next (tonal notes)
     compute_fundamental_state_doubling_cost(*this, size, tonality, chordStas, chordDegs, FullChordsVoicing,
@@ -93,6 +94,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
 
     /**-------------------------------------------- generic constraints -----------------------------------------------*/
 
+    /// forbid parallel octaves, fifths, and unissons
     for(int i = 0; i < size-1; i++){
         for(int interval : {PERFECT_FIFTH, PERFECT_OCTAVE, UNISSON}){
             /// from bass
@@ -113,37 +115,46 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
         }
     }
 
-    /**------------------------------------------chord related constraints --------------------------------------------*/
+    /**------------------------------------------- harmonic constraints ----------------------------------------------*/
+
+    /// for each chord
     for(int i = 0; i < size; i++){
         IntVarArgs currentChord(FullChordsVoicing.slice(4 * i, 1, 4));
 
+        /// set the chord's domain to the notes of the degree chordDegrees[i]'s chord
         setToChord(*this, tonality, chordDegrees[i], currentChord);
+        /// set the bass based on the chord's state
         setBass(*this, tonality, chordDegrees[i], chordStates[i], currentChord);
 
+        /// post the constraints specific to fundamental state chords
         if(chordStas[i] == FUNDAMENTAL_STATE){
             // @todo change this to take into account c/i chords (see cst def)
-            if(i == 0)// handle the case where there is no previous chord
-                chordNoteOccurrenceFundamentalState(*this, tonality, chordDegrees[i],
-                                                    chordDegrees[i], currentChord);
-            chordNoteOccurrenceFundamentalState(*this, tonality, chordDegrees[i],
-                                                chordDegrees[i-1], currentChord);
+            /// each note should be present at least once, doubling is determined with costs
+            chordNoteOccurrenceFundamentalState(*this, tonality, chordDegrees[i], currentChord);
         }
+        /// post the constraints specific to first inversion chords
         else if(chordStas[i] == FIRST_INVERSION){
-            chordNoteOccurrenceFirstInversion(*this, tonality, chordDegrees[i], currentChord);
+            // @todo change the previous constraint to make it as a preference
+            //chordNoteOccurrenceFirstInversion(*this, tonality, chordDegrees[i], currentChord);
         }
-        else{ // second inversion
+        /// post the constraints specific to second inversion chords
+        else if(chordStas[i] == SECOND_INVERSION){
 
+        }
+        else{
+            //@todo add the other cases here (4 note chords, etc)
         }
     }
 
     /**--------------------------------------------melodic constraints ------------------------------------------------*/
+
+    /// between each chord
     for(int i = 0; i < size-1; i++){
         if (chordStas[i] == FUNDAMENTAL_STATE){
-            std::cout << "fundamental state 1" << std::endl;
             if (chordStas[i+1] == FUNDAMENTAL_STATE){
-                std::cout << "fundamental state 2" << std::endl;
-                fundamentalStateChordToFundamentalStateChord(*this, i, chordDegrees,
-                                                             *tonality,
+                /// keep the common note(s) in the same voice(s) if there is one. If there is not, then other voices move
+                /// in contrary motion to the bass
+                fundamentalStateChordToFundamentalStateChord(*this, i, chordDegrees,*tonality,
                                                              bassMelodicIntervals,
                                                              tenorMelodicIntervals,
                                                               altoMelodicIntervals,
@@ -154,11 +165,26 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     }
 
     /**------------------------------------------------branching-------------------------------------------------------*/
+    // @todo make it smart when it becomes necessary
     branch(*this, FullChordsVoicing, INT_VAR_DEGREE_MAX(), INT_VAL_MIN());
 }
 
 /**
+ * Cost function for lexicographical minimization. The order is as follows:
+ * 1. number of diminished chords with more than 3 notes
+ * 2. number of chords with less than 4 note values
+ * 3. number of fundamental state chords without doubled bass // @todo check how we can remove diminished chords from this as they are preferred to only have 3 voices
+ * 4. sum of melodic intervals minimizes the melodic movement between chords
+ * @return the cost variables in order of importance
+ */
+IntVarArgs FourVoiceTexture::cost() const {
+    return {nOfDiminishedChordsWith4notes, nOfChordsWithLessThan4notes, nOfFundamentalStateChordsWithoutDoubledBass,
+            sumOfMelodicIntervals};
+}
+
+/**
  * Copy constructor
+ * updates every variable and copies other arguments
  * @param s an instance of the FourVoiceTexture class
  */
 FourVoiceTexture::FourVoiceTexture(FourVoiceTexture& s): IntLexMinimizeSpace(s){
@@ -203,6 +229,14 @@ int FourVoiceTexture::getSize() const{
 }
 
 /**
+ * Copy method
+ * @return a copy of the current instance of the FourVoiceTexture class. Calls the copy constructor
+ */
+Space* FourVoiceTexture::copy() {
+    return new FourVoiceTexture(*this);
+}
+
+/**
  * Returns the values taken by the variables vars in a solution
  * @return an array of integers representing the values of the variables in a solution
  */
@@ -215,29 +249,13 @@ int* FourVoiceTexture::return_solution(){
 }
 
 /**
- * Copy method
- * @return a copy of the current instance of the FourVoiceTexture class. Calls the copy constructor
- */
-Space* FourVoiceTexture::copy() {
-    return new FourVoiceTexture(*this);
-}
-
-/**
- * Constrain method for bab search
+ * Constrain method for bab search not needed for optimization problems as it is already implemented
  * Ensures that exactly 2*b.size notes are identical to the ones in the previous solution
  * @param _b a solution to the problem from which we wish to add a constraint for the next solutions
  */
 //void FourVoiceTexture::constrain(const Space& _b) {
 //    const auto &b = dynamic_cast<const FourVoiceTexture &>(_b);
 //}
-/**
- * Cost function for lexical minimization
- * @return the cost variables in order of importance
- */
-IntVarArgs FourVoiceTexture::cost() const {
-    return {nOfDiminishedChordsWith4notes, nOfChordsWithLessThan4notes, nOfFundamentalStateChordsWithoutDoubledBass,
-            sumOfMelodicIntervals};
-}
 
 /**
  * Prints the solution in the console
@@ -257,7 +275,7 @@ void FourVoiceTexture::print_solution(){
  * If a variable is not assigned when this function is called, it writes <not assigned> instead of the value
  */
 string FourVoiceTexture::toString(){
-    string message = "";
+    string message;
     message += "******************************************\n";
     message += "*        FourVoiceTexture object.        *\n";
     message += "******************************************\n";

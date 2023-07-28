@@ -48,11 +48,9 @@ void setBass(const Home& home, Tonality *tonality, int degree, int state, IntVar
  * @param home the instance of the problem
  * @param tonality the tonality of the piece
  * @param degree the degree of the chord
- * @param previous_chord_degree the degree of the following chord
  * @param currentChord the array containing a chord in the form [bass, alto, tenor, soprano]
  */
-void chordNoteOccurrenceFundamentalState(const Home& home, Tonality *tonality, int degree, int previous_chord_degree,
-                                         const IntVarArgs& currentChord){
+void chordNoteOccurrenceFundamentalState(const Home& home, Tonality *tonality, int degree, IntVarArgs currentChord){
     /// each note is present at least once
     count(home, currentChord, tonality->get_scale_degree(degree), IRT_GQ,1); // double the bass which is also the tonic
     count(home, currentChord, tonality->get_scale_degree((degree + 2) % 7), IRT_GQ,1); // the third should be present once
