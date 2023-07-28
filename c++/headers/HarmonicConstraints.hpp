@@ -61,6 +61,8 @@ void setBass(const Home& home, Tonality *tonality, int degree, int state, IntVar
 void chordNoteOccurrenceFundamentalState(const Home& home, Tonality *tonality, int degree, int previous_chord_degree,
                                          const IntVarArgs& currentChord);
 
+void computeNOfNotesInChordCost(const Home& home, int size, Tonality &tonality, IntVarArray fullChordsVoicing, IntVarArray nOfDifferentNotes, IntVar costVar);
+
 /***********************************************************************************************************************
  *                                                                                                                     *
  *                                            First inversion chord constraints                                        *

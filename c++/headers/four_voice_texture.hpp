@@ -60,11 +60,15 @@ protected:
 
     // global array for all the notes for all voices
     IntVarArray FullChordsVoicing; // [bass0, alto0, tenor0, soprano0, bass1, alto1, tenor1, soprano1, ...]
+
+    // cost variables auxiliary arrays
     IntVarArray nDifferentValuesInDiminishedChord; // number of different note values in each chord
+    IntVarArray nDifferentValuesAllChords;
 
     /// cost variables
     IntVar sumOfMelodicIntervals;                       // for minimizing voice movement between voices
     IntVar nOfDiminishedChordsWith4notes;               // number of diminished chords that don't respect the preferences
+    IntVar nOfChordsWithLessThan4notes;                 // number of chords with less than 4 notes
     IntVar nOfFundamentalStateChordsWithoutDoubledBass; // number of fundamental state chords that don't follow the preferences
 
 public:

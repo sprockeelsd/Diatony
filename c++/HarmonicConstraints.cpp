@@ -65,16 +65,24 @@ void chordNoteOccurrenceFundamentalState(const Home& home, Tonality *tonality, i
         count(home, currentChord, tonality->get_scale_degree((degree + 2) % 7), IRT_EQ,1); // the third should be present once
         count(home, currentChord, tonality->get_scale_degree((degree + 4) % 7), IRT_EQ, 1); // the fifth should be present once
     }
+}
 
-    /// number of different note values in the chord
-    if(tonality->get_chord_qualities()[degree] == DIMINISHED_CHORD){
-        if( not (degree == SECOND_DEGREE && previous_chord_degree == SIXTH_DEGREE && tonality->get_mode() == MINOR_MODE)){ /// this is the only case where it is not possible (for now)
-            nvalues(home, currentChord, IRT_EQ,3); // there should only be 3 different notes
-        }
+/**
+ * Computes the cost for the number of notes in a chord, that is the number of chords that have less than 4 different values
+ * @param home the instance of the problem
+ * @param size the size of the chord
+ * @param tonality the tonality of the piece
+ * @param fullChordsVoicing the array containing all the chords in the form [bass, alto, tenor, soprano]
+ * @param nOfDifferentNotes the array containing the number of different notes in each chord
+ * @param costVar the variable that will contain the cost
+ */
+void computeNOfNotesInChordCost(const Home& home, int size, Tonality &tonality, IntVarArray fullChordsVoicing,
+                                IntVarArray nOfDifferentNotes, IntVar costVar){
+    for(int i = 0; i < size; i++) {
+        IntVarArgs currentChord(fullChordsVoicing.slice(4 * i, 1, 4));
+        nvalues(home, currentChord, IRT_EQ,nOfDifferentNotes[i]); // nOfDifferentNotes[i] = nOfDiffVals in current chord
     }
-    else{
-        distinct(home, currentChord); // all notes should be different
-    }
+    count(home, nOfDifferentNotes, IntSet({1,2,3}), IRT_EQ, costVar); // costVar = nb of vars in nOfDifferentNotes that are smaller than 4 @todo problem here
 }
 
 /***********************************************************************************************************************
