@@ -53,18 +53,10 @@ void setBass(const Home& home, Tonality *tonality, int degree, int state, IntVar
  */
 void chordNoteOccurrenceFundamentalState(const Home& home, Tonality *tonality, int degree, int previous_chord_degree,
                                          const IntVarArgs& currentChord){
-    /// exceptions
-    if(degree == SIXTH_DEGREE && previous_chord_degree == FIFTH_DEGREE){ // 5->6 degree in fundamental state (broken cadence)
-        count(home, currentChord, tonality->get_scale_degree(degree), IRT_EQ,1); // the fundamental should be present once
-        count(home, currentChord, tonality->get_scale_degree((degree + 2) % 7), IRT_EQ,2); // double the third
-        count(home, currentChord, tonality->get_scale_degree((degree + 4) % 7), IRT_EQ, 1); // the fifth should be present once
-    }
-        /// default = double the fundamental
-    else{
-        count(home, currentChord, tonality->get_scale_degree(degree), IRT_EQ,2); // double the bass which is also the tonic
-        count(home, currentChord, tonality->get_scale_degree((degree + 2) % 7), IRT_EQ,1); // the third should be present once
-        count(home, currentChord, tonality->get_scale_degree((degree + 4) % 7), IRT_EQ, 1); // the fifth should be present once
-    }
+    /// each note is present at least once
+    count(home, currentChord, tonality->get_scale_degree(degree), IRT_GQ,1); // double the bass which is also the tonic
+    count(home, currentChord, tonality->get_scale_degree((degree + 2) % 7), IRT_GQ,1); // the third should be present once
+    count(home, currentChord, tonality->get_scale_degree((degree + 4) % 7), IRT_GQ, 1); // the fifth should be present once
 }
 
 /**
@@ -76,13 +68,42 @@ void chordNoteOccurrenceFundamentalState(const Home& home, Tonality *tonality, i
  * @param nOfDifferentNotes the array containing the number of different notes in each chord
  * @param costVar the variable that will contain the cost
  */
-void computeNOfNotesInChordCost(const Home& home, int size, Tonality &tonality, IntVarArray fullChordsVoicing,
+void computeNOfNotesInChordCost(Home home, int size, Tonality *tonality, IntVarArray fullChordsVoicing,
                                 IntVarArray nOfDifferentNotes, IntVar costVar){
     for(int i = 0; i < size; i++) {
         IntVarArgs currentChord(fullChordsVoicing.slice(4 * i, 1, 4));
         nvalues(home, currentChord, IRT_EQ,nOfDifferentNotes[i]); // nOfDifferentNotes[i] = nOfDiffVals in current chord
     }
-    count(home, nOfDifferentNotes, IntSet({1,2,3}), IRT_EQ, costVar); // costVar = nb of vars in nOfDifferentNotes that are smaller than 4 @todo problem here
+    count(home, nOfDifferentNotes, IntSet({1,2,3}), IRT_EQ, costVar); // costVar = nb of vars in nOfDifferentNotes that are smaller than 4
+}
+
+/**
+ * Computes the cost for the number of times the fundamental is not doubled in fundamental state chords.
+ * @param home the instance of the problem
+ * @param size the size of the chord
+ * @param tonality the tonality of the piece
+ * @param chordStas the array containing the state of each chord
+ * @param chordDegs the array containing the degree of each chord
+ * @param fullChordsVoicing the array containing all the chords in the form [bass, alto, tenor, soprano]
+ * @param nOccurrencesFund the array containing the number of times the fundamental is present in each chord
+ * @param costVar the variable that will contain the cost
+ */
+void compute_fundamental_state_doubling_cost(const Home& home, int size, Tonality *tonality, vector<int> chordStas,
+                                             vector<int> chordDegs, IntVarArray fullChordsVoicing,
+                                             IntVarArray nOccurrencesFund, const IntVar& costVar){
+    for(int i = 0; i < size; ++i){// for each chord
+        /// if the chord is in fundamental state
+        if(chordStas[i] == FUNDAMENTAL_STATE){
+            IntVarArgs currentChord(fullChordsVoicing.slice(4 * i, 1, 4)); // current chord
+            /// nOccurencesFund[i] = nb of times the fundamental is present in the chord
+            count(home, currentChord, tonality->get_scale_degree(chordDegs[i]), IRT_EQ,nOccurrencesFund[i]);
+        }
+        else{ /// if not fundamental state, then we ignore it so its 0
+            rel(home, nOccurrencesFund[i], IRT_EQ, 0); // don't care
+        }
+    }
+    /// costVar = nb of vars in nOfDifferentNotes that are different from 1
+    count(home, nOccurrencesFund, 1, IRT_EQ, costVar);
 }
 
 /***********************************************************************************************************************

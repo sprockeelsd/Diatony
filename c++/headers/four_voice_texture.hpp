@@ -37,20 +37,19 @@ protected:
     vector<int> chordDegrees; // The degrees of the chord of the chord progression
     vector<int> chordStates; // The states of the chord of the chord progression (fundamental, 1st inversion,...)
 
-    /// note related variables
-    // variable arrays for melodic intervals for each voice (not absolute value)
+    /// variable arrays for melodic intervals for each voice (not absolute value)
     IntVarArray bassMelodicIntervals;
     IntVarArray tenorMelodicIntervals;
     IntVarArray altoMelodicIntervals;
     IntVarArray sopranoMelodicIntervals;
 
-    // absolute melodic intervals
+    /// absolute melodic intervals
     IntVarArray absoluteBassMelodicIntervals;
     IntVarArray absoluteTenorMelodicIntervals;
     IntVarArray absoluteAltoMelodicIntervals;
     IntVarArray absoluteSopranoMelodicIntervals;
 
-    // variable arrays for harmonic intervals between adjacent voices (not absolute value)
+    /// variable arrays for harmonic intervals between adjacent voices (not absolute value)
     IntVarArray bassTenorHarmonicIntervals;
     IntVarArray bassAltoHarmonicIntervals;
     IntVarArray bassSopranoHarmonicIntervals;
@@ -58,12 +57,13 @@ protected:
     IntVarArray tenorSopranoHarmonicIntervals;
     IntVarArray altoSopranoHarmonicIntervals;
 
-    // global array for all the notes for all voices
+    ///global array for all the notes for all voices
     IntVarArray FullChordsVoicing; // [bass0, alto0, tenor0, soprano0, bass1, alto1, tenor1, soprano1, ...]
 
-    // cost variables auxiliary arrays
+    /// cost variables auxiliary arrays
     IntVarArray nDifferentValuesInDiminishedChord; // number of different note values in each chord
     IntVarArray nDifferentValuesAllChords;
+    IntVarArray nOccurrencesBassInFundamentalState; // number of chords that don't double the bass in fundamental state
 
     /// cost variables
     IntVar sumOfMelodicIntervals;                       // for minimizing voice movement between voices

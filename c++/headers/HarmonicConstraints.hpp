@@ -61,7 +61,32 @@ void setBass(const Home& home, Tonality *tonality, int degree, int state, IntVar
 void chordNoteOccurrenceFundamentalState(const Home& home, Tonality *tonality, int degree, int previous_chord_degree,
                                          const IntVarArgs& currentChord);
 
-void computeNOfNotesInChordCost(const Home& home, int size, Tonality &tonality, IntVarArray fullChordsVoicing, IntVarArray nOfDifferentNotes, IntVar costVar);
+/**
+ * Computes the cost for the number of notes in a chord, that is the number of chords that have less than 4 different values
+ * @param home the instance of the problem
+ * @param size the size of the chord
+ * @param tonality the tonality of the piece
+ * @param fullChordsVoicing the array containing all the chords in the form [bass, alto, tenor, soprano]
+ * @param nOfDifferentNotes the array containing the number of different notes in each chord
+ * @param costVar the variable that will contain the cost
+ */
+void computeNOfNotesInChordCost(Home home, int size, Tonality *tonality, IntVarArray fullChordsVoicing,
+                                IntVarArray nOfDifferentNotes, IntVar costVar);
+
+/**
+ * Computes the cost for the number of times the fundamental is not doubled in fundamental state chords.
+ * @param home the instance of the problem
+ * @param size the size of the chord
+ * @param tonality the tonality of the piece
+ * @param chordStas the array containing the state of each chord
+ * @param chordDegs the array containing the degree of each chord
+ * @param fullChordsVoicing the array containing all the chords in the form [bass, alto, tenor, soprano]
+ * @param nOccurrencesFund the array containing the number of times the fundamental is present in each chord
+ * @param costVar the variable that will contain the cost
+ */
+void compute_fundamental_state_doubling_cost(const Home& home, int size, Tonality *tonality, vector<int> chordStas,
+                                             vector<int> chordDegs, IntVarArray fullChordsVoicing,
+                                             IntVarArray nOccurrencesFund, const IntVar& costVar);
 
 /***********************************************************************************************************************
  *                                                                                                                     *
