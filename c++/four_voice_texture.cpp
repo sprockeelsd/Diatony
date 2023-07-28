@@ -69,7 +69,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
                                absoluteSopranoMelodicIntervals << absoluteBassMelodicIntervals,
            IRT_EQ, sumOfMelodicIntervals); // sumOfMelodicIntervals is the sum of the absolute melodic intervals
 
-    link_diminished_chords_cost(*this, size, *tonality, chordDegrees, FullChordsVoicing,
+    compute_diminished_chords_cost(*this, size, *tonality, chordDegrees, FullChordsVoicing,
                                 nDifferentValuesInDiminishedChord, nOfDiminishedChordsWith4notes);
 
 
@@ -113,7 +113,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
         else if(chordStas[i] == FIRST_INVERSION){
             chordNoteOccurrenceFirstInversion(*this, tonality, chordDegrees[i], currentChord);
         }
-        else{ // first or second inversion
+        else{ // second inversion
 
         }
     }

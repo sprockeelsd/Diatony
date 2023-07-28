@@ -84,15 +84,27 @@ void link_harmonic_arrays(const Home& home, int n, IntVarArray FullChordsVoicing
     }
 }
 
-void link_diminished_chords_cost(Home home, int size, Tonality &tonality, vector<int> chordDegs, IntVarArray fullChordsVoicing, IntVarArray nOfDifferentNotes, IntVar costVar){
-    for(int i = 0; i < size; ++i){
+/**
+ * Computes the cost for diminished intervals, that is the number of diminished chords that don't respect the preference
+ * Here, the preference is that they should be used in 3 voices instead of 4
+ * @param home the instance of the problem
+ * @param size the number of chords
+ * @param tonality the tonality of the piece
+ * @param chordDegs the degrees of the chords
+ * @param fullChordsVoicing the array containing all the chords in the form [bass0, alto0, tenor0, soprano0, bass1, alto1, tenor1, soprano1, ...]
+ * @param nOfDifferentNotes the array containing the number of different notes in each diminished chord. In other chords, its value is 0
+ * @param costVar the variable that will contain the cost, that is the number of diminished chords that don't respect the preference
+ */
+void compute_diminished_chords_cost(Home home, int size, Tonality &tonality, vector<int> chordDegs, IntVarArray fullChordsVoicing, IntVarArray nOfDifferentNotes, IntVar costVar){
+    for(int i = 0; i < size; ++i){// for each chord
+        /// if the chord is diminished
         if(tonality.get_chord_qualities()[chordDegs[i]] == DIMINISHED_CHORD){
             IntVarArgs currentChord(fullChordsVoicing.slice(4 * i, 1, 4));
             // nOfDiffVals in current chord > 3 => cost += 1
             nvalues(home, currentChord, IRT_EQ, nOfDifferentNotes[i]); // nOfDifferentNotes[i] = nOfDiffVals in current chord
         }
-        else{
-            rel(home, nOfDifferentNotes[i], IRT_EQ, 0); // does not matter then
+        else{ /// doesn't matter so is set to 0 to be ignored
+            rel(home, nOfDifferentNotes[i], IRT_EQ, 0);
         }
         count(home, nOfDifferentNotes, 4, IRT_EQ, costVar); // costVar = number of diminished chords with 4 notes
     }
