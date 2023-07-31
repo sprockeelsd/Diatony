@@ -150,17 +150,26 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
 
     /// between each chord
     for(int i = 0; i < size-1; i++){
-        if (chordStas[i] == FUNDAMENTAL_STATE){
-            if (chordStas[i+1] == FUNDAMENTAL_STATE){
-                /// keep the common note(s) in the same voice(s) if there is one. If there is not, then other voices move
-                /// in contrary motion to the bass
-                fundamentalStateChordToFundamentalStateChord(*this, i, chordDegrees,*tonality,
-                                                             bassMelodicIntervals,
-                                                             tenorMelodicIntervals,
-                                                              altoMelodicIntervals,
-                                                              sopranoMelodicIntervals,
-                                                              FullChordsVoicing);
-            }
+        if (chordStas[i] == FUNDAMENTAL_STATE && chordStas[i+1] == FUNDAMENTAL_STATE){
+            /// keep the common note(s) in the same voice(s) if there is one. If there is not, then other voices move
+            /// in contrary motion to the bass
+            fundamentalStateChordToFundamentalStateChord(*this, i, chordDegrees,*tonality,
+                                                         bassMelodicIntervals,
+                                                         tenorMelodicIntervals,
+                                                          altoMelodicIntervals,
+                                                          sopranoMelodicIntervals,
+                                                          FullChordsVoicing);
+        }
+        else if(chordStas[i] == FIRST_INVERSION){
+            /// see function def for the details, it's too long to write here
+            fromFirstInversionChord(*this, i, chordDegrees, *tonality,
+                                    bassMelodicIntervals, tenorMelodicIntervals,
+                                    altoMelodicIntervals,sopranoMelodicIntervals,
+                                    FullChordsVoicing);
+        }
+        else{ /// general guidelines (not explicit from Duha)
+            /// keep the common note(s) in the same voice(s) if there is one, then move other voices to the closest note
+            /// (done with preferences)
         }
     }
 

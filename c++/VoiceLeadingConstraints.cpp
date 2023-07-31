@@ -58,6 +58,48 @@ void forbid_parallel_intervals(Home home, int forbiddenParallelInterval, int cur
 
 }
 
+void generalVoiceLeadingRules(const Home& home, int currentPosition, vector<int> chordDegrees,
+                                                  Tonality &tonality,
+                                                  const IntVarArray& bassMelodicInterval, const IntVarArray& tenorMelodicInterval,
+                                                  const IntVarArray& altoMelodicInterval, const IntVarArray& sopranoMelodicInterval,
+                                                  IntVarArray fullChordsVoicing){
+
+    int degreeDifference = abs(chordDegrees[currentPosition+1] - chordDegrees[currentPosition]); // interval between the chords
+
+    /// keep common notes in the same voice
+    // chord qualities
+    vector<int> thisChordQuality = tonality.get_chord_qualities()[chordDegrees[currentPosition]];
+    vector<int> nextChordQuality = tonality.get_chord_qualities()[chordDegrees[currentPosition+1]];
+
+    /// notes of the current chord @todo maybe add sets in the tonality class with the notes for each chord
+    int new_note = tonality.get_degree_note(chordDegrees[currentPosition]);
+    set<int> thisChord = {new_note}; // notes of the chord
+    for(int i = 0; i < thisChordQuality.size() - 1; ++i){ // -1 because the last note is the same as the first
+        new_note = (new_note + thisChordQuality[i]) % PERFECT_OCTAVE;
+        thisChord.insert(new_note);
+    }
+
+    /// notes of the next chord
+    int new_note_new_chord = tonality.get_degree_note(chordDegrees[currentPosition+1]);
+    set<int> nextChord = {new_note_new_chord};
+    for(int i = 0; i < nextChordQuality.size() - 1; ++i){ // -1 because the last note is the same as the first
+        new_note_new_chord = (new_note_new_chord + nextChordQuality[i]) % PERFECT_OCTAVE;
+        nextChord.insert(new_note_new_chord);
+    }
+
+    /// for each note in the current chord domain, if the note is in the next chord as well, it has to be in the same voice
+    for(auto it : thisChord){ // for each note in the current chord domain
+        if(nextChord.find(it) != nextChord.end()){ // if the note is in the next chord as well
+            for(int i = TENOR; i <= SOPRANO; ++i){ // for all voices except the bass
+                // the note in the current chord in the voice i must be the same in the next chord, @todo make it both ways?
+                rel(home, expr(home, fullChordsVoicing[currentPosition * 4 + i] % 12 == it), BOT_IMP,
+                    expr(home, fullChordsVoicing[(currentPosition + 1) * 4 + i] ==
+                               fullChordsVoicing[currentPosition * 4 + i]), true);
+            }
+        }
+    }
+}
+
 /***********************************************************************************************************************
  *                                                                                                                     *
  *                                          Fundamental state chord constraints                                        *
@@ -107,38 +149,9 @@ void fundamentalStateChordToFundamentalStateChord(const Home& home, int currentP
         rel(home, expr(home, bassMelodicInterval[currentPosition] < 0), BOT_EQV,
             expr(home, sopranoMelodicInterval[currentPosition] > 0), true);
     }
-    else{ /// there is at least one common note in the 2 chords ->
-            /// keep that (these) notes in the same voices and move the others to the closest note
-        // chord qualities
-        vector<int> thisChordQuality = tonality.get_chord_qualities()[chordDegrees[currentPosition]];
-        vector<int> nextChordQuality = tonality.get_chord_qualities()[chordDegrees[currentPosition+1]];
-
-        // notes of the current chord @todo maybe add sets in the tonality class with the notes for each chord
-        int new_note = tonality.get_degree_note(chordDegrees[currentPosition]);
-        set<int> thisChord = {new_note}; // notes of the chord
-        for(int i = 0; i < thisChordQuality.size() - 1; ++i){ // -1 because the last note is the same as the first
-            new_note = (new_note + thisChordQuality[i]) % PERFECT_OCTAVE;
-            thisChord.insert(new_note);
-        }
-
-        // notes of the next chord
-        int new_note_new_chord = tonality.get_degree_note(chordDegrees[currentPosition+1]);
-        set<int> nextChord = {new_note_new_chord};
-        for(int i = 0; i < nextChordQuality.size() - 1; ++i){ // -1 because the last note is the same as the first
-            new_note_new_chord = (new_note_new_chord + nextChordQuality[i]) % PERFECT_OCTAVE;
-            nextChord.insert(new_note_new_chord);
-        }
-
-        for(auto it : thisChord){ // for each note in the current chord domain
-            if(nextChord.find(it) != nextChord.end()){ // if the note is in the next chord as well
-                for(int i = TENOR; i <= SOPRANO; ++i){ // for all voices except the bass
-                    /// the note in the current chord in the voice i must be the same in the next chord, @todo make it both ways?
-                    rel(home, expr(home, fullChordsVoicing[currentPosition * 4 + i] % 12 == it), BOT_IMP,
-                        expr(home, fullChordsVoicing[(currentPosition + 1) * 4 + i] ==
-                                   fullChordsVoicing[currentPosition * 4 + i]), true);
-                }
-            }
-        }
+    else{ /// there is at least one common note in the 2 chords -> keep that (these) notes in the same voices and move the others to the closest note
+        generalVoiceLeadingRules(home, currentPosition, chordDegrees, tonality, bassMelodicInterval,
+                                 tenorMelodicInterval, altoMelodicInterval, sopranoMelodicInterval, fullChordsVoicing);
     }
 }
 
@@ -210,3 +223,33 @@ void fifthDegreeFSToSixthDegreeFS(const Home& home, int currentPosition, Tonalit
  *                                            First inversion chord constraints                                        *
  *                                                                                                                     *
  ***********************************************************************************************************************/
+
+void fromFirstInversionChord(const Home& home, int currentPosition, vector<int> chordDegrees,
+                             Tonality &tonality,
+                             const IntVarArray& bassMelodicInterval, const IntVarArray& tenorMelodicInterval,
+                             const IntVarArray& altoMelodicInterval, const IntVarArray& sopranoMelodicInterval,
+                             IntVarArray fullChordsVoicing){
+    /// exceptions
+    /// II 1st inv. to V -> contrary motion to the bass
+    /// other voices need to move by contrary motion to the bass
+    if(chordDegrees[currentPosition] == SECOND_DEGREE && chordDegrees[currentPosition + 1] == FIFTH_DEGREE){
+        //@todo make it into a separate function because it is used multiple times and right now the code is duplicated
+        rel(home, expr(home, bassMelodicInterval[currentPosition] > 0), BOT_EQV,
+            expr(home, tenorMelodicInterval[currentPosition] < 0), true);
+        rel(home, expr(home, bassMelodicInterval[currentPosition] > 0), BOT_EQV,
+            expr(home, altoMelodicInterval[currentPosition] < 0), true);
+        rel(home, expr(home, bassMelodicInterval[currentPosition] > 0), BOT_EQV,
+            expr(home, sopranoMelodicInterval[currentPosition] < 0), true);
+
+        rel(home, expr(home, bassMelodicInterval[currentPosition] < 0), BOT_EQV,
+            expr(home, tenorMelodicInterval[currentPosition] > 0), true);
+        rel(home, expr(home, bassMelodicInterval[currentPosition] < 0), BOT_EQV,
+            expr(home, altoMelodicInterval[currentPosition] > 0), true);
+        rel(home, expr(home, bassMelodicInterval[currentPosition] < 0), BOT_EQV,
+            expr(home, sopranoMelodicInterval[currentPosition] > 0), true);
+    }
+    else{ /// general case
+        generalVoiceLeadingRules(home, currentPosition, chordDegrees, tonality, bassMelodicInterval,
+                                 tenorMelodicInterval, altoMelodicInterval, sopranoMelodicInterval, fullChordsVoicing);
+    }
+}

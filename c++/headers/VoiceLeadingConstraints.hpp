@@ -40,6 +40,25 @@ using namespace std;
 void forbid_parallel_intervals(Home home, int forbiddenParallelInterval, int currentPosition, int voice1ID, int voice2ID,
                                IntVarArray voicesHarmonicIntervals, IntVarArray FullChordsVoicing);
 
+/**
+ * Sets the general rules for the melodic movements between chords
+ * Ensures that common notes between chords are kept in the same voice
+ * @param home the instance of the problem
+ * @param currentPosition the current position in the chord progression
+ * @param chordDegrees the array containing the degrees of the chords in the progression
+ * @param tonality the tonality of the piece
+ * @param bassMelodicInterval The melodic interval of the bass between the current position and the next
+ * @param tenorMelodicInterval the melodic interval of the tenor between the current position and the next
+ * @param altoMelodicInterval the melodic interval of the alto between the current position and the next
+ * @param sopranoMelodicInterval the melodic interval of the soprano between the current position and the next
+ * @param fullChordsVoicing the array containing all the notes of the chords in the progression
+ */
+void generalVoiceLeadingRules(const Home& home, int currentPosition, vector<int> chordDegrees,
+                                                  Tonality &tonality,
+                                                  const IntVarArray& bassMelodicInterval, const IntVarArray& tenorMelodicInterval,
+                                                  const IntVarArray& altoMelodicInterval, const IntVarArray& sopranoMelodicInterval,
+                                                  IntVarArray fullChordsVoicing);
+
 /***********************************************************************************************************************
  *                                                                                                                     *
  *                                          Fundamental state chord constraints                                        *
@@ -85,5 +104,11 @@ void fifthDegreeFSToSixthDegreeFS(const Home& home, int currentPosition, Tonalit
  *                                            First inversion chord constraints                                        *
  *                                                                                                                     *
  ***********************************************************************************************************************/
+
+void fromFirstInversionChord(const Home& home, int currentPosition, vector<int> chordDegrees,
+                                                  Tonality &tonality,
+                                                  const IntVarArray& bassMelodicInterval, const IntVarArray& tenorMelodicInterval,
+                                                  const IntVarArray& altoMelodicInterval, const IntVarArray& sopranoMelodicInterval,
+                                                  IntVarArray fullChordsVoicing);
 
 #endif

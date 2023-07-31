@@ -1,4 +1,4 @@
-all: so dylib
+all: run_mac_os dylib
 
 #compile the dynamic library for linux
 so:
@@ -10,10 +10,12 @@ dylib: problem_wrapper.cpp
 	install_name_tool -change gecode.framework/Versions/49/gecode /Library/Frameworks/gecode.framework/Versions/49/gecode ../sources/libgecode.dylib
 
 #run the main.cpp file on macOS
-run_mac_os:
+run_mac_os: Main
+	./Main
+
+Main:
 	g++ -std=c++11 -F/Library/Frameworks -c Utilities.cpp Tonality.cpp MajorTonality.cpp MinorTonality.cpp VoiceLeadingConstraints.cpp HarmonicConstraints.cpp GeneralConstraints.cpp four_voice_texture.cpp Main.cpp
 	g++ -std=c++11 -F/Library/Frameworks -framework gecode -o Main Utilities.cpp Tonality.cpp MajorTonality.cpp MinorTonality.cpp VoiceLeadingConstraints.cpp HarmonicConstraints.cpp GeneralConstraints.cpp four_voice_texture.cpp Main.cpp
-	./Main
 
 test_tonality:
 	g++ -std=c++11 -F/Library/Frameworks -c Utilities.cpp Tonality.cpp MajorTonality.cpp MinorTonality.cpp testTonality.cpp
