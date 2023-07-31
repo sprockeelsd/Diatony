@@ -118,19 +118,15 @@ void compute_fundamental_state_doubling_cost(const Home& home, int size, Tonalit
  * @param currentChord the array containing a chord in the form [bass, alto, tenor, soprano]
  */
 void chordNoteOccurrenceFirstInversion(const Home& home, Tonality *tonality, int degree, const IntVarArgs& currentChord){
-    // @todo simplify this
+    //@todo simplify this + check it works correctly
     /// exceptions
-    // if the degree is a tonal note (1 4 5) then it can be doubled
-    if(tonality->get_tonal_notes().find(degree) != tonality->get_tonal_notes().end()){
-        count(home, currentChord, tonality->get_scale_degree(degree + FIRST_DEGREE), IRT_GQ, 1); // the fundamental should be present at least once
-        count(home, currentChord, tonality->get_scale_degree((degree + THIRD_DEGREE) % 7), IRT_GQ,1); // the third should be present exactly once
-        count(home, currentChord, tonality->get_scale_degree((degree + FIFTH_DEGREE) % 7), IRT_GQ, 1); // the fifth should be present at least once
+    // If 2 1st inv -> 5 then double the bass and move contrary motion to the bass
+    if(false){
+
     }
     else{ /// default case: double the fundamental or the fifth of the chord
         count(home, currentChord, tonality->get_scale_degree(degree + FIRST_DEGREE), IRT_GQ, 1); // the fundamental should be present at least once
         count(home, currentChord, tonality->get_scale_degree((degree + THIRD_DEGREE) % 7), IRT_EQ,1); // the third should be present exactly once
         count(home, currentChord, tonality->get_scale_degree((degree + FIFTH_DEGREE) % 7), IRT_GQ, 1); // the fifth should be present at least once
     }
-    /// @todo temporary to make all notes different, but there might be exceptions to this
-    distinct(home, currentChord);
 }

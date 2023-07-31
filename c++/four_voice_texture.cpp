@@ -54,7 +54,11 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     nOfChordsWithLessThan4notes = IntVar(*this, 0, size);
     nOfFundamentalStateChordsWithoutDoubledBass = IntVar(*this, 0, size);
 
-    /** --------------------------------------------constraints------------------------------------------------------ */
+    /*******************************************************************************************************************
+    *                                                   Constraints                                                    *
+    ********************************************************************************************************************/
+
+    /**------------------------------------------generic constraints--------------------------------------------------*/
 
     /// link the arrays together
     link_melodic_arrays(*this, size, FullChordsVoicing, bassMelodicIntervals, tenorMelodicIntervals,
@@ -70,29 +74,6 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
 
     /// restrain the domain of the voices to their range + state that bass <= tenor <= alto <= soprano
     restrain_voices_domains(*this, size, FullChordsVoicing);
-
-    /** ------------------------------------------cost variables----------------------------------------------------- */
-
-    /// sum of melodic intervals
-    linear(*this, IntVarArgs() << absoluteTenorMelodicIntervals << absoluteAltoMelodicIntervals <<
-                               absoluteSopranoMelodicIntervals << absoluteBassMelodicIntervals,
-           IRT_EQ, sumOfMelodicIntervals);
-
-    /// number of diminished chords with more than 3 notes
-    compute_diminished_chords_cost(*this, size, *tonality, chordDegrees, FullChordsVoicing,
-                                nDifferentValuesInDiminishedChord, nOfDiminishedChordsWith4notes);
-
-    /// number of chords with less than 4 note values
-    computeNOfNotesInChordCost(*this, size, tonality, FullChordsVoicing, nDifferentValuesAllChords,
-                               nOfChordsWithLessThan4notes);
-
-    /// number of fundamental state chords without doubled bass @todo maybe add suggestion to which note to double next (tonal notes)
-    compute_fundamental_state_doubling_cost(*this, size, tonality, chordStas, chordDegs, FullChordsVoicing,
-                                            nOccurrencesBassInFundamentalState,
-                                            nOfFundamentalStateChordsWithoutDoubledBass);
-
-
-    /**-------------------------------------------- generic constraints -----------------------------------------------*/
 
     /// forbid parallel octaves, fifths, and unissons
     for(int i = 0; i < size-1; i++){
@@ -115,6 +96,26 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
         }
     }
 
+    /** ------------------------------------------cost variables----------------------------------------------------- */
+
+    /// number of diminished chords with more than 3 notes
+    compute_diminished_chords_cost(*this, size, *tonality, chordDegrees, FullChordsVoicing,
+                                nDifferentValuesInDiminishedChord, nOfDiminishedChordsWith4notes);
+
+    /// number of chords with less than 4 note values
+    computeNOfNotesInChordCost(*this, size, tonality, FullChordsVoicing, nDifferentValuesAllChords,
+                               nOfChordsWithLessThan4notes);
+
+    /// number of fundamental state chords without doubled bass @todo maybe add suggestion to which note to double next (tonal notes)
+    compute_fundamental_state_doubling_cost(*this, size, tonality, chordStas, chordDegs, FullChordsVoicing,
+                                            nOccurrencesBassInFundamentalState,
+                                            nOfFundamentalStateChordsWithoutDoubledBass);
+
+    /// sum of melodic intervals
+    linear(*this, IntVarArgs() << absoluteTenorMelodicIntervals << absoluteAltoMelodicIntervals <<
+                               absoluteSopranoMelodicIntervals << absoluteBassMelodicIntervals,
+                               IRT_EQ, sumOfMelodicIntervals);
+
     /**------------------------------------------- harmonic constraints ----------------------------------------------*/
 
     /// for each chord
@@ -134,8 +135,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
         }
         /// post the constraints specific to first inversion chords
         else if(chordStas[i] == FIRST_INVERSION){
-            // @todo change the previous constraint to make it as a preference
-            //chordNoteOccurrenceFirstInversion(*this, tonality, chordDegrees[i], currentChord);
+            chordNoteOccurrenceFirstInversion(*this, tonality, chordDegrees[i], currentChord);
         }
         /// post the constraints specific to second inversion chords
         else if(chordStas[i] == SECOND_INVERSION){
@@ -276,15 +276,17 @@ void FourVoiceTexture::print_solution(){
  */
 string FourVoiceTexture::toString(){
     string message;
-    message += "******************************************\n";
-    message += "*        FourVoiceTexture object.        *\n";
-    message += "******************************************\n";
-    message += "----------------parameters----------------\n";
-    message += "size = " + to_string(size) + "\n.";
+    message += "**************************************************************\n";
+    message += "*                                                            *\n";
+    message += "*                           Solution                         *\n";
+    message += "*                                                            *\n";
+    message += "**************************************************************\n\n";
+    message += "--------------------parameters--------------------\n";
+    message += "size = " + to_string(size) + "\n";
     message += "chord degrees = " + int_vector_to_string(chordDegrees) + "\n";
     message += "chord states = " + int_vector_to_string(chordStates) + "\n";
 
-    message += "----------------variables-----------------\n";
+    message += "--------------------variables---------------------\n";
 
     message += "BassTenorHarmonicIntervals = " + intVarArrayToString(bassTenorHarmonicIntervals) + "\n";
     message += "TenorAltoHarmonicIntervals = " + intVarArrayToString(tenorAltoHarmonicIntervals) + "\n";
@@ -300,18 +302,17 @@ string FourVoiceTexture::toString(){
     message += "absoluteAltoMelodicIntervals = " + intVarArrayToString(absoluteAltoMelodicIntervals) + "\n";
     message += "absoluteSopranoMelodicIntervals = " + intVarArrayToString(absoluteSopranoMelodicIntervals) + "\n\n";
 
-    message += "----------------solution-----------------\n\n";
-
+    message += "🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵\n\n";
     message += "FullChordsVoicing = " + intVarArrayToString(FullChordsVoicing) + "\n\n";
-    message += "-----------------------------------------\n\n";
+    message += "🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵\n\n";
 
-    message += "------cost-related auxiliary arrays------\n";
+    message += "----------cost-related auxiliary arrays----------\n";
 
     message += "nDifferentValuesInDiminishedChord" + intVarArrayToString(nDifferentValuesInDiminishedChord) + "\n";
     message += "nDifferentValuesInAllChords" + intVarArrayToString(nDifferentValuesAllChords) + "\n";
     message += "nOccurrencesBassInFundamentalState" + intVarArrayToString(nOccurrencesBassInFundamentalState) + "\n\n";
 
-    message += "-------------cost variables--------------\n";
+    message += "-----------------cost variables------------------\n";
 
     message += "nOfDiminishedChordsWith4notes = " + intVarToString(nOfDiminishedChordsWith4notes) + "\n";
     message += "nOfChordsWithLessThan4notes = " + intVarToString(nOfChordsWithLessThan4notes) + "\n";
@@ -369,7 +370,7 @@ void writeToLogFile(const char* message){
     const char* homeDir = std::getenv("HOME"); // Get the user's home directory
     if (homeDir) {
         std::string filePath(homeDir);
-        filePath += "/log.txt"; // Specify the desired file path, such as $HOME/log.txt
+        filePath += "/Users/sprockeelsd/Documents/Libraries/log.txt"; // Specify the desired file path, such as $HOME/log.txt
 
         std::ofstream myfile(filePath, std::ios::app); // append mode
         if (myfile.is_open()) {

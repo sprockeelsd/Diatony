@@ -9,7 +9,7 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
     int size = 2;
-    Tonality* tonality = new MinorTonality(C);
+    Tonality* tonality = new MajorTonality(C);
 
     // create a new problem
 //    FourVoiceTexture* p = new FourVoiceTexture(size, tonality, {FIRST_DEGREE, FOURTH_DEGREE, SEVENTH_DEGREE,
@@ -17,8 +17,8 @@ int main(int argc, char* argv[]) {
 //                                                                FIRST_DEGREE},
 //                                               {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE,
 //                                                FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE});
-    FourVoiceTexture *p = new FourVoiceTexture(size, tonality, {FIFTH_DEGREE, SIXTH_DEGREE},
-                                               {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE});
+    FourVoiceTexture *p = new FourVoiceTexture(size, tonality, {SECOND_DEGREE, FIFTH_DEGREE},
+                                               {FIRST_INVERSION, FUNDAMENTAL_STATE});
     // std::cout << p->toString() << std::endl;
 
 
