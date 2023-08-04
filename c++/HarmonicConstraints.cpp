@@ -50,7 +50,14 @@ void setBass(const Home& home, Tonality *tonality, int degree, int state, IntVar
  * @param degree the degree of the chord
  * @param currentChord the array containing a chord in the form [bass, alto, tenor, soprano]
  */
-void chordNoteOccurrenceFundamentalState(const Home& home, Tonality *tonality, int degree, IntVarArgs currentChord){
+void chordNoteOccurrenceFundamentalState(Home home, Tonality *tonality, int degree,
+                                         IntVar nDifferentValuesInDiminishedChord, IntVarArgs currentChord){
+    /// if the chord is a diminished seventh degree, the third must be doubled
+    if(tonality->get_chord_qualities()[degree] == DIMINISHED_CHORD && degree == SEVENTH_DEGREE){
+        IntVar nOfThirds(home,0,4);
+        count(home, currentChord, tonality->get_scale_degree(degree + FIRST_DEGREE), IRT_EQ, nOfThirds);
+        rel(home, expr(home, nDifferentValuesInDiminishedChord == 4), BOT_IMP, expr(home, nOfThirds == 2), true);
+    }
     /// each note is present at least once
     count(home, currentChord, tonality->get_scale_degree(degree), IRT_GQ,1); // double the bass which is also the tonic
     count(home, currentChord, tonality->get_scale_degree((degree + 2) % 7), IRT_GQ,1); // the third should be present once

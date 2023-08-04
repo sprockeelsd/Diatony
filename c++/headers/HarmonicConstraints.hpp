@@ -58,7 +58,8 @@ void setBass(const Home& home, Tonality *tonality, int degree, int state, IntVar
  * @param degree the degree of the chord
  * @param currentChord the array containing a chord in the form [bass, alto, tenor, soprano]
  */
-void chordNoteOccurrenceFundamentalState(const Home& home, Tonality *tonality, int degree, IntVarArgs currentChord);
+void chordNoteOccurrenceFundamentalState(Home home, Tonality *tonality, int degree,
+                                         IntVar nDifferentValuesInDiminishedChord, IntVarArgs currentChord);
 
 /**
  * Computes the cost for the number of notes in a chord, that is the number of chords that have less than 4 different values

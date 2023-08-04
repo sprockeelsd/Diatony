@@ -131,7 +131,9 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
         if(chordStas[i] == FUNDAMENTAL_STATE){
             // @todo change this to take into account c/i chords (see cst def)
             /// each note should be present at least once, doubling is determined with costs
-            chordNoteOccurrenceFundamentalState(*this, tonality, chordDegrees[i], currentChord);
+            chordNoteOccurrenceFundamentalState(*this, tonality, chordDegrees[i],
+                                                nDifferentValuesInDiminishedChord[i],
+                                                currentChord);
         }
         /// post the constraints specific to first inversion chords
         else if(chordStas[i] == FIRST_INVERSION){
@@ -153,7 +155,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
         if (chordStas[i] == FUNDAMENTAL_STATE && chordStas[i+1] == FUNDAMENTAL_STATE){
             /// keep the common note(s) in the same voice(s) if there is one. If there is not, then other voices move
             /// in contrary motion to the bass
-            fundamentalStateChordToFundamentalStateChord(*this, i, chordDegrees,*tonality,
+            fundamentalStateChordToFundamentalStateChord(*this, i, chordDegrees,tonality,
                                                          bassMelodicIntervals,
                                                          tenorMelodicIntervals,
                                                           altoMelodicIntervals,
@@ -162,7 +164,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
         }
         else if(chordStas[i] == FIRST_INVERSION){
             /// see function def for the details, it's too long to write here
-            fromFirstInversionChord(*this, i, chordDegrees, *tonality,
+            fromFirstInversionChord(*this, i, chordDegrees, tonality,
                                     bassMelodicIntervals, tenorMelodicIntervals,
                                     altoMelodicIntervals,sopranoMelodicIntervals,
                                     FullChordsVoicing);

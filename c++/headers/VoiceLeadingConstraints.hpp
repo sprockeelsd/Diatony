@@ -54,7 +54,7 @@ void forbid_parallel_intervals(Home home, int forbiddenParallelInterval, int cur
  * @param fullChordsVoicing the array containing all the notes of the chords in the progression
  */
 void generalVoiceLeadingRules(const Home& home, int currentPosition, vector<int> chordDegrees,
-                                                  Tonality &tonality,
+                                                  Tonality *tonality,
                                                   const IntVarArray& bassMelodicInterval, const IntVarArray& tenorMelodicInterval,
                                                   const IntVarArray& altoMelodicInterval, const IntVarArray& sopranoMelodicInterval,
                                                   IntVarArray fullChordsVoicing);
@@ -79,10 +79,14 @@ void generalVoiceLeadingRules(const Home& home, int currentPosition, vector<int>
  * @param fullChordsVoicing the array containing all the notes of the chords in the progression
  */
 void fundamentalStateChordToFundamentalStateChord(const Home& home, int currentPosition, vector<int> chordDegrees,
-                                                  Tonality &tonality,
+                                                  Tonality *tonality,
                                                   const IntVarArray& bassMelodicInterval, const IntVarArray& tenorMelodicInterval,
                                                   const IntVarArray& altoMelodicInterval, const IntVarArray& sopranoMelodicInterval,
                                                   IntVarArray fullChordsVoicing);
+
+void tritoneResolution(Home home, int currentPosition, Tonality *tonality, IntVarArray bassMelodicInterval,
+                       IntVarArray tenorMelodicInterval, IntVarArray altoMelodicInterval, IntVarArray sopranoMelodicInterval,
+                       IntVarArray fullChordsVoicing);
 
 /**
  * Sets the constraint for a fifth degree followed by a sixth degree in fundamental state
@@ -95,7 +99,7 @@ void fundamentalStateChordToFundamentalStateChord(const Home& home, int currentP
  * @param sopranoMelodicInterval the melodic intervals of the soprano
  * @param fullChordsVoicing the array containing the notes of the chords in the progression
  */
-void fifthDegreeFSToSixthDegreeFS(const Home& home, int currentPosition, Tonality& tonality,
+void fifthDegreeFSToSixthDegreeFS(const Home& home, int currentPosition, Tonality *tonality,
                                   const IntVarArray& tenorMelodicInterval, const IntVarArray& altoMelodicInterval,
                                   const IntVarArray& sopranoMelodicInterval, IntVarArray fullChordsVoicing);
 
@@ -106,7 +110,7 @@ void fifthDegreeFSToSixthDegreeFS(const Home& home, int currentPosition, Tonalit
  ***********************************************************************************************************************/
 
 void fromFirstInversionChord(const Home& home, int currentPosition, vector<int> chordDegrees,
-                                                  Tonality &tonality,
+                                                  Tonality *tonality,
                                                   const IntVarArray& bassMelodicInterval, const IntVarArray& tenorMelodicInterval,
                                                   const IntVarArray& altoMelodicInterval, const IntVarArray& sopranoMelodicInterval,
                                                   IntVarArray fullChordsVoicing);
