@@ -1,4 +1,4 @@
-#include "headers/four_voice_texture.hpp"
+#include "headers/FourVoiceTexture.hpp"
 #include "headers/Utilities.hpp"
 #include "headers/Tonality.hpp"
 #include "headers/MajorTonality.hpp"

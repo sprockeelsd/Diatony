@@ -25,7 +25,7 @@ void* create_new_problem(int size, int key, int mode, int* chord_degrees, int* c
     vector<int> degrees(int_pointer_to_vector(chord_degrees, size));
     vector<int> states(int_pointer_to_vector(chord_states, size));
     FourVoiceTexture* pb = new FourVoiceTexture(size, t, degrees, states);
-    writeToLogFile(pb->toString().c_str());
+    write_to_log_file(pb->to_string().c_str());
     return (void*) pb;
 }
 
@@ -35,7 +35,7 @@ void* create_new_problem(int size, int key, int mode, int* chord_degrees, int* c
  * @return an integer representing the size of the problem
  */
 int get_size(void* sp){
-    return static_cast<FourVoiceTexture*>(sp)->getSize();
+    return static_cast<FourVoiceTexture*>(sp)->get_size();
 }
 
 /**
@@ -46,7 +46,7 @@ int get_size(void* sp){
 int* return_solution(void* sp){
     FourVoiceTexture* pb = static_cast<FourVoiceTexture*>(sp);
     int* sol = pb->return_solution();
-    writeToLogFile(pb->toString().c_str());
+    write_to_log_file(pb->to_string().c_str());
     return sol;
 }
 

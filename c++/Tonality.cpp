@@ -26,10 +26,10 @@ Tonality::Tonality(int t, int m, vector<int> s) {
 
     /// Create the dictionary of degrees and all possible values of that (those) note(s)
     for (int i = 0; i < degrees_notes.size(); ++i) {
-        vector<int> notes = getAllGivenNote(degrees_notes[i]);          //vector to store all notes for a given degree
+        vector<int> notes = get_all_given_note(degrees_notes[i]);          //vector to store all notes for a given degree
         if(i == SEVENTH_DEGREE && mode == MINOR_MODE){ // @todo move this to minor tonality somehow
             // @todo maybe add sharp sixth as well? for now not necessary
-            vector<int> additional_notes = getAllGivenNote(degrees_notes[i] - 1); // to also get the flat seventh because it is used in third degree chord
+            vector<int> additional_notes = get_all_given_note(degrees_notes[i] - 1); // to also get the flat seventh because it is used in third degree chord
             notes.insert(notes.end(), additional_notes.begin(), additional_notes.end()); // merge the 2 vectors together
         }
         IntSet set((const vector<int>) notes); // cast into IntSet

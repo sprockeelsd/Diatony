@@ -1,9 +1,11 @@
 #include <utility>
 
-#include "headers/four_voice_texture.hpp"
+#include "headers/FourVoiceTexture.hpp"
 
 /***********************************************************************************************************************
- *                                          FourVoiceTexture class methods                                             *
+ *                                                                                                                     *
+ *                                             FourVoiceTexture class methods                                          *
+ *                                                                                                                     *
  ***********************************************************************************************************************/
 
 /**
@@ -235,7 +237,7 @@ FourVoiceTexture::FourVoiceTexture(FourVoiceTexture& s): IntLexMinimizeSpace(s){
  * Returns the size of the problem
  * @return an integer representing the size of the vars array
  */
-int FourVoiceTexture::getSize() const{
+int FourVoiceTexture::get_size() const{
     return size;
 }
 
@@ -285,7 +287,7 @@ void FourVoiceTexture::print_solution(){
  * Right now, it returns a string "FourVoiceTexture object. size = <size>"
  * If a variable is not assigned when this function is called, it writes <not assigned> instead of the value
  */
-string FourVoiceTexture::toString(){
+string FourVoiceTexture::to_string(){
     string message;
     message += "**************************************************************\n";
     message += "*                                                            *\n";
@@ -293,42 +295,43 @@ string FourVoiceTexture::toString(){
     message += "*                                                            *\n";
     message += "**************************************************************\n\n";
     message += "--------------------parameters--------------------\n";
-    message += "size = " + to_string(size) + "\n";
+    message += "size = " + std::to_string(size) + "\n";
     message += "chord degrees = " + int_vector_to_string(chordDegrees) + "\n";
     message += "chord states = " + int_vector_to_string(chordStates) + "\n";
 
     message += "--------------------variables---------------------\n";
 
-    message += "BassTenorHarmonicIntervals = " + intVarArrayToString(bassTenorHarmonicIntervals) + "\n";
-    message += "TenorAltoHarmonicIntervals = " + intVarArrayToString(tenorAltoHarmonicIntervals) + "\n";
-    message += "AltoSopranoHarmonicIntervals = " + intVarArrayToString(altoSopranoHarmonicIntervals) + "\n\n";
+    message += "BassTenorHarmonicIntervals = " + intVarArray_to_string(bassTenorHarmonicIntervals) + "\n";
+    message += "TenorAltoHarmonicIntervals = " + intVarArray_to_string(tenorAltoHarmonicIntervals) + "\n";
+    message += "AltoSopranoHarmonicIntervals = " + intVarArray_to_string(altoSopranoHarmonicIntervals) + "\n\n";
 
-    message += "BassMelodicIntervals = " + intVarArrayToString(bassMelodicIntervals) + "\n";
-    message += "TenorMelodicIntervals = " + intVarArrayToString(tenorMelodicIntervals) + "\n";
-    message += "AltoMelodicIntervals = " + intVarArrayToString(altoMelodicIntervals) + "\n";
-    message += "SopranoMelodicIntervals = " + intVarArrayToString(sopranoMelodicIntervals) + "\n\n";
+    message += "BassMelodicIntervals = " + intVarArray_to_string(bassMelodicIntervals) + "\n";
+    message += "TenorMelodicIntervals = " + intVarArray_to_string(tenorMelodicIntervals) + "\n";
+    message += "AltoMelodicIntervals = " + intVarArray_to_string(altoMelodicIntervals) + "\n";
+    message += "SopranoMelodicIntervals = " + intVarArray_to_string(sopranoMelodicIntervals) + "\n\n";
 
-    message += "absoluteBassMelodicIntervals = " + intVarArrayToString(absoluteBassMelodicIntervals) + "\n";
-    message += "absoluteTenorMelodicIntervals = " + intVarArrayToString(absoluteTenorMelodicIntervals) + "\n";
-    message += "absoluteAltoMelodicIntervals = " + intVarArrayToString(absoluteAltoMelodicIntervals) + "\n";
-    message += "absoluteSopranoMelodicIntervals = " + intVarArrayToString(absoluteSopranoMelodicIntervals) + "\n\n";
+    message += "absoluteBassMelodicIntervals = " + intVarArray_to_string(absoluteBassMelodicIntervals) + "\n";
+    message += "absoluteTenorMelodicIntervals = " + intVarArray_to_string(absoluteTenorMelodicIntervals) + "\n";
+    message += "absoluteAltoMelodicIntervals = " + intVarArray_to_string(absoluteAltoMelodicIntervals) + "\n";
+    message += "absoluteSopranoMelodicIntervals = " + intVarArray_to_string(absoluteSopranoMelodicIntervals) + "\n\n";
 
     message += "🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵\n\n";
-    message += "FullChordsVoicing = " + intVarArrayToString(FullChordsVoicing) + "\n\n";
+    message += "FullChordsVoicing = " + intVarArray_to_string(FullChordsVoicing) + "\n\n";
     message += "🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵\n\n";
 
     message += "----------cost-related auxiliary arrays----------\n";
 
-    message += "nDifferentValuesInDiminishedChord" + intVarArrayToString(nDifferentValuesInDiminishedChord) + "\n";
-    message += "nDifferentValuesInAllChords" + intVarArrayToString(nDifferentValuesAllChords) + "\n";
-    message += "nOccurrencesBassInFundamentalState" + intVarArrayToString(nOccurrencesBassInFundamentalState) + "\n\n";
+    message += "nDifferentValuesInDiminishedChord" + intVarArray_to_string(nDifferentValuesInDiminishedChord) + "\n";
+    message += "nDifferentValuesInAllChords" + intVarArray_to_string(nDifferentValuesAllChords) + "\n";
+    message += "nOccurrencesBassInFundamentalState" + intVarArray_to_string(nOccurrencesBassInFundamentalState) + "\n\n";
 
     message += "-----------------cost variables------------------\n";
 
-    message += "nOfDiminishedChordsWith4notes = " + intVarToString(nOfDiminishedChordsWith4notes) + "\n";
-    message += "nOfChordsWithLessThan4notes = " + intVarToString(nOfChordsWithLessThan4notes) + "\n";
-    message += "nOfFundamentalStateChordsWithoutDoubledBass = " + intVarToString(nOfFundamentalStateChordsWithoutDoubledBass) + "\n";
-    message += "sumOfMelodicIntervals = " + intVarToString(sumOfMelodicIntervals) + "\n\n";
+    message += "nOfDiminishedChordsWith4notes = " + intVar_to_string(nOfDiminishedChordsWith4notes) + "\n";
+    message += "nOfChordsWithLessThan4notes = " + intVar_to_string(nOfChordsWithLessThan4notes) + "\n";
+    message += "nOfFundamentalStateChordsWithoutDoubledBass = " +
+            intVar_to_string(nOfFundamentalStateChordsWithoutDoubledBass) + "\n";
+    message += "sumOfMelodicIntervals = " + intVar_to_string(sumOfMelodicIntervals) + "\n\n";
     message += "\n";
     return message;
 }
@@ -374,7 +377,7 @@ FourVoiceTexture* get_next_solution_space(Search::Base<FourVoiceTexture>* solver
  * Useful for debugging in the OM environment
  * @param message the text to write
  */
-void writeToLogFile(const char* message){
+void write_to_log_file(const char* message){
     std::time_t currentTime = std::time(nullptr); // Get the current time
     std::string timeString = std::asctime(std::localtime(&currentTime)); // Convert to string
 

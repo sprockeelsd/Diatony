@@ -140,13 +140,13 @@
 		},
 		{
 			"backtrace" : 1,
-			"path" : "headers/four_voice_texture.hpp",
+			"path" : "headers/FourVoiceTexture.hpp",
 			"sourceGroupIndex" : 0
 		},
 		{
 			"backtrace" : 1,
 			"compileGroupIndex" : 0,
-			"path" : "four_voice_texture.cpp",
+			"path" : "FourVoiceTexture.cpp",
 			"sourceGroupIndex" : 1
 		},
 		{

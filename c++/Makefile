@@ -2,7 +2,7 @@ all: clean run_mac_os dylib
 
 #define auxiliary files
 PROBLEM_FILES = Utilities.cpp Tonality.cpp MajorTonality.cpp MinorTonality.cpp VoiceLeadingConstraints.cpp \
-				HarmonicConstraints.cpp GeneralConstraints.cpp four_voice_texture.cpp
+				HarmonicConstraints.cpp GeneralConstraints.cpp FourVoiceTexture.cpp
 
 #gecode libraries
 LIBRARIES = -lgecodedriver -lgecodeflatzinc -lgecodefloat -lgecodeint -lgecodekernel -lgecodeminimodel \

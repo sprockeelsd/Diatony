@@ -140,7 +140,7 @@ const vector<int> MELODIC_MINOR_SCALE = {MAJOR_SECOND, MINOR_SECOND, MAJOR_SECON
  * scale from note, use {2, 2, 1, 2, 2, 2, 1}. To get all notes from a minor chord, use {3, 4, 5}.
  * @return vector<int> all the notes
  */
-vector<int> getAllNotesFromIntervalLoop(int note, vector<int> intervals);
+vector<int> get_all_notes_from_interval_loop(int n, vector<int> intervals);
 
 /**
  * For a given tonality (root + mode), returns all the possible notes
@@ -148,7 +148,7 @@ vector<int> getAllNotesFromIntervalLoop(int note, vector<int> intervals);
  * @param scale the set of tones and semitones that define the scale
  * @return vector<int> all the possible notes from that tonality
  */
-vector<int> getAllNotesFromTonality(int root, vector<int> scale);
+vector<int> get_all_notes_from_scale(int root, vector<int> scale);
 
 /**
  * For a given chord (root + mode), returns all the possible notes
@@ -156,14 +156,14 @@ vector<int> getAllNotesFromTonality(int root, vector<int> scale);
  * @param quality the set of tones and semitones that define the chord
  * @return vector<int> all the possible notes from that chord
  */
-vector<int> getAllNotesFromChord(int root, vector<int> quality);
+vector<int> get_all_notes_from_chord(int root, vector<int> quality);
 
 /**
  * Get all values for a given note
  * @param note a note
  * @return vector<int> a vector containing all the given notes
  */
-vector<int> getAllGivenNote(int note);
+vector<int> get_all_given_note(int note);
 
 /**
  * Transforms a vector of integers into a string
@@ -188,29 +188,29 @@ vector<int> int_pointer_to_vector(int* ptr, int size);
 string statistics_to_string(Search::Statistics stats);
 
 /**
- * Returns the values of an array of variables as a string. Calls the intVarToString function
- * @param vars an array of integer variables
- * @return a string representing the values of the variables
- */
-string intVarArrayToString(IntVarArray vars);
-
-/**
  * Returns the value of a variable as a string. If the variable is unassigned, returns "<unassigned>"
  * @param var an integer variable
  * @return a string representing the value of the variable
  */
-string intVarToString(IntVar var);
+string intVar_to_string(IntVar var);
+
+/**
+ * Returns the values of an array of variables as a string. Calls the intVar_to_string function
+ * @param vars an array of integer variables
+ * @return a string representing the values of the variables
+ */
+string intVarArray_to_string(IntVarArray vars);
 
 /**
  * Prints A note with its name (e.g. 60 = C)
  * @param var an integer variable
  */
-void printNoteInLetter(IntVar var);
+void print_note_in_letter(IntVar var);
 
 /**
  * Prints a node in MIDIcent value
  * @param var an integer variable
  */
-void printNoteForOM(IntVar var);
+void print_note_for_OM(IntVar var);
 
 #endif

@@ -27,15 +27,18 @@ using namespace Gecode::Search;
 using namespace std;
 
 /***********************************************************************************************************************
+ *                                                                                                                     *
  *                                                FourVoiceTexture class                                               *
+ *                                                                                                                     *
  ***********************************************************************************************************************/
 class FourVoiceTexture: public IntLexMinimizeSpace {
 protected:
     /// Data
-    int size; // The size of the variable array of interest
-    Tonality* tonality; // The tonality of the piece
-    vector<int> chordDegrees; // The degrees of the chord of the chord progression
-    vector<int> chordStates; // The states of the chord of the chord progression (fundamental, 1st inversion,...)
+    int n_of_voices = 4;        // The number of voices
+    int size;                   // The size of the variable array of interest
+    Tonality *tonality;         // The tonality of the piece
+    vector<int> chordDegrees;   // The degrees of the chord of the chord progression
+    vector<int> chordStates;    // The states of the chord of the chord progression (fundamental, 1st inversion,...)
 
     /// variable arrays for melodic intervals for each voice (not absolute value)
     IntVarArray bassMelodicIntervals;
@@ -91,7 +94,7 @@ public:
      * Returns the size of the problem
      * @return an integer representing the size of the vars array
      */
-    int getSize() const;
+    int get_size() const;
 
     /**
      * Returns the values taken by the variables vars in a solution
@@ -124,7 +127,7 @@ public:
      * Right now, it returns a string "FourVoiceTexture object. size = <size>"
      * If a variable is not assigned when this function is called, it writes <not assigned> instead of the value
      */
-    string toString();
+    string to_string();
 };
 
 
@@ -156,6 +159,6 @@ FourVoiceTexture* get_next_solution_space(Search::Base<FourVoiceTexture>* solver
  * Write a text into a log file
  * @param message the text to write
  */
-void writeToLogFile(const char* message);
+void write_to_log_file(const char* message);
 
 #endif

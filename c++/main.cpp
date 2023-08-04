@@ -1,4 +1,4 @@
-#include "headers/four_voice_texture.hpp"
+#include "headers/FourVoiceTexture.hpp"
 #include "headers/Utilities.hpp"
 #include "headers/Tonality.hpp"
 #include "headers/MajorTonality.hpp"
@@ -33,8 +33,8 @@ int main(int argc, char* argv[]) {
         nb_sol++;
         cout << "Solution " << nb_sol << ": " << endl;
         //sol->print_solution();
-        std::cout << sol->toString() <<std::endl;
-        writeToLogFile(sol->toString().c_str());
+        std::cout << sol->to_string() <<std::endl;
+        write_to_log_file(sol->to_string().c_str());
         std::cout << statistics_to_string(e->statistics()) << std::endl;
         delete sol;
         if (nb_sol >= 10)
