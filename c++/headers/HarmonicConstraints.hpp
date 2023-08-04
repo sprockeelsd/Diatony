@@ -16,9 +16,9 @@ using namespace std;
  *                                                                                                                     *
  * This file contains all the harmonic constraints, that is constraints within a given chord.                          *
  * It currently contains the following constraints:                                                                    *
- *      - setToChord: sets the domain of the current chord based on the tonality and the scale degree                  *
- *      - setBass: sets the bass of the chord according to the state of the chord                                      *
- *      - chordNoteOccurrenceFundamentalState: sets the number of times each note in the chord are present for fundam- *
+ *      - set_to_chord: sets the domain of the current chord based on the tonality and the scale degree                  *
+ *      - set_bass: sets the bass of the chord according to the state of the chord                                      *
+ *      - chord_note_occurrence_fundamental_state: sets the number of times each note in the chord are present for fundam- *
  *          ental state chords                                                                                         *
  *                                                                                                                     *
  ***********************************************************************************************************************/
@@ -30,7 +30,7 @@ using namespace std;
  * @param degree the degree of the chord
  * @param currentChord the array containing a chord in the form [bass, alto, tenor, soprano]
  */
-void setToChord(const Home& home, Tonality* tonality, int degree, const IntVarArgs& currentChord);
+void set_to_chord(const Home& home, Tonality* tonality, int degree, const IntVarArgs& currentChord);
 
 /**
  * Set the bass of the chord to be the given note
@@ -40,7 +40,7 @@ void setToChord(const Home& home, Tonality* tonality, int degree, const IntVarAr
  * @param state the state of the chord
  * @param currentChord the array containing a chord in the form [bass, alto, tenor, soprano]
  */
-void setBass(const Home& home, Tonality *tonality, int degree, int state, IntVarArgs currentChord);
+void set_bass(const Home& home, Tonality *tonality, int degree, int state, IntVarArgs currentChord);
 
 /***********************************************************************************************************************
  *                                                                                                                     *
@@ -58,8 +58,8 @@ void setBass(const Home& home, Tonality *tonality, int degree, int state, IntVar
  * @param degree the degree of the chord
  * @param currentChord the array containing a chord in the form [bass, alto, tenor, soprano]
  */
-void chordNoteOccurrenceFundamentalState(Home home, Tonality *tonality, int degree,
-                                         IntVar nDifferentValuesInDiminishedChord, IntVarArgs currentChord);
+void chord_note_occurrence_fundamental_state(Home home, Tonality *tonality, int degree,
+                                             IntVar nDifferentValuesInDiminishedChord, IntVarArgs currentChord);
 
 /**
  * Computes the cost for the number of notes in a chord, that is the number of chords that have less than 4 different values
@@ -70,8 +70,8 @@ void chordNoteOccurrenceFundamentalState(Home home, Tonality *tonality, int degr
  * @param nOfDifferentNotes the array containing the number of different notes in each chord
  * @param costVar the variable that will contain the cost
  */
-void computeNOfNotesInChordCost(Home home, int size, Tonality *tonality, IntVarArray fullChordsVoicing,
-                                IntVarArray nOfDifferentNotes, IntVar costVar);
+void compute_n_of_notes_in_chord_cost(Home home, int size, Tonality *tonality, IntVarArray fullChordsVoicing,
+                                      IntVarArray nOfDifferentNotes, IntVar costVar);
 
 /**
  * Computes the cost for the number of times the fundamental is not doubled in fundamental state chords.
@@ -101,6 +101,6 @@ void compute_fundamental_state_doubling_cost(const Home& home, int size, Tonalit
  * @param degree the degree of the chord
  * @param currentChord the array containing a chord in the form [bass, alto, tenor, soprano]
  */
-void chordNoteOccurrenceFirstInversion(const Home& home, Tonality *tonality, int degree, const IntVarArgs& currentChord);
+void chord_note_occurrence_first_inversion(const Home& home, Tonality *tonality, int degree, const IntVarArgs& currentChord);
 
 #endif

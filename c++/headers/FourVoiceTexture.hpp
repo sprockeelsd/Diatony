@@ -34,7 +34,7 @@ using namespace std;
 class FourVoiceTexture: public IntLexMinimizeSpace {
 protected:
     /// Data
-    int n_of_voices = 4;        // The number of voices
+    int nOfVoices = 4;        // The number of voices
     int size;                   // The size of the variable array of interest
     Tonality *tonality;         // The tonality of the piece
     vector<int> chordDegrees;   // The degrees of the chord of the chord progression
