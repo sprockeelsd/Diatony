@@ -1,4 +1,4 @@
-all: run_mac_os dylib
+all: clean run_mac_os dylib
 
 #define auxiliary files
 PROBLEM_FILES = Utilities.cpp Tonality.cpp MajorTonality.cpp MinorTonality.cpp VoiceLeadingConstraints.cpp \
@@ -21,11 +21,9 @@ dylib: problem_wrapper.cpp
  			../sources/libgecode.dylib
 
 #run the main.cpp file on macOS
-run_mac_os: Main
-	./Main
-
-Main:
+run_mac_os:
 	g++ -std=c++11 -F/Library/Frameworks -framework gecode -o Main $(PROBLEM_FILES) Main.cpp
+	./Main
 
 test_tonality:
 	g++ -std=c++11 -F/Library/Frameworks -framework gecode -o testTonality Utilities.cpp Tonality.cpp MajorTonality.cpp \
@@ -34,5 +32,5 @@ test_tonality:
 
 #remove temporary files and dynamic library files
 clean:
-	rm -f *.o *.so *.dylib ../sources/*.so ../sources/*.dylib Main
+	rm -f *.o *.so *.dylib ../sources/*.so ../sources/*.dylib Main testTonality
 
