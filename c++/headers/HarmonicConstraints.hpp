@@ -70,8 +70,9 @@ void chord_note_occurrence_fundamental_state(Home home, Tonality *tonality, int 
  * @param nOfDifferentNotes the array containing the number of different notes in each chord
  * @param costVar the variable that will contain the cost
  */
-void compute_n_of_notes_in_chord_cost(Home home, int size, Tonality *tonality, IntVarArray fullChordsVoicing,
-                                      IntVarArray nOfDifferentNotes, IntVar costVar);
+void
+compute_n_of_notes_in_chord_cost(Home home, int size, int nVoices, Tonality *tonality, IntVarArray fullChordsVoicing,
+                                 IntVarArray nOfDifferentNotes, IntVar costVar);
 
 /**
  * Computes the cost for the number of times the fundamental is not doubled in fundamental state chords.

@@ -10,7 +10,7 @@
 
 /**
  * Constructor
- * @param s the size of the array of variables
+ * @param s the number of chords in the progression
  * @param *t a pointer to a Tonality object
  * @param chordDegs the degrees of the chord of the chord progression
  * @param chordStas the states of the chord of the chord progression (fundamental, 1st inversion,...)
@@ -39,10 +39,10 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
 
     /// variable arrays for harmonic intervals between adjacent voices (only positive because there is no direction)
     bassTenorHarmonicIntervals = IntVarArray(*this, size, 0, PERFECT_OCTAVE + PERFECT_FIFTH);
-    bassAltoHarmonicIntervals = IntVarArray(*this, size, 0, PERFECT_OCTAVE + PERFECT_FIFTH);
-    bassSopranoHarmonicIntervals = IntVarArray(*this, size, 0, PERFECT_OCTAVE + PERFECT_FIFTH);
+    bassAltoHarmonicIntervals = IntVarArray(*this, size, 0, 2 * PERFECT_OCTAVE + PERFECT_FIFTH);
+    bassSopranoHarmonicIntervals = IntVarArray(*this, size, 0, 3 * PERFECT_OCTAVE + PERFECT_FIFTH);
     tenorAltoHarmonicIntervals = IntVarArray(*this, size, 0, PERFECT_OCTAVE);
-    tenorSopranoHarmonicIntervals = IntVarArray(*this, size, 0, PERFECT_OCTAVE);
+    tenorSopranoHarmonicIntervals = IntVarArray(*this, size, 0, 2 * PERFECT_OCTAVE);
     altoSopranoHarmonicIntervals = IntVarArray(*this, size, 0, PERFECT_OCTAVE);
 
     /// cost variables auxiliary arrays
@@ -62,52 +62,33 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     *                                                                                                                  *
     ********************************************************************************************************************/
 
-    /**------------------------------------------generic constraints--------------------------------------------------*/
-
     /// link the arrays together
-    link_melodic_arrays(*this, size, FullChordsVoicing, bassMelodicIntervals, tenorMelodicIntervals,
-                        altoMelodicIntervals, sopranoMelodicIntervals);
-
+    link_melodic_arrays(*this, nOfVoices, size, bassMelodicIntervals, FullChordsVoicing,
+                        altoMelodicIntervals, tenorMelodicIntervals, sopranoMelodicIntervals);
     link_absolute_melodic_arrays(*this, bassMelodicIntervals, tenorMelodicIntervals, altoMelodicIntervals,
                                  sopranoMelodicIntervals, absoluteBassMelodicIntervals, absoluteTenorMelodicIntervals,
                                  absoluteAltoMelodicIntervals, absoluteSopranoMelodicIntervals);
-
-    link_harmonic_arrays(*this, size, FullChordsVoicing, bassTenorHarmonicIntervals, bassAltoHarmonicIntervals,
-                         bassSopranoHarmonicIntervals, tenorAltoHarmonicIntervals, tenorSopranoHarmonicIntervals,
-                         altoSopranoHarmonicIntervals);
+    link_harmonic_arrays(*this, size, nOfVoices, FullChordsVoicing, bassTenorHarmonicIntervals,
+                         bassAltoHarmonicIntervals,bassSopranoHarmonicIntervals, tenorSopranoHarmonicIntervals,
+                         altoSopranoHarmonicIntervals, tenorAltoHarmonicIntervals);
 
     /// restrain the domain of the voices to their range + state that bass <= tenor <= alto <= soprano
-    restrain_voices_domains(*this, size, FullChordsVoicing);
+    restrain_voices_domains(*this, size, nOfVoices, FullChordsVoicing);
 
-    /// forbid parallel octaves, fifths, and unissons
-    for(int i = 0; i < size-1; i++){
-        for(int interval : {PERFECT_FIFTH, PERFECT_OCTAVE, UNISSON}){
-            /// from bass
-            forbid_parallel_intervals(*this, interval, i, BASS,
-                                      TENOR,bassTenorHarmonicIntervals, FullChordsVoicing); // between bass and tenor
-            forbid_parallel_intervals(*this, interval, i, BASS,
-                                      ALTO,bassAltoHarmonicIntervals, FullChordsVoicing); // between tenor and alto
-            forbid_parallel_intervals(*this, interval, i, BASS,
-                                      SOPRANO,bassSopranoHarmonicIntervals, FullChordsVoicing); // between alto and soprano
-            /// from tenor
-            forbid_parallel_intervals(*this, interval, i, TENOR,
-                                      ALTO, tenorAltoHarmonicIntervals, FullChordsVoicing); // between tenor and alto
-            forbid_parallel_intervals(*this, interval, i, TENOR,
-                                      SOPRANO, tenorSopranoHarmonicIntervals, FullChordsVoicing); // between tenor and soprano
-            /// from alto
-            forbid_parallel_intervals(*this, interval, i, ALTO,
-                                      SOPRANO, altoSopranoHarmonicIntervals, FullChordsVoicing); // between alto and soprano
-        }
-    }
+    /// forbid parallel octaves and fifths
+    forbid_parallel_intervals(*this, size, nOfVoices, {PERFECT_FIFTH, PERFECT_OCTAVE},
+                              bassTenorHarmonicIntervals, bassAltoHarmonicIntervals, bassSopranoHarmonicIntervals,
+                              tenorAltoHarmonicIntervals, tenorSopranoHarmonicIntervals, altoSopranoHarmonicIntervals,
+                              FullChordsVoicing);
 
-    /** ------------------------------------------cost variables----------------------------------------------------- */
+    /// number of diminished chords with more than 3 notes (cost to minimize)
+    compute_diminished_chords_cost(*this, size, nOfVoices, *tonality, chordDegrees,
+                                   FullChordsVoicing,nDifferentValuesInDiminishedChord,
+                                   nOfDiminishedChordsWith4notes);
 
-    /// number of diminished chords with more than 3 notes
-    compute_diminished_chords_cost(*this, size, *tonality, chordDegrees, FullChordsVoicing,
-                                nDifferentValuesInDiminishedChord, nOfDiminishedChordsWith4notes);
-
-    /// number of chords with less than 4 note values
-    compute_n_of_notes_in_chord_cost(*this, size, tonality, FullChordsVoicing, nDifferentValuesAllChords,
+    //@todo continue refactoring from here downwards and check in all files when this is done
+    /// number of chords with less than 4 note values (cost to minimize)
+    compute_n_of_notes_in_chord_cost(*this, size, 0, tonality, FullChordsVoicing, nDifferentValuesAllChords,
                                      nOfChordsWithLessThan4notes);
 
     /// number of fundamental state chords without doubled bass @todo maybe add suggestion to which note to double next (tonal notes)

@@ -5,18 +5,68 @@
  * This file contains all the voice leading constraints, that is constraints on how voices move through successive     *
  * chords.                                                                                                             *
  * It currently contains the following constraints:                                                                    *
- *      - forbid_parallel_intervals: forbids a given parallel interval between two voices                              *
- *      - fundamental_state_chord_to_fundamental_state_chord: sets the rules for the melodic movements between chords in     *
- *        fundamental state                                                                                            *
- *      - fifth_degree_fs_to_sixth_degree_fs: sets the constraint for a fifth degree followed by a sixth degree in funda-    *
- *        mental state                                                                                               *
+ *      - forbid_parallel_interval: forbids a given parallel interval between two voices                               *
+ *      - fundamental_state_chord_to_fundamental_state_chord: sets the rules for the melodic movements between chords  *
+ *      in fundamental state                                                                                           *
+ *      - fifth_degree_fs_to_sixth_degree_fs: sets the constraint for a fifth degree followed by a sixth degree in     *
+ *      fundamental state                                                                                              *
  *                                                                                                                     *
  ***********************************************************************************************************************/
+
+/**
+ * Forbids a list of parallel intervals between two voices. This calls the forbid_parallel_interval function
+ * @param home the instance of the problem
+ * @param size the size of the chord progression
+ * @param nOfVoices the number of voices
+ * @param intervals the list of intervals to forbid
+ * @param bassTenorHarmonicIntervals the array containing the harmonic intervals between bass and tenor
+ * @param bassAltoHarmonicIntervals the array containing the harmonic intervals between bass and alto
+ * @param bassSopranoHarmonicIntervals the array containing the harmonic intervals between bass and soprano
+ * @param tenorAltoHarmonicIntervals the array containing the harmonic intervals between tenor and alto
+ * @param tenorSopranoHarmonicIntervals the array containing the harmonic intervals between tenor and soprano
+ * @param altoSopranoHarmonicIntervals the array containing the harmonic intervals between alto and soprano
+ * @param FullChordsVoicing the array containing all the notes of the chords in the progression
+ */
+void forbid_parallel_intervals(const Home& home, int size, int nOfVoices, const vector<int>& intervals,
+                               const IntVarArray& bassTenorHarmonicIntervals,
+                               const IntVarArray& bassAltoHarmonicIntervals,
+                               const IntVarArray& bassSopranoHarmonicIntervals,
+                               const IntVarArray& tenorAltoHarmonicIntervals,
+                               const IntVarArray& tenorSopranoHarmonicIntervals,
+                               const IntVarArray& altoSopranoHarmonicIntervals,
+                               const IntVarArray& FullChordsVoicing){
+    for(int chord = 0; chord < size - 1; chord++){ /// for each chord
+        for(int interval : intervals){ /// for each interval
+            /// from bass
+            forbid_parallel_interval(home, nOfVoices, interval, chord,
+                                     BASS, TENOR, bassTenorHarmonicIntervals,
+                                     FullChordsVoicing); // between bass and tenor
+            forbid_parallel_interval(home, nOfVoices, interval, chord,
+                                     BASS, ALTO, bassAltoHarmonicIntervals,
+                                     FullChordsVoicing); // between tenor and alto
+            forbid_parallel_interval(home, nOfVoices, interval, chord,
+                                     BASS,SOPRANO, bassSopranoHarmonicIntervals,
+                                     FullChordsVoicing); // between alto and soprano
+            /// from tenor
+            forbid_parallel_interval(home, nOfVoices, interval, chord,
+                                     TENOR,ALTO, tenorAltoHarmonicIntervals,
+                                     FullChordsVoicing); // between tenor and alto
+            forbid_parallel_interval(home, nOfVoices, interval, chord,
+                                     TENOR,SOPRANO, tenorSopranoHarmonicIntervals,
+                                     FullChordsVoicing); // between tenor and soprano
+            /// from alto
+            forbid_parallel_interval(home, nOfVoices, interval, chord,
+                                     ALTO,SOPRANO, altoSopranoHarmonicIntervals,
+                                     FullChordsVoicing); // between alto and soprano
+        }
+    }
+}
 
 /**
  * Forbids a given parallel interval between two voices
  * @todo make it with argument variables + make it cleaner
  * @param home the instance of the problem
+ * @param nVoices the number of voices
  * @param forbiddenParallelInterval the interval that must not be parallel
  * @param currentPosition the current position in the chord progression
  * @param voice1ID the ID of the first voice
@@ -24,8 +74,8 @@
  * @param voicesHarmonicIntervals the array containing the harmonic intervals between adjacent voices
  * @param FullChordsVoicing the array containing all the notes of the chords in the progression
  */
-void forbid_parallel_intervals(Home home, int forbiddenParallelInterval, int currentPosition, int voice1ID, int voice2ID,
-                               IntVarArray voicesHarmonicIntervals, IntVarArray FullChordsVoicing){
+void forbid_parallel_interval(Home home, int nVoices, int forbiddenParallelInterval, int currentPosition, int voice1ID,
+                              int voice2ID, IntVarArray voicesHarmonicIntervals, IntVarArray FullChordsVoicing) {
 
     /// harmonicIntervalForbidden is true if the interval is forbiddenParallelInterval
     BoolVar harmonicIntervalForbidden(home, 0, 1);
@@ -34,13 +84,15 @@ void forbid_parallel_intervals(Home home, int forbiddenParallelInterval, int cur
 
     /// notesLowerVoiceEqual is true if voice1 is the same note in both chords
     BoolVar notesLowerVoiceEqual(home, 0, 1);
-    rel(home, notesLowerVoiceEqual, IRT_EQ, expr(home, FullChordsVoicing[currentPosition * 4 + voice1ID]
-                                                       == FullChordsVoicing[(currentPosition + 1) *4 + voice1ID]));
+    rel(home, notesLowerVoiceEqual, IRT_EQ,
+        expr(home, FullChordsVoicing[currentPosition * nVoices + voice1ID] ==
+                FullChordsVoicing[(currentPosition + 1) *nVoices + voice1ID]));
 
     /// notesUpperVoiceEqual is true if voice2 is the same note in both chords
     BoolVar notesUpperVoiceEqual(home,0,1);
-    rel(home, notesUpperVoiceEqual, IRT_EQ, expr(home, FullChordsVoicing[currentPosition * 4 + voice2ID]
-                                                       == FullChordsVoicing[(currentPosition + 1) *4 + voice2ID]));
+    rel(home, notesUpperVoiceEqual, IRT_EQ,
+        expr(home, FullChordsVoicing[currentPosition * nVoices + voice2ID]
+                == FullChordsVoicing[(currentPosition + 1) * nVoices + voice2ID]));
 
     /// bothVoicesEqual is true if both voices are the same in both chords
     BoolVar bothVoicesEqual(home, 0, 1);
@@ -48,14 +100,14 @@ void forbid_parallel_intervals(Home home, int forbiddenParallelInterval, int cur
 
     /// nextIntervalNotParallel is true if the harmonic interval between the voices is not forbidden
     BoolVar nextIntervalNotParallel(home, 0,1);
-    rel(home, nextIntervalNotParallel, IRT_EQ, expr(home, voicesHarmonicIntervals[currentPosition+1] %
-                                                          PERFECT_OCTAVE != forbiddenParallelInterval));
+    rel(home, nextIntervalNotParallel, IRT_EQ,
+        expr(home, voicesHarmonicIntervals[currentPosition+1] % PERFECT_OCTAVE != forbiddenParallelInterval));
+
     /// isNextIntervalValid is true if the next interval is not parallel or if the both voices are equal in the 2 chords
     BoolVar isNextIntervalValid(home,0,1);
     rel(home, bothVoicesEqual, BOT_OR, nextIntervalNotParallel, isNextIntervalValid); // ok
 
     rel(home, harmonicIntervalForbidden, BOT_IMP, isNextIntervalValid, true);
-
 }
 
 void general_voice_leading_rules(const Home& home, int currentPosition, vector<int> chordDegrees,

@@ -20,15 +20,19 @@
  * @param altoMelodicIntervals the melodic intervals of the alto
  * @param sopranoMelodicIntervals the melodic intervals of the soprano
  */
-void link_melodic_arrays(const Home& home, int n, IntVarArray FullChordsVoicing, IntVarArray bassMelodicIntervals,
-                         IntVarArray tenorMelodicIntervals, IntVarArray altoMelodicIntervals,
-                         IntVarArray sopranoMelodicIntervals){
+void link_melodic_arrays(const Home &home, int nVoices, int n, IntVarArray bassMelodicIntervals,
+                         IntVarArray FullChordsVoicing, IntVarArray altoMelodicIntervals,
+                         IntVarArray tenorMelodicIntervals, IntVarArray sopranoMelodicIntervals) {
     for (int i = 0; i < n - 1; ++i)
     {
-        rel(home, bassMelodicIntervals[i] == FullChordsVoicing[(i + 1) * 4 + BASS] - FullChordsVoicing[i * 4 + BASS]);
-        rel(home,tenorMelodicIntervals[i] == FullChordsVoicing[((i + 1) * 4) + TENOR] - FullChordsVoicing[(i * 4) + TENOR]);
-        rel(home, altoMelodicIntervals[i] == FullChordsVoicing[((i + 1) * 4) + ALTO] - FullChordsVoicing[(i * 4) + ALTO]);
-        rel(home, sopranoMelodicIntervals[i] == FullChordsVoicing[((i + 1) * 4) + SOPRANO] - FullChordsVoicing[(i * 4) + SOPRANO]);
+        rel(home, bassMelodicIntervals[i] == FullChordsVoicing[(i + 1) * nVoices + BASS] -
+            FullChordsVoicing[i * nVoices + BASS]);
+        rel(home,tenorMelodicIntervals[i] == FullChordsVoicing[((i + 1) * nVoices) + TENOR] -
+            FullChordsVoicing[(i * nVoices) + TENOR]);
+        rel(home, altoMelodicIntervals[i] == FullChordsVoicing[((i + 1) * nVoices) + ALTO] -
+            FullChordsVoicing[(i * nVoices) + ALTO]);
+        rel(home, sopranoMelodicIntervals[i] == FullChordsVoicing[((i + 1) * nVoices) + SOPRANO] -
+            FullChordsVoicing[(i * nVoices) + SOPRANO]);
     }
 }
 
@@ -68,10 +72,10 @@ void link_absolute_melodic_arrays(const Home& home, IntVarArray bassMelodicInter
  * @param tenorSopranoHarmonicIntervals the harmonic intervals between tenor and soprano
  * @param altoSopranoHarmonicIntervals the harmonic intervals between alto and soprano
  */
-void link_harmonic_arrays(const Home& home, int n, IntVarArray FullChordsVoicing, IntVarArray bassTenorHarmonicIntervals,
-                          IntVarArray bassAltoHarmonicIntervals, IntVarArray bassSopranoHarmonicIntervals,
-                          IntVarArray tenorAltoHarmonicIntervals, IntVarArray tenorSopranoHarmonicIntervals,
-                          IntVarArray altoSopranoHarmonicIntervals){
+void link_harmonic_arrays(const Home &home, int n, int nVoices, IntVarArray FullChordsVoicing,
+                          IntVarArray bassTenorHarmonicIntervals, IntVarArray bassAltoHarmonicIntervals,
+                          IntVarArray bassSopranoHarmonicIntervals, IntVarArray tenorSopranoHarmonicIntervals,
+                          IntVarArray altoSopranoHarmonicIntervals, IntVarArray tenorAltoHarmonicIntervals) {
     for(int i = 0; i < n; ++i){
         rel(home, bassTenorHarmonicIntervals[i] == FullChordsVoicing[(4 * i) + TENOR] - FullChordsVoicing[4 * i + BASS]);
         rel(home, bassAltoHarmonicIntervals[i] == FullChordsVoicing[(4 * i) + ALTO] - FullChordsVoicing[4 * i + BASS]);
@@ -86,27 +90,33 @@ void link_harmonic_arrays(const Home& home, int n, IntVarArray FullChordsVoicing
 
 /**
  * Computes the cost for diminished intervals, that is the number of diminished chords that don't respect the preference
- * Here, the preference is that they should be used in 3 voices instead of 4
+ * Here, the preference is that they should be used in 3 voices instead of 4.
+ * If the chord is not diminished, the value is forced to 0 since it doesn't matter
  * @param home the instance of the problem
  * @param size the number of chords
+ * @param nVoices the number of voices
  * @param tonality the tonality of the piece
  * @param chordDegs the degrees of the chords
- * @param fullChordsVoicing the array containing all the chords in the form [bass0, alto0, tenor0, soprano0, bass1, alto1, tenor1, soprano1, ...]
- * @param nOfDifferentNotes the array containing the number of different notes in each diminished chord. In other chords, its value is 0
- * @param costVar the variable that will contain the cost, that is the number of diminished chords that don't respect the preference
+ * @param fullChordsVoicing the array containing all the chords in the form
+ *          [bass0, alto0, tenor0, soprano0, bass1, alto1, tenor1, soprano1, ...]
+ * @param nOfDifferentNotes the array containing the number of different notes in each diminished chord.
+ * @param costVar the variable that will contain the number of diminished chords that don't respect the preference
  */
-void compute_diminished_chords_cost(Home home, int size, Tonality &tonality, vector<int> chordDegs, IntVarArray fullChordsVoicing, IntVarArray nOfDifferentNotes, IntVar costVar){
+void compute_diminished_chords_cost(const Home& home, int size, int nVoices, Tonality &tonality, vector<int> chordDegs,
+                                    IntVarArray fullChordsVoicing, IntVarArray nOfDifferentNotes,
+                                    const IntVar& costVar) {
     for(int i = 0; i < size; ++i){// for each chord
         /// if the chord is diminished
         if(tonality.get_chord_qualities()[chordDegs[i]] == DIMINISHED_CHORD){
-            IntVarArgs currentChord(fullChordsVoicing.slice(4 * i, 1, 4));
-            // nOfDiffVals in current chord > 3 => cost += 1
-            nvalues(home, currentChord, IRT_EQ, nOfDifferentNotes[i]); // nOfDifferentNotes[i] = nOfDiffVals in current chord
+            IntVarArgs currentChord(fullChordsVoicing.slice(nVoices * i, 1, nVoices));
+            /// nOfDifferentNotes[i] = nOfDiffVals in current chord
+            nvalues(home, currentChord, IRT_EQ, nOfDifferentNotes[i]);
         }
         else{ /// doesn't matter so is set to 0 to be ignored
             rel(home, nOfDifferentNotes[i], IRT_EQ, 0);
         }
-        count(home, nOfDifferentNotes, 4, IRT_EQ, costVar); // costVar = number of diminished chords with 4 notes
+        /// costVar = number of diminished chords with 4 notes
+        count(home, nOfDifferentNotes, 4, IRT_EQ, costVar);
     }
 }
 
@@ -119,12 +129,13 @@ void compute_diminished_chords_cost(Home home, int size, Tonality &tonality, vec
  * and states that bass <= tenor <= alto <= soprano
  * @param home the instance of the problem
  * @param n the number of chords
- * @param FullChordsVoicing the array containing all the chords in the form [bass0, alto0, tenor0, soprano0, bass1, alto1, tenor1, soprano1, ...]
+ * @param FullChordsVoicing the array containing all the chords in the form
+ *          [bass0, alto0, tenor0, soprano0, bass1, alto1, tenor1, soprano1, ...]
  */
-void restrain_voices_domains(const Home& home, int n, IntVarArray FullChordsVoicing){
+void restrain_voices_domains(const Home &home, int n, int nVoices, IntVarArray FullChordsVoicing) {
     for (int i = 0; i < n; ++i)
     {
-        IntVarArgs currentChord(FullChordsVoicing.slice(4 * i, 1, 4));
+        IntVarArgs currentChord(FullChordsVoicing.slice(nVoices * i, 1, nVoices));
         rel(home, currentChord, IRT_LQ); // bass[i] <= tenor[i] <= alto[i] <= soprano[i]
 
         // E2 <= bass <= C3

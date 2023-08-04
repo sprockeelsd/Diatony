@@ -77,7 +77,7 @@ protected:
 public:
     /**
      * Constructor
-     * @param s the size of the array of variables
+     * @param s the number of chords in the progression
      * @param *t a pointer to a Tonality object
      * @param chordDegs the degrees of the chord of the chord progression
      * @param chordStas the states of the chord of the chord progression (fundamental, 1st inversion,...)

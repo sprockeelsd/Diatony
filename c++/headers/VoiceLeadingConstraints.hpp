@@ -18,7 +18,7 @@ using namespace std;
  * This file contains all the voice leading constraints, that is constraints on how voices move through successive     *
  * chords.                                                                                                             *
  * It currently contains the following constraints:                                                                    *
- *      - forbid_parallel_intervals: forbids a given parallel interval between two voices                              *
+ *      - forbid_parallel_interval: forbids a given parallel interval between two voices                              *
  *      - fundamental_state_chord_to_fundamental_state_chord: sets the rules for the melodic movements between chords in     *
  *        fundamental state                                                                                            *
  *      - fifth_degree_fs_to_sixth_degree_fs: sets the constraint for a fifth degree followed by a sixth degree in funda-    *
@@ -27,9 +27,33 @@ using namespace std;
  ***********************************************************************************************************************/
 
 /**
+ * Forbids a list of parallel intervals between two voices. This calls the forbid_parallel_interval function
+ * @param home the instance of the problem
+ * @param size the size of the chord progression
+ * @param nOfVoices the number of voices
+ * @param intervals the list of intervals to forbid
+ * @param bassTenorHarmonicIntervals the array containing the harmonic intervals between bass and tenor
+ * @param bassAltoHarmonicIntervals the array containing the harmonic intervals between bass and alto
+ * @param bassSopranoHarmonicIntervals the array containing the harmonic intervals between bass and soprano
+ * @param tenorAltoHarmonicIntervals the array containing the harmonic intervals between tenor and alto
+ * @param tenorSopranoHarmonicIntervals the array containing the harmonic intervals between tenor and soprano
+ * @param altoSopranoHarmonicIntervals the array containing the harmonic intervals between alto and soprano
+ * @param FullChordsVoicing the array containing all the notes of the chords in the progression
+ */
+void forbid_parallel_intervals(const Home& home, int size, int nOfVoices, const vector<int>& intervals,
+                               const IntVarArray& bassTenorHarmonicIntervals,
+                               const IntVarArray& bassAltoHarmonicIntervals,
+                               const IntVarArray& bassSopranoHarmonicIntervals,
+                               const IntVarArray& tenorAltoHarmonicIntervals,
+                               const IntVarArray& tenorSopranoHarmonicIntervals,
+                               const IntVarArray& altoSopranoHarmonicIntervals,
+                               const IntVarArray& FullChordsVoicing);
+
+/**
  * Forbids a given parallel interval between two voices
  * @todo make it with argument variables + make it cleaner
  * @param home the instance of the problem
+ * @param nVoices the number of voices
  * @param forbiddenParallelInterval the interval that must not be parallel
  * @param currentPosition the current position in the chord progression
  * @param voice1ID the ID of the first voice
@@ -37,8 +61,8 @@ using namespace std;
  * @param voicesHarmonicIntervals the array containing the harmonic intervals between adjacent voices
  * @param FullChordsVoicing the array containing all the notes of the chords in the progression
  */
-void forbid_parallel_intervals(Home home, int forbiddenParallelInterval, int currentPosition, int voice1ID, int voice2ID,
-                               IntVarArray voicesHarmonicIntervals, IntVarArray FullChordsVoicing);
+void forbid_parallel_interval(Home home, int nVoices, int forbiddenParallelInterval, int currentPosition, int voice1ID,
+                              int voice2ID, IntVarArray voicesHarmonicIntervals, IntVarArray FullChordsVoicing);
 
 /**
  * Sets the general rules for the melodic movements between chords
