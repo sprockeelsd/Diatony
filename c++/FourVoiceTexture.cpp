@@ -65,9 +65,11 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     /// link the arrays together
     link_melodic_arrays(*this, nOfVoices, size, bassMelodicIntervals, FullChordsVoicing,
                         altoMelodicIntervals, tenorMelodicIntervals, sopranoMelodicIntervals);
+
     link_absolute_melodic_arrays(*this, bassMelodicIntervals, tenorMelodicIntervals, altoMelodicIntervals,
                                  sopranoMelodicIntervals, absoluteBassMelodicIntervals, absoluteTenorMelodicIntervals,
                                  absoluteAltoMelodicIntervals, absoluteSopranoMelodicIntervals);
+
     link_harmonic_arrays(*this, size, nOfVoices, FullChordsVoicing, bassTenorHarmonicIntervals,
                          bassAltoHarmonicIntervals,bassSopranoHarmonicIntervals, tenorSopranoHarmonicIntervals,
                          altoSopranoHarmonicIntervals, tenorAltoHarmonicIntervals);
@@ -82,18 +84,18 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
                               FullChordsVoicing);
 
     /// number of diminished chords with more than 3 notes (cost to minimize)
-    compute_diminished_chords_cost(*this, size, nOfVoices, *tonality, chordDegrees,
+    compute_diminished_chords_cost(*this, size, nOfVoices, tonality, chordDegrees,
                                    FullChordsVoicing,nDifferentValuesInDiminishedChord,
                                    nOfDiminishedChordsWith4notes);
 
-    //@todo continue refactoring from here downwards and check in all files when this is done
     /// number of chords with less than 4 note values (cost to minimize)
-    compute_n_of_notes_in_chord_cost(*this, size, 0, tonality, FullChordsVoicing, nDifferentValuesAllChords,
-                                     nOfChordsWithLessThan4notes);
+    compute_n_of_notes_in_chord_cost(*this, size, nOfVoices, FullChordsVoicing,
+                                     nDifferentValuesAllChords,nOfChordsWithLessThan4notes);
 
-    /// number of fundamental state chords without doubled bass @todo maybe add suggestion to which note to double next (tonal notes)
-    compute_fundamental_state_doubling_cost(*this, size, tonality, chordStas, chordDegs, FullChordsVoicing,
-                                            nOccurrencesBassInFundamentalState,
+    /// number of fundamental state chords without doubled bass
+    /// @todo maybe add suggestion to which note to double next (tonal notes)
+    compute_fundamental_state_doubling_cost(*this, size, nOfVoices, tonality, chordStas, chordDegs,
+                                            FullChordsVoicing,nOccurrencesBassInFundamentalState,
                                             nOfFundamentalStateChordsWithoutDoubledBass);
 
     /// sum of melodic intervals
@@ -101,25 +103,27 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
                                absoluteSopranoMelodicIntervals << absoluteBassMelodicIntervals,
                                IRT_EQ, sumOfMelodicIntervals);
 
-    /**------------------------------------------- harmonic constraints ----------------------------------------------*/
+    /**-----------------------------------------------------------------------------------------------------------------
+    |     Harmonic constraints: loop over each chord and post the constraints depending on the degree and state        |
+    -------------------------------------------------------------------------------------------------------------------*/
 
-    /// for each chord
     for(int i = 0; i < size; i++){
-        IntVarArgs currentChord(FullChordsVoicing.slice(4 * i, 1, 4));
+        IntVarArgs currentChord(FullChordsVoicing.slice(nOfVoices * i, 1, nOfVoices));
 
         /// set the chord's domain to the notes of the degree chordDegrees[i]'s chord
         set_to_chord(*this, tonality, chordDegrees[i], currentChord);
+
         /// set the bass based on the chord's state
         set_bass(*this, tonality, chordDegrees[i], chordStates[i], currentChord);
 
-        /// post the constraints specific to fundamental state chords
+        /// post the constraints depending on the chord's state
         if(chordStas[i] == FUNDAMENTAL_STATE){
-            // @todo change this to take into account c/i chords (see cst def)
             /// each note should be present at least once, doubling is determined with costs
-            chord_note_occurrence_fundamental_state(*this, tonality, chordDegrees[i],
+            chord_note_occurrence_fundamental_state(*this, chordDegrees[i], nOfVoices, tonality,
                                                     nDifferentValuesInDiminishedChord[i],
                                                     currentChord);
         }
+        //@todo continue refactoring from here
         /// post the constraints specific to first inversion chords
         else if(chordStas[i] == FIRST_INVERSION){
             chord_note_occurrence_first_inversion(*this, tonality, chordDegrees[i], currentChord);
@@ -304,9 +308,9 @@ string FourVoiceTexture::to_string(){
 
     message += "----------cost-related auxiliary arrays----------\n";
 
-    message += "nDifferentValuesInDiminishedChord" + intVarArray_to_string(nDifferentValuesInDiminishedChord) + "\n";
-    message += "nDifferentValuesInAllChords" + intVarArray_to_string(nDifferentValuesAllChords) + "\n";
-    message += "nOccurrencesBassInFundamentalState" + intVarArray_to_string(nOccurrencesBassInFundamentalState) + "\n\n";
+    message += "nDifferentValuesInDiminishedChord = " + intVarArray_to_string(nDifferentValuesInDiminishedChord) + "\n";
+    message += "nDifferentValuesInAllChords = " + intVarArray_to_string(nDifferentValuesAllChords) + "\n";
+    message += "nOccurrencesBassInFundamentalState = " + intVarArray_to_string(nOccurrencesBassInFundamentalState) + "\n\n";
 
     message += "-----------------cost variables------------------\n";
 

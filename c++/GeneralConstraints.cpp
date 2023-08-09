@@ -102,12 +102,12 @@ void link_harmonic_arrays(const Home &home, int n, int nVoices, IntVarArray Full
  * @param nOfDifferentNotes the array containing the number of different notes in each diminished chord.
  * @param costVar the variable that will contain the number of diminished chords that don't respect the preference
  */
-void compute_diminished_chords_cost(const Home& home, int size, int nVoices, Tonality &tonality, vector<int> chordDegs,
+void compute_diminished_chords_cost(const Home& home, int size, int nVoices, Tonality *tonality, vector<int> chordDegs,
                                     IntVarArray fullChordsVoicing, IntVarArray nOfDifferentNotes,
                                     const IntVar& costVar) {
     for(int i = 0; i < size; ++i){// for each chord
         /// if the chord is diminished
-        if(tonality.get_chord_qualities()[chordDegs[i]] == DIMINISHED_CHORD){
+        if(tonality->get_chord_qualities()[chordDegs[i]] == DIMINISHED_CHORD){
             IntVarArgs currentChord(fullChordsVoicing.slice(nVoices * i, 1, nVoices));
             /// nOfDifferentNotes[i] = nOfDiffVals in current chord
             nvalues(home, currentChord, IRT_EQ, nOfDifferentNotes[i]);

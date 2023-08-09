@@ -16,10 +16,10 @@ using namespace std;
  *                                                                                                                     *
  * This file contains all the harmonic constraints, that is constraints within a given chord.                          *
  * It currently contains the following constraints:                                                                    *
- *      - set_to_chord: sets the domain of the current chord based on the tonality and the scale degree                  *
- *      - set_bass: sets the bass of the chord according to the state of the chord                                      *
- *      - chord_note_occurrence_fundamental_state: sets the number of times each note in the chord are present for fundam- *
- *          ental state chords                                                                                         *
+ *      - set_to_chord: sets the domain of the current chord based on the tonality and the scale degree                *
+ *      - set_bass: sets the bass of the chord according to the state of the chord                                     *
+ *      - chord_note_occurrence_fundamental_state: sets the number of times each note in the chord are present for     *
+ *          fundamental state chords                                                                                   *
  *                                                                                                                     *
  ***********************************************************************************************************************/
 
@@ -54,30 +54,35 @@ void set_bass(const Home& home, Tonality *tonality, int degree, int state, IntVa
  * @todo maybe make it a preference later
  * Sets the number of times each note of the notes of the chord are present in the chord
  * @param home the instance of the problem
- * @param tonality the tonality of the piece
  * @param degree the degree of the chord
+ * @param nVoices the number of voices
+ * @param tonality the tonality of the piece
+ * @param nDifferentValuesInDiminishedChord the number of different values in the diminished chord
  * @param currentChord the array containing a chord in the form [bass, alto, tenor, soprano]
  */
-void chord_note_occurrence_fundamental_state(Home home, Tonality *tonality, int degree,
-                                             IntVar nDifferentValuesInDiminishedChord, IntVarArgs currentChord);
+void chord_note_occurrence_fundamental_state(Home home, int degree, int nVoices, Tonality *tonality,
+                                             const IntVar &nDifferentValuesInDiminishedChord,
+                                             const IntVarArgs &currentChord);
 
 /**
- * Computes the cost for the number of notes in a chord, that is the number of chords that have less than 4 different values
+ * Computes the cost for the number of notes in a chord, that is the number of chords that have less than 4 different
+ * values
  * @param home the instance of the problem
  * @param size the size of the chord
+ * @param nVoices the number of voices
  * @param tonality the tonality of the piece
  * @param fullChordsVoicing the array containing all the chords in the form [bass, alto, tenor, soprano]
  * @param nOfDifferentNotes the array containing the number of different notes in each chord
  * @param costVar the variable that will contain the cost
  */
-void
-compute_n_of_notes_in_chord_cost(Home home, int size, int nVoices, Tonality *tonality, IntVarArray fullChordsVoicing,
-                                 IntVarArray nOfDifferentNotes, IntVar costVar);
+void compute_n_of_notes_in_chord_cost(const Home& home, int size, int nVoices, IntVarArray fullChordsVoicing,
+                                      IntVarArray nOfDifferentNotes, const IntVar& costVar);
 
 /**
  * Computes the cost for the number of times the fundamental is not doubled in fundamental state chords.
  * @param home the instance of the problem
  * @param size the size of the chord
+ * @param nVoices the number of voices
  * @param tonality the tonality of the piece
  * @param chordStas the array containing the state of each chord
  * @param chordDegs the array containing the degree of each chord
@@ -85,9 +90,10 @@ compute_n_of_notes_in_chord_cost(Home home, int size, int nVoices, Tonality *ton
  * @param nOccurrencesFund the array containing the number of times the fundamental is present in each chord
  * @param costVar the variable that will contain the cost
  */
-void compute_fundamental_state_doubling_cost(const Home& home, int size, Tonality *tonality, vector<int> chordStas,
-                                             vector<int> chordDegs, IntVarArray fullChordsVoicing,
-                                             IntVarArray nOccurrencesFund, const IntVar& costVar);
+void compute_fundamental_state_doubling_cost(const Home& home, int size, int nVoices, Tonality *tonality,
+                                             vector<int> chordStas, vector<int> chordDegs,
+                                             IntVarArray fullChordsVoicing, IntVarArray nOccurrencesFund,
+                                             const IntVar& costVar);
 
 /***********************************************************************************************************************
  *                                                                                                                     *
