@@ -110,15 +110,18 @@ void forbid_parallel_interval(Home home, int nVoices, int forbiddenParallelInter
     rel(home, harmonicIntervalForbidden, BOT_IMP, isNextIntervalValid, true);
 }
 
-void general_voice_leading_rules(const Home& home, int currentPosition, vector<int> chordDegrees,
-                                 Tonality *tonality,
-                                 const IntVarArray& bassMelodicInterval, const IntVarArray& tenorMelodicInterval,
-                                 const IntVarArray& altoMelodicInterval, const IntVarArray& sopranoMelodicInterval,
-                                 IntVarArray fullChordsVoicing){
-
-    int degreeDifference = abs(chordDegrees[currentPosition+1] - chordDegrees[currentPosition]); // interval between the chords
-
-    /// keep common notes in the same voice
+/**
+ * Sets the general rules for the melodic movements between chords
+ * Ensures that common notes between chords are kept in the same voice
+ * @param home the instance of the problem
+ * @param currentPosition the current position in the chord progression
+ * @param chordDegrees the array containing the degrees of the chords in the progression
+ * @param tonality the tonality of the piece
+ * @param fullChordsVoicing the array containing all the notes of the chords in the progression
+ */
+void general_voice_leading_rules(const Home &home, int currentPosition, vector<int> chordDegrees, Tonality *tonality,
+                                 IntVarArray fullChordsVoicing) {
+    /// keep common notes in the same voice and move other voices as closely as possible (cost)
     // chord qualities
     vector<int> thisChordQuality = tonality->get_chord_qualities()[chordDegrees[currentPosition]];
     vector<int> nextChordQuality = tonality->get_chord_qualities()[chordDegrees[currentPosition+1]];
@@ -173,19 +176,23 @@ void general_voice_leading_rules(const Home& home, int currentPosition, vector<i
  */
 void fundamental_state_chord_to_fundamental_state_chord(const Home& home, int currentPosition, vector<int> chordDegrees,
                                                         Tonality *tonality,
-                                                        const IntVarArray& bassMelodicInterval, const IntVarArray& tenorMelodicInterval,
-                                                        const IntVarArray& altoMelodicInterval, const IntVarArray& sopranoMelodicInterval,
-                                                        IntVarArray fullChordsVoicing){
+                                                        const IntVarArray& bassMelodicInterval,
+                                                        const IntVarArray& tenorMelodicInterval,
+                                                        const IntVarArray& altoMelodicInterval,
+                                                        const IntVarArray& sopranoMelodicInterval,
+                                                        const IntVarArray& fullChordsVoicing){
 
-    int degreeDifference = abs(chordDegrees[currentPosition+1] - chordDegrees[currentPosition]); // interval between the chords
+    // interval between the chords
+    int degreeDifference = abs(chordDegrees[currentPosition+1] - chordDegrees[currentPosition]);
 
     /// First, corner cases that differ from the general rules
     if(chordDegrees[currentPosition] == FIFTH_DEGREE && chordDegrees[currentPosition+1] == SIXTH_DEGREE){
+        /// see function definition
         fifth_degree_fs_to_sixth_degree_fs(home, currentPosition, tonality, tenorMelodicInterval, altoMelodicInterval,
                                            sopranoMelodicInterval, fullChordsVoicing);
     }
     else if(chordDegrees[currentPosition] == SEVENTH_DEGREE && chordDegrees[currentPosition + 1] == FIRST_DEGREE){
-        /// tritone resolution
+        /// tritone resolution @todo add the dominant seventh chord in here as well when we get to it
         tritone_resolution(home, currentPosition, tonality, bassMelodicInterval, tenorMelodicInterval,
                            altoMelodicInterval,
                            sopranoMelodicInterval, fullChordsVoicing);
@@ -207,9 +214,9 @@ void fundamental_state_chord_to_fundamental_state_chord(const Home& home, int cu
         rel(home, expr(home, bassMelodicInterval[currentPosition] < 0), BOT_EQV,
             expr(home, sopranoMelodicInterval[currentPosition] > 0), true);
     }
-    else{ /// there is at least one common note in the 2 chords -> keep that (these) notes in the same voices and move the others to the closest note
-        general_voice_leading_rules(home, currentPosition, chordDegrees, tonality, bassMelodicInterval,
-                                    tenorMelodicInterval, altoMelodicInterval, sopranoMelodicInterval,
+    else{ /// there is at least one common note in the 2 chords ->
+          /// keep that (these) notes in the same voices and move the others to the closest note
+        general_voice_leading_rules(home, currentPosition, chordDegrees, tonality,
                                     fullChordsVoicing);
     }
 }
@@ -253,9 +260,9 @@ void fifth_degree_fs_to_sixth_degree_fs(const Home& home, int currentPosition, T
     // @todo make it cleaner with loops
 
     /// if the mode is major, then this rule only applies to the soprano voice. Otherwise, it applies for all voices
-
     /// soprano note is the seventh of the scale
     /// -> that voice must raise to the tonic by a minor second
+
     /// If the leading tone is in the soprano, it must rise to the tonic regardless of the mode
     rel(home, expr(home, fullChordsVoicing[currentPosition +  SOPRANO] % PERFECT_OCTAVE ==
             tonality->get_degree_note(SEVENTH_DEGREE)),BOT_IMP,
@@ -308,7 +315,7 @@ void from_first_inversion_chord(const Home& home, int currentPosition, vector<in
                                 Tonality *tonality,
                                 const IntVarArray& bassMelodicInterval, const IntVarArray& tenorMelodicInterval,
                                 const IntVarArray& altoMelodicInterval, const IntVarArray& sopranoMelodicInterval,
-                                IntVarArray fullChordsVoicing){
+                                const IntVarArray& fullChordsVoicing){
     /// exceptions
     /// II 1st inv. to V -> contrary motion to the bass
     /// other voices need to move by contrary motion to the bass
@@ -329,8 +336,7 @@ void from_first_inversion_chord(const Home& home, int currentPosition, vector<in
             expr(home, sopranoMelodicInterval[currentPosition] > 0), true);
     }
     else{ /// general case
-        general_voice_leading_rules(home, currentPosition, chordDegrees, tonality, bassMelodicInterval,
-                                    tenorMelodicInterval, altoMelodicInterval, sopranoMelodicInterval,
+        general_voice_leading_rules(home, currentPosition, chordDegrees, tonality,
                                     fullChordsVoicing);
     }
 }

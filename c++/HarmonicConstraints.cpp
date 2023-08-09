@@ -138,19 +138,18 @@ void compute_fundamental_state_doubling_cost(const Home& home, int size, int nVo
  * @param degree the degree of the chord
  * @param currentChord the array containing a chord in the form [bass, alto, tenor, soprano]
  */
-void chord_note_occurrence_first_inversion(const Home& home, Tonality *tonality, int degree, const IntVarArgs& currentChord){
-    //@todo simplify this
-
+void chord_note_occurrence_first_inversion(const Home& home, Tonality *tonality, int degree,
+                                           const IntVarArgs& currentChord){
     /// exceptions
     /// if the third is a tonal note, then double it
-    if(tonality->get_tonal_notes().find(tonality->get_degree_note(degree + THIRD_DEGREE % 7)) != tonality->get_tonal_notes().end()){
-        count(home, currentChord, tonality->get_scale_degree(degree + FIRST_DEGREE), IRT_GQ, 1); // the fundamental should be present at least once
-        count(home, currentChord, tonality->get_scale_degree((degree + THIRD_DEGREE) % 7), IRT_EQ,2); // the third should be doubled
-        count(home, currentChord, tonality->get_scale_degree((degree + FIFTH_DEGREE) % 7), IRT_GQ, 1); // the fifth should be present at least once
+    if(tonality->get_tonal_notes().find(tonality->get_degree_note(degree + THIRD_DEGREE % 7)) !=
+            tonality->get_tonal_notes().end()){ /// double the third and other notes should be present at least once
+        count(home, currentChord, tonality->get_scale_degree((degree + THIRD_DEGREE) % 7), IRT_EQ,2);
     }
     else{ /// default case: double the fundamental or the fifth of the chord
-        count(home, currentChord, tonality->get_scale_degree(degree + FIRST_DEGREE), IRT_GQ, 1); // the fundamental should be present at least once
-        count(home, currentChord, tonality->get_scale_degree((degree + THIRD_DEGREE) % 7), IRT_EQ,1); // the third should be present exactly once
-        count(home, currentChord, tonality->get_scale_degree((degree + FIFTH_DEGREE) % 7), IRT_GQ, 1); // the fifth should be present at least once
+        count(home, currentChord, tonality->get_scale_degree((degree + THIRD_DEGREE) % 7), IRT_EQ,1);
     }
+    /// happens either way
+    count(home, currentChord, tonality->get_scale_degree(degree + FIRST_DEGREE), IRT_GQ, 1);
+    count(home, currentChord, tonality->get_scale_degree((degree + FIFTH_DEGREE) % 7), IRT_GQ, 1);
 }

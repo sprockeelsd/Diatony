@@ -18,11 +18,11 @@ using namespace std;
  * This file contains all the voice leading constraints, that is constraints on how voices move through successive     *
  * chords.                                                                                                             *
  * It currently contains the following constraints:                                                                    *
- *      - forbid_parallel_interval: forbids a given parallel interval between two voices                              *
- *      - fundamental_state_chord_to_fundamental_state_chord: sets the rules for the melodic movements between chords in     *
- *        fundamental state                                                                                            *
- *      - fifth_degree_fs_to_sixth_degree_fs: sets the constraint for a fifth degree followed by a sixth degree in funda-    *
- *        mental state                                                                                               *
+ *      - forbid_parallel_interval: forbids a given parallel interval between two voices                               *
+ *      - fundamental_state_chord_to_fundamental_state_chord: sets the rules for the melodic movements between chords  *
+ *          in fundamental state                                                                                       *
+ *      - fifth_degree_fs_to_sixth_degree_fs: sets the constraint for a fifth degree followed by a sixth degree in     *
+ *          funda mental state                                                                                         *
  *                                                                                                                     *
  ***********************************************************************************************************************/
 
@@ -71,16 +71,9 @@ void forbid_parallel_interval(Home home, int nVoices, int forbiddenParallelInter
  * @param currentPosition the current position in the chord progression
  * @param chordDegrees the array containing the degrees of the chords in the progression
  * @param tonality the tonality of the piece
- * @param bassMelodicInterval The melodic interval of the bass between the current position and the next
- * @param tenorMelodicInterval the melodic interval of the tenor between the current position and the next
- * @param altoMelodicInterval the melodic interval of the alto between the current position and the next
- * @param sopranoMelodicInterval the melodic interval of the soprano between the current position and the next
  * @param fullChordsVoicing the array containing all the notes of the chords in the progression
  */
-void general_voice_leading_rules(const Home& home, int currentPosition, vector<int> chordDegrees,
-                                 Tonality *tonality,
-                                 const IntVarArray& bassMelodicInterval, const IntVarArray& tenorMelodicInterval,
-                                 const IntVarArray& altoMelodicInterval, const IntVarArray& sopranoMelodicInterval,
+void general_voice_leading_rules(const Home &home, int currentPosition, vector<int> chordDegrees, Tonality *tonality,
                                  IntVarArray fullChordsVoicing);
 
 /***********************************************************************************************************************
@@ -106,7 +99,7 @@ void fundamental_state_chord_to_fundamental_state_chord(const Home& home, int cu
                                                         Tonality *tonality,
                                                         const IntVarArray& bassMelodicInterval, const IntVarArray& tenorMelodicInterval,
                                                         const IntVarArray& altoMelodicInterval, const IntVarArray& sopranoMelodicInterval,
-                                                        IntVarArray fullChordsVoicing);
+                                                        const IntVarArray& fullChordsVoicing);
 
 void tritone_resolution(Home home, int currentPosition, Tonality *tonality, IntVarArray bassMelodicInterval,
                         IntVarArray tenorMelodicInterval, IntVarArray altoMelodicInterval, IntVarArray sopranoMelodicInterval,
@@ -137,6 +130,6 @@ void from_first_inversion_chord(const Home& home, int currentPosition, vector<in
                                 Tonality *tonality,
                                 const IntVarArray& bassMelodicInterval, const IntVarArray& tenorMelodicInterval,
                                 const IntVarArray& altoMelodicInterval, const IntVarArray& sopranoMelodicInterval,
-                                IntVarArray fullChordsVoicing);
+                                const IntVarArray& fullChordsVoicing);
 
 #endif

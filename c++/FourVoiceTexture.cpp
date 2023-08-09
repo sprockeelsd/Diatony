@@ -123,7 +123,6 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
                                                     nDifferentValuesInDiminishedChord[i],
                                                     currentChord);
         }
-        //@todo continue refactoring from here
         /// post the constraints specific to first inversion chords
         else if(chordStas[i] == FIRST_INVERSION){
             chord_note_occurrence_first_inversion(*this, tonality, chordDegrees[i], currentChord);
@@ -137,7 +136,12 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
         }
     }
 
-    /**--------------------------------------------melodic constraints ------------------------------------------------*/
+    /// @todo continue refactoring from here
+
+    /**-----------------------------------------------------------------------------------------------------------------
+    | Melodic constraints: loop over each space between chords and post the constraints depending on the state and     |`
+    | quality of the chords                                                                                            |
+    -------------------------------------------------------------------------------------------------------------------*/
 
     /// between each chord
     for(int i = 0; i < size-1; i++){
@@ -153,6 +157,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
         }
         else if(chordStas[i] == FIRST_INVERSION){
             /// see function def for the details, it's too long to write here
+            //@todo finish this constraint
             from_first_inversion_chord(*this, i, chordDegrees, tonality,
                                        bassMelodicIntervals, tenorMelodicIntervals,
                                        altoMelodicIntervals, sopranoMelodicIntervals,
