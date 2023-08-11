@@ -7,7 +7,7 @@
 #include "Tonality.hpp"
 #include "MajorTonality.hpp"
 #include "MinorTonality.hpp"
-#include "four_voice_texture.hpp"
+#include "FourVoiceTexture.hpp"
 
 #ifdef __cplusplus
 extern "C" {

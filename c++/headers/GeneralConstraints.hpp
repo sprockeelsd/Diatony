@@ -26,15 +26,16 @@ using namespace std;
  * Link the melodic intervals arrays to the FullChordsVoicing array
  * @param home The instance of the problem
  * @param n the number of chords
- * @param FullChordsVoicing the array containing all the chords in the form [bass0, alto0, tenor0, soprano0, bass1, alto1, tenor1, soprano1, ...]
+ * @param FullChordsVoicing the array containing all the chords in the form
+ *          [bass0, alto0, tenor0, soprano0, bass1, alto1, tenor1, soprano1, ...]
  * @param bassMelodicIntervals the melodic intervals of the bass
  * @param tenorMelodicIntervals the melodic intervals of the tenor
  * @param altoMelodicIntervals the melodic intervals of the alto
  * @param sopranoMelodicIntervals the melodic intervals of the soprano
  */
-void link_melodic_arrays(const Home& home, int n, IntVarArray FullChordsVoicing, IntVarArray bassMelodicIntervals,
-                         IntVarArray tenorMelodicIntervals, IntVarArray altoMelodicIntervals,
-                         IntVarArray sopranoMelodicIntervals);
+void link_melodic_arrays(const Home &home, int nVoices, int n, IntVarArray bassMelodicIntervals,
+                         IntVarArray FullChordsVoicing, IntVarArray altoMelodicIntervals,
+                         IntVarArray tenorMelodicIntervals, IntVarArray sopranoMelodicIntervals);
 
 /**
  * Link the absolute melodic intervals arrays to the corresponding melodic interval arrays
@@ -57,7 +58,8 @@ void link_absolute_melodic_arrays(const Home& home, IntVarArray bassMelodicInter
  * Link the harmonic intervals arrays to the FullChordsVoicing array for each voice
  * @param home the instance of the problem
  * @param n the number of chords
- * @param FullChordsVoicing the array containing all the chords in the form [bass0, alto0, tenor0, soprano0, bass1, alto1, tenor1, soprano1, ...]
+ * @param FullChordsVoicing the array containing all the chords in the form
+ *          [bass0, alto0, tenor0, soprano0, bass1, alto1, tenor1, soprano1, ...]
  * @param bassTenorHarmonicIntervals the harmonic intervals between bass and tenor
  * @param bassAltoHarmonicIntervals the harmonic intervals between bass and alto
  * @param bassSopranoHarmonicIntervals the harmonic intervals between bass and soprano
@@ -65,10 +67,28 @@ void link_absolute_melodic_arrays(const Home& home, IntVarArray bassMelodicInter
  * @param tenorSopranoHarmonicIntervals the harmonic intervals between tenor and soprano
  * @param altoSopranoHarmonicIntervals the harmonic intervals between alto and soprano
  */
-void link_harmonic_arrays(const Home& home, int n, IntVarArray FullChordsVoicing, IntVarArray bassTenorHarmonicIntervals,
-                          IntVarArray bassAltoHarmonicIntervals, IntVarArray bassSopranoHarmonicIntervals,
-                          IntVarArray tenorAltoHarmonicIntervals, IntVarArray tenorSopranoHarmonicIntervals,
-                          IntVarArray altoSopranoHarmonicIntervals);
+void link_harmonic_arrays(const Home &home, int n, int nVoices, IntVarArray FullChordsVoicing,
+                          IntVarArray bassTenorHarmonicIntervals, IntVarArray bassAltoHarmonicIntervals,
+                          IntVarArray bassSopranoHarmonicIntervals, IntVarArray tenorSopranoHarmonicIntervals,
+                          IntVarArray altoSopranoHarmonicIntervals, IntVarArray tenorAltoHarmonicIntervals);
+
+/**
+ * Computes the cost for diminished intervals, that is the number of diminished chords that don't respect the preference
+ * Here, the preference is that they should be used in 3 voices instead of 4.
+ * If the chord is not diminished, the value is forced to 0 since it doesn't matter
+ * @param home the instance of the problem
+ * @param size the number of chords
+ * @param nVoices the number of voices
+ * @param tonality the tonality of the piece
+ * @param chordDegs the degrees of the chords
+ * @param fullChordsVoicing the array containing all the chords in the form
+ *          [bass0, alto0, tenor0, soprano0, bass1, alto1, tenor1, soprano1, ...]
+ * @param nOfDifferentNotes the array containing the number of different notes in each diminished chord.
+ * @param costVar the variable that will contain the number of diminished chords that don't respect the preference
+ */
+void compute_diminished_chords_cost(const Home& home, int size, int nVoices, Tonality *tonality, vector<int> chordDegs,
+                                    IntVarArray fullChordsVoicing, IntVarArray nOfDifferentNotes,
+                                    const IntVar& costVar);
 
 /**
  * Sets the domains of the different voices to their range
@@ -78,8 +98,9 @@ void link_harmonic_arrays(const Home& home, int n, IntVarArray FullChordsVoicing
  *      soprano: [60, 84] C3 -> A4
  * @param home the instance of the problem
  * @param n the number of chords
- * @param FullChordsVoicing the array containing all the chords in the form [bass0, alto0, tenor0, soprano0, bass1, alto1, tenor1, soprano1, ...]
+ * @param FullChordsVoicing the array containing all the chords in the form
+ *          [bass0, alto0, tenor0, soprano0, bass1, alto1, tenor1, soprano1, ...]
  */
-void restrain_voices_domains(const Home& home, int n, IntVarArray FullChordsVoicing);
+void restrain_voices_domains(const Home &home, int n, int nVoices, IntVarArray FullChordsVoicing);
 
 #endif

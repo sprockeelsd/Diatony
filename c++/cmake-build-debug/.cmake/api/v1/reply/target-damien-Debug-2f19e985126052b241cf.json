@@ -49,10 +49,7 @@
 			"compileCommandFragments" : 
 			[
 				{
-					"fragment" : "-g -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk -fcolor-diagnostics -F/Library/Frameworks "
-				},
-				{
-					"fragment" : "-std=gnu++11"
+					"fragment" : "-g -std=gnu++11 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk -fcolor-diagnostics -F/Library/Frameworks "
 				}
 			],
 			"includes" : 
@@ -143,13 +140,13 @@
 		},
 		{
 			"backtrace" : 1,
-			"path" : "headers/four_voice_texture.hpp",
+			"path" : "headers/FourVoiceTexture.hpp",
 			"sourceGroupIndex" : 0
 		},
 		{
 			"backtrace" : 1,
 			"compileGroupIndex" : 0,
-			"path" : "four_voice_texture.cpp",
+			"path" : "FourVoiceTexture.cpp",
 			"sourceGroupIndex" : 1
 		},
 		{
@@ -238,7 +235,7 @@
 		},
 		{
 			"backtrace" : 1,
-			"path" : "VoiceLeadingConstraints.hpp",
+			"path" : "headers/VoiceLeadingConstraints.hpp",
 			"sourceGroupIndex" : 0
 		},
 		{

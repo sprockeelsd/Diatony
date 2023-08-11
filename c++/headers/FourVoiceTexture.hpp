@@ -27,30 +27,32 @@ using namespace Gecode::Search;
 using namespace std;
 
 /***********************************************************************************************************************
+ *                                                                                                                     *
  *                                                FourVoiceTexture class                                               *
+ *                                                                                                                     *
  ***********************************************************************************************************************/
-class FourVoiceTexture: public IntMinimizeSpace {
+class FourVoiceTexture: public IntLexMinimizeSpace {
 protected:
-    /** Data */
-    int size; // The size of the variable array of interest
-    Tonality* tonality; // The tonality of the piece
-    vector<int> chordDegrees; // The degrees of the chord of the chord progression
-    vector<int> chordStates; // The states of the chord of the chord progression (fundamental, 1st inversion,...)
+    /// Data
+    int nOfVoices = 4;        // The number of voices
+    int size;                   // The size of the variable array of interest
+    Tonality *tonality;         // The tonality of the piece
+    vector<int> chordDegrees;   // The degrees of the chord of the chord progression
+    vector<int> chordStates;    // The states of the chord of the chord progression (fundamental, 1st inversion,...)
 
-    /** Variables */
-    // variable arrays for melodic intervals for each voice (not absolute value)
+    /// variable arrays for melodic intervals for each voice (not absolute value)
     IntVarArray bassMelodicIntervals;
     IntVarArray tenorMelodicIntervals;
     IntVarArray altoMelodicIntervals;
     IntVarArray sopranoMelodicIntervals;
 
-    // absolute intervals
+    /// absolute melodic intervals
     IntVarArray absoluteBassMelodicIntervals;
     IntVarArray absoluteTenorMelodicIntervals;
     IntVarArray absoluteAltoMelodicIntervals;
     IntVarArray absoluteSopranoMelodicIntervals;
 
-    // variable arrays for harmonic intervals between adjacent voices (not absolute value)
+    /// variable arrays for harmonic intervals between adjacent voices (not absolute value)
     IntVarArray bassTenorHarmonicIntervals;
     IntVarArray bassAltoHarmonicIntervals;
     IntVarArray bassSopranoHarmonicIntervals;
@@ -58,18 +60,24 @@ protected:
     IntVarArray tenorSopranoHarmonicIntervals;
     IntVarArray altoSopranoHarmonicIntervals;
 
-    // @todo maybe harmonic movement array?
-
-    // global array for all the notes for all voices
+    ///global array for all the notes for all voices
     IntVarArray FullChordsVoicing; // [bass0, alto0, tenor0, soprano0, bass1, alto1, tenor1, soprano1, ...]
 
-    // cost variables
-    IntVar sumOfMelodicIntervals;
+    /// cost variables auxiliary arrays
+    IntVarArray nDifferentValuesInDiminishedChord; // number of different note values in each chord
+    IntVarArray nDifferentValuesAllChords;
+    IntVarArray nOccurrencesBassInFundamentalState; // number of chords that don't double the bass in fundamental state
+
+    /// cost variables
+    IntVar sumOfMelodicIntervals;                       // for minimizing voice movement between voices
+    IntVar nOfDiminishedChordsWith4notes;               // number of diminished chords that don't respect the preferences
+    IntVar nOfChordsWithLessThan4notes;                 // number of chords with less than 4 notes
+    IntVar nOfFundamentalStateChordsWithoutDoubledBass; // number of fundamental state chords that don't follow the preferences
 
 public:
     /**
      * Constructor
-     * @param s the size of the array of variables
+     * @param s the number of chords in the progression
      * @param *t a pointer to a Tonality object
      * @param chordDegs the degrees of the chord of the chord progression
      * @param chordStas the states of the chord of the chord progression (fundamental, 1st inversion,...)
@@ -86,7 +94,7 @@ public:
      * Returns the size of the problem
      * @return an integer representing the size of the vars array
      */
-    int getSize() const;
+    int get_size() const;
 
     /**
      * Returns the values taken by the variables vars in a solution
@@ -104,9 +112,9 @@ public:
      * Constrain method for bab search
      * @param _b a space to constrain the current instance of the FourVoiceTexture class with upon finding a solution
      */
-    virtual void constrain(const Space& _b);
+    // virtual void constrain(const Space& _b);
 
-    virtual IntVar cost(void) const;
+    virtual IntVarArgs cost(void) const;
 
     /**
      * Prints the solution in the console
@@ -119,7 +127,7 @@ public:
      * Right now, it returns a string "FourVoiceTexture object. size = <size>"
      * If a variable is not assigned when this function is called, it writes <not assigned> instead of the value
      */
-    string toString();
+    string to_string();
 };
 
 
@@ -151,6 +159,6 @@ FourVoiceTexture* get_next_solution_space(Search::Base<FourVoiceTexture>* solver
  * Write a text into a log file
  * @param message the text to write
  */
-void writeToLogFile(const char* message);
+void write_to_log_file(const char* message);
 
 #endif

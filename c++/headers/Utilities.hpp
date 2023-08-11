@@ -26,43 +26,43 @@ enum solver_types{
 const vector<std::string> noteNames = {"C", "C#", "D", "Eb", "E", "F", "F#", "G", "Ab", "A", "Bb", "B"}; // @todo turn into a bi-directional map
 
 /** Notes */
-const int Bsharp = 0;
+const int B_SHARP = 0;
 const int C = 0;
-const int Csharp = 1;
-const int Dflat = 1;
+const int C_SHARP = 1;
+const int D_FLAT = 1;
 const int D = 2;
-const int Dsharp = 3;
-const int Eflat = 3;
+const int D_SHARP = 3;
+const int E_FLAT = 3;
 const int E = 4;
-const int Fflat = 4;
-const int Esharp = 5;
+const int F_FLAT = 4;
+const int E_SHARP = 5;
 const int F = 5;
-const int Fsharp = 6;
-const int Gflat = 6;
+const int F_SHARP = 6;
+const int G_FLAT = 6;
 const int G = 7;
-const int Gsharp = 8;
-const int Aflat = 8;
+const int G_SHARP = 8;
+const int A_FLAT = 8;
 const int A = 9;
-const int Asharp = 10;
-const int Bflat = 10;
+const int A_SHARP = 10;
+const int B_FLAT = 10;
 const int B = 11;
-const int Cflat = 11;
+const int C_FLAT = 11;
 
 enum voices{
-    BASS,
-    TENOR,
-    ALTO,
-    SOPRANO
+    BASS,       //0
+    TENOR,      //1
+    ALTO,       //2
+    SOPRANO     //3
 };
 
 enum degrees{
-    FIRST_DEGREE,
-    SECOND_DEGREE,
-    THIRD_DEGREE,
-    FOURTH_DEGREE,
-    FIFTH_DEGREE,
-    SIXTH_DEGREE,
-    SEVENTH_DEGREE
+    FIRST_DEGREE,       //0
+    SECOND_DEGREE,      //1
+    THIRD_DEGREE,       //2
+    FOURTH_DEGREE,      //3
+    FIFTH_DEGREE,       //4
+    SIXTH_DEGREE,       //5
+    SEVENTH_DEGREE      //6
 };
 
 /** Intervals */
@@ -84,7 +84,7 @@ enum intervals{
 };
 
 // augmented/diminished intervals
-const int augmented_second = 3;
+const int AUGMENTED_SECOND = 3;
 
 /** Chords */
 // Types of chords represented by the intervals between their notes in root position up to an octave
@@ -126,7 +126,7 @@ enum Mode {
 
 const vector<int> MAJOR_SCALE = {MAJOR_SECOND, MAJOR_SECOND, MINOR_SECOND, MAJOR_SECOND, MAJOR_SECOND, MAJOR_SECOND, MINOR_SECOND};
 const vector<int> NATURAL_MINOR_SCALE = {MAJOR_SECOND, MINOR_SECOND, MAJOR_SECOND, MAJOR_SECOND, MINOR_SECOND, MAJOR_SECOND, MAJOR_SECOND};
-const vector<int> HARMONIC_MINOR_SCALE = {MAJOR_SECOND, MINOR_SECOND, MAJOR_SECOND, MAJOR_SECOND, MINOR_SECOND, augmented_second, MINOR_SECOND};
+const vector<int> HARMONIC_MINOR_SCALE = {MAJOR_SECOND, MINOR_SECOND, MAJOR_SECOND, MAJOR_SECOND, MINOR_SECOND, AUGMENTED_SECOND, MINOR_SECOND};
 const vector<int> MELODIC_MINOR_SCALE = {MAJOR_SECOND, MINOR_SECOND, MAJOR_SECOND, MAJOR_SECOND, MAJOR_SECOND, MAJOR_SECOND, MINOR_SECOND};
 
 /***********************************************************************************************************************
@@ -140,7 +140,7 @@ const vector<int> MELODIC_MINOR_SCALE = {MAJOR_SECOND, MINOR_SECOND, MAJOR_SECON
  * scale from note, use {2, 2, 1, 2, 2, 2, 1}. To get all notes from a minor chord, use {3, 4, 5}.
  * @return vector<int> all the notes
  */
-vector<int> getAllNotesFromIntervalLoop(int note, vector<int> intervals);
+vector<int> get_all_notes_from_interval_loop(int n, vector<int> intervals);
 
 /**
  * For a given tonality (root + mode), returns all the possible notes
@@ -148,7 +148,7 @@ vector<int> getAllNotesFromIntervalLoop(int note, vector<int> intervals);
  * @param scale the set of tones and semitones that define the scale
  * @return vector<int> all the possible notes from that tonality
  */
-vector<int> getAllNotesFromTonality(int root, vector<int> scale);
+vector<int> get_all_notes_from_scale(int root, vector<int> scale);
 
 /**
  * For a given chord (root + mode), returns all the possible notes
@@ -156,14 +156,14 @@ vector<int> getAllNotesFromTonality(int root, vector<int> scale);
  * @param quality the set of tones and semitones that define the chord
  * @return vector<int> all the possible notes from that chord
  */
-vector<int> getAllNotesFromChord(int root, vector<int> quality);
+vector<int> get_all_notes_from_chord(int root, vector<int> quality);
 
 /**
  * Get all values for a given note
  * @param note a note
  * @return vector<int> a vector containing all the given notes
  */
-vector<int> getAllGivenNote(int note);
+vector<int> get_all_given_note(int note);
 
 /**
  * Transforms a vector of integers into a string
@@ -187,20 +187,30 @@ vector<int> int_pointer_to_vector(int* ptr, int size);
  */
 string statistics_to_string(Search::Statistics stats);
 
-string intVarArrayToString(IntVarArray vars);
+/**
+ * Returns the value of a variable as a string. If the variable is unassigned, returns "<unassigned>"
+ * @param var an integer variable
+ * @return a string representing the value of the variable
+ */
+string intVar_to_string(IntVar var);
 
-string intVarToString(IntVar var);
+/**
+ * Returns the values of an array of variables as a string. Calls the intVar_to_string function
+ * @param vars an array of integer variables
+ * @return a string representing the values of the variables
+ */
+string intVarArray_to_string(IntVarArray vars);
 
 /**
  * Prints A note with its name (e.g. 60 = C)
  * @param var an integer variable
  */
-void printNoteInLetter(IntVar var);
+void print_note_in_letter(IntVar var);
 
 /**
  * Prints a node in MIDIcent value
  * @param var an integer variable
  */
-void printNoteForOM(IntVar var);
+void print_note_for_OM(IntVar var);
 
 #endif

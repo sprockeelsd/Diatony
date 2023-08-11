@@ -7,7 +7,7 @@
  * scale from note, use {2, 2, 1, 2, 2, 2, 1}. To get all notes from a minor chord, use {3, 4, 5}.
  * @return vector<int> all the notes
  */
-vector<int> getAllNotesFromIntervalLoop(int n, vector<int> intervals)
+vector<int> get_all_notes_from_interval_loop(int n, vector<int> intervals)
 {
     int note = n % PERFECT_OCTAVE; // bring the root back to [12,23] in case the argument is wrong
     vector<int> notes;
@@ -28,9 +28,9 @@ vector<int> getAllNotesFromIntervalLoop(int n, vector<int> intervals)
  * @param scale the set of tones and semitones that define the scale
  * @return vector<int> all the possible notes from that tonality
  */
-vector<int> getAllNotesFromTonality(int root, vector<int> scale)
+vector<int> get_all_notes_from_scale(int root, vector<int> scale)
 {
-    return getAllNotesFromIntervalLoop(root, scale);
+    return get_all_notes_from_interval_loop(root, scale);
 }
 
 /**
@@ -39,9 +39,9 @@ vector<int> getAllNotesFromTonality(int root, vector<int> scale)
  * @param quality the set of tones and semitones that define the chord
  * @return vector<int> all the possible notes from that chord
  */
-vector<int> getAllNotesFromChord(int root, vector<int> quality)
+vector<int> get_all_notes_from_chord(int root, vector<int> quality)
 {
-    return getAllNotesFromIntervalLoop(root, quality);
+    return get_all_notes_from_interval_loop(root, quality);
 }
 
 /**
@@ -49,7 +49,7 @@ vector<int> getAllNotesFromChord(int root, vector<int> quality)
  * @param note a note
  * @return vector<int> a vector containing all the given notes
  */
-vector<int> getAllGivenNote(int note)
+vector<int> get_all_given_note(int note)
 {
     int current = note % PERFECT_OCTAVE;
     vector<int> notes;
@@ -108,7 +108,7 @@ string statistics_to_string(Search::Statistics stats){
  * @param var an integer variable
  * @return a string representing the value of the variable
  */
-string intVarToString(IntVar var){
+string intVar_to_string(IntVar var){
     if (var.assigned())
         return to_string(var.val());
     return "<not assigned>";
@@ -119,11 +119,11 @@ string intVarToString(IntVar var){
  * @param vars an array of integer variables
  * @return a string representing the values of the variables
  */
-string intVarArrayToString(IntVarArray vars){
+string intVarArray_to_string(IntVarArray vars){
     int s = vars.size();
     string res = "{";
     for(int i = 0; i < s; i++){
-        res += intVarToString(vars[i]);
+        res += intVar_to_string(vars[i]);
         if(i != s - 1)
             res += ", ";
     }
@@ -136,7 +136,7 @@ string intVarArrayToString(IntVarArray vars){
  * Prints A note with its name (e.g. 60 = C)
  * @param var an integer variable
  */
-void printNoteInLetter(IntVar var){
+void print_note_in_letter(IntVar var){
     std::cout << noteNames[var.val() % PERFECT_OCTAVE] << var.val() / PERFECT_OCTAVE << " ";
 }
 
@@ -144,6 +144,6 @@ void printNoteInLetter(IntVar var){
  * Prints a node in MIDIcent value
  * @param var an integer variable
  */
-void printNoteForOM(IntVar var){
+void print_note_for_OM(IntVar var){
     std::cout << var.val() * 100 << " ";
 }

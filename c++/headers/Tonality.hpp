@@ -9,6 +9,7 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <set>
 
 using namespace Gecode;
 using namespace std;
@@ -26,8 +27,8 @@ protected:
     map<int, vector<int>> chord_qualities;  // map of [degree, chord_quality] for each degree of the scale (0 to 6) (set by child classes)
 
     map<int, IntSet> scale_degrees;         // map of [degree, all_notes] for each degree of the scale (0 to 6). May contain multiple notes per degree depending on the mode
-    IntSet tonal_notes;                     // notes that don't change in major or minor mode (1,4,5 degrees)
-    IntSet modal_notes;                     // notes that change in major or minor mode (3,6,7 degrees)
+    set<int> tonal_notes;                     // notes that don't change in major or minor mode (1,4,5 degrees)
+    set<int> modal_notes;                     // notes that change in major or minor mode (3,6,7 degrees)
 
     map<int, IntSet> scale_degrees_chords;  // map of [degree, chord] for each degree of the scale (0 to 6) (set by child classes)
 
@@ -89,13 +90,13 @@ public:
      * Get the notes that don't change in major or minor mode (1,4,5 degrees)
      * @return an IntSet containing the tonal notes
      */
-    IntSet get_tonal_notes();
+    set<int> get_tonal_notes();
 
     /**
      * Get the notes that change in major or minor mode (3,6,7 degrees)
      * @return an IntSet containing the modal notes
      */
-    IntSet get_modal_notes();
+    set<int> get_modal_notes();
 
     /** ABSTRACT METHODS */
 

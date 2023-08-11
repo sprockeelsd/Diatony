@@ -1,4 +1,4 @@
-#include "headers/four_voice_texture.hpp"
+#include "headers/FourVoiceTexture.hpp"
 #include "headers/Utilities.hpp"
 #include "headers/Tonality.hpp"
 #include "headers/MajorTonality.hpp"
@@ -9,7 +9,7 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
     int size = 2;
-    Tonality* tonality = new MinorTonality(C);
+    Tonality* tonality = new MajorTonality(C);
 
     // create a new problem
 //    FourVoiceTexture* p = new FourVoiceTexture(size, tonality, {FIRST_DEGREE, FOURTH_DEGREE, SEVENTH_DEGREE,
@@ -17,13 +17,13 @@ int main(int argc, char* argv[]) {
 //                                                                FIRST_DEGREE},
 //                                               {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE,
 //                                                FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE});
-    FourVoiceTexture *p = new FourVoiceTexture(size, tonality, {FIFTH_DEGREE, SIXTH_DEGREE},
-                                               {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE});
+    FourVoiceTexture *p = new FourVoiceTexture(size, tonality, {SEVENTH_DEGREE, FIRST_DEGREE},
+                                               {FIRST_INVERSION, FUNDAMENTAL_STATE});
     // std::cout << p->toString() << std::endl;
 
 
     // create a new search engine
-    Search::Base<FourVoiceTexture>* e = make_solver(p, DFS_SOLVER);
+    Search::Base<FourVoiceTexture>* e = make_solver(p, BAB_SOLVER);
     delete p;
 
     std::cout << "Solver type : DFS " << std::endl;
@@ -33,8 +33,8 @@ int main(int argc, char* argv[]) {
         nb_sol++;
         cout << "Solution " << nb_sol << ": " << endl;
         //sol->print_solution();
-        std::cout << sol->toString() <<std::endl;
-        writeToLogFile(sol->toString().c_str());
+        std::cout << sol->to_string() <<std::endl;
+        write_to_log_file(sol->to_string().c_str());
         std::cout << statistics_to_string(e->statistics()) << std::endl;
         delete sol;
         if (nb_sol >= 10)

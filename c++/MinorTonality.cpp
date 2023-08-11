@@ -14,7 +14,7 @@ MinorTonality::MinorTonality(int t) : Tonality(t, MINOR_MODE, HARMONIC_MINOR_SCA
     chord_qualities[6] = DIMINISHED_CHORD;
 
     for (int i = 0; i < chord_qualities.size(); i++){
-        IntSet set(getAllNotesFromChord(degrees_notes[i], chord_qualities[i]));
+        IntSet set(get_all_notes_from_chord(degrees_notes[i], chord_qualities[i]));
         scale_degrees_chords[i] = set;
     }
 }
