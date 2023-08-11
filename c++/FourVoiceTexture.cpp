@@ -145,10 +145,12 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
 
     /// between each chord
     for(int i = 0; i < size-1; i++){
+
         if (chordStas[i] == FUNDAMENTAL_STATE && chordStas[i+1] == FUNDAMENTAL_STATE){
             /// keep the common note(s) in the same voice(s) if there is one. If there is not, then other voices move
             /// in contrary motion to the bass
-            fundamental_state_chord_to_fundamental_state_chord(*this, i, chordDegrees, tonality,
+            fundamental_state_chord_to_fundamental_state_chord(*this, i, chordDegrees,
+                                                               nOfVoices, tonality,
                                                                bassMelodicIntervals,
                                                                tenorMelodicIntervals,
                                                                altoMelodicIntervals,
@@ -158,7 +160,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
         else if(chordStas[i] == FIRST_INVERSION){
             /// see function def for the details, it's too long to write here
             //@todo finish this constraint
-            from_first_inversion_chord(*this, i, chordDegrees, tonality,
+            from_first_inversion_chord(*this, i, nOfVoices, chordDegrees, tonality,
                                        bassMelodicIntervals, tenorMelodicIntervals,
                                        altoMelodicIntervals, sopranoMelodicIntervals,
                                        FullChordsVoicing);

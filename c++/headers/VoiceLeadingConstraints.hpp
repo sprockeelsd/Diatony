@@ -88,6 +88,7 @@ void general_voice_leading_rules(const Home &home, int currentPosition, vector<i
  * @param home the instance of the problem
  * @param currentPosition the current position in the chord progression
  * @param chordDegrees the array containing the degrees of the chords in the progression
+ * @param nVoices the number of voices in the progression
  * @param tonality the tonality of the piece
  * @param bassMelodicInterval The melodic interval of the bass between the current position and the next
  * @param tenorMelodicInterval the melodic interval of the tenor between the current position and the next
@@ -96,13 +97,29 @@ void general_voice_leading_rules(const Home &home, int currentPosition, vector<i
  * @param fullChordsVoicing the array containing all the notes of the chords in the progression
  */
 void fundamental_state_chord_to_fundamental_state_chord(const Home& home, int currentPosition, vector<int> chordDegrees,
-                                                        Tonality *tonality,
-                                                        const IntVarArray& bassMelodicInterval, const IntVarArray& tenorMelodicInterval,
-                                                        const IntVarArray& altoMelodicInterval, const IntVarArray& sopranoMelodicInterval,
+                                                        int nVoices, Tonality *tonality,
+                                                        const IntVarArray& bassMelodicInterval,
+                                                        const IntVarArray& tenorMelodicInterval,
+                                                        const IntVarArray& altoMelodicInterval,
+                                                        const IntVarArray& sopranoMelodicInterval,
                                                         const IntVarArray& fullChordsVoicing);
 
-void tritone_resolution(Home home, int currentPosition, Tonality *tonality, IntVarArray bassMelodicInterval,
-                        IntVarArray tenorMelodicInterval, IntVarArray altoMelodicInterval, IntVarArray sopranoMelodicInterval,
+
+/**
+ * Forces the tritone to resolve properly
+ * @param home the instance of the problem
+ * @param currentPosition the current position in the chord progression
+ * @param nvoices the number of voices in the piece
+ * @param tonality the tonality of the piece
+ * @param bassMelodicInterval the melodic interval of the bass between the current position and the next
+ * @param tenorMelodicInterval the melodic interval of the tenor between the current position and the next
+ * @param altoMelodicInterval the melodic interval of the alto between the current position and the next
+ * @param sopranoMelodicInterval the melodic interval of the soprano between the current position and the next
+ * @param fullChordsVoicing the array containing all the notes of the chords in the progression
+ */
+void tritone_resolution(const Home& home, int currentPosition, int nVoices, Tonality *tonality,
+                        const IntVarArray& bassMelodicInterval, const IntVarArray& tenorMelodicInterval,
+                        const IntVarArray& altoMelodicInterval, const IntVarArray& sopranoMelodicInterval,
                         IntVarArray fullChordsVoicing);
 
 /**
@@ -126,10 +143,9 @@ void fifth_degree_fs_to_sixth_degree_fs(const Home& home, int currentPosition, T
  *                                                                                                                     *
  ***********************************************************************************************************************/
 
-void from_first_inversion_chord(const Home& home, int currentPosition, vector<int> chordDegrees,
-                                Tonality *tonality,
-                                const IntVarArray& bassMelodicInterval, const IntVarArray& tenorMelodicInterval,
-                                const IntVarArray& altoMelodicInterval, const IntVarArray& sopranoMelodicInterval,
-                                const IntVarArray& fullChordsVoicing);
+void from_first_inversion_chord(const Home &home, int currentPosition, int nVoices, vector<int> chordDegrees,
+                                Tonality *tonality, const IntVarArray &bassMelodicInterval,
+                                const IntVarArray &tenorMelodicInterval, const IntVarArray &altoMelodicInterval,
+                                const IntVarArray &sopranoMelodicInterval, const IntVarArray &fullChordsVoicing);
 
 #endif
