@@ -4,7 +4,9 @@
 
 /***********************************************************************************************************************
  *                                                                                                                     *
+ *                                                                                                                     *
  *                                             FourVoiceTexture class methods                                          *
+ *                                                                                                                     *
  *                                                                                                                     *
  ***********************************************************************************************************************/
 
@@ -56,13 +58,31 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     nOfChordsWithLessThan4notes = IntVar(*this, 0, size);
     nOfFundamentalStateChordsWithoutDoubledBass = IntVar(*this, 0, size);
 
-    /*******************************************************************************************************************
-    *                                                                                                                  *
-    *                                                   Constraints                                                    *
-    *                                                                                                                  *
-    ********************************************************************************************************************/
+    /**-----------------------------------------------------------------------------------------------------------------
+    |                                                                                                                  |
+    |                                              generic constraints                                                 |
+    |                                                                                                                  |
+    -------------------------------------------------------------------------------------------------------------------*/
 
-    /// link the arrays together
+    /// restrain the domain of the voices to their range + state that bass <= tenor <= alto <= soprano
+    restrain_voices_domains(*this, size, nOfVoices, FullChordsVoicing);
+
+    for(int i = 0; i < size; i++) {
+        IntVarArgs currentChord(FullChordsVoicing.slice(nOfVoices * i, 1, nOfVoices));
+
+        /// set the chord's domain to the notes of the degree chordDegrees[i]'s chord
+        set_to_chord(*this, tonality, chordDegrees[i], currentChord);
+
+        /// set the bass based on the chord's state
+        set_bass(*this, tonality, chordDegrees[i], chordStates[i], currentChord);
+    }
+
+    /**-----------------------------------------------------------------------------------------------------------------
+    |                                                                                                                  |
+    |                                              link the arrays together                                            |
+    |                                                                                                                  |
+    -------------------------------------------------------------------------------------------------------------------*/
+
     link_melodic_arrays(*this, nOfVoices, size, bassMelodicIntervals, FullChordsVoicing,
                         altoMelodicIntervals, tenorMelodicIntervals, sopranoMelodicIntervals);
 
@@ -74,14 +94,11 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
                          bassAltoHarmonicIntervals,bassSopranoHarmonicIntervals, tenorSopranoHarmonicIntervals,
                          altoSopranoHarmonicIntervals, tenorAltoHarmonicIntervals);
 
-    /// restrain the domain of the voices to their range + state that bass <= tenor <= alto <= soprano
-    restrain_voices_domains(*this, size, nOfVoices, FullChordsVoicing);
-
-    /// forbid parallel octaves and fifths
-    forbid_parallel_intervals(*this, size, nOfVoices, {PERFECT_FIFTH, PERFECT_OCTAVE},
-                              bassTenorHarmonicIntervals, bassAltoHarmonicIntervals, bassSopranoHarmonicIntervals,
-                              tenorAltoHarmonicIntervals, tenorSopranoHarmonicIntervals, altoSopranoHarmonicIntervals,
-                              FullChordsVoicing);
+    /**-----------------------------------------------------------------------------------------------------------------
+    |                                                                                                                  |
+    |                                             set up costs computation                                             |
+    |                                                                                                                  |
+    -------------------------------------------------------------------------------------------------------------------*/
 
     /// number of diminished chords with more than 3 notes (cost to minimize)
     compute_diminished_chords_cost(*this, size, nOfVoices, tonality, chordDegrees,
@@ -92,29 +109,25 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     compute_n_of_notes_in_chord_cost(*this, size, nOfVoices, FullChordsVoicing,
                                      nDifferentValuesAllChords,nOfChordsWithLessThan4notes);
 
-    /// number of fundamental state chords without doubled bass
+    /// number of fundamental state chords without doubled bass (cost to minimize)
     /// @todo maybe add suggestion to which note to double next (tonal notes)
     compute_fundamental_state_doubling_cost(*this, size, nOfVoices, tonality, chordStas, chordDegs,
                                             FullChordsVoicing,nOccurrencesBassInFundamentalState,
                                             nOfFundamentalStateChordsWithoutDoubledBass);
 
-    /// sum of melodic intervals
+    /// sum of melodic intervals (cost to minimize)
     linear(*this, IntVarArgs() << absoluteTenorMelodicIntervals << absoluteAltoMelodicIntervals <<
                                absoluteSopranoMelodicIntervals << absoluteBassMelodicIntervals,
                                IRT_EQ, sumOfMelodicIntervals);
 
     /**-----------------------------------------------------------------------------------------------------------------
+    |                                                                                                                  |
     |     Harmonic constraints: loop over each chord and post the constraints depending on the degree and state        |
+    |                                                                                                                  |
     -------------------------------------------------------------------------------------------------------------------*/
 
     for(int i = 0; i < size; i++){
         IntVarArgs currentChord(FullChordsVoicing.slice(nOfVoices * i, 1, nOfVoices));
-
-        /// set the chord's domain to the notes of the degree chordDegrees[i]'s chord
-        set_to_chord(*this, tonality, chordDegrees[i], currentChord);
-
-        /// set the bass based on the chord's state
-        set_bass(*this, tonality, chordDegrees[i], chordStates[i], currentChord);
 
         /// post the constraints depending on the chord's state
         if(chordStas[i] == FUNDAMENTAL_STATE){
@@ -136,42 +149,75 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
         }
     }
 
-    /// @todo continue refactoring from here
-
     /**-----------------------------------------------------------------------------------------------------------------
+    |                                                                                                                  |
     | Melodic constraints: loop over each space between chords and post the constraints depending on the state and     |`
     | quality of the chords                                                                                            |
+    |                                                                                                                  |
     -------------------------------------------------------------------------------------------------------------------*/
 
     /// between each chord
-    for(int i = 0; i < size-1; i++){
+    for(int i = 0; i < size-1; i++) {
+        /// parallel unissons, fifths and octaves are forbidden
+        forbid_parallel_intervals(*this, size, nOfVoices, {PERFECT_FIFTH, PERFECT_OCTAVE, UNISSON},
+                                  bassTenorHarmonicIntervals, bassAltoHarmonicIntervals, bassSopranoHarmonicIntervals,
+                                  tenorAltoHarmonicIntervals, tenorSopranoHarmonicIntervals,
+                                  altoSopranoHarmonicIntervals,
+                                  FullChordsVoicing);
 
-        if (chordStas[i] == FUNDAMENTAL_STATE && chordStas[i+1] == FUNDAMENTAL_STATE){
-            /// keep the common note(s) in the same voice(s) if there is one. If there is not, then other voices move
-            /// in contrary motion to the bass
-            fundamental_state_chord_to_fundamental_state_chord(*this, i, chordDegrees,
-                                                               nOfVoices, tonality,
-                                                               bassMelodicIntervals,
-                                                               tenorMelodicIntervals,
-                                                               altoMelodicIntervals,
-                                                               sopranoMelodicIntervals,
-                                                               FullChordsVoicing);
+        /// resolve the tritone if there is one and it needs to be resolved
+        if (chordDegs[i] == SEVENTH_DEGREE && chordDegs[i + 1] == FIRST_DEGREE) {
+            //@todo add other chords that have a tritone
+            tritone_resolution(*this, i, nOfVoices, tonality,
+                               bassMelodicIntervals, tenorMelodicIntervals,
+                               altoMelodicIntervals, sopranoMelodicIntervals,
+                               FullChordsVoicing);
         }
-        else if(chordStas[i] == FIRST_INVERSION){
-            /// see function def for the details, it's too long to write here
-            //@todo finish this constraint
-            from_first_inversion_chord(*this, i, nOfVoices, chordDegrees, tonality,
-                                       bassMelodicIntervals, tenorMelodicIntervals,
-                                       altoMelodicIntervals, sopranoMelodicIntervals,
-                                       FullChordsVoicing);
+
+        /// Exceptions to the general voice leading rules
+
+        /// special rule for interrupted cadence
+        if (chordDegs[i] == FIFTH_DEGREE && chordStas[i] == FUNDAMENTAL_STATE &&
+        chordDegs[i + 1] == SIXTH_DEGREE && chordStas[i + 1] == FUNDAMENTAL_STATE) {
+            interrupted_cadence(*this, i, tonality, tenorMelodicIntervals,
+                                altoMelodicIntervals, sopranoMelodicIntervals,
+                                FullChordsVoicing);
         }
-        else{ /// general guidelines (not explicit from Duha)
-            /// keep the common note(s) in the same voice(s) if there is one, then move other voices to the closest note
-            /// (done with preferences)
+        /// general voice leading rules
+        else {
+            /// If the bass moves by a step, other voices should move in contrary motion
+            // note at the bass of the first chord
+            int bassFirstChord = (tonality->get_degree_note(chordDegrees[i] + 2 * chordStates[i])
+                    % PERFECT_OCTAVE);
+            // note at the bass of the second chord
+            int bassSecondChord = (tonality->get_degree_note(chordDegrees[i + 1] + 2 * chordStates[i + 1])
+                    % PERFECT_OCTAVE);
+            // difference in degrees between the two bass notes
+            int bassMelodicMotion = bassSecondChord - bassFirstChord;
+            /// if the bass moves by a step
+            if (bassMelodicMotion == MINOR_SECOND || bassMelodicMotion == MAJOR_SECOND ||
+                bassMelodicMotion == MINOR_SEVENTH || bassMelodicMotion == MAJOR_SEVENTH) {
+                /// move other voices in contrary motion
+                contrary_motion_to_bass(*this, i,bassMelodicIntervals,
+                                        tenorMelodicIntervals,altoMelodicIntervals,
+                                        sopranoMelodicIntervals);
+            }
+            else {
+                /// Otherwise, keep common notes in the same voice @todo override this when the chords are the same degree
+                // @todo maybe this doesn't need to be in an else statement and can be applied all the time
+
+                keep_common_notes_in_same_voice(*this, i, chordDegrees, tonality, FullChordsVoicing);
+            }
+
+            /// move voices as closely as possible (implemented with costs)
         }
     }
 
-    /**------------------------------------------------branching-------------------------------------------------------*/
+    /**-----------------------------------------------------------------------------------------------------------------
+    |                                                                                                                  |
+    |                                                       Branching                                                  |
+    |                                                                                                                  |
+    -------------------------------------------------------------------------------------------------------------------*/
     // @todo make it smart when it becomes necessary
     branch(*this, FullChordsVoicing, INT_VAR_DEGREE_MAX(), INT_VAL_MIN());
 }
@@ -186,7 +232,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
  */
 IntVarArgs FourVoiceTexture::cost() const {
     return {nOfDiminishedChordsWith4notes, nOfChordsWithLessThan4notes, nOfFundamentalStateChordsWithoutDoubledBass,
-            sumOfMelodicIntervals};
+            sumOfMelodicIntervals};// @todo maybe give the voices a priority
 }
 
 /**
@@ -256,8 +302,8 @@ int* FourVoiceTexture::return_solution(){
 }
 
 /**
- * Constrain method for bab search not needed for optimization problems as it is already implemented
- * Ensures that exactly 2*b.size notes are identical to the ones in the previous solution
+ * Constrain method for bab search
+ * not needed for optimization problems as it is already implemented
  * @param _b a solution to the problem from which we wish to add a constraint for the next solutions
  */
 //void FourVoiceTexture::constrain(const Space& _b) {
@@ -360,30 +406,4 @@ FourVoiceTexture* get_next_solution_space(Search::Base<FourVoiceTexture>* solver
     if (sol_space == nullptr) // handle the case of no solution or time out, necessary when sending the data to OM
         return nullptr;
     return sol_space;
-}
-
-/***********************************************************************************************************************
- *                                                 Auxiliary functions                                                 *
- ***********************************************************************************************************************/
-
-/**
- * Write a text into a log file
- * Useful for debugging in the OM environment
- * @param message the text to write
- */
-void write_to_log_file(const char* message){
-    std::time_t currentTime = std::time(nullptr); // Get the current time
-    std::string timeString = std::asctime(std::localtime(&currentTime)); // Convert to string
-
-    const char* homeDir = std::getenv("HOME"); // Get the user's home directory
-    if (homeDir) {
-        std::string filePath(homeDir);
-        filePath += "/Users/sprockeelsd/Documents/Libraries/log.txt"; // Specify the desired file path, such as $HOME/log.txt
-
-        std::ofstream myfile(filePath, std::ios::app); // append mode
-        if (myfile.is_open()) {
-            myfile <<timeString<< endl << message << endl;
-            myfile.close();
-        }
-    }
 }

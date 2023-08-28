@@ -8,7 +8,7 @@ using namespace Gecode;
 using namespace std;
 
 int main(int argc, char* argv[]) {
-    int size = 2;
+    int size = 3;
     Tonality* tonality = new MajorTonality(C);
 
     // create a new problem
@@ -17,8 +17,8 @@ int main(int argc, char* argv[]) {
 //                                                                FIRST_DEGREE},
 //                                               {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE,
 //                                                FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE});
-    FourVoiceTexture *p = new FourVoiceTexture(size, tonality, {SEVENTH_DEGREE, FIRST_DEGREE},
-                                               {FIRST_INVERSION, FUNDAMENTAL_STATE});
+    auto *p = new FourVoiceTexture(size, tonality, {SECOND_DEGREE, FIFTH_DEGREE, FIRST_DEGREE},
+                                               {FIRST_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE});
     // std::cout << p->toString() << std::endl;
 
 

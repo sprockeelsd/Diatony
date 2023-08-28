@@ -8,6 +8,8 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <iostream>
+#include <fstream>
 
 using namespace std;
 using namespace Gecode;
@@ -212,5 +214,11 @@ void print_note_in_letter(IntVar var);
  * @param var an integer variable
  */
 void print_note_for_OM(IntVar var);
+
+/**
+ * Write a text into a log file
+ * @param message the text to write
+ */
+void write_to_log_file(const char* message);
 
 #endif

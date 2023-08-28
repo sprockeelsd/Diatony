@@ -150,15 +150,4 @@ Search::Base<FourVoiceTexture>* make_solver(FourVoiceTexture* pb, int type);
  */
 FourVoiceTexture* get_next_solution_space(Search::Base<FourVoiceTexture>* solver);
 
-
-/***********************************************************************************************************************
- *                                                 Auxiliary functions                                                 *
- ***********************************************************************************************************************/
-
-/**
- * Write a text into a log file
- * @param message the text to write
- */
-void write_to_log_file(const char* message);
-
 #endif
