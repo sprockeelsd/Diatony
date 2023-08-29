@@ -146,7 +146,6 @@ void keep_common_notes_in_same_voice(const Home &home, int currentPosition, vect
     /// for each note in the current chord domain, if the note is in the next chord as well, it has to be in the same voice
     for(auto it : thisChord){ // for each note in the current chord domain
         if(nextChord.find(it) != nextChord.end()){ // if the note is in the next chord as well
-            std::cout << "note " << it << " is in both chords" << std::endl;
             for(int i = TENOR; i <= SOPRANO; ++i){ // for all voices except the bass
                 // the note in the current chord in the voice i must be the same in the next chord, @todo make it both ways?
                 rel(home, expr(home, fullChordsVoicing[currentPosition * 4 + i] % PERFECT_OCTAVE == it),
