@@ -24,7 +24,7 @@ int main(int argc, char* argv[]) {
 
     /// find the solution that minimizes the costs (maximize the preference satisfaction)
     find_best_solution(pb);
-    find_all_solutions(pb, DFS_SOLVER,10);
+    find_all_solutions(pb, DFS_SOLVER);
     delete pb;
 
     return 0;
