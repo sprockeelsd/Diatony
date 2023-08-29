@@ -3,6 +3,7 @@
 #include "headers/Tonality.hpp"
 #include "headers/MajorTonality.hpp"
 #include "headers/MinorTonality.hpp"
+#include "headers/SolutionFinders.hpp"
 
 using namespace Gecode;
 using namespace std;
@@ -17,10 +18,11 @@ int main(int argc, char* argv[]) {
 //                                                                FIRST_DEGREE},
 //                                               {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE,
 //                                                FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE});
-    auto *p = new FourVoiceTexture(size, tonality, {SECOND_DEGREE, FIFTH_DEGREE, FIRST_DEGREE},
-                                               {FIRST_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE});
+    auto *p = new FourVoiceTexture(size, tonality, {FIRST_DEGREE, FOURTH_DEGREE},
+                                               {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE});
     // std::cout << p->toString() << std::endl;
 
+    find_best_solution(p, size);
 
     // create a new search engine
     Search::Base<FourVoiceTexture>* e = make_solver(p, BAB_SOLVER);
