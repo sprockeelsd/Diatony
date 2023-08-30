@@ -11,21 +11,21 @@
  * @return A pointer to a FourVoiceTexture object casted as a void*
  */
 void* create_new_problem(int size, int key, int mode, int* chord_degrees, int* chord_states){
+    /// date and time for logs
+    write_to_log_file(time().c_str());
+
     Tonality *t;
-    if(mode == MAJOR_MODE){ /// major mode
+    if(mode == MAJOR_MODE) /// major mode
         t = new MajorTonality(key % PERFECT_OCTAVE);
-    }
-    else if(mode == MINOR_MODE){ /// minor mode
+    else if(mode == MINOR_MODE) /// minor mode
         t = new MinorTonality(key % PERFECT_OCTAVE);
-    }
     // @todo add other modes here if needed
-    else{ /// default = major
+    else /// default = major
         t = new MajorTonality(key % PERFECT_OCTAVE);
-    }
+
     vector<int> degrees(int_pointer_to_vector(chord_degrees, size));
     vector<int> states(int_pointer_to_vector(chord_states, size));
     auto* pb = new FourVoiceTexture(size, t, degrees, states);
-    write_to_log_file(pb->to_string().c_str());
     return (void*) pb;
 }
 
@@ -46,7 +46,6 @@ int get_size(void* sp){
 int* return_solution(void* sp){
     auto* pb = static_cast<FourVoiceTexture*>(sp);
     int* sol = pb->return_solution();
-    write_to_log_file(pb->to_string().c_str());
     return sol;
 }
 

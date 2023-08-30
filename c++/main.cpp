@@ -12,10 +12,7 @@ int main(int argc, char* argv[]) {
     int size = 3;
     Tonality* tonality = new MajorTonality(C);
 
-    /// date and time for logs
-    std::time_t currentTime = std::time(nullptr); // Get the current time
-    std::string timeString = std::asctime(std::localtime(&currentTime)); // Convert to string
-    write_to_log_file(timeString.c_str());
+    write_to_log_file(time().c_str());
 
     /// create a new problem
 //  auto *p = new FourVoiceTexture(size, tonality, {FIRST_DEGREE, FOURTH_DEGREE, SEVENTH_DEGREE,

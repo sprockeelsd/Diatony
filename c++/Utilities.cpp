@@ -160,6 +160,17 @@ void print_note_for_OM(IntVar var){
 }
 
 /**
+ * returns a string with the time
+ * @return a string with the time
+ */
+string time(){
+    /// date and time for logs
+    std::time_t currentTime = std::time(nullptr); // Get the current time
+    std::string timeString = std::asctime(std::localtime(&currentTime)); // Convert to string
+    return "\n" + timeString;
+}
+
+/**
  * Write a text into a log file
  * Useful for debugging in the OM environment
  * @param message the text to write

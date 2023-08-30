@@ -1,8 +1,11 @@
-Wed Aug 30 20:46:51 2023
+
+Wed Aug 30 21:05:18 2023
 
 New problem created. Parameters are: 
-size: 3
-tonality: C Major
+number of chords: 3
+tonality: B Major
+
+Solver type: BAB
 
 Searching for the optimal solution based on preferences:
 
@@ -18,8 +21,8 @@ chord degrees = {0}
 chord states = {0}
 --------------------variables---------------------
 BassTenorHarmonicIntervals = {4, 4, 4}
-TenorAltoHarmonicIntervals = {3, 3, 3}
-AltoSopranoHarmonicIntervals = {5, 5, 5}
+TenorAltoHarmonicIntervals = {8, 8, 8}
+AltoSopranoHarmonicIntervals = {7, 7, 7}
 
 BassMelodicIntervals = {0, 0}
 TenorMelodicIntervals = {0, 0}
@@ -33,7 +36,7 @@ absoluteSopranoMelodicIntervals = {0, 0}
 
 🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵
 
-FullChordsVoicing = {48, 52, 55, 60, 48, 52, 55, 60, 48, 52, 55, 60}
+FullChordsVoicing = {47, 51, 59, 66, 47, 51, 59, 66, 47, 51, 59, 66}
 
 🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵
 

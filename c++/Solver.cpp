@@ -18,10 +18,14 @@ Search::Base<FourVoiceTexture>* make_solver(FourVoiceTexture* pb, int type){
 
     Gecode::Search::Options opts;
 
-    if (type == BAB_SOLVER)
+    if (type == BAB_SOLVER){
+        write_to_log_file("Solver type: BAB\n");
         return new BAB<FourVoiceTexture>(pb, opts);
-    else
+    }
+    else{
+        write_to_log_file("Solver type: DFS\n");
         return new DFS<FourVoiceTexture>(pb, opts);
+    }
 }
 
 /**
@@ -43,7 +47,7 @@ FourVoiceTexture* get_next_solution_space(Search::Base<FourVoiceTexture>* solver
  */
 const FourVoiceTexture* find_best_solution(FourVoiceTexture *pb){
     // create a new search engine
-    auto* solver = new BAB<FourVoiceTexture>(pb);
+    auto* solver = make_solver(pb, BAB_SOLVER);
 
     write_to_log_file("Searching for the optimal solution based on preferences:\n");
 
@@ -65,7 +69,7 @@ const FourVoiceTexture* find_best_solution(FourVoiceTexture *pb){
 vector<const FourVoiceTexture*> find_all_solutions(FourVoiceTexture *pb, int solverType, int maxNOfSols){
     vector<const FourVoiceTexture*> sols;
     // create the search engine
-    Search::Base<FourVoiceTexture>* solver = make_solver(pb, solverType);
+    auto* solver = make_solver(pb, solverType);
     write_to_log_file("\n Searching for all solutions to the problem with the given solver type:");
 
     int nbSol = 0;

@@ -1,5 +1,3 @@
-#include <utility>
-
 #include "headers/FourVoiceTexture.hpp"
 
 /***********************************************************************************************************************
@@ -60,7 +58,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
 
     /// print parameters to log file
     string message = "New problem created. Parameters are: \n";
-    message += "size: " + std::to_string(size) + "\n";
+    message += "number of chords: " + std::to_string(size) + "\n";
     message += "tonality: " + midi_to_letter(tonality->get_tonic()) + " " + mode_int_to_name(tonality->get_mode()) + "\n";
     write_to_log_file(message.c_str());
     //@todo add the chord degrees and inversions as well

@@ -226,6 +226,12 @@ string mode_int_to_name(int mode);
 void print_note_for_OM(IntVar var);
 
 /**
+ * returns a string with the time
+ * @return a string with the time
+ */
+string time();
+
+/**
  * Write a text into a log file
  * @param message the text to write
  */
