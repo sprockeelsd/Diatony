@@ -60,6 +60,21 @@ void* create_solver(void* sp, int type){
 }
 
 /**
+ * returns the best solution space, it should be bound. If not, it will return NULL.
+ * @param solver a void* pointer to a BAB<FourVoiceTexture> for the search engine of the problem
+ * @return a void* cast of a FourVoiceTexture* pointer
+ */
+void* return_best_solution_space(void* solver){
+    FourVoiceTexture *bestSol; // keep a pointer to the best solution
+    while(FourVoiceTexture *sol = get_next_solution_space(static_cast<BAB<FourVoiceTexture>*>(solver))){
+        bestSol = sol;
+    }
+    std::cout << "Best solution found: \n\n" << bestSol->to_string() << std::endl;
+    write_to_log_file(bestSol->to_string().c_str());
+    return (void*) bestSol;
+}
+
+/**
  * returns the next solution space, it should be bound. If not, it will return NULL.
  * @param solver a void* pointer to a Base<FourVoiceTexture>* pointer for the search engine of the problem
  * @return a void* cast of a FourVoiceTexture* pointer

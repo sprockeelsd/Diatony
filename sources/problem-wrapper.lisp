@@ -1,6 +1,6 @@
 (cl:defpackage "gilf"
   (:nicknames "GILF")
-   (:use common-lisp :cl-user :cl :cffi))
+  (:use common-lisp :cl-user :cl :cffi))
 
 (in-package :gilf)
 
@@ -36,11 +36,6 @@
         (x (cffi::foreign-alloc :int :initial-contents chord-degrees))
         (y (cffi::foreign-alloc :int :initial-contents chord-states))
         )
-        (print x)
-        (print y)
-        (print chord-degrees)
-        (print chord-states)
-        (print (length chord-degrees))
         (new-problem (length chord-degrees) key mode x y)
     )
 )
@@ -74,6 +69,11 @@
     (solver :pointer) ; a void* cast of a Base<Problem>* pointer
 )
 
+(cffi::defcfun ("return_best_solution_space" return-best-solution-space) :pointer
+    "Returns a pointer to the best solution of the problem. Returns a void* cast of a Problem*. Must take a BAB solver as argument"
+    (solver :pointer) ; a void* cast of a BAB<Problem>* pointer
+)
+
 ;;;;;;;;;;;;;;;;;;;;;;;
 ;; Solution handling ;;
 ;;;;;;;;;;;;;;;;;;;;;;;
@@ -86,10 +86,10 @@
 (defun solution-to-int-array (sp)
     "Returns the values the variables have taken in the solution as a list of integers. Casts a int* into a list of numbers."
     "sp is a void* cast of a Problem* that is a solution to the problem. Calling this funciton on a non-solution 
-        will result in an error."
-        (if (cffi::null-pointer-p sp) ; TODO check
-            (error "No (more) solutions.")
-        )
+    will result in an error."
+    (if (cffi::null-pointer-p sp) ; TODO check
+        (error "No (more) solutions.")
+    )
     (let* (
             (size (get-size sp))
             (ptr (return-solution sp))

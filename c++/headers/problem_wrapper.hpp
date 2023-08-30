@@ -45,6 +45,13 @@ int* return_solution(void* sp);
 void* create_solver(void* sp, int type);
 
 /**
+ * returns the best solution space, it should be bound. If not, it will return NULL.
+ * @param solver a void* pointer to a BAB<FourVoiceTexture> for the search engine of the problem
+ * @return a void* cast of a FourVoiceTexture* pointer
+ */
+void* return_best_solution_space(void* solver);
+
+/**
  * returns the next solution space, it should be bound. If not, it will return NULL.
  * @param solver a void* pointer to a Base<FourVoiceTexture>* pointer for the search engine of the problem
  * @return a void* cast of a FourVoiceTexture* pointer
