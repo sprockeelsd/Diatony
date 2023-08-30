@@ -1,5 +1,5 @@
-#ifndef MYPROJECT_SOLUTIONFINDERS_HPP
-#define MYPROJECT_SOLUTIONFINDERS_HPP
+#ifndef MYPROJECT_SOLVER_HPP
+#define MYPROJECT_SOLVER_HPP
 
 #include "FourVoiceTexture.hpp"
 #include "Utilities.hpp"

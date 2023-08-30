@@ -1,0 +1,52 @@
+Wed Aug 30 20:46:51 2023
+
+New problem created. Parameters are: 
+size: 3
+tonality: C Major
+
+Searching for the optimal solution based on preferences:
+
+************************************************************************
+*                                                                      *
+*                                Solution                              *
+*                                                                      *
+************************************************************************
+
+--------------------parameters--------------------
+size = 3
+chord degrees = {0}
+chord states = {0}
+--------------------variables---------------------
+BassTenorHarmonicIntervals = {4, 4, 4}
+TenorAltoHarmonicIntervals = {3, 3, 3}
+AltoSopranoHarmonicIntervals = {5, 5, 5}
+
+BassMelodicIntervals = {0, 0}
+TenorMelodicIntervals = {0, 0}
+AltoMelodicIntervals = {0, 0}
+SopranoMelodicIntervals = {0, 0}
+
+absoluteBassMelodicIntervals = {0, 0}
+absoluteTenorMelodicIntervals = {0, 0}
+absoluteAltoMelodicIntervals = {0, 0}
+absoluteSopranoMelodicIntervals = {0, 0}
+
+🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵
+
+FullChordsVoicing = {48, 52, 55, 60, 48, 52, 55, 60, 48, 52, 55, 60}
+
+🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵
+
+----------cost-related auxiliary arrays----------
+nDifferentValuesInDiminishedChord = {0, 0, 0}
+nDifferentValuesInAllChords = {4, 4, 4}
+nOccurrencesBassInFundamentalState = {2, 2, 2}
+
+-----------------cost variables------------------
+nOfDiminishedChordsWith4notes = 0
+nOfChordsWithLessThan4notes = 0
+nOfFundamentalStateChordsWithoutDoubledBass = 0
+sumOfMelodicIntervals = 0
+
+
+

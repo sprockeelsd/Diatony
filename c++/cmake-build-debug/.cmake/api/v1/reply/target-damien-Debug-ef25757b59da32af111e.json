@@ -249,7 +249,7 @@
 		},
 		{
 			"backtrace" : 1,
-			"path" : "SolutionFinders.hpp",
+			"path" : "headers/SolutionFinders.hpp",
 			"sourceGroupIndex" : 0
 		},
 		{

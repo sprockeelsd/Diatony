@@ -69,7 +69,9 @@ vector<int> get_all_given_note(int note)
 string int_vector_to_string(vector<int> vector){
     string s = "{";
     for (int i = 0; i < vector.size(); ++i) {
-        s += to_string(vector[i]) + " ";
+        s += to_string(vector[i]);
+        if(i != vector.size() - 1)
+            s += ", ";
     }
     return s + "}";
 }
@@ -133,11 +135,20 @@ string intVarArray_to_string(IntVarArray vars){
 
 
 /**
- * Prints A note with its name (e.g. 60 = C)
- * @param var an integer variable
+ * Returns the name of a note based on its MIDI value
+ * @param note an integer
  */
-void print_note_in_letter(IntVar var){
-    std::cout << noteNames[var.val() % PERFECT_OCTAVE] << var.val() / PERFECT_OCTAVE << " ";
+string midi_to_letter(int note){
+    return noteNames[note % PERFECT_OCTAVE];
+}
+
+/**
+ * Returns the name of a mode based on its integer value
+ * @param mode an integer
+ * @return a string representing the name of the mode
+ */
+string mode_int_to_name(int mode){
+    return modeNames[mode];
 }
 
 /**
@@ -154,17 +165,14 @@ void print_note_for_OM(IntVar var){
  * @param message the text to write
  */
 void write_to_log_file(const char* message){
-    std::time_t currentTime = std::time(nullptr); // Get the current time
-    std::string timeString = std::asctime(std::localtime(&currentTime)); // Convert to string
-
     const char* homeDir = std::getenv("HOME"); // Get the user's home directory
     if (homeDir) {
         std::string filePath(homeDir);
-        filePath += "/Users/sprockeelsd/Documents/Libraries/log.txt"; // Specify the desired file path, such as $HOME/log.txt
+        filePath += "/Documents/Libraries/MusicConstraints/c++/log.txt"; // Specify the desired file path, such as $HOME/log.txt
 
         std::ofstream myfile(filePath, std::ios::app); // append mode
         if (myfile.is_open()) {
-            myfile <<timeString<< endl << message << endl;
+            myfile << message << endl;
             myfile.close();
         }
     }

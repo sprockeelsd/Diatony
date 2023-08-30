@@ -58,6 +58,13 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     nOfChordsWithLessThan4notes = IntVar(*this, 0, size);
     nOfFundamentalStateChordsWithoutDoubledBass = IntVar(*this, 0, size);
 
+    /// print parameters to log file
+    string message = "New problem created. Parameters are: \n";
+    message += "size: " + std::to_string(size) + "\n";
+    message += "tonality: " + midi_to_letter(tonality->get_tonic()) + " " + mode_int_to_name(tonality->get_mode()) + "\n";
+    write_to_log_file(message.c_str());
+    //@todo add the chord degrees and inversions as well
+
     /**-----------------------------------------------------------------------------------------------------------------
     |                                                                                                                  |
     |                                              generic constraints                                                 |
@@ -329,11 +336,11 @@ void FourVoiceTexture::print_solution(){
  */
 string FourVoiceTexture::to_string(){
     string message;
-    message += "**************************************************************\n";
-    message += "*                                                            *\n";
-    message += "*                           Solution                         *\n";
-    message += "*                                                            *\n";
-    message += "**************************************************************\n\n";
+    message += "************************************************************************\n";
+    message += "*                                                                      *\n";
+    message += "*                                Solution                              *\n";
+    message += "*                                                                      *\n";
+    message += "************************************************************************\n\n";
     message += "--------------------parameters--------------------\n";
     message += "size = " + std::to_string(size) + "\n";
     message += "chord degrees = " + int_vector_to_string(chordDegrees) + "\n";
@@ -374,36 +381,4 @@ string FourVoiceTexture::to_string(){
     message += "sumOfMelodicIntervals = " + intVar_to_string(sumOfMelodicIntervals) + "\n\n";
     message += "\n";
     return message;
-}
-
-/***********************************************************************************************************************
- *                                                Search engine methods                                                *
- ***********************************************************************************************************************/
-
-/**
- * Creates a search engine for the given problem
- * @param pb an instance of the FourVoiceTexture class representing a given problem
- * @param type the type of search engine to create (see enumeration in headers/gecode_problem.hpp)
- * @return a search engine for the given problem
- */
-Search::Base<FourVoiceTexture>* make_solver(FourVoiceTexture* pb, int type){
-
-    Gecode::Search::Options opts;
-
-    if (type == BAB_SOLVER)
-        return new BAB<FourVoiceTexture>(pb, opts);
-    else // default case
-        return new DFS<FourVoiceTexture>(pb, opts);
-}
-
-/**
- * Returns the next solution space for the problem
- * @param solver a solver for the problem
- * @return an instance of the FourVoiceTexture class representing the next solution to the problem
- */
-FourVoiceTexture* get_next_solution_space(Search::Base<FourVoiceTexture>* solver){
-    FourVoiceTexture* sol_space = solver->next();
-    if (sol_space == nullptr) // handle the case of no solution or time out, necessary when sending the data to OM
-        return nullptr;
-    return sol_space;
 }

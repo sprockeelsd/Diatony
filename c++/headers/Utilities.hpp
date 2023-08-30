@@ -25,8 +25,6 @@ enum solver_types{
     LDS_SOLVER  //2
 };
 
-const vector<std::string> noteNames = {"C", "C#", "D", "Eb", "E", "F", "F#", "G", "Ab", "A", "Bb", "B"}; // @todo turn into a bi-directional map
-
 /** Notes */
 const int B_SHARP = 0;
 const int C = 0;
@@ -49,6 +47,9 @@ const int A_SHARP = 10;
 const int B_FLAT = 10;
 const int B = 11;
 const int C_FLAT = 11;
+
+const vector<std::string> noteNames = {"C", "C#", "D", "Eb", "E", "F", "F#", "G", "Ab", "A", "Bb", "B"}; // @todo turn into a bi-directional map
+
 
 enum voices{
     BASS,       //0
@@ -120,6 +121,8 @@ enum Mode {
     AEOLIAN,    //5 , natural minor mode
     LOCRIAN     //6
 };
+
+const vector<std::string> modeNames = {"Major", "Dorian", "Phrygian", "Lydian", "Mixolydian", "Minor", "Locrian"}; // @todo turn into a bi-directional map
 
 /** Scales */
 /// defined by the intervals between their notes
@@ -204,10 +207,17 @@ string intVar_to_string(IntVar var);
 string intVarArray_to_string(IntVarArray vars);
 
 /**
- * Prints A note with its name (e.g. 60 = C)
- * @param var an integer variable
+ * Returns the name of a note based on its MIDI value
+ * @param note an integer
  */
-void print_note_in_letter(IntVar var);
+string midi_to_letter(int note);
+
+/**
+ * Returns the name of a mode based on its integer value
+ * @param mode an integer
+ * @return a string representing the name of the mode
+ */
+string mode_int_to_name(int mode);
 
 /**
  * Prints a node in MIDIcent value
