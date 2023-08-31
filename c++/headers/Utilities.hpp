@@ -50,7 +50,6 @@ const int C_FLAT = 11;
 
 const vector<std::string> noteNames = {"C", "C#", "D", "Eb", "E", "F", "F#", "G", "Ab", "A", "Bb", "B"}; // @todo turn into a bi-directional map
 
-
 enum voices{
     BASS,       //0
     TENOR,      //1
@@ -67,6 +66,9 @@ enum degrees{
     SIXTH_DEGREE,       //5
     SEVENTH_DEGREE      //6
 };
+
+const vector<std::string> degreeNames = {"First degree", "Second degree", "Third degree", "Fourth degree", "Fifth degree",
+                                         "Sixth degree", "Seventh degree"};
 
 /** Intervals */
 // "classic" intervals
@@ -107,6 +109,8 @@ enum chordStates{
     THIRD_INVERSION     //3
 };
 
+const vector<std::string> stateNames = {"Fundamental state", "First inversion", "Second inversion", "Third inversion"};
+
 /** Modes */
 // syntactic sugar for more commonly used modes
 const int MAJOR_MODE = 0;
@@ -122,7 +126,7 @@ enum Mode {
     LOCRIAN     //6
 };
 
-const vector<std::string> modeNames = {"Major", "Dorian", "Phrygian", "Lydian", "Mixolydian", "Minor", "Locrian"}; // @todo turn into a bi-directional map
+const vector<std::string> modeNames = {"Major", "Dorian", "Phrygian", "Lydian", "Mixolydian", "Minor", "Locrian"};
 
 /** Scales */
 /// defined by the intervals between their notes
@@ -171,19 +175,21 @@ vector<int> get_all_notes_from_chord(int root, vector<int> quality);
 vector<int> get_all_given_note(int note);
 
 /**
- * Transforms a vector of integers into a string
- * @param vector a vector of integers
- * @return string the string representation of the vector
- */
-string int_vector_to_string(vector<int> vector);
-
-/**
  * Transforms an int* into a vector<int>
  * @param ptr an int* pointer
  * @param size the size of the array
  * @return a vector<int> containing the same values as the array
  */
 vector<int> int_pointer_to_vector(int* ptr, int size);
+
+
+
+/**
+ * Transforms a vector of integers into a string
+ * @param vector a vector of integers
+ * @return string the string representation of the vector
+ */
+string int_vector_to_string(vector<int> vector);
 
 /**
  * Prints the Search::Statistics object into a readable format
@@ -218,12 +224,6 @@ string midi_to_letter(int note);
  * @return a string representing the name of the mode
  */
 string mode_int_to_name(int mode);
-
-/**
- * Prints a node in MIDIcent value
- * @param var an integer variable
- */
-void print_note_for_OM(IntVar var);
 
 /**
  * returns a string with the time

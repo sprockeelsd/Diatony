@@ -9,19 +9,20 @@ using namespace Gecode;
 using namespace std;
 
 int main(int argc, char* argv[]) {
-    int size = 3;
     Tonality* tonality = new MajorTonality(C);
 
     write_to_log_file(time().c_str());
+    vector<int> chords = {FIRST_DEGREE, FOURTH_DEGREE, SEVENTH_DEGREE,
+                          THIRD_DEGREE, SIXTH_DEGREE, SECOND_DEGREE, FIFTH_DEGREE,
+                          FIRST_DEGREE, FIRST_DEGREE};
+
+    vector<int> states = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FIRST_INVERSION, FUNDAMENTAL_STATE,
+                          FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, SECOND_INVERSION,
+                          FUNDAMENTAL_STATE};
+    int size = chords.size();
 
     /// create a new problem
-//  auto *p = new FourVoiceTexture(size, tonality, {FIRST_DEGREE, FOURTH_DEGREE, SEVENTH_DEGREE,
-//                                                                THIRD_DEGREE, SIXTH_DEGREE, SECOND_DEGREE, FIFTH_DEGREE,
-//                                                                FIRST_DEGREE},
-//                                               {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE,
-//                                                FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE});
-    auto *pb = new FourVoiceTexture(size, tonality, {FIRST_DEGREE},
-                                               {FUNDAMENTAL_STATE});
+  auto *pb = new FourVoiceTexture(size, tonality, chords, states);
 
     /// find the solution that minimizes the costs (maximize the preference satisfaction)
     find_best_solution(pb);

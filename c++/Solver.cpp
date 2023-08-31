@@ -16,7 +16,7 @@
  */
 Search::Base<FourVoiceTexture>* make_solver(FourVoiceTexture* pb, int type){
 
-    Gecode::Search::Options opts;
+    Gecode::Search::Options opts; //@todo add options when necessary
 
     if (type == BAB_SOLVER){
         write_to_log_file("Solver type: BAB\n");

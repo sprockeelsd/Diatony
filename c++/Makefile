@@ -22,6 +22,7 @@ dylib: problem_wrapper.cpp
 
 #run the main.cpp file on macOS
 run_mac_os:
+	clear
 	g++ -std=c++11 -F/Library/Frameworks -framework gecode -o Main $(PROBLEM_FILES) Main.cpp
 	./Main
 	cat log.txt

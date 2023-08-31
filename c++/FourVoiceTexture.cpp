@@ -57,10 +57,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     nOfFundamentalStateChordsWithoutDoubledBass = IntVar(*this, 0, size);
 
     /// print parameters to log file
-    string message = "New problem created. Parameters are: \n";
-    message += "number of chords: " + std::to_string(size) + "\n";
-    message += "tonality: " + midi_to_letter(tonality->get_tonic()) + " " + mode_int_to_name(tonality->get_mode()) + "\n";
-    write_to_log_file(message.c_str());
+    write_to_log_file(parameters().c_str());
     //@todo add the chord degrees and inversions as well
 
     /**-----------------------------------------------------------------------------------------------------------------
@@ -326,6 +323,24 @@ void FourVoiceTexture::print_solution(){
 }
 
 /**
+     * returns the parameters in a string
+     * @return a string containing the parameters of the problem
+     */
+string FourVoiceTexture::parameters(){
+    string message = "-----------------------------------------parameters-----------------------------------------\n";
+    message += "Number of chords: " + std::to_string(size) + "\n";
+    message += "Tonality: " + midi_to_letter(tonality->get_tonic()) + " " + mode_int_to_name(tonality->get_mode()) + "\n";
+    message += "Chords: \n";
+    for(int i = 0; i < size; i++){
+        message += degreeNames[chordDegrees[i]] + " in " +
+                   stateNames[chordStates[i]];
+        if(i != size - 1)
+            message += ",\n";
+    }
+    return message + ".\n";
+}
+
+/**
  * toString method
  * @todo make a toString method for IntVarArrays so the code here is cleaner
  * @return a string representation of the current instance of the FourVoiceTexture class.
@@ -334,17 +349,14 @@ void FourVoiceTexture::print_solution(){
  */
 string FourVoiceTexture::to_string(){
     string message;
-    message += "************************************************************************\n";
-    message += "*                                                                      *\n";
-    message += "*                                Solution                              *\n";
-    message += "*                                                                      *\n";
-    message += "************************************************************************\n\n";
-    message += "--------------------parameters--------------------\n";
-    message += "size = " + std::to_string(size) + "\n";
-    message += "chord degrees = " + int_vector_to_string(chordDegrees) + "\n";
-    message += "chord states = " + int_vector_to_string(chordStates) + "\n";
+    message += "********************************************************************************************\n";
+    message += "*                                                                                          *\n";
+    message += "*                                          Solution                                        *\n";
+    message += "*                                                                                          *\n";
+    message += "********************************************************************************************\n\n";
+    message += parameters();
 
-    message += "--------------------variables---------------------\n";
+    message += "\n-----------------------------------------variables------------------------------------------\n";
 
     message += "BassTenorHarmonicIntervals = " + intVarArray_to_string(bassTenorHarmonicIntervals) + "\n";
     message += "TenorAltoHarmonicIntervals = " + intVarArray_to_string(tenorAltoHarmonicIntervals) + "\n";
@@ -360,23 +372,22 @@ string FourVoiceTexture::to_string(){
     message += "absoluteAltoMelodicIntervals = " + intVarArray_to_string(absoluteAltoMelodicIntervals) + "\n";
     message += "absoluteSopranoMelodicIntervals = " + intVarArray_to_string(absoluteSopranoMelodicIntervals) + "\n\n";
 
-    message += "🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵\n\n";
+    message += "🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵\n\n";
     message += "FullChordsVoicing = " + intVarArray_to_string(FullChordsVoicing) + "\n\n";
-    message += "🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵\n\n";
+    message += "🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵\n\n";
 
-    message += "----------cost-related auxiliary arrays----------\n";
+    message += "-------------------------------cost-related auxiliary arrays------------------------------\n";
 
     message += "nDifferentValuesInDiminishedChord = " + intVarArray_to_string(nDifferentValuesInDiminishedChord) + "\n";
     message += "nDifferentValuesInAllChords = " + intVarArray_to_string(nDifferentValuesAllChords) + "\n";
     message += "nOccurrencesBassInFundamentalState = " + intVarArray_to_string(nOccurrencesBassInFundamentalState) + "\n\n";
 
-    message += "-----------------cost variables------------------\n";
+    message += "------------------------------------cost variables----------------------------------------\n";
 
     message += "nOfDiminishedChordsWith4notes = " + intVar_to_string(nOfDiminishedChordsWith4notes) + "\n";
     message += "nOfChordsWithLessThan4notes = " + intVar_to_string(nOfChordsWithLessThan4notes) + "\n";
     message += "nOfFundamentalStateChordsWithoutDoubledBass = " +
             intVar_to_string(nOfFundamentalStateChordsWithoutDoubledBass) + "\n";
     message += "sumOfMelodicIntervals = " + intVar_to_string(sumOfMelodicIntervals) + "\n\n";
-    message += "\n";
     return message;
 }

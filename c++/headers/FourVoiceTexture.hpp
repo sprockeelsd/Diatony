@@ -122,6 +122,12 @@ public:
     void print_solution();
 
     /**
+     * returns the parameters in a string
+     * @return a string containing the parameters of the problem
+     */
+    string parameters();
+
+    /**
      * toString method
      * @return a string representation of the current instance of the FourVoiceTexture class.
      * Right now, it returns a string "FourVoiceTexture object. size = <size>"
