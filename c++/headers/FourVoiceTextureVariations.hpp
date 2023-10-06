@@ -1,0 +1,14 @@
+//
+// Created by Damien Sprockeels on 03/10/2023.
+//
+
+#ifndef MYPROJECT_FOURVOICETEXTUREVARIATIONS_HPP
+#define MYPROJECT_FOURVOICETEXTUREVARIATIONS_HPP
+
+
+class FourVoiceTextureVariations {
+
+};
+
+
+#endif //MYPROJECT_FOURVOICETEXTUREVARIATIONS_HPP
