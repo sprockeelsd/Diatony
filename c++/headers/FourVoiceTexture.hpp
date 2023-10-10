@@ -39,6 +39,7 @@ protected:
     Tonality *tonality;         // The tonality of the piece
     vector<int> chordDegrees;   // The degrees of the chord of the chord progression
     vector<int> chordStates;    // The states of the chord of the chord progression (fundamental, 1st inversion,...)
+    int minCost;                // The minimum cost of the solutions we want to find
 
     /// variable arrays for melodic intervals for each voice (not absolute value)
     IntVarArray bassMelodicIntervals;
@@ -61,18 +62,20 @@ protected:
     IntVarArray altoSopranoHarmonicIntervals;
 
     ///global array for all the notes for all voices
-    IntVarArray FullChordsVoicing; // [bass0, alto0, tenor0, soprano0, bass1, alto1, tenor1, soprano1, ...]
+    IntVarArray FullChordsVoicing;                      // [bass0, alto0, tenor0, soprano0, bass1, alto1, tenor1, soprano1, ...]
 
     /// cost variables auxiliary arrays
-    IntVarArray nDifferentValuesInDiminishedChord; // number of different note values in each chord
+    IntVarArray nDifferentValuesInDiminishedChord;      // number of different note values in each chord
     IntVarArray nDifferentValuesAllChords;
-    IntVarArray nOccurrencesBassInFundamentalState; // number of chords that don't double the bass in fundamental state
+    IntVarArray nOccurrencesBassInFundamentalState;     // number of chords that don't double the bass in fundamental state
+    IntVarArray CommonNotesInSoprano;             // chords with common notes in outside voices
 
     /// cost variables
     IntVar sumOfMelodicIntervals;                       // for minimizing voice movement between voices
     IntVar nOfDiminishedChordsWith4notes;               // number of diminished chords that don't respect the preferences
     IntVar nOfChordsWithLessThan4notes;                 // number of chords with less than 4 notes
     IntVar nOfFundamentalStateChordsWithoutDoubledBass; // number of fundamental state chords that don't follow the preferences
+    IntVar nOfCommonNotesInSoprano;               // number of common notes in outside voices
 
 public:
     /**

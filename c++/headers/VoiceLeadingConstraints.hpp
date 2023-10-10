@@ -74,7 +74,8 @@ void forbid_parallel_interval(Home home, int nVoices, int forbiddenParallelInter
  * @param fullChordsVoicing the array containing all the notes of the chords in the progression
  */
 void keep_common_notes_in_same_voice(const Home &home, int currentPosition, vector<int> chordDegrees, Tonality *tonality,
-                                     IntVarArray fullChordsVoicing);
+                                     IntVarArray fullChordsVoicing, IntVarArray CommonNotesInSoprano,
+                                     IntVar nOfCommonNotesInSoprano);
 
 /**
  * Adds the constraint that Soprano, Alto and Tenor must move in contrary motion to the bass

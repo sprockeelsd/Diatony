@@ -18,8 +18,10 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/headers)
 # Create the dynamic library and link to the Gecode library
 set(MY_HEADERS headers/problem_wrapper.hpp headers/FourVoiceTexture.hpp FourVoiceTexture.cpp main.cpp Tonality.cpp headers/Tonality.hpp Utilities.cpp headers/Utilities.hpp MajorTonality.cpp headers/MajorTonality.hpp testTonality.cpp GeneralConstraints.cpp headers/GeneralConstraints.hpp MinorTonality.cpp headers/MinorTonality.hpp HarmonicConstraints.cpp headers/HarmonicConstraints.hpp VoiceLeadingConstraints.cpp headers/VoiceLeadingConstraints.hpp
         Solver.cpp
-        headers/Solver.hpp)
+        headers/Solver.hpp
+        FourVoiceTextureVariations.cpp)
 add_library(damien ${MY_HEADERS} problem_wrapper.cpp main.cpp Tonality.cpp headers/Tonality.hpp Utilities.cpp headers/Utilities.hpp MajorTonality.cpp headers/MajorTonality.hpp testTonality.cpp GeneralConstraints.cpp headers/GeneralConstraints.hpp MinorTonality.cpp headers/MinorTonality.hpp HarmonicConstraints.cpp headers/HarmonicConstraints.hpp VoiceLeadingConstraints.cpp headers/VoiceLeadingConstraints.hpp
         Solver.cpp
-        headers/Solver.hpp)
+        headers/Solver.hpp
+        FourVoiceTextureVariations.cpp)
 target_link_libraries(damien ${GECODE_LIBRARY})

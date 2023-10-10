@@ -49,16 +49,17 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     nDifferentValuesInDiminishedChord = IntVarArray(*this, size, 0, nOfVoices);
     nDifferentValuesAllChords = IntVarArray(*this, size, 0, nOfVoices);
     nOccurrencesBassInFundamentalState = IntVarArray(*this, size, 0, nOfVoices);
+    CommonNotesInSoprano = IntVarArray(*this, size, 0, 1); // 1 because if it is at the bass we can't prevent it, so it only counts for the soprano
 
     /// cost variables
     sumOfMelodicIntervals = IntVar(*this, 0, PERFECT_OCTAVE * nOfVoices * (size - 1));
     nOfDiminishedChordsWith4notes = IntVar(*this, 0, size);
     nOfChordsWithLessThan4notes = IntVar(*this, 0, size);
     nOfFundamentalStateChordsWithoutDoubledBass = IntVar(*this, 0, size);
+    nOfCommonNotesInSoprano = IntVar(*this, 0, size);
 
     /// print parameters to log file
     write_to_log_file(parameters().c_str());
-    //@todo add the chord degrees and inversions as well
 
     /**-----------------------------------------------------------------------------------------------------------------
     |                                                                                                                  |
@@ -208,7 +209,8 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
                 /// Otherwise, keep common notes in the same voice @todo override this when the chords are the same degree
                 // @todo maybe this doesn't need to be in an else statement and can be applied all the time
 
-                keep_common_notes_in_same_voice(*this, i, chordDegrees, tonality, FullChordsVoicing);
+                keep_common_notes_in_same_voice(*this, i, chordDegrees, tonality, FullChordsVoicing,
+                                                CommonNotesInSoprano, nOfCommonNotesInSoprano);
             }
 
             /// move voices as closely as possible (implemented with costs)
@@ -268,11 +270,13 @@ FourVoiceTexture::FourVoiceTexture(FourVoiceTexture& s): IntLexMinimizeSpace(s){
     nDifferentValuesInDiminishedChord.update(*this, s.nDifferentValuesInDiminishedChord);
     nDifferentValuesAllChords.update(*this, s.nDifferentValuesAllChords);
     nOccurrencesBassInFundamentalState.update(*this, s.nOccurrencesBassInFundamentalState);
+    CommonNotesInSoprano.update(*this, s.CommonNotesInSoprano);
 
     sumOfMelodicIntervals.update(*this, s.sumOfMelodicIntervals);
     nOfDiminishedChordsWith4notes.update(*this, s.nOfDiminishedChordsWith4notes);
     nOfChordsWithLessThan4notes.update(*this, s.nOfChordsWithLessThan4notes);
     nOfFundamentalStateChordsWithoutDoubledBass.update(*this, s.nOfFundamentalStateChordsWithoutDoubledBass);
+    nOfCommonNotesInSoprano.update(*this, s.nOfCommonNotesInSoprano);
 }
 
 /**
@@ -381,6 +385,7 @@ string FourVoiceTexture::to_string(){
     message += "nDifferentValuesInDiminishedChord = " + intVarArray_to_string(nDifferentValuesInDiminishedChord) + "\n";
     message += "nDifferentValuesInAllChords = " + intVarArray_to_string(nDifferentValuesAllChords) + "\n";
     message += "nOccurrencesBassInFundamentalState = " + intVarArray_to_string(nOccurrencesBassInFundamentalState) + "\n\n";
+    message += "nCommonNotesInSoprano = " + intVarArray_to_string(CommonNotesInSoprano) + "\n\n";
 
     message += "------------------------------------cost variables----------------------------------------\n";
 
@@ -389,5 +394,7 @@ string FourVoiceTexture::to_string(){
     message += "nOfFundamentalStateChordsWithoutDoubledBass = " +
             intVar_to_string(nOfFundamentalStateChordsWithoutDoubledBass) + "\n";
     message += "sumOfMelodicIntervals = " + intVar_to_string(sumOfMelodicIntervals) + "\n\n";
+    message += "nOfCommonNotesInSoprano = " + intVar_to_string(nOfCommonNotesInSoprano) + "\n\n";
+
     return message;
 }

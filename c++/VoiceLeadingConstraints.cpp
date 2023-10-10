@@ -120,8 +120,9 @@ void forbid_parallel_interval(Home home, int nVoices, int forbiddenParallelInter
  * @param fullChordsVoicing the array containing all the notes of the chords in the progression
  */
  // @todo add nVoices to the arguments
-void keep_common_notes_in_same_voice(const Home &home, int currentPosition, vector<int> chordDegrees, Tonality *tonality,
-                                     IntVarArray fullChordsVoicing) {
+ void keep_common_notes_in_same_voice(const Home &home, int currentPosition, vector<int> chordDegrees, Tonality *tonality,
+                                      IntVarArray fullChordsVoicing, IntVarArray CommonNotesInSoprano,
+                                      IntVar nOfCommonNotesInSoprano) {
     /// keep common notes in the same voice and move other voices as closely as possible (cost)
     // chord qualities
     vector<int> thisChordQuality = tonality->get_chord_qualities()[chordDegrees[currentPosition]];
@@ -147,13 +148,16 @@ void keep_common_notes_in_same_voice(const Home &home, int currentPosition, vect
     for(auto it : thisChord){ // for each note in the current chord domain
         if(nextChord.find(it) != nextChord.end()){ // if the note is in the next chord as well
             for(int i = TENOR; i <= SOPRANO; ++i){ // for all voices except the bass
-                // the note in the current chord in the voice i must be the same in the next chord, @todo make it both ways?
-                rel(home, expr(home, fullChordsVoicing[currentPosition * 4 + i] % PERFECT_OCTAVE == it),
-                    BOT_IMP,expr(home, fullChordsVoicing[(currentPosition + 1) * 4 + i] ==
+                // the note in the current chord in the voice i must be the same in the next chord
+                BoolVar thisVoiceThisChordContainsTheNote = expr(home, fullChordsVoicing[currentPosition * 4 + i] % PERFECT_OCTAVE == it);
+                BoolVar thisVoiceNextChordContainsTheNote = expr(home, fullChordsVoicing[(currentPosition + 1) * 4 + i] % PERFECT_OCTAVE == it);
+
+                rel(home, thisVoiceThisChordContainsTheNote,BOT_IMP,expr(home,fullChordsVoicing[(currentPosition + 1) * 4 + i] ==
                                fullChordsVoicing[currentPosition * 4 + i]), true);
-                rel(home, expr(home, fullChordsVoicing[(currentPosition + 1) * 4 + i] % PERFECT_OCTAVE == it),
-                    BOT_IMP, expr(home, fullChordsVoicing[currentPosition * 4 + i] ==
+                rel(home, thisVoiceNextChordContainsTheNote,BOT_IMP, expr(home, fullChordsVoicing[currentPosition * 4 + i] ==
                                 fullChordsVoicing[(currentPosition + 1) * 4 + i]), true);
+                // @todo add the constraint that if the voice is soprano and the note is in the next chord, the cost for this chord is set to 1 (use if then else constraint)
+                // @todo simplify this by assigning the expressions to BoolVar
             }
         }
     }
@@ -296,3 +300,4 @@ void tritone_resolution(const Home& home, int currentPosition, int nVoices, Tona
             BOT_IMP, expr(home, melodicIntervals[voice][currentPosition] == 1), true); /// must move up by a semitone to (the tonic)
     }
 }
+
