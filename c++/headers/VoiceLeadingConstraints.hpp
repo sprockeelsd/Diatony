@@ -73,9 +73,8 @@ void forbid_parallel_interval(Home home, int nVoices, int forbiddenParallelInter
  * @param tonality the tonality of the piece
  * @param fullChordsVoicing the array containing all the notes of the chords in the progression
  */
-void keep_common_notes_in_same_voice(const Home &home, int currentPosition, vector<int> chordDegrees, Tonality *tonality,
-                                     IntVarArray fullChordsVoicing, IntVarArray CommonNotesInSoprano,
-                                     IntVar nOfCommonNotesInSoprano);
+void keep_common_notes_in_same_voice(const Home &home, int nVoices, int currentPosition, vector<int> chordDegrees,
+                                     Tonality *tonality, IntVarArray fullChordsVoicing);
 
 /**
  * Adds the constraint that Soprano, Alto and Tenor must move in contrary motion to the bass
@@ -127,5 +126,27 @@ void tritone_resolution(const Home& home, int currentPosition, int nVoices, Tona
 void interrupted_cadence(const Home& home, int currentPosition, Tonality *tonality,
                          const IntVarArray& tenorMelodicInterval, const IntVarArray& altoMelodicInterval,
                          const IntVarArray& sopranoMelodicInterval, IntVarArray fullChordsVoicing);
+
+/***********************************************************************************************************************
+ *                                                                                                                     *
+ *                                           First inversion chord constraints                                         *
+ *                                                                                                                     *
+ ***********************************************************************************************************************/
+
+/**
+ * This function counts the number of times when a common note in the soprano voice when moving from a chord in first
+ * inversion to another chord.
+ * @param home the instance of the problem
+ * @param nChords the number of chords in the progression
+ * @param nVoices the number of voices in the piece
+ * @param commonNotesInSoprano an array containing 1 if there is a common note in the soprano voice between this chord and
+ * the next, and if the first chord is in first inversion
+ * @param nOfCommonNotesInSoprano the number of times when there is a common note in the soprano voice
+ * @param chordStates the state of the chord (fundamental, first inversion, second inversion)
+ * @param FullChordsVoicing the array containing all the notes of the chords in the progression
+ */
+void compute_cost_for_common_note_in_soprano(const Home& home, int nChords, int nVoices, IntVarArray commonNotesInSoprano,
+                                             const IntVar& nOfCommonNotesInSoprano, vector<int> chordStates,
+                                             IntVarArray FullChordsVoicing);
 
 #endif

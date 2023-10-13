@@ -8,7 +8,7 @@
  *      - forbid_parallel_interval: forbids a given parallel interval between two voices                               *
  *      - fundamental_state_chord_to_fundamental_state_chord: sets the rules for the melodic movements between chords  *
  *      in fundamental state                                                                                           *
- *      - interrupted_cadence: sets the constraint for a fifth degree followed by a sixth degree in     *
+ *      - interrupted_cadence: sets the constraint for a fifth degree followed by a sixth degree in                    *
  *      fundamental state                                                                                              *
  *                                                                                                                     *
  ***********************************************************************************************************************/
@@ -120,9 +120,8 @@ void forbid_parallel_interval(Home home, int nVoices, int forbiddenParallelInter
  * @param fullChordsVoicing the array containing all the notes of the chords in the progression
  */
  // @todo add nVoices to the arguments
- void keep_common_notes_in_same_voice(const Home &home, int currentPosition, vector<int> chordDegrees, Tonality *tonality,
-                                      IntVarArray fullChordsVoicing, IntVarArray CommonNotesInSoprano,
-                                      IntVar nOfCommonNotesInSoprano) {
+ void keep_common_notes_in_same_voice(const Home &home, int nVoices, int currentPosition, vector<int> chordDegrees,
+                                      Tonality *tonality, IntVarArray fullChordsVoicing) {
     /// keep common notes in the same voice and move other voices as closely as possible (cost)
     // chord qualities
     vector<int> thisChordQuality = tonality->get_chord_qualities()[chordDegrees[currentPosition]];
@@ -145,19 +144,18 @@ void forbid_parallel_interval(Home home, int nVoices, int forbiddenParallelInter
     }
 
     /// for each note in the current chord domain, if the note is in the next chord as well, it has to be in the same voice
+    /// but if it is in the soprano, then increase the cost
     for(auto it : thisChord){ // for each note in the current chord domain
         if(nextChord.find(it) != nextChord.end()){ // if the note is in the next chord as well
             for(int i = TENOR; i <= SOPRANO; ++i){ // for all voices except the bass
                 // the note in the current chord in the voice i must be the same in the next chord
-                BoolVar thisVoiceThisChordContainsTheNote = expr(home, fullChordsVoicing[currentPosition * 4 + i] % PERFECT_OCTAVE == it);
-                BoolVar thisVoiceNextChordContainsTheNote = expr(home, fullChordsVoicing[(currentPosition + 1) * 4 + i] % PERFECT_OCTAVE == it);
+                BoolVar thisVoiceThisChordContainsTheNote = expr(home, fullChordsVoicing[currentPosition * nVoices + i] % PERFECT_OCTAVE == it);
+                BoolVar thisVoiceNextChordContainsTheNote = expr(home, fullChordsVoicing[(currentPosition + 1) * nVoices + i] % PERFECT_OCTAVE == it);
 
-                rel(home, thisVoiceThisChordContainsTheNote,BOT_IMP,expr(home,fullChordsVoicing[(currentPosition + 1) * 4 + i] ==
-                               fullChordsVoicing[currentPosition * 4 + i]), true);
-                rel(home, thisVoiceNextChordContainsTheNote,BOT_IMP, expr(home, fullChordsVoicing[currentPosition * 4 + i] ==
-                                fullChordsVoicing[(currentPosition + 1) * 4 + i]), true);
-                // @todo add the constraint that if the voice is soprano and the note is in the next chord, the cost for this chord is set to 1 (use if then else constraint)
-                // @todo simplify this by assigning the expressions to BoolVar
+                rel(home, thisVoiceThisChordContainsTheNote,BOT_IMP,expr(home,fullChordsVoicing[(currentPosition + 1) * nVoices + i] ==
+                               fullChordsVoicing[currentPosition * nVoices + i]), true);
+                rel(home, thisVoiceNextChordContainsTheNote,BOT_IMP, expr(home, fullChordsVoicing[currentPosition * nVoices + i] ==
+                                fullChordsVoicing[(currentPosition + 1) * nVoices + i]), true);
             }
         }
     }
@@ -256,6 +254,43 @@ void interrupted_cadence(const Home& home, int currentPosition, Tonality *tonali
                 tonality->get_degree_note(SEVENTH_DEGREE)),BOT_IMP,
             expr(home, sopranoMelodicInterval[currentPosition] < 0), true);
     }
+}
+
+/***********************************************************************************************************************
+ *                                                                                                                     *
+ *                                           First inversion chord constraints                                         *
+ *                                                                                                                     *
+ ***********************************************************************************************************************/
+
+/**
+ * This function counts the number of times when a common note in the soprano voice when moving from a chord in first
+ * inversion to another chord.
+ * @param home the instance of the problem
+ * @param nChords the number of chords in the progression
+ * @param nVoices the number of voices in the piece
+ * @param commonNotesInSoprano an array containing 1 if there is a common note in the soprano voice between this chord and
+ * the next, and if the first chord is in first inversion
+ * @param nOfCommonNotesInSoprano the number of times when there is a common note in the soprano voice
+ * @param chordStates the state of the chord (fundamental, first inversion, second inversion)
+ * @param FullChordsVoicing the array containing all the notes of the chords in the progression
+ */
+void compute_cost_for_common_note_in_soprano(const Home& home, int nChords, int nVoices, IntVarArray commonNotesInSoprano,
+                                             const IntVar& nOfCommonNotesInSoprano, vector<int> chordStates, IntVarArray FullChordsVoicing){
+    for(int chord = 0; chord < nChords - 1; chord++){
+        if (chordStates[chord] == FIRST_INVERSION){
+            rel(home, expr(home, FullChordsVoicing[nVoices * chord + SOPRANO] ==
+                                 FullChordsVoicing[nVoices * (chord + 1) + SOPRANO]), BOT_IMP,
+                expr(home, commonNotesInSoprano[chord] == 1), true);
+            rel(home, expr(home, FullChordsVoicing[nVoices * chord + SOPRANO] !=
+                                 FullChordsVoicing[nVoices * (chord + 1) + SOPRANO]), BOT_IMP,
+                expr(home, commonNotesInSoprano[chord] == 0), true);
+        }
+        else{
+            rel(home, commonNotesInSoprano[chord], IRT_EQ, 0); /// set it to 0 because the rule doesn't apply
+        }
+    }
+    /// costVar = number of diminished chords with 4 notes
+    count(home, commonNotesInSoprano, 4, IRT_EQ, nOfCommonNotesInSoprano);
 }
 
 /***********************************************************************************************************************

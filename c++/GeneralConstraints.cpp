@@ -149,6 +149,6 @@ void compute_diminished_chords_cost(const Home& home, int size, int nVoices, Ton
             rel(home, nOfDifferentNotes[i], IRT_EQ, 0);
         }
         /// costVar = number of diminished chords with 4 notes
-        count(home, nOfDifferentNotes, 4, IRT_EQ, costVar);
+        count(home, nOfDifferentNotes, 4, IRT_EQ, costVar); ///@todo move this out of the loop
     }
 }

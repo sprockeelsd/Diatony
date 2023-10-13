@@ -68,7 +68,7 @@ protected:
     IntVarArray nDifferentValuesInDiminishedChord;      // number of different note values in each chord
     IntVarArray nDifferentValuesAllChords;
     IntVarArray nOccurrencesBassInFundamentalState;     // number of chords that don't double the bass in fundamental state
-    IntVarArray CommonNotesInSoprano;             // chords with common notes in outside voices
+    IntVarArray commonNotesInSoprano;             // chords with common notes in outside voices
 
     /// cost variables
     IntVar sumOfMelodicIntervals;                       // for minimizing voice movement between voices
