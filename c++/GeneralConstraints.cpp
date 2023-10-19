@@ -89,38 +89,6 @@ void link_harmonic_arrays(const Home &home, int n, int nVoices, IntVarArray Full
 }
 
 /**
- * Computes the cost for diminished intervals, that is the number of diminished chords that don't respect the preference
- * Here, the preference is that they should be used in 3 voices instead of 4.
- * If the chord is not diminished, the value is forced to 0 since it doesn't matter
- * @param home the instance of the problem
- * @param size the number of chords
- * @param nVoices the number of voices
- * @param tonality the tonality of the piece
- * @param chordDegs the degrees of the chords
- * @param fullChordsVoicing the array containing all the chords in the form
- *          [bass0, alto0, tenor0, soprano0, bass1, alto1, tenor1, soprano1, ...]
- * @param nOfDifferentNotes the array containing the number of different notes in each diminished chord.
- * @param costVar the variable that will contain the number of diminished chords that don't respect the preference
- */
-void compute_diminished_chords_cost(const Home& home, int size, int nVoices, Tonality *tonality, vector<int> chordDegs,
-                                    IntVarArray fullChordsVoicing, IntVarArray nOfDifferentNotes,
-                                    const IntVar& costVar) {
-    for(int i = 0; i < size; ++i){// for each chord
-        /// if the chord is diminished
-        if(tonality->get_chord_qualities()[chordDegs[i]] == DIMINISHED_CHORD){
-            IntVarArgs currentChord(fullChordsVoicing.slice(nVoices * i, 1, nVoices));
-            /// nOfDifferentNotes[i] = nOfDiffVals in current chord
-            nvalues(home, currentChord, IRT_EQ, nOfDifferentNotes[i]);
-        }
-        else{ /// doesn't matter so is set to 0 to be ignored
-            rel(home, nOfDifferentNotes[i], IRT_EQ, 0);
-        }
-        /// costVar = number of diminished chords with 4 notes
-        count(home, nOfDifferentNotes, 4, IRT_EQ, costVar);
-    }
-}
-
-/**
  * Sets the domains of the different voices to their range
  *      bass: [40, 60] E2 -> C3
  *      tenor: [48, 69] C2 -> A3
@@ -150,5 +118,37 @@ void restrain_voices_domains(const Home &home, int n, int nVoices, IntVarArray F
         // C3 <= soprano <= A4
         rel(home, currentChord[3], IRT_GQ, 60);
         rel(home, currentChord[3], IRT_LQ, 84);
+    }
+}
+
+/**
+ * Computes the cost for diminished intervals, that is the number of diminished chords that don't respect the preference
+ * Here, the preference is that they should be used in 3 voices instead of 4.
+ * If the chord is not diminished, the value is forced to 0 since it doesn't matter
+ * @param home the instance of the problem
+ * @param size the number of chords
+ * @param nVoices the number of voices
+ * @param tonality the tonality of the piece
+ * @param chordDegs the degrees of the chords
+ * @param fullChordsVoicing the array containing all the chords in the form
+ *          [bass0, alto0, tenor0, soprano0, bass1, alto1, tenor1, soprano1, ...]
+ * @param nOfDifferentNotes the array containing the number of different notes in each diminished chord.
+ * @param costVar the variable that will contain the number of diminished chords that don't respect the preference
+ */
+void compute_diminished_chords_cost(const Home& home, int size, int nVoices, Tonality *tonality, vector<int> chordDegs,
+                                    IntVarArray fullChordsVoicing, IntVarArray nOfDifferentNotes,
+                                    const IntVar& costVar) {
+    for(int i = 0; i < size; ++i){// for each chord
+        /// if the chord is diminished
+        if(tonality->get_chord_qualities()[chordDegs[i]] == DIMINISHED_CHORD){
+            IntVarArgs currentChord(fullChordsVoicing.slice(nVoices * i, 1, nVoices));
+            /// nOfDifferentNotes[i] = nOfDiffVals in current chord
+            nvalues(home, currentChord, IRT_EQ, nOfDifferentNotes[i]);
+        }
+        else{ /// doesn't matter so is set to 0 to be ignored
+            rel(home, nOfDifferentNotes[i], IRT_EQ, 0);
+        }
+        /// costVar = number of diminished chords with 4 notes
+        count(home, nOfDifferentNotes, 4, IRT_EQ, costVar); ///@todo move this out of the loop
     }
 }

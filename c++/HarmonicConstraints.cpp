@@ -60,8 +60,7 @@ void chord_note_occurrence_fundamental_state(Home home, int degree, int nVoices,
     /// if the chord is a diminished seventh degree, the third must be doubled
     if(degree == SEVENTH_DEGREE && tonality->get_chord_qualities()[degree] == DIMINISHED_CHORD){
         IntVar nOfThirds(home,0,nVoices); // @todo make argument variable
-        count(home, currentChord, tonality->get_scale_degree(degree + FIRST_DEGREE), IRT_EQ,
-              nOfThirds);
+        count(home, currentChord, tonality->get_scale_degree(degree), IRT_EQ,nOfThirds);
         rel(home, expr(home, nDifferentValuesInDiminishedChord == nVoices), BOT_IMP,
             expr(home, nOfThirds == 2), true);
     }
@@ -117,11 +116,11 @@ void compute_fundamental_state_doubling_cost(const Home& home, int size, int nVo
             /// nOccurencesFund[i] = nb of times the fundamental is present in the chord
             count(home, currentChord, tonality->get_scale_degree(chordDegs[i]), IRT_EQ,nOccurrencesFund[i]);
         }
-        else{ /// if not fundamental state, then we ignore it so its 0
+        else{ /// if not fundamental state, then we ignore it so it's 0
             rel(home, nOccurrencesFund[i], IRT_EQ, 0); // don't care
         }
     }
-    /// costVar = nb of vars in nOfDifferentNotes that are different from 1
+    /// costVar = nb of chords that only have their fundamental once (it is not doubled)
     count(home, nOccurrencesFund, 1, IRT_EQ, costVar);
 }
 
@@ -142,8 +141,9 @@ void chord_note_occurrence_first_inversion(const Home& home, Tonality *tonality,
                                            const IntVarArgs& currentChord){
     /// exceptions
     /// if the third is a tonal note, then double it
-    if(tonality->get_tonal_notes().find(tonality->get_degree_note(degree + THIRD_DEGREE % 7)) !=
-            tonality->get_tonal_notes().end()){ /// double the third and other notes should be present at least once
+    set<int> tonalNotes = tonality->get_tonal_notes();
+    if(tonalNotes.find(tonality->get_degree_note(degree + THIRD_DEGREE % 7)) !=
+            tonalNotes.end()){ /// double the third and other notes should be present at least once
         count(home, currentChord, tonality->get_scale_degree((degree + THIRD_DEGREE) % 7), IRT_EQ,2);
     }
     else{ /// default case: double the fundamental or the fifth of the chord

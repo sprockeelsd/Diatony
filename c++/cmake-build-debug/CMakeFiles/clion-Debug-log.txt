@@ -1,5 +1,5 @@
 /Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/Applications/CLion.app/Contents/bin/ninja/mac/ninja -G Ninja -S /Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++ -B /Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++/cmake-build-debug
 -- Gecode library: /Library/Frameworks/Gecode.framework
--- Configuring done (0.1s)
+-- Configuring done (0.2s)
 -- Generating done (0.0s)
 -- Build files have been written to: /Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++/cmake-build-debug

@@ -3,44 +3,35 @@
 #include "headers/Tonality.hpp"
 #include "headers/MajorTonality.hpp"
 #include "headers/MinorTonality.hpp"
+#include "headers/Solver.hpp"
 
 using namespace Gecode;
 using namespace std;
 
 int main(int argc, char* argv[]) {
-    int size = 2;
     Tonality* tonality = new MajorTonality(C);
 
-    // create a new problem
-//    FourVoiceTexture* p = new FourVoiceTexture(size, tonality, {FIRST_DEGREE, FOURTH_DEGREE, SEVENTH_DEGREE,
-//                                                                THIRD_DEGREE, SIXTH_DEGREE, SECOND_DEGREE, FIFTH_DEGREE,
-//                                                                FIRST_DEGREE},
-//                                               {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE,
-//                                                FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE});
-    FourVoiceTexture *p = new FourVoiceTexture(size, tonality, {SEVENTH_DEGREE, FIRST_DEGREE},
-                                               {FIRST_INVERSION, FUNDAMENTAL_STATE});
-    // std::cout << p->toString() << std::endl;
+    write_to_log_file(time().c_str());
+//    vector<int> chords = {FIRST_DEGREE, FOURTH_DEGREE, SEVENTH_DEGREE,
+//                          THIRD_DEGREE, SIXTH_DEGREE, SECOND_DEGREE, FIRST_DEGREE,
+//                          FIFTH_DEGREE, FIRST_DEGREE};
+//
+//    vector<int> states = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FIRST_INVERSION, FUNDAMENTAL_STATE,
+//                          FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, SECOND_INVERSION, FUNDAMENTAL_STATE,
+//                          FUNDAMENTAL_STATE};
+    vector<int> chords = {FIRST_DEGREE, FOURTH_DEGREE};
+    vector<int> states = {FIRST_INVERSION, FUNDAMENTAL_STATE};
+    int size = chords.size();
 
+    /// create a new problem
+  auto *pb = new FourVoiceTexture(size, tonality, chords, states);
 
-    // create a new search engine
-    Search::Base<FourVoiceTexture>* e = make_solver(p, BAB_SOLVER);
-    delete p;
+    /// find the solution that minimizes the costs (maximize the preference satisfaction)
+    // const FourVoiceTexture *bestSol = find_best_solution(pb);
+    /// find all solutions to the problem
+    find_all_solutions(pb, BAB_SOLVER);
+    delete pb;
 
-    std::cout << "Solver type : DFS " << std::endl;
-    int nb_sol = 0;
-    std::cout << std::endl;
-    while(FourVoiceTexture * sol = get_next_solution_space(e)){
-        nb_sol++;
-        cout << "Solution " << nb_sol << ": " << endl;
-        //sol->print_solution();
-        std::cout << sol->to_string() <<std::endl;
-        write_to_log_file(sol->to_string().c_str());
-        std::cout << statistics_to_string(e->statistics()) << std::endl;
-        delete sol;
-        if (nb_sol >= 10)
-            break;
-    }
-    cout << "No (more) solutions or solution cap reached.\n" << endl;
     return 0;
 }
 

@@ -11,21 +11,21 @@
  * @return A pointer to a FourVoiceTexture object casted as a void*
  */
 void* create_new_problem(int size, int key, int mode, int* chord_degrees, int* chord_states){
+    /// date and time for logs
+    write_to_log_file(time().c_str());
+
     Tonality *t;
-    if(mode == MAJOR_MODE){ /// major mode
+    if(mode == MAJOR_MODE) /// major mode
         t = new MajorTonality(key % PERFECT_OCTAVE);
-    }
-    else if(mode == MINOR_MODE){ /// minor mode
+    else if(mode == MINOR_MODE) /// minor mode
         t = new MinorTonality(key % PERFECT_OCTAVE);
-    }
     // @todo add other modes here if needed
-    else{ /// default = major
+    else /// default = major
         t = new MajorTonality(key % PERFECT_OCTAVE);
-    }
+
     vector<int> degrees(int_pointer_to_vector(chord_degrees, size));
     vector<int> states(int_pointer_to_vector(chord_states, size));
-    FourVoiceTexture* pb = new FourVoiceTexture(size, t, degrees, states);
-    write_to_log_file(pb->to_string().c_str());
+    auto* pb = new FourVoiceTexture(size, t, degrees, states);
     return (void*) pb;
 }
 
@@ -44,9 +44,8 @@ int get_size(void* sp){
  * @return an int* pointer representing the values of the variables
  */
 int* return_solution(void* sp){
-    FourVoiceTexture* pb = static_cast<FourVoiceTexture*>(sp);
+    auto* pb = static_cast<FourVoiceTexture*>(sp);
     int* sol = pb->return_solution();
-    write_to_log_file(pb->to_string().c_str());
     return sol;
 }
 
@@ -57,6 +56,21 @@ int* return_solution(void* sp){
  */
 void* create_solver(void* sp, int type){
     return (void*) make_solver(static_cast<FourVoiceTexture*>(sp), type);
+}
+
+/**
+ * returns the best solution space, it should be bound. If not, it will return NULL.
+ * @param solver a void* pointer to a BAB<FourVoiceTexture> for the search engine of the problem
+ * @return a void* cast of a FourVoiceTexture* pointer
+ */
+void* return_best_solution_space(void* solver){
+    FourVoiceTexture *bestSol; // keep a pointer to the best solution
+    while(FourVoiceTexture *sol = get_next_solution_space(static_cast<BAB<FourVoiceTexture>*>(solver))){
+        bestSol = sol;
+    }
+    std::cout << "Best solution found: \n\n" << bestSol->to_string() << std::endl;
+    write_to_log_file(bestSol->to_string().c_str());
+    return (void*) bestSol;
 }
 
 /**

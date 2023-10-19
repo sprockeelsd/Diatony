@@ -1,10 +1,10 @@
-#include <utility>
-
 #include "headers/FourVoiceTexture.hpp"
 
 /***********************************************************************************************************************
  *                                                                                                                     *
+ *                                                                                                                     *
  *                                             FourVoiceTexture class methods                                          *
+ *                                                                                                                     *
  *                                                                                                                     *
  ***********************************************************************************************************************/
 
@@ -49,20 +49,44 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     nDifferentValuesInDiminishedChord = IntVarArray(*this, size, 0, nOfVoices);
     nDifferentValuesAllChords = IntVarArray(*this, size, 0, nOfVoices);
     nOccurrencesBassInFundamentalState = IntVarArray(*this, size, 0, nOfVoices);
+    commonNotesInSoprano = IntVarArray(*this, size-1, 0, 1); // 1 because if it is at the bass we can't prevent it, so it only counts for the soprano
 
     /// cost variables
     sumOfMelodicIntervals = IntVar(*this, 0, PERFECT_OCTAVE * nOfVoices * (size - 1));
     nOfDiminishedChordsWith4notes = IntVar(*this, 0, size);
     nOfChordsWithLessThan4notes = IntVar(*this, 0, size);
     nOfFundamentalStateChordsWithoutDoubledBass = IntVar(*this, 0, size);
+    nOfCommonNotesInSoprano = IntVar(*this, 0, size);
 
-    /*******************************************************************************************************************
-    *                                                                                                                  *
-    *                                                   Constraints                                                    *
-    *                                                                                                                  *
-    ********************************************************************************************************************/
 
-    /// link the arrays together
+    /// print parameters to log file
+    write_to_log_file(parameters().c_str());
+
+    /**-----------------------------------------------------------------------------------------------------------------
+    |                                                                                                                  |
+    |                                              generic constraints                                                 |
+    |                                                                                                                  |
+    -------------------------------------------------------------------------------------------------------------------*/
+
+    /// restrain the domain of the voices to their range + state that bass <= tenor <= alto <= soprano
+    restrain_voices_domains(*this, size, nOfVoices, FullChordsVoicing);
+
+    for(int i = 0; i < size; i++) {
+        IntVarArgs currentChord(FullChordsVoicing.slice(nOfVoices * i, 1, nOfVoices));
+
+        /// set the chord's domain to the notes of the degree chordDegrees[i]'s chord
+        set_to_chord(*this, tonality, chordDegrees[i], currentChord);
+
+        /// set the bass based on the chord's state
+        set_bass(*this, tonality, chordDegrees[i], chordStates[i], currentChord);
+    }
+
+    /**-----------------------------------------------------------------------------------------------------------------
+    |                                                                                                                  |
+    |                                              link the arrays together                                            |
+    |                                                                                                                  |
+    -------------------------------------------------------------------------------------------------------------------*/
+
     link_melodic_arrays(*this, nOfVoices, size, bassMelodicIntervals, FullChordsVoicing,
                         altoMelodicIntervals, tenorMelodicIntervals, sopranoMelodicIntervals);
 
@@ -74,14 +98,11 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
                          bassAltoHarmonicIntervals,bassSopranoHarmonicIntervals, tenorSopranoHarmonicIntervals,
                          altoSopranoHarmonicIntervals, tenorAltoHarmonicIntervals);
 
-    /// restrain the domain of the voices to their range + state that bass <= tenor <= alto <= soprano
-    restrain_voices_domains(*this, size, nOfVoices, FullChordsVoicing);
-
-    /// forbid parallel octaves and fifths
-    forbid_parallel_intervals(*this, size, nOfVoices, {PERFECT_FIFTH, PERFECT_OCTAVE},
-                              bassTenorHarmonicIntervals, bassAltoHarmonicIntervals, bassSopranoHarmonicIntervals,
-                              tenorAltoHarmonicIntervals, tenorSopranoHarmonicIntervals, altoSopranoHarmonicIntervals,
-                              FullChordsVoicing);
+    /**-----------------------------------------------------------------------------------------------------------------
+    |                                                                                                                  |
+    |                                             set up costs computation                                             |
+    |                                                                                                                  |
+    -------------------------------------------------------------------------------------------------------------------*/
 
     /// number of diminished chords with more than 3 notes (cost to minimize)
     compute_diminished_chords_cost(*this, size, nOfVoices, tonality, chordDegrees,
@@ -92,29 +113,29 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     compute_n_of_notes_in_chord_cost(*this, size, nOfVoices, FullChordsVoicing,
                                      nDifferentValuesAllChords,nOfChordsWithLessThan4notes);
 
-    /// number of fundamental state chords without doubled bass
+    /// number of fundamental state chords without doubled bass (cost to minimize)
     /// @todo maybe add suggestion to which note to double next (tonal notes)
     compute_fundamental_state_doubling_cost(*this, size, nOfVoices, tonality, chordStas, chordDegs,
                                             FullChordsVoicing,nOccurrencesBassInFundamentalState,
                                             nOfFundamentalStateChordsWithoutDoubledBass);
 
-    /// sum of melodic intervals
+    /// number of common notes in soprano with first inversion chord going to another chord (cost to minimize)
+    compute_cost_for_common_note_in_soprano(*this, size, nOfVoices, commonNotesInSoprano,
+                                            nOfCommonNotesInSoprano, chordStates, FullChordsVoicing); //@todo test more
+
+    /// sum of melodic intervals (cost to minimize)
     linear(*this, IntVarArgs() << absoluteTenorMelodicIntervals << absoluteAltoMelodicIntervals <<
                                absoluteSopranoMelodicIntervals << absoluteBassMelodicIntervals,
                                IRT_EQ, sumOfMelodicIntervals);
 
     /**-----------------------------------------------------------------------------------------------------------------
+    |                                                                                                                  |
     |     Harmonic constraints: loop over each chord and post the constraints depending on the degree and state        |
+    |                                                                                                                  |
     -------------------------------------------------------------------------------------------------------------------*/
 
     for(int i = 0; i < size; i++){
         IntVarArgs currentChord(FullChordsVoicing.slice(nOfVoices * i, 1, nOfVoices));
-
-        /// set the chord's domain to the notes of the degree chordDegrees[i]'s chord
-        set_to_chord(*this, tonality, chordDegrees[i], currentChord);
-
-        /// set the bass based on the chord's state
-        set_bass(*this, tonality, chordDegrees[i], chordStates[i], currentChord);
 
         /// post the constraints depending on the chord's state
         if(chordStas[i] == FUNDAMENTAL_STATE){
@@ -136,42 +157,77 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
         }
     }
 
-    /// @todo continue refactoring from here
-
     /**-----------------------------------------------------------------------------------------------------------------
+    |                                                                                                                  |
     | Melodic constraints: loop over each space between chords and post the constraints depending on the state and     |`
     | quality of the chords                                                                                            |
+    |                                                                                                                  |
     -------------------------------------------------------------------------------------------------------------------*/
 
     /// between each chord
-    for(int i = 0; i < size-1; i++){
+    for(int i = 0; i < size-1; i++) {
+        /// parallel unissons, fifths and octaves are forbidden
+        forbid_parallel_intervals(*this, size, nOfVoices, {PERFECT_FIFTH, PERFECT_OCTAVE, UNISSON},
+                                  bassTenorHarmonicIntervals, bassAltoHarmonicIntervals, bassSopranoHarmonicIntervals,
+                                  tenorAltoHarmonicIntervals, tenorSopranoHarmonicIntervals,
+                                  altoSopranoHarmonicIntervals,
+                                  FullChordsVoicing);
 
-        if (chordStas[i] == FUNDAMENTAL_STATE && chordStas[i+1] == FUNDAMENTAL_STATE){
-            /// keep the common note(s) in the same voice(s) if there is one. If there is not, then other voices move
-            /// in contrary motion to the bass
-            fundamental_state_chord_to_fundamental_state_chord(*this, i, chordDegrees,
-                                                               nOfVoices, tonality,
-                                                               bassMelodicIntervals,
-                                                               tenorMelodicIntervals,
-                                                               altoMelodicIntervals,
-                                                               sopranoMelodicIntervals,
-                                                               FullChordsVoicing);
+        /// resolve the tritone if there is one and it needs to be resolved
+        if (chordDegs[i] == SEVENTH_DEGREE && chordDegs[i + 1] == FIRST_DEGREE) {
+            //@todo add other chords that have a tritone
+            tritone_resolution(*this, i, nOfVoices, tonality,
+                               bassMelodicIntervals, tenorMelodicIntervals,
+                               altoMelodicIntervals, sopranoMelodicIntervals,
+                               FullChordsVoicing);
         }
-        else if(chordStas[i] == FIRST_INVERSION){
-            /// see function def for the details, it's too long to write here
-            //@todo finish this constraint
-            from_first_inversion_chord(*this, i, nOfVoices, chordDegrees, tonality,
-                                       bassMelodicIntervals, tenorMelodicIntervals,
-                                       altoMelodicIntervals, sopranoMelodicIntervals,
-                                       FullChordsVoicing);
+
+        /// Exceptions to the general voice leading rules
+
+        /// special rule for interrupted cadence
+        if (chordDegs[i] == FIFTH_DEGREE && chordStas[i] == FUNDAMENTAL_STATE &&
+        chordDegs[i + 1] == SIXTH_DEGREE && chordStas[i + 1] == FUNDAMENTAL_STATE) {
+            interrupted_cadence(*this, i, tonality, tenorMelodicIntervals,
+                                altoMelodicIntervals, sopranoMelodicIntervals,
+                                FullChordsVoicing);
         }
-        else{ /// general guidelines (not explicit from Duha)
-            /// keep the common note(s) in the same voice(s) if there is one, then move other voices to the closest note
-            /// (done with preferences)
+        /// general voice leading rules
+        else {
+            /// If the bass moves by a step, other voices should move in contrary motion
+            // note at the bass of the first chord
+            int bassFirstChord = (tonality->get_degree_note(chordDegrees[i] + 2 * chordStates[i])
+                    % PERFECT_OCTAVE);
+            // note at the bass of the second chord
+            int bassSecondChord = (tonality->get_degree_note(chordDegrees[i + 1] + 2 * chordStates[i + 1])
+                    % PERFECT_OCTAVE);
+            // difference in degrees between the two bass notes
+            int bassMelodicMotion = abs(bassSecondChord - bassFirstChord);
+            /// if the bass moves by a step between fund. state chords @todo check if this needs to apply in other cases
+            if ((bassMelodicMotion == MINOR_SECOND || bassMelodicMotion == MAJOR_SECOND ||
+                bassMelodicMotion == MINOR_SEVENTH || bassMelodicMotion == MAJOR_SEVENTH) &&
+                (chordStas[i] == FUNDAMENTAL_STATE && chordStas[i+1] == FUNDAMENTAL_STATE)){
+                /// move other voices in contrary motion
+                contrary_motion_to_bass(*this, i,bassMelodicIntervals,
+                                        tenorMelodicIntervals,altoMelodicIntervals,
+                                        sopranoMelodicIntervals);
+            }
+            else {
+                /// Otherwise, keep common notes in the same voice @todo override this when the chords are the same degree
+                // @todo maybe this doesn't need to be in an else statement and can be applied all the time
+
+                keep_common_notes_in_same_voice(*this, nOfVoices, i, chordDegrees, tonality,
+                                                FullChordsVoicing);
+            }
+
+            /// move voices as closely as possible (implemented with costs)
         }
     }
 
-    /**------------------------------------------------branching-------------------------------------------------------*/
+    /**-----------------------------------------------------------------------------------------------------------------
+    |                                                                                                                  |
+    |                                                       Branching                                                  |
+    |                                                                                                                  |
+    -------------------------------------------------------------------------------------------------------------------*/
     // @todo make it smart when it becomes necessary
     branch(*this, FullChordsVoicing, INT_VAR_DEGREE_MAX(), INT_VAL_MIN());
 }
@@ -186,7 +242,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
  */
 IntVarArgs FourVoiceTexture::cost() const {
     return {nOfDiminishedChordsWith4notes, nOfChordsWithLessThan4notes, nOfFundamentalStateChordsWithoutDoubledBass,
-            sumOfMelodicIntervals};
+            sumOfMelodicIntervals, nOfCommonNotesInSoprano};// @todo maybe give the voices a priority
 }
 
 /**
@@ -220,11 +276,13 @@ FourVoiceTexture::FourVoiceTexture(FourVoiceTexture& s): IntLexMinimizeSpace(s){
     nDifferentValuesInDiminishedChord.update(*this, s.nDifferentValuesInDiminishedChord);
     nDifferentValuesAllChords.update(*this, s.nDifferentValuesAllChords);
     nOccurrencesBassInFundamentalState.update(*this, s.nOccurrencesBassInFundamentalState);
+    commonNotesInSoprano.update(*this, s.commonNotesInSoprano);
 
     sumOfMelodicIntervals.update(*this, s.sumOfMelodicIntervals);
     nOfDiminishedChordsWith4notes.update(*this, s.nOfDiminishedChordsWith4notes);
     nOfChordsWithLessThan4notes.update(*this, s.nOfChordsWithLessThan4notes);
     nOfFundamentalStateChordsWithoutDoubledBass.update(*this, s.nOfFundamentalStateChordsWithoutDoubledBass);
+    nOfCommonNotesInSoprano.update(*this, s.nOfCommonNotesInSoprano);
 }
 
 /**
@@ -256,8 +314,8 @@ int* FourVoiceTexture::return_solution(){
 }
 
 /**
- * Constrain method for bab search not needed for optimization problems as it is already implemented
- * Ensures that exactly 2*b.size notes are identical to the ones in the previous solution
+ * Constrain method for bab search
+ * not needed for optimization problems as it is already implemented
  * @param _b a solution to the problem from which we wish to add a constraint for the next solutions
  */
 //void FourVoiceTexture::constrain(const Space& _b) {
@@ -275,6 +333,24 @@ void FourVoiceTexture::print_solution(){
 }
 
 /**
+     * returns the parameters in a string
+     * @return a string containing the parameters of the problem
+     */
+string FourVoiceTexture::parameters(){
+    string message = "-----------------------------------------parameters-----------------------------------------\n";
+    message += "Number of chords: " + std::to_string(size) + "\n";
+    message += "Tonality: " + midi_to_letter(tonality->get_tonic()) + " " + mode_int_to_name(tonality->get_mode()) + "\n";
+    message += "Chords: \n";
+    for(int i = 0; i < size; i++){
+        message += degreeNames[chordDegrees[i]] + " in " +
+                   stateNames[chordStates[i]];
+        if(i != size - 1)
+            message += ",\n";
+    }
+    return message + ".\n";
+}
+
+/**
  * toString method
  * @todo make a toString method for IntVarArrays so the code here is cleaner
  * @return a string representation of the current instance of the FourVoiceTexture class.
@@ -283,17 +359,14 @@ void FourVoiceTexture::print_solution(){
  */
 string FourVoiceTexture::to_string(){
     string message;
-    message += "**************************************************************\n";
-    message += "*                                                            *\n";
-    message += "*                           Solution                         *\n";
-    message += "*                                                            *\n";
-    message += "**************************************************************\n\n";
-    message += "--------------------parameters--------------------\n";
-    message += "size = " + std::to_string(size) + "\n";
-    message += "chord degrees = " + int_vector_to_string(chordDegrees) + "\n";
-    message += "chord states = " + int_vector_to_string(chordStates) + "\n";
+    message += "********************************************************************************************\n";
+    message += "*                                                                                          *\n";
+    message += "*                                          Solution                                        *\n";
+    message += "*                                                                                          *\n";
+    message += "********************************************************************************************\n\n";
+    message += parameters();
 
-    message += "--------------------variables---------------------\n";
+    message += "\n-----------------------------------------variables------------------------------------------\n";
 
     message += "BassTenorHarmonicIntervals = " + intVarArray_to_string(bassTenorHarmonicIntervals) + "\n";
     message += "TenorAltoHarmonicIntervals = " + intVarArray_to_string(tenorAltoHarmonicIntervals) + "\n";
@@ -309,81 +382,25 @@ string FourVoiceTexture::to_string(){
     message += "absoluteAltoMelodicIntervals = " + intVarArray_to_string(absoluteAltoMelodicIntervals) + "\n";
     message += "absoluteSopranoMelodicIntervals = " + intVarArray_to_string(absoluteSopranoMelodicIntervals) + "\n\n";
 
-    message += "🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵\n\n";
+    message += "🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵\n\n";
     message += "FullChordsVoicing = " + intVarArray_to_string(FullChordsVoicing) + "\n\n";
-    message += "🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵\n\n";
+    message += "🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵\n\n";
 
-    message += "----------cost-related auxiliary arrays----------\n";
+    message += "-------------------------------cost-related auxiliary arrays------------------------------\n";
 
     message += "nDifferentValuesInDiminishedChord = " + intVarArray_to_string(nDifferentValuesInDiminishedChord) + "\n";
     message += "nDifferentValuesInAllChords = " + intVarArray_to_string(nDifferentValuesAllChords) + "\n";
     message += "nOccurrencesBassInFundamentalState = " + intVarArray_to_string(nOccurrencesBassInFundamentalState) + "\n\n";
+    message += "nCommonNotesInSoprano = " + intVarArray_to_string(commonNotesInSoprano) + "\n\n";
 
-    message += "-----------------cost variables------------------\n";
+    message += "------------------------------------cost variables----------------------------------------\n";
 
     message += "nOfDiminishedChordsWith4notes = " + intVar_to_string(nOfDiminishedChordsWith4notes) + "\n";
     message += "nOfChordsWithLessThan4notes = " + intVar_to_string(nOfChordsWithLessThan4notes) + "\n";
     message += "nOfFundamentalStateChordsWithoutDoubledBass = " +
             intVar_to_string(nOfFundamentalStateChordsWithoutDoubledBass) + "\n";
     message += "sumOfMelodicIntervals = " + intVar_to_string(sumOfMelodicIntervals) + "\n\n";
-    message += "\n";
+    message += "nOfCommonNotesInSoprano = " + intVar_to_string(nOfCommonNotesInSoprano) + "\n\n";
+
     return message;
-}
-
-/***********************************************************************************************************************
- *                                                Search engine methods                                                *
- ***********************************************************************************************************************/
-
-/**
- * Creates a search engine for the given problem
- * @param pb an instance of the FourVoiceTexture class representing a given problem
- * @param type the type of search engine to create (see enumeration in headers/gecode_problem.hpp)
- * @return a search engine for the given problem
- */
-Search::Base<FourVoiceTexture>* make_solver(FourVoiceTexture* pb, int type){
-
-    Gecode::Search::Options opts;
-
-    if (type == BAB_SOLVER)
-        return new BAB<FourVoiceTexture>(pb, opts);
-    else // default case
-        return new DFS<FourVoiceTexture>(pb, opts);
-}
-
-/**
- * Returns the next solution space for the problem
- * @param solver a solver for the problem
- * @return an instance of the FourVoiceTexture class representing the next solution to the problem
- */
-FourVoiceTexture* get_next_solution_space(Search::Base<FourVoiceTexture>* solver){
-    FourVoiceTexture* sol_space = solver->next();
-    if (sol_space == nullptr) // handle the case of no solution or time out, necessary when sending the data to OM
-        return nullptr;
-    return sol_space;
-}
-
-/***********************************************************************************************************************
- *                                                 Auxiliary functions                                                 *
- ***********************************************************************************************************************/
-
-/**
- * Write a text into a log file
- * Useful for debugging in the OM environment
- * @param message the text to write
- */
-void write_to_log_file(const char* message){
-    std::time_t currentTime = std::time(nullptr); // Get the current time
-    std::string timeString = std::asctime(std::localtime(&currentTime)); // Convert to string
-
-    const char* homeDir = std::getenv("HOME"); // Get the user's home directory
-    if (homeDir) {
-        std::string filePath(homeDir);
-        filePath += "/Users/sprockeelsd/Documents/Libraries/log.txt"; // Specify the desired file path, such as $HOME/log.txt
-
-        std::ofstream myfile(filePath, std::ios::app); // append mode
-        if (myfile.is_open()) {
-            myfile <<timeString<< endl << message << endl;
-            myfile.close();
-        }
-    }
 }

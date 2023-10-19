@@ -1,0 +1,131 @@
+
+Thu Oct 19 11:27:49 2023
+
+-----------------------------------------parameters-----------------------------------------
+Number of chords: 2
+Tonality: C Major
+Chords: 
+First degree in First inversion,
+Fourth degree in Fundamental state.
+
+Solver type: BAB
+
+
+ Searching for all solutions to the problem with the given solver type:
+Solution1: 
+********************************************************************************************
+*                                                                                          *
+*                                          Solution                                        *
+*                                                                                          *
+********************************************************************************************
+
+-----------------------------------------parameters-----------------------------------------
+Number of chords: 2
+Tonality: C Major
+Chords: 
+First degree in First inversion,
+Fourth degree in Fundamental state.
+
+-----------------------------------------variables------------------------------------------
+BassTenorHarmonicIntervals = {8, 7}
+TenorAltoHarmonicIntervals = {7, 9}
+AltoSopranoHarmonicIntervals = {5, 3}
+
+BassMelodicIntervals = {1}
+TenorMelodicIntervals = {0}
+AltoMelodicIntervals = {2}
+SopranoMelodicIntervals = {0}
+
+absoluteBassMelodicIntervals = {1}
+absoluteTenorMelodicIntervals = {0}
+absoluteAltoMelodicIntervals = {2}
+absoluteSopranoMelodicIntervals = {0}
+
+🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵
+
+FullChordsVoicing = {40, 48, 55, 60, 41, 48, 57, 60}
+
+🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵
+
+-------------------------------cost-related auxiliary arrays------------------------------
+nDifferentValuesInDiminishedChord = {0, 0}
+nDifferentValuesInAllChords = {4, 4}
+nOccurrencesBassInFundamentalState = {0, 1}
+
+nCommonNotesInSoprano = {1}
+
+------------------------------------cost variables----------------------------------------
+nOfDiminishedChordsWith4notes = 0
+nOfChordsWithLessThan4notes = 0
+nOfFundamentalStateChordsWithoutDoubledBass = 1
+sumOfMelodicIntervals = 3
+
+nOfCommonNotesInSoprano = 1
+
+
+
+Solution2: 
+********************************************************************************************
+*                                                                                          *
+*                                          Solution                                        *
+*                                                                                          *
+********************************************************************************************
+
+-----------------------------------------parameters-----------------------------------------
+Number of chords: 2
+Tonality: C Major
+Chords: 
+First degree in First inversion,
+Fourth degree in Fundamental state.
+
+-----------------------------------------variables------------------------------------------
+BassTenorHarmonicIntervals = {8, 7}
+TenorAltoHarmonicIntervals = {7, 9}
+AltoSopranoHarmonicIntervals = {12, 8}
+
+BassMelodicIntervals = {1}
+TenorMelodicIntervals = {0}
+AltoMelodicIntervals = {2}
+SopranoMelodicIntervals = {-2}
+
+absoluteBassMelodicIntervals = {1}
+absoluteTenorMelodicIntervals = {0}
+absoluteAltoMelodicIntervals = {2}
+absoluteSopranoMelodicIntervals = {2}
+
+🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵
+
+FullChordsVoicing = {40, 48, 55, 67, 41, 48, 57, 65}
+
+🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵
+
+-------------------------------cost-related auxiliary arrays------------------------------
+nDifferentValuesInDiminishedChord = {0, 0}
+nDifferentValuesInAllChords = {4, 4}
+nOccurrencesBassInFundamentalState = {0, 2}
+
+nCommonNotesInSoprano = {0}
+
+------------------------------------cost variables----------------------------------------
+nOfDiminishedChordsWith4notes = 0
+nOfChordsWithLessThan4notes = 0
+nOfFundamentalStateChordsWithoutDoubledBass = 0
+sumOfMelodicIntervals = 5
+
+nOfCommonNotesInSoprano = 0
+
+
+
+
+Thu Oct 19 11:28:11 2023
+
+-----------------------------------------parameters-----------------------------------------
+Number of chords: 3
+Tonality: C Major
+Chords: 
+Second degree in First inversion,
+Fifth degree in Fundamental state,
+First degree in Fundamental state.
+
+Solver type: BAB
+

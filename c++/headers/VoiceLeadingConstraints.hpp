@@ -21,7 +21,7 @@ using namespace std;
  *      - forbid_parallel_interval: forbids a given parallel interval between two voices                               *
  *      - fundamental_state_chord_to_fundamental_state_chord: sets the rules for the melodic movements between chords  *
  *          in fundamental state                                                                                       *
- *      - fifth_degree_fs_to_sixth_degree_fs: sets the constraint for a fifth degree followed by a sixth degree in     *
+ *      - interrupted_cadence: sets the constraint for a fifth degree followed by a sixth degree in     *
  *          funda mental state                                                                                         *
  *                                                                                                                     *
  ***********************************************************************************************************************/
@@ -73,37 +73,27 @@ void forbid_parallel_interval(Home home, int nVoices, int forbiddenParallelInter
  * @param tonality the tonality of the piece
  * @param fullChordsVoicing the array containing all the notes of the chords in the progression
  */
-void general_voice_leading_rules(const Home &home, int currentPosition, vector<int> chordDegrees, Tonality *tonality,
-                                 IntVarArray fullChordsVoicing);
+void keep_common_notes_in_same_voice(const Home &home, int nVoices, int currentPosition, vector<int> chordDegrees,
+                                     Tonality *tonality, IntVarArray fullChordsVoicing);
+
+/**
+ * Adds the constraint that Soprano, Alto and Tenor must move in contrary motion to the bass
+ * @param home the instance of the problem
+ * @param currentPosition the current position in the chord progression
+ * @param bassMelodicInterval the array containing the melodic intervals of the bass
+ * @param tenorMelodicInterval the array containing the melodic intervals of the tenor
+ * @param altoMelodicInterval the array containing the melodic intervals of the alto
+ * @param sopranoMelodicInterval the array containing the melodic intervals of the soprano
+ */
+void contrary_motion_to_bass(const Home& home, int currentPosition, const IntVarArray& bassMelodicInterval,
+                             const IntVarArray& tenorMelodicInterval, const IntVarArray& altoMelodicInterval,
+                             const IntVarArray& sopranoMelodicInterval);
 
 /***********************************************************************************************************************
  *                                                                                                                     *
  *                                          Fundamental state chord constraints                                        *
  *                                                                                                                     *
  ***********************************************************************************************************************/
-
-/**
- * Sets the rules for the melodic movements between chords in fundamental state
- * For chords that are 1 degree apart, the other voices must move in contrary motion to the bass
- * @param home the instance of the problem
- * @param currentPosition the current position in the chord progression
- * @param chordDegrees the array containing the degrees of the chords in the progression
- * @param nVoices the number of voices in the progression
- * @param tonality the tonality of the piece
- * @param bassMelodicInterval The melodic interval of the bass between the current position and the next
- * @param tenorMelodicInterval the melodic interval of the tenor between the current position and the next
- * @param altoMelodicInterval the melodic interval of the alto between the current position and the next
- * @param sopranoMelodicInterval the melodic interval of the soprano between the current position and the next
- * @param fullChordsVoicing the array containing all the notes of the chords in the progression
- */
-void fundamental_state_chord_to_fundamental_state_chord(const Home& home, int currentPosition, vector<int> chordDegrees,
-                                                        int nVoices, Tonality *tonality,
-                                                        const IntVarArray& bassMelodicInterval,
-                                                        const IntVarArray& tenorMelodicInterval,
-                                                        const IntVarArray& altoMelodicInterval,
-                                                        const IntVarArray& sopranoMelodicInterval,
-                                                        const IntVarArray& fullChordsVoicing);
-
 
 /**
  * Forces the tritone to resolve properly
@@ -133,19 +123,30 @@ void tritone_resolution(const Home& home, int currentPosition, int nVoices, Tona
  * @param sopranoMelodicInterval the melodic intervals of the soprano
  * @param fullChordsVoicing the array containing the notes of the chords in the progression
  */
-void fifth_degree_fs_to_sixth_degree_fs(const Home& home, int currentPosition, Tonality *tonality,
-                                        const IntVarArray& tenorMelodicInterval, const IntVarArray& altoMelodicInterval,
-                                        const IntVarArray& sopranoMelodicInterval, IntVarArray fullChordsVoicing);
+void interrupted_cadence(const Home& home, int currentPosition, Tonality *tonality,
+                         const IntVarArray& tenorMelodicInterval, const IntVarArray& altoMelodicInterval,
+                         const IntVarArray& sopranoMelodicInterval, IntVarArray fullChordsVoicing);
 
 /***********************************************************************************************************************
  *                                                                                                                     *
- *                                            First inversion chord constraints                                        *
+ *                                           First inversion chord constraints                                         *
  *                                                                                                                     *
  ***********************************************************************************************************************/
 
-void from_first_inversion_chord(const Home &home, int currentPosition, int nVoices, vector<int> chordDegrees,
-                                Tonality *tonality, const IntVarArray &bassMelodicInterval,
-                                const IntVarArray &tenorMelodicInterval, const IntVarArray &altoMelodicInterval,
-                                const IntVarArray &sopranoMelodicInterval, const IntVarArray &fullChordsVoicing);
+/**
+ * This function counts the number of times when a common note in the soprano voice when moving from a chord in first
+ * inversion to another chord.
+ * @param home the instance of the problem
+ * @param nChords the number of chords in the progression
+ * @param nVoices the number of voices in the piece
+ * @param commonNotesInSoprano an array containing 1 if there is a common note in the soprano voice between this chord and
+ * the next, and if the first chord is in first inversion
+ * @param nOfCommonNotesInSoprano the number of times when there is a common note in the soprano voice
+ * @param chordStates the state of the chord (fundamental, first inversion, second inversion)
+ * @param FullChordsVoicing the array containing all the notes of the chords in the progression
+ */
+void compute_cost_for_common_note_in_soprano(const Home& home, int nChords, int nVoices, IntVarArray commonNotesInSoprano,
+                                             const IntVar& nOfCommonNotesInSoprano, vector<int> chordStates,
+                                             IntVarArray FullChordsVoicing);
 
 #endif
