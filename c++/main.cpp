@@ -19,7 +19,7 @@ int main(int argc, char* argv[]) {
 //    vector<int> states = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FIRST_INVERSION, FUNDAMENTAL_STATE,
 //                          FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, SECOND_INVERSION, FUNDAMENTAL_STATE,
 //                          FUNDAMENTAL_STATE};
-    vector<int> chords = {SECOND_DEGREE, FIFTH_DEGREE};
+    vector<int> chords = {FIRST_DEGREE, FOURTH_DEGREE};
     vector<int> states = {FIRST_INVERSION, FUNDAMENTAL_STATE};
     int size = chords.size();
 
@@ -29,7 +29,7 @@ int main(int argc, char* argv[]) {
     /// find the solution that minimizes the costs (maximize the preference satisfaction)
     // const FourVoiceTexture *bestSol = find_best_solution(pb);
     /// find all solutions to the problem
-    find_all_solutions(pb, DFS_SOLVER);
+    find_all_solutions(pb, BAB_SOLVER);
     delete pb;
 
     return 0;

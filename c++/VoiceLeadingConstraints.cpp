@@ -289,8 +289,8 @@ void compute_cost_for_common_note_in_soprano(const Home& home, int nChords, int 
             rel(home, commonNotesInSoprano[chord], IRT_EQ, 0); /// set it to 0 because the rule doesn't apply
         }
     }
-    /// costVar = number of diminished chords with 4 notes
-    count(home, commonNotesInSoprano, 4, IRT_EQ, nOfCommonNotesInSoprano);
+    /// costVar = 1 if there is a common note in the soprano voice
+    count(home, commonNotesInSoprano, 1, IRT_EQ, nOfCommonNotesInSoprano);
 }
 
 /***********************************************************************************************************************

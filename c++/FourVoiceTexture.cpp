@@ -58,6 +58,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     nOfFundamentalStateChordsWithoutDoubledBass = IntVar(*this, 0, size);
     nOfCommonNotesInSoprano = IntVar(*this, 0, size);
 
+
     /// print parameters to log file
     write_to_log_file(parameters().c_str());
 
@@ -120,7 +121,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
 
     /// number of common notes in soprano with first inversion chord going to another chord (cost to minimize)
     compute_cost_for_common_note_in_soprano(*this, size, nOfVoices, commonNotesInSoprano,
-                                            nOfCommonNotesInSoprano, chordStates, FullChordsVoicing);
+                                            nOfCommonNotesInSoprano, chordStates, FullChordsVoicing); //@todo test more
 
     /// sum of melodic intervals (cost to minimize)
     linear(*this, IntVarArgs() << absoluteTenorMelodicIntervals << absoluteAltoMelodicIntervals <<
@@ -201,9 +202,10 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
                     % PERFECT_OCTAVE);
             // difference in degrees between the two bass notes
             int bassMelodicMotion = abs(bassSecondChord - bassFirstChord);
-            /// if the bass moves by a step
-            if (bassMelodicMotion == MINOR_SECOND || bassMelodicMotion == MAJOR_SECOND ||
-                bassMelodicMotion == MINOR_SEVENTH || bassMelodicMotion == MAJOR_SEVENTH) {
+            /// if the bass moves by a step between fund. state chords @todo check if this needs to apply in other cases
+            if ((bassMelodicMotion == MINOR_SECOND || bassMelodicMotion == MAJOR_SECOND ||
+                bassMelodicMotion == MINOR_SEVENTH || bassMelodicMotion == MAJOR_SEVENTH) &&
+                (chordStas[i] == FUNDAMENTAL_STATE && chordStas[i+1] == FUNDAMENTAL_STATE)){
                 /// move other voices in contrary motion
                 contrary_motion_to_bass(*this, i,bassMelodicIntervals,
                                         tenorMelodicIntervals,altoMelodicIntervals,
@@ -240,7 +242,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
  */
 IntVarArgs FourVoiceTexture::cost() const {
     return {nOfDiminishedChordsWith4notes, nOfChordsWithLessThan4notes, nOfFundamentalStateChordsWithoutDoubledBass,
-            nOfCommonNotesInSoprano, sumOfMelodicIntervals};// @todo maybe give the voices a priority
+            sumOfMelodicIntervals, nOfCommonNotesInSoprano};// @todo maybe give the voices a priority
 }
 
 /**

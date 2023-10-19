@@ -141,8 +141,9 @@ void chord_note_occurrence_first_inversion(const Home& home, Tonality *tonality,
                                            const IntVarArgs& currentChord){
     /// exceptions
     /// if the third is a tonal note, then double it
-    if(tonality->get_tonal_notes().find(tonality->get_degree_note(degree + THIRD_DEGREE % 7)) !=
-            tonality->get_tonal_notes().end()){ /// double the third and other notes should be present at least once
+    set<int> tonalNotes = tonality->get_tonal_notes();
+    if(tonalNotes.find(tonality->get_degree_note(degree + THIRD_DEGREE % 7)) !=
+            tonalNotes.end()){ /// double the third and other notes should be present at least once
         count(home, currentChord, tonality->get_scale_degree((degree + THIRD_DEGREE) % 7), IRT_EQ,2);
     }
     else{ /// default case: double the fundamental or the fifth of the chord
