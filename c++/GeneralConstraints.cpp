@@ -11,17 +11,19 @@
  ***********************************************************************************************************************/
 
 /**
- * Link the melodic intervals arrays to the FullChordsVoicing array for each voice
+ * Link the melodic intervals arrays to the FullChordsVoicing array
  * @param home The instance of the problem
+ * @param nVoices the number of voices
  * @param n the number of chords
- * @param FullChordsVoicing the array containing all the chords in the form [bass0, alto0, tenor0, soprano0, bass1, alto1, tenor1, soprano1, ...]
+ * @param FullChordsVoicing the array containing all the chords in the form
+ *          [bass0, alto0, tenor0, soprano0, bass1, alto1, tenor1, soprano1, ...]
  * @param bassMelodicIntervals the melodic intervals of the bass
  * @param tenorMelodicIntervals the melodic intervals of the tenor
  * @param altoMelodicIntervals the melodic intervals of the alto
  * @param sopranoMelodicIntervals the melodic intervals of the soprano
  */
-void link_melodic_arrays(const Home &home, int nVoices, int n, IntVarArray bassMelodicIntervals,
-                         IntVarArray FullChordsVoicing, IntVarArray altoMelodicIntervals,
+void link_melodic_arrays(const Home &home, int nVoices, int n, IntVarArray FullChordsVoicing,
+                         IntVarArray bassMelodicIntervals, IntVarArray altoMelodicIntervals,
                          IntVarArray tenorMelodicIntervals, IntVarArray sopranoMelodicIntervals) {
     for (int i = 0; i < n - 1; ++i)
     {
@@ -94,9 +96,9 @@ void link_harmonic_arrays(const Home &home, int n, int nVoices, IntVarArray Full
  *      tenor: [48, 69] C2 -> A3
  *      alto: [55, 75] G2 -> D3
  *      soprano: [60, 84] C3 -> A4
- * and states that bass <= tenor <= alto <= soprano
  * @param home the instance of the problem
  * @param n the number of chords
+ * @param nVoices the number of voices
  * @param FullChordsVoicing the array containing all the chords in the form
  *          [bass0, alto0, tenor0, soprano0, bass1, alto1, tenor1, soprano1, ...]
  */

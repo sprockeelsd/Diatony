@@ -31,6 +31,11 @@ using namespace std;
  *                                                FourVoiceTexture class                                               *
  *                                                                                                                     *
  ***********************************************************************************************************************/
+ /**
+  * This class models a classic 4 voice harmonic problem of tonal music. It takes as arguments a tonality, and a series
+  * of chords identified by their degree and state. It then generates a 4 voice chord progression following traditional
+  * rules of western tonal harmony.
+  */
 class FourVoiceTexture: public IntLexMinimizeSpace {
 protected:
     /// Data
@@ -39,7 +44,6 @@ protected:
     Tonality *tonality;         // The tonality of the piece
     vector<int> chordDegrees;   // The degrees of the chord of the chord progression
     vector<int> chordStates;    // The states of the chord of the chord progression (fundamental, 1st inversion,...)
-    int minCost;                // The minimum cost of the solutions we want to find
 
     /// variable arrays for melodic intervals for each voice (not absolute value)
     IntVarArray bassMelodicIntervals;
@@ -53,7 +57,7 @@ protected:
     IntVarArray absoluteAltoMelodicIntervals;
     IntVarArray absoluteSopranoMelodicIntervals;
 
-    /// variable arrays for harmonic intervals between adjacent voices (not absolute value)
+    /// variable arrays for harmonic intervals between adjacent voices (not absolute value but are always positive)
     IntVarArray bassTenorHarmonicIntervals;
     IntVarArray bassAltoHarmonicIntervals;
     IntVarArray bassSopranoHarmonicIntervals;
@@ -68,14 +72,14 @@ protected:
     IntVarArray nDifferentValuesInDiminishedChord;      // number of different note values in each chord
     IntVarArray nDifferentValuesAllChords;
     IntVarArray nOccurrencesBassInFundamentalState;     // number of chords that don't double the bass in fundamental state
-    IntVarArray commonNotesInSoprano;             // chords with common notes in outside voices
+    IntVarArray commonNotesInSoprano;                   // chords with common notes in outside voices
 
     /// cost variables
     IntVar sumOfMelodicIntervals;                       // for minimizing voice movement between voices
     IntVar nOfDiminishedChordsWith4notes;               // number of diminished chords that don't respect the preferences
     IntVar nOfChordsWithLessThan4notes;                 // number of chords with less than 4 notes
     IntVar nOfFundamentalStateChordsWithoutDoubledBass; // number of fundamental state chords that don't follow the preferences
-    IntVar nOfCommonNotesInSoprano;               // number of common notes in outside voices
+    IntVar nOfCommonNotesInSoprano;                     // number of common notes in outside voices
 
 public:
     /**
@@ -84,12 +88,14 @@ public:
      * @param *t a pointer to a Tonality object
      * @param chordDegs the degrees of the chord of the chord progression
      * @param chordStas the states of the chord of the chord progression (fundamental, 1st inversion,...)
+     * @return a FourVoiceTexture object
      */
     FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, vector<int> chordStas);
 
     /**
      * Copy constructor
      * @param s an instance of the FourVoiceTexture class
+     * @return a copy of the given instance of the FourVoiceTexture class
      */
     FourVoiceTexture(FourVoiceTexture &s);
 
@@ -138,25 +144,5 @@ public:
      */
     string to_string();
 };
-
-
-/***********************************************************************************************************************
- *                                                Search engine methods                                                *
- ***********************************************************************************************************************/
-
-/**
- * Creates a search engine for the given problem
- * @param pb an instance of the FourVoiceTexture class representing a given problem
- * @param type the type of search engine to create (see enumeration in headers/gecode_problem.hpp)
- * @return a search engine for the given problem
- */
-Search::Base<FourVoiceTexture>* make_solver(FourVoiceTexture* pb, int type);
-
-/**
- * Returns the next solution space for the problem
- * @param solver a solver for the problem
- * @return an instance of the FourVoiceTexture class representing the next solution to the problem
- */
-FourVoiceTexture* get_next_solution_space(Search::Base<FourVoiceTexture>* solver);
 
 #endif

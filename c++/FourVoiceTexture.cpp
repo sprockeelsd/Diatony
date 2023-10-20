@@ -14,6 +14,7 @@
  * @param *t a pointer to a Tonality object
  * @param chordDegs the degrees of the chord of the chord progression
  * @param chordStas the states of the chord of the chord progression (fundamental, 1st inversion,...)
+ * Returns a FourVoiceTexture object
  */
 FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, vector<int> chordStas){
     /// basic data
@@ -62,6 +63,8 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     /// print parameters to log file
     write_to_log_file(parameters().c_str());
 
+    /// Test constraints
+
     /**-----------------------------------------------------------------------------------------------------------------
     |                                                                                                                  |
     |                                              generic constraints                                                 |
@@ -87,7 +90,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     |                                                                                                                  |
     -------------------------------------------------------------------------------------------------------------------*/
 
-    link_melodic_arrays(*this, nOfVoices, size, bassMelodicIntervals, FullChordsVoicing,
+    link_melodic_arrays(*this, nOfVoices, size, FullChordsVoicing, bassMelodicIntervals,
                         altoMelodicIntervals, tenorMelodicIntervals, sopranoMelodicIntervals);
 
     link_absolute_melodic_arrays(*this, bassMelodicIntervals, tenorMelodicIntervals, altoMelodicIntervals,
@@ -121,7 +124,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
 
     /// number of common notes in soprano with first inversion chord going to another chord (cost to minimize)
     compute_cost_for_common_note_in_soprano(*this, size, nOfVoices, commonNotesInSoprano,
-                                            nOfCommonNotesInSoprano, chordStates, FullChordsVoicing); //@todo test more
+                                            nOfCommonNotesInSoprano, chordStates, FullChordsVoicing);
 
     /// sum of melodic intervals (cost to minimize)
     linear(*this, IntVarArgs() << absoluteTenorMelodicIntervals << absoluteAltoMelodicIntervals <<
@@ -166,16 +169,18 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
 
     /// between each chord
     for(int i = 0; i < size-1; i++) {
-        /// parallel unissons, fifths and octaves are forbidden
-        forbid_parallel_intervals(*this, size, nOfVoices, {PERFECT_FIFTH, PERFECT_OCTAVE, UNISSON},
-                                  bassTenorHarmonicIntervals, bassAltoHarmonicIntervals, bassSopranoHarmonicIntervals,
-                                  tenorAltoHarmonicIntervals, tenorSopranoHarmonicIntervals,
-                                  altoSopranoHarmonicIntervals,
-                                  FullChordsVoicing);
+        /// parallel unissons, fifths and octaves are forbidden unless we have the same chord twice in a row
+        if(chordDegrees[i] != chordDegrees[i + 1]){
+            forbid_parallel_intervals(*this, size, nOfVoices, {PERFECT_FIFTH, PERFECT_OCTAVE, UNISSON},
+                                      bassTenorHarmonicIntervals, bassAltoHarmonicIntervals, bassSopranoHarmonicIntervals,
+                                      tenorAltoHarmonicIntervals, tenorSopranoHarmonicIntervals,
+                                      altoSopranoHarmonicIntervals,
+                                      FullChordsVoicing);
+        }
 
         /// resolve the tritone if there is one and it needs to be resolved
         if (chordDegs[i] == SEVENTH_DEGREE && chordDegs[i + 1] == FIRST_DEGREE) {
-            //@todo add other chords that have a tritone
+            //@todo add other chords that have the tritone
             tritone_resolution(*this, i, nOfVoices, tonality,
                                bassMelodicIntervals, tenorMelodicIntervals,
                                altoMelodicIntervals, sopranoMelodicIntervals,
@@ -211,8 +216,14 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
                                         tenorMelodicIntervals,altoMelodicIntervals,
                                         sopranoMelodicIntervals);
             }
-            else {
-                /// Otherwise, keep common notes in the same voice @todo override this when the chords are the same degree
+            /// if II -> V, move voices in contrary motion to bass @todo check that its not only for 1st inversion II
+            else if(chordDegs[i] == SECOND_DEGREE && chordDegs[i+1] == FIFTH_DEGREE){
+                contrary_motion_to_bass(*this, i, bassMelodicIntervals,
+                                        tenorMelodicIntervals, altoMelodicIntervals,
+                                        sopranoMelodicIntervals);
+            }
+            else if(chordDegrees[i] != chordDegrees[i + 1]){
+                /// Otherwise, keep common notes in the same voice
                 // @todo maybe this doesn't need to be in an else statement and can be applied all the time
 
                 keep_common_notes_in_same_voice(*this, nOfVoices, i, chordDegrees, tonality,
@@ -242,13 +253,14 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
  */
 IntVarArgs FourVoiceTexture::cost() const {
     return {nOfDiminishedChordsWith4notes, nOfChordsWithLessThan4notes, nOfFundamentalStateChordsWithoutDoubledBass,
-            sumOfMelodicIntervals, nOfCommonNotesInSoprano};// @todo maybe give the voices a priority
+            nOfCommonNotesInSoprano, sumOfMelodicIntervals};// @todo maybe give the voices a priority + check if we want
+            //@todo to first minimize the sum of melodic intervals or the number of common notes in soprano
 }
 
 /**
  * Copy constructor
- * updates every variable and copies other arguments
  * @param s an instance of the FourVoiceTexture class
+ * @return a copy of the given instance of the FourVoiceTexture class
  */
 FourVoiceTexture::FourVoiceTexture(FourVoiceTexture& s): IntLexMinimizeSpace(s){
     //IntVars update

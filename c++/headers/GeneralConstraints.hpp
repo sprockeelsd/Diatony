@@ -25,6 +25,7 @@ using namespace std;
 /**
  * Link the melodic intervals arrays to the FullChordsVoicing array
  * @param home The instance of the problem
+ * @param nVoices the number of voices
  * @param n the number of chords
  * @param FullChordsVoicing the array containing all the chords in the form
  *          [bass0, alto0, tenor0, soprano0, bass1, alto1, tenor1, soprano1, ...]
@@ -33,8 +34,8 @@ using namespace std;
  * @param altoMelodicIntervals the melodic intervals of the alto
  * @param sopranoMelodicIntervals the melodic intervals of the soprano
  */
-void link_melodic_arrays(const Home &home, int nVoices, int n, IntVarArray bassMelodicIntervals,
-                         IntVarArray FullChordsVoicing, IntVarArray altoMelodicIntervals,
+void link_melodic_arrays(const Home &home, int nVoices, int n, IntVarArray FullChordsVoicing,
+                         IntVarArray bassMelodicIntervals, IntVarArray altoMelodicIntervals,
                          IntVarArray tenorMelodicIntervals, IntVarArray sopranoMelodicIntervals);
 
 /**
@@ -98,6 +99,7 @@ void compute_diminished_chords_cost(const Home& home, int size, int nVoices, Ton
  *      soprano: [60, 84] C3 -> A4
  * @param home the instance of the problem
  * @param n the number of chords
+ * @param nVoices the number of voices
  * @param FullChordsVoicing the array containing all the chords in the form
  *          [bass0, alto0, tenor0, soprano0, bass1, alto1, tenor1, soprano1, ...]
  */

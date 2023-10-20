@@ -277,7 +277,7 @@ void interrupted_cadence(const Home& home, int currentPosition, Tonality *tonali
 void compute_cost_for_common_note_in_soprano(const Home& home, int nChords, int nVoices, IntVarArray commonNotesInSoprano,
                                              const IntVar& nOfCommonNotesInSoprano, vector<int> chordStates, IntVarArray FullChordsVoicing){
     for(int chord = 0; chord < nChords - 1; chord++){
-        if (chordStates[chord] == FIRST_INVERSION){
+        if (chordStates[chord] == FIRST_INVERSION || chordStates[chord + 1] == FIRST_INVERSION){
             rel(home, expr(home, FullChordsVoicing[nVoices * chord + SOPRANO] ==
                                  FullChordsVoicing[nVoices * (chord + 1) + SOPRANO]), BOT_IMP,
                 expr(home, commonNotesInSoprano[chord] == 1), true);

@@ -85,8 +85,7 @@
 				15,
 				17,
 				19,
-				21,
-				22
+				21
 			]
 		}
 	],
@@ -131,8 +130,7 @@
 				15,
 				17,
 				19,
-				21,
-				22
+				21
 			]
 		}
 	],
@@ -253,12 +251,6 @@
 			"backtrace" : 1,
 			"path" : "headers/Solver.hpp",
 			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "FourVoiceTextureVariations.cpp",
-			"sourceGroupIndex" : 1
 		},
 		{
 			"backtrace" : 1,
