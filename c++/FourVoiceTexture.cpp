@@ -64,7 +64,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     write_to_log_file(parameters().c_str());
 
     /// Test constraints
-
+    
     /**-----------------------------------------------------------------------------------------------------------------
     |                                                                                                                  |
     |                                              generic constraints                                                 |
@@ -149,8 +149,8 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
         }
         /// post the constraints specific to first inversion chords
         else if(chordStas[i] == FIRST_INVERSION){
-            chord_note_occurrence_first_inversion(*this, i, tonality, chordDegrees,
-                                                  chordStates, currentChord); //@todo change this
+            chord_note_occurrence_first_inversion(*this, size, nOfVoices, i, tonality, chordDegrees,
+                                                  currentChord, bassMelodicIntervals, sopranoMelodicIntervals);
         }
         /// post the constraints specific to second inversion chords
         else if(chordStas[i] == SECOND_INVERSION){

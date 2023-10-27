@@ -137,11 +137,12 @@ void compute_fundamental_state_doubling_cost(const Home& home, int size, int nVo
  * @param degrees the degree of the chord
  * @param currentChord the array containing a chord in the form [bass, alto, tenor, soprano]
  */
-void chord_note_occurrence_first_inversion(const Home &home, int currentPos, Tonality *tonality, vector<int> degrees,
-                                           vector<int> chordStas, const IntVarArgs &currentChord){
+void chord_note_occurrence_first_inversion(Home home, int size, int nVoices, int currentPos, Tonality *tonality,
+                                           vector<int> degrees, const IntVarArgs &currentChord,
+                                           IntVarArray bassMelodicIntervals, IntVarArray sopranoMelodicIntervals) {
     /// if the third is a tonal note, then double it
     set<int> tonalNotes = tonality->get_tonal_notes();
-    if(tonalNotes.find(tonality->get_degree_note(degrees[currentPos] + THIRD_DEGREE % 7)) !=
+    if(tonalNotes.find(tonality->get_degree_note((degrees[currentPos] + THIRD_DEGREE) % 7)) !=
        tonalNotes.end()) { /// double the third and other notes should be present at least once
         count(home, currentChord, tonality->get_scale_degree((degrees[currentPos] + THIRD_DEGREE) % 7), IRT_EQ, 2);
     }
@@ -150,13 +151,41 @@ void chord_note_occurrence_first_inversion(const Home &home, int currentPos, Ton
         count(home, currentChord, tonality->get_scale_degree((degrees[currentPos] + THIRD_DEGREE) % 7), IRT_EQ, 2);
     }
     else{ /// default case: double the fundamental or the fifth of the chord unless the top and bottom voices move down and up respectively
-    //@todo: bool Var pour dire si la voix du dessus descend avant et après et si la voix du bas monte avant et après
-    //@todo si oui, alors on double la basse. Sinon on double la fondamentale ou la quinte de l'accord
-        
+        if(currentPos < size-1 && currentPos > 0){ /// this special case cannot happen on the first and last chord
+            ///BoolVar to see if the bass rises for the first motion
+            BoolVar bassStep1 = expr(home,bassMelodicIntervals[currentPos-1] > 0);
+            BoolVar bassStep2 = expr(home, bassMelodicIntervals[currentPos-1] <= 2);
+            BoolVar bassRises1 = expr(home, bassStep1 && bassStep2);
+            /// BoolVar to see if the bass rises for the second motion
+            BoolVar bassStep3 = expr(home, bassMelodicIntervals[currentPos] > 0);
+            BoolVar bassStep4 = expr(home, bassMelodicIntervals[currentPos] <= 2);
+            BoolVar bassRises2 = expr(home, bassStep3 && bassStep4);
+            /// BoolVar to see if the bass rises overall
+            BoolVar bassRisesOverall = expr(home, bassRises1 && bassRises2);
+            /// BoolVar to see if the soprano rises for the first motion
+            BoolVar sopranoStep1 = expr(home, sopranoMelodicIntervals[currentPos-1] < 0);
+            BoolVar sopranoStep2 = expr(home, sopranoMelodicIntervals[currentPos-1] >= -2);
+            BoolVar sopranoFalls1 = expr(home, sopranoStep1 && sopranoStep2);
+            /// BoolVar to see if the soprano rises for the second motion
+            BoolVar sopranoStep3 = expr(home, sopranoMelodicIntervals[currentPos] < 0);
+            BoolVar sopranoStep4 = expr(home, sopranoMelodicIntervals[currentPos] >= -2);
+            BoolVar sopranoFalls2 = expr(home, sopranoStep3 && sopranoStep4);
+            /// BoolVar to see if the soprano rises overall
+            BoolVar sopranoFallsOverall = expr(home, sopranoFalls1 && sopranoFalls2);
+            /// BoolVar to see if the voices move step wise by contrary motion over the three chords
+            BoolVar contraryMotion = expr(home, bassRisesOverall && sopranoFallsOverall);
 
-        count(home, currentChord, tonality->get_scale_degree((degrees[currentPos] + THIRD_DEGREE) % 7), IRT_EQ, 1);
+            IntVar nOfBassNotes(home,0,nVoices); // @todo make argument variable
+            count(home, currentChord, tonality->get_scale_degree(degrees[currentPos] + THIRD_DEGREE), IRT_EQ,nOfBassNotes);
+            rel(home, contraryMotion, BOT_EQV, expr(home, nOfBassNotes == 2), true);
+            rel(home, expr(home, !contraryMotion), BOT_EQV, expr(home, nOfBassNotes == 1), true);
+        }
+        else{ /// the bass can't be doubled
+            count(home, currentChord, tonality->get_scale_degree((degrees[currentPos] + THIRD_DEGREE) % 7), IRT_EQ, 1);
+        }
     }
-    /// happens either way
-    count(home, currentChord, tonality->get_scale_degree(degrees[currentPos] + FIRST_DEGREE), IRT_GQ, 1);
+    /// each note always has to be present at least once
+    count(home, currentChord, tonality->get_scale_degree((degrees[currentPos] + FIRST_DEGREE) % 7), IRT_GQ, 1);
+    count(home, currentChord, tonality->get_scale_degree((degrees[currentPos] + THIRD_DEGREE) % 7), IRT_GQ, 1);
     count(home, currentChord, tonality->get_scale_degree((degrees[currentPos] + FIFTH_DEGREE) % 7), IRT_GQ, 1);
 }
