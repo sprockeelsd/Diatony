@@ -64,7 +64,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     write_to_log_file(parameters().c_str());
 
     /// Test constraints
-    
+
     /**-----------------------------------------------------------------------------------------------------------------
     |                                                                                                                  |
     |                                              generic constraints                                                 |
@@ -90,7 +90,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     |                                                                                                                  |
     -------------------------------------------------------------------------------------------------------------------*/
 
-    link_melodic_arrays(*this, nOfVoices, size, FullChordsVoicing, bassMelodicIntervals,
+    link_melodic_arrays(*this, size, nOfVoices, FullChordsVoicing, bassMelodicIntervals,
                         altoMelodicIntervals, tenorMelodicIntervals, sopranoMelodicIntervals);
 
     link_absolute_melodic_arrays(*this, bassMelodicIntervals, tenorMelodicIntervals, altoMelodicIntervals,
@@ -98,8 +98,8 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
                                  absoluteAltoMelodicIntervals, absoluteSopranoMelodicIntervals);
 
     link_harmonic_arrays(*this, size, nOfVoices, FullChordsVoicing, bassTenorHarmonicIntervals,
-                         bassAltoHarmonicIntervals,bassSopranoHarmonicIntervals, tenorSopranoHarmonicIntervals,
-                         altoSopranoHarmonicIntervals, tenorAltoHarmonicIntervals);
+                         bassAltoHarmonicIntervals, bassSopranoHarmonicIntervals, tenorAltoHarmonicIntervals,
+                         tenorSopranoHarmonicIntervals, altoSopranoHarmonicIntervals);
 
     /**-----------------------------------------------------------------------------------------------------------------
     |                                                                                                                  |
@@ -110,16 +110,20 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     /// number of diminished chords in fundamental state with more than 3 notes (cost to minimize)
     compute_diminished_chords_cost(*this, size, nOfVoices, tonality, chordDegrees,
                                    chordStates, FullChordsVoicing,
-                                   nDifferentValuesInDiminishedChord,nOfDiminishedChordsWith4notes);
+                                   nDifferentValuesInDiminishedChord,
+                                   nOfDiminishedChordsWith4notes);
 
     /// number of chords with less than 4 note values (cost to minimize)
     compute_n_of_notes_in_chord_cost(*this, size, nOfVoices, FullChordsVoicing,
                                      nDifferentValuesAllChords,nOfChordsWithLessThan4notes);
 
+    ///@todo keep doing the refactoring from here
+
     /// number of fundamental state chords without doubled bass (cost to minimize)
     /// @todo maybe add suggestion to which note to double next (tonal notes)
-    compute_fundamental_state_doubling_cost(*this, size, nOfVoices, tonality, chordStas, chordDegs,
-                                            FullChordsVoicing,nOccurrencesBassInFundamentalState,
+    compute_fundamental_state_doubling_cost(*this, size, nOfVoices, tonality, chordStates,
+                                            chordDegrees, FullChordsVoicing,
+                                            nOccurrencesBassInFundamentalState,
                                             nOfFundamentalStateChordsWithoutDoubledBass);
 
     /// number of common notes in soprano with first inversion chord going to another chord (cost to minimize)

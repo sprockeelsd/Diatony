@@ -1,5 +1,5 @@
 
-Fri Oct 27 16:06:27 2023
+Fri Oct 27 16:59:08 2023
 
 -----------------------------------------parameters-----------------------------------------
 Number of chords: 3
@@ -29,39 +29,39 @@ First degree in First inversion,
 Second degree in First inversion.
 
 -----------------------------------------variables------------------------------------------
-BassTenorHarmonicIntervals = {7, 8, 4}
-TenorAltoHarmonicIntervals = {8, 7, 8}
-AltoSopranoHarmonicIntervals = {12, 9, 9}
+BassTenorHarmonicIntervals = {3, 8, 12}
+TenorAltoHarmonicIntervals = {4, 7, 4}
+AltoSopranoHarmonicIntervals = {5, 5, 5}
 
-BassMelodicIntervals = {2, 1}
-TenorMelodicIntervals = {3, -3}
-AltoMelodicIntervals = {2, -2}
-SopranoMelodicIntervals = {-1, -2}
+BassMelodicIntervals = {-10, 1}
+TenorMelodicIntervals = {-5, 5}
+AltoMelodicIntervals = {-2, 2}
+SopranoMelodicIntervals = {-2, 2}
 
-absoluteBassMelodicIntervals = {2, 1}
-absoluteTenorMelodicIntervals = {3, 3}
+absoluteBassMelodicIntervals = {10, 1}
+absoluteTenorMelodicIntervals = {5, 5}
 absoluteAltoMelodicIntervals = {2, 2}
-absoluteSopranoMelodicIntervals = {1, 2}
+absoluteSopranoMelodicIntervals = {2, 2}
 
 🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵
 
-FullChordsVoicing = {50, 57, 65, 77, 52, 60, 67, 76, 53, 57, 65, 74}
+FullChordsVoicing = {50, 53, 57, 62, 40, 48, 55, 60, 41, 53, 57, 62}
 
 🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵
 
 -------------------------------cost-related auxiliary arrays------------------------------
 nDifferentValuesInDiminishedChord = {0, 0, 0}
 nDifferentValuesInAllChords = {4, 4, 4}
-nOccurrencesBassInFundamentalState = {1, 0, 0}
+nOccurrencesBassInFundamentalState = {2, 0, 0}
 
 nCommonNotesInSoprano = {0, 0}
 
 ------------------------------------cost variables----------------------------------------
 nOfDiminishedChordsWith4notes = 0
 nOfChordsWithLessThan4notes = 0
-nOfFundamentalStateChordsWithoutDoubledBass = 1
+nOfFundamentalStateChordsWithoutDoubledBass = 0
 nOfCommonNotesInSoprano = 0
-sumOfMelodicIntervals = 16
+sumOfMelodicIntervals = 29
 
 
 
@@ -81,23 +81,23 @@ First degree in First inversion,
 Second degree in First inversion.
 
 -----------------------------------------variables------------------------------------------
-BassTenorHarmonicIntervals = {19, 8, 4}
-TenorAltoHarmonicIntervals = {5, 7, 8}
-AltoSopranoHarmonicIntervals = {3, 9, 9}
+BassTenorHarmonicIntervals = {3, 15, 16}
+TenorAltoHarmonicIntervals = {4, 5, 5}
+AltoSopranoHarmonicIntervals = {5, 7, 3}
 
-BassMelodicIntervals = {2, 1}
-TenorMelodicIntervals = {-9, -3}
-AltoMelodicIntervals = {-7, -2}
-SopranoMelodicIntervals = {-1, -2}
+BassMelodicIntervals = {-10, 1}
+TenorMelodicIntervals = {2, 2}
+AltoMelodicIntervals = {3, 2}
+SopranoMelodicIntervals = {5, -2}
 
-absoluteBassMelodicIntervals = {2, 1}
-absoluteTenorMelodicIntervals = {9, 3}
-absoluteAltoMelodicIntervals = {7, 2}
-absoluteSopranoMelodicIntervals = {1, 2}
+absoluteBassMelodicIntervals = {10, 1}
+absoluteTenorMelodicIntervals = {2, 2}
+absoluteAltoMelodicIntervals = {3, 2}
+absoluteSopranoMelodicIntervals = {5, 2}
 
 🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵
 
-FullChordsVoicing = {50, 69, 74, 77, 52, 60, 67, 76, 53, 57, 65, 74}
+FullChordsVoicing = {50, 53, 57, 62, 40, 55, 60, 67, 41, 57, 62, 65}
 
 🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵
 
@@ -133,23 +133,23 @@ First degree in First inversion,
 Second degree in First inversion.
 
 -----------------------------------------variables------------------------------------------
-BassTenorHarmonicIntervals = {12, 15, 12}
-TenorAltoHarmonicIntervals = {7, 5, 4}
-AltoSopranoHarmonicIntervals = {8, 4, 5}
+BassTenorHarmonicIntervals = {3, 3, 4}
+TenorAltoHarmonicIntervals = {4, 5, 5}
+AltoSopranoHarmonicIntervals = {5, 7, 3}
 
 BassMelodicIntervals = {2, 1}
-TenorMelodicIntervals = {5, -2}
-AltoMelodicIntervals = {3, -3}
-SopranoMelodicIntervals = {-1, -2}
+TenorMelodicIntervals = {2, 2}
+AltoMelodicIntervals = {3, 2}
+SopranoMelodicIntervals = {5, -2}
 
 absoluteBassMelodicIntervals = {2, 1}
-absoluteTenorMelodicIntervals = {5, 2}
-absoluteAltoMelodicIntervals = {3, 3}
-absoluteSopranoMelodicIntervals = {1, 2}
+absoluteTenorMelodicIntervals = {2, 2}
+absoluteAltoMelodicIntervals = {3, 2}
+absoluteSopranoMelodicIntervals = {5, 2}
 
 🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵
 
-FullChordsVoicing = {50, 62, 69, 77, 52, 67, 72, 76, 53, 65, 69, 74}
+FullChordsVoicing = {50, 53, 57, 62, 52, 55, 60, 67, 53, 57, 62, 65}
 
 🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵
 
@@ -185,23 +185,23 @@ First degree in First inversion,
 Second degree in First inversion.
 
 -----------------------------------------variables------------------------------------------
-BassTenorHarmonicIntervals = {19, 15, 12}
-TenorAltoHarmonicIntervals = {5, 5, 4}
-AltoSopranoHarmonicIntervals = {3, 4, 5}
+BassTenorHarmonicIntervals = {7, 3, 4}
+TenorAltoHarmonicIntervals = {5, 5, 5}
+AltoSopranoHarmonicIntervals = {3, 7, 3}
 
 BassMelodicIntervals = {2, 1}
-TenorMelodicIntervals = {-2, -2}
-AltoMelodicIntervals = {-2, -3}
-SopranoMelodicIntervals = {-1, -2}
+TenorMelodicIntervals = {-2, 2}
+AltoMelodicIntervals = {-2, 2}
+SopranoMelodicIntervals = {2, -2}
 
 absoluteBassMelodicIntervals = {2, 1}
 absoluteTenorMelodicIntervals = {2, 2}
-absoluteAltoMelodicIntervals = {2, 3}
-absoluteSopranoMelodicIntervals = {1, 2}
+absoluteAltoMelodicIntervals = {2, 2}
+absoluteSopranoMelodicIntervals = {2, 2}
 
 🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵
 
-FullChordsVoicing = {50, 69, 74, 77, 52, 67, 72, 76, 53, 65, 69, 74}
+FullChordsVoicing = {50, 57, 62, 65, 52, 55, 60, 67, 53, 57, 62, 65}
 
 🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵
 
@@ -220,17 +220,4 @@ nOfCommonNotesInSoprano = 0
 sumOfMelodicIntervals = 15
 
 
-
-
-Fri Oct 27 16:07:14 2023
-
------------------------------------------parameters-----------------------------------------
-Number of chords: 3
-Tonality: C Major
-Chords: 
-Second degree in Fundamental state,
-First degree in First inversion,
-Second degree in First inversion.
-
-Solver type: BAB
 
