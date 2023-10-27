@@ -107,10 +107,10 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     |                                                                                                                  |
     -------------------------------------------------------------------------------------------------------------------*/
 
-    /// number of diminished chords with more than 3 notes (cost to minimize)
+    /// number of diminished chords in fundamental state with more than 3 notes (cost to minimize)
     compute_diminished_chords_cost(*this, size, nOfVoices, tonality, chordDegrees,
-                                   FullChordsVoicing,nDifferentValuesInDiminishedChord,
-                                   nOfDiminishedChordsWith4notes);
+                                   chordStates, FullChordsVoicing,
+                                   nDifferentValuesInDiminishedChord,nOfDiminishedChordsWith4notes);
 
     /// number of chords with less than 4 note values (cost to minimize)
     compute_n_of_notes_in_chord_cost(*this, size, nOfVoices, FullChordsVoicing,
@@ -149,7 +149,8 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
         }
         /// post the constraints specific to first inversion chords
         else if(chordStas[i] == FIRST_INVERSION){
-            chord_note_occurrence_first_inversion(*this, tonality, chordDegrees[i], currentChord);
+            chord_note_occurrence_first_inversion(*this, i, tonality, chordDegrees,
+                                                  chordStates, currentChord); //@todo change this
         }
         /// post the constraints specific to second inversion chords
         else if(chordStas[i] == SECOND_INVERSION){
@@ -247,7 +248,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
  * Cost function for lexicographical minimization. The order is as follows:
  * 1. number of diminished chords with more than 3 notes
  * 2. number of chords with less than 4 note values
- * 3. number of fundamental state chords without doubled bass // @todo check how we can remove diminished chords from this as they are preferred to only have 3 voices
+ * 3. number of fundamental state chords without doubled bass
  * 4. sum of melodic intervals minimizes the melodic movement between chords
  * @return the cost variables in order of importance
  */
@@ -411,8 +412,8 @@ string FourVoiceTexture::to_string(){
     message += "nOfChordsWithLessThan4notes = " + intVar_to_string(nOfChordsWithLessThan4notes) + "\n";
     message += "nOfFundamentalStateChordsWithoutDoubledBass = " +
             intVar_to_string(nOfFundamentalStateChordsWithoutDoubledBass) + "\n";
+    message += "nOfCommonNotesInSoprano = " + intVar_to_string(nOfCommonNotesInSoprano) + "\n";
     message += "sumOfMelodicIntervals = " + intVar_to_string(sumOfMelodicIntervals) + "\n\n";
-    message += "nOfCommonNotesInSoprano = " + intVar_to_string(nOfCommonNotesInSoprano) + "\n\n";
 
     return message;
 }

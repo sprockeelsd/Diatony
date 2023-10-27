@@ -134,22 +134,29 @@ void compute_fundamental_state_doubling_cost(const Home& home, int size, int nVo
  * Sets the number of time each note of the chord are present in the chord
  * @param home the instance of the problem
  * @param tonality the tonality of the piece
- * @param degree the degree of the chord
+ * @param degrees the degree of the chord
  * @param currentChord the array containing a chord in the form [bass, alto, tenor, soprano]
  */
-void chord_note_occurrence_first_inversion(const Home& home, Tonality *tonality, int degree,
-                                           const IntVarArgs& currentChord){
-    /// exceptions
+void chord_note_occurrence_first_inversion(const Home &home, int currentPos, Tonality *tonality, vector<int> degrees,
+                                           vector<int> chordStas, const IntVarArgs &currentChord){
     /// if the third is a tonal note, then double it
     set<int> tonalNotes = tonality->get_tonal_notes();
-    if(tonalNotes.find(tonality->get_degree_note(degree + THIRD_DEGREE % 7)) !=
-            tonalNotes.end()){ /// double the third and other notes should be present at least once
-        count(home, currentChord, tonality->get_scale_degree((degree + THIRD_DEGREE) % 7), IRT_EQ,2);
+    if(tonalNotes.find(tonality->get_degree_note(degrees[currentPos] + THIRD_DEGREE % 7)) !=
+       tonalNotes.end()) { /// double the third and other notes should be present at least once
+        count(home, currentChord, tonality->get_scale_degree((degrees[currentPos] + THIRD_DEGREE) % 7), IRT_EQ, 2);
     }
-    else{ /// default case: double the fundamental or the fifth of the chord
-        count(home, currentChord, tonality->get_scale_degree((degree + THIRD_DEGREE) % 7), IRT_EQ,1);
+    /// if the chord is the seventh degree diminished chord @todo make the difference between b7 and 7° chords
+    else if(degrees[currentPos] == SEVENTH_DEGREE) { /// double the third and other notes should be present at least once
+        count(home, currentChord, tonality->get_scale_degree((degrees[currentPos] + THIRD_DEGREE) % 7), IRT_EQ, 2);
+    }
+    else{ /// default case: double the fundamental or the fifth of the chord unless the top and bottom voices move down and up respectively
+    //@todo: bool Var pour dire si la voix du dessus descend avant et après et si la voix du bas monte avant et après
+    //@todo si oui, alors on double la basse. Sinon on double la fondamentale ou la quinte de l'accord
+        
+
+        count(home, currentChord, tonality->get_scale_degree((degrees[currentPos] + THIRD_DEGREE) % 7), IRT_EQ, 1);
     }
     /// happens either way
-    count(home, currentChord, tonality->get_scale_degree(degree + FIRST_DEGREE), IRT_GQ, 1);
-    count(home, currentChord, tonality->get_scale_degree((degree + FIFTH_DEGREE) % 7), IRT_GQ, 1);
+    count(home, currentChord, tonality->get_scale_degree(degrees[currentPos] + FIRST_DEGREE), IRT_GQ, 1);
+    count(home, currentChord, tonality->get_scale_degree((degrees[currentPos] + FIFTH_DEGREE) % 7), IRT_GQ, 1);
 }

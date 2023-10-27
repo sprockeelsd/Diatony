@@ -88,7 +88,7 @@ void link_harmonic_arrays(const Home &home, int n, int nVoices, IntVarArray Full
  * @param costVar the variable that will contain the number of diminished chords that don't respect the preference
  */
 void compute_diminished_chords_cost(const Home& home, int size, int nVoices, Tonality *tonality, vector<int> chordDegs,
-                                    IntVarArray fullChordsVoicing, IntVarArray nOfDifferentNotes,
+                                    vector<int> chordStas, IntVarArray fullChordsVoicing, IntVarArray nOfDifferentNotes,
                                     const IntVar& costVar);
 
 /**

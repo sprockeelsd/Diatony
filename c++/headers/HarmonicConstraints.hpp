@@ -105,9 +105,10 @@ void compute_fundamental_state_doubling_cost(const Home& home, int size, int nVo
  * Sets the number of time each note of the chord are present in the chord
  * @param home the instance of the problem
  * @param tonality the tonality of the piece
- * @param degree the degree of the chord
+ * @param degrees the degree of the chord
  * @param currentChord the array containing a chord in the form [bass, alto, tenor, soprano]
  */
-void chord_note_occurrence_first_inversion(const Home& home, Tonality *tonality, int degree, const IntVarArgs& currentChord);
+void chord_note_occurrence_first_inversion(const Home &home, int currentPos, Tonality *tonality, vector<int> degrees,
+                                           vector<int> chordStas, const IntVarArgs &currentChord);
 
 #endif
