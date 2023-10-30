@@ -1,22 +1,12 @@
 # Music Constraints
-This repository contains a constraint formalization of western tonal music rules for harmony. It is mainly based on the book "L'harmonie en liberté" by Isabelle Duha, and partially based on the book "Harmonic Practice in Tonal Music" by Robert Gauldin.
+This repository contains a constraint formalization of general western tonal music rules for harmony using constraint programming. It is mainly based on the book "L'harmonie en liberté" by Isabelle Duha, and the book "Harmonic Practice in Tonal Music" by Robert Gauldin. The constraint solver used for modeling the rules is Gecode.
 
 ## Contents
-TODO
 
-## Supported musical rules
-As of now, the following rules are supported:
+The patch "example_patch" contains an example of generating a 4 voice chord progression. The key can be set by giving an integer as the first argument to the "new-4-voice" function. 0 corresponds to C, etc up to 11 for B. The mode can be set through functions, currently only major and minor mode are supported. The third argument is the list of degrees of the chords. For convenience, there is a function that substracts 1 from the list given so the degrees correspond to their number. Inversions are also given in a list, with 0 representing fundamental state, 1 representing first inversion, and so on.
 
-### General rules
-Parallel octaves/fifths/unissons are forbidden
+The "create-solver" function creates the solver, and takes the output of the "new-4-voice" function as a first argument and the solver type as a second argument. 
 
-### Fundamental state
-All rules for fundamental state chords are implemented, aside from a few exceptions which are :
-- resolution of seventh degree chord to first degree chord.
-- melodic augmented intervals should be avoided.
-Supported rules are:
-- The fundamental should be doubled in priority.
-- In two successive chords, common notes should be kept in the same voices (except for the bass) and other voices should move as closely as possible (the last part is in the form of an optimization problem for now).
-- If there are no common notes, then other voices should move in contrary motion to the bass.
-- Diminished chords should be used with 3 voices whenever possible
-- When moving from the 5th degree chord to the 6th degree chord, the seventh of the scale must rise to the tonic in the next chord in all voices if the mode is minor, and only in the soprano if the mode is major
+The solutions can then be visualised by evaluating the voice object. For now, the branch-and-bound has to be used to find a solution that follows all the rules as closely as possible. Multiple evaluations can be necessary to find the last solution. Please note that intermediate solutions might not follow all rules, especially those related to doubling.
+
+Right now, only 3 note chords in fundamental state and first inversion are supported.
