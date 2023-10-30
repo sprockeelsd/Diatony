@@ -26,7 +26,7 @@
 			{
 				"command" : 0,
 				"file" : 0,
-				"line" : 23,
+				"line" : 25,
 				"parent" : 0
 			},
 			{
@@ -86,7 +86,7 @@
 				17,
 				19,
 				21,
-				22
+				23
 			]
 		}
 	],
@@ -113,7 +113,8 @@
 				14,
 				16,
 				18,
-				20
+				20,
+				22
 			]
 		},
 		{
@@ -132,7 +133,7 @@
 				17,
 				19,
 				21,
-				22
+				23
 			]
 		}
 	],
@@ -257,8 +258,13 @@
 		{
 			"backtrace" : 1,
 			"compileGroupIndex" : 0,
-			"path" : "FourVoiceTextureVariations.cpp",
+			"path" : "preferences.cpp",
 			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "preferences.hpp",
+			"sourceGroupIndex" : 0
 		},
 		{
 			"backtrace" : 1,

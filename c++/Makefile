@@ -2,7 +2,7 @@ all: clean run_mac_os dylib
 
 #define auxiliary files
 PROBLEM_FILES = Utilities.cpp Tonality.cpp MajorTonality.cpp MinorTonality.cpp VoiceLeadingConstraints.cpp \
-				HarmonicConstraints.cpp GeneralConstraints.cpp FourVoiceTexture.cpp Solver.cpp
+				HarmonicConstraints.cpp GeneralConstraints.cpp Preferences.cpp FourVoiceTexture.cpp Solver.cpp
 
 # Define the log file where all the results are printed
 LOG_FILE = log.txt

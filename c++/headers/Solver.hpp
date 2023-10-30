@@ -10,6 +10,31 @@
 using namespace Gecode;
 using namespace std;
 
+/***********************************************************************************************************************
+ *                                                                                                                     *
+ *                                                Search engine methods                                                *
+ *                                                                                                                     *
+ ***********************************************************************************************************************/
+
+/**
+ * This file contains all the functions responsible for creating and using search engines for the FourVoiceTexture class.
+ */
+
+/**
+ * Creates a search engine for the given problem
+ * @param pb an instance of the FourVoiceTexture class representing a given problem
+ * @param type the type of search engine to create (see enumeration in headers/gecode_problem.hpp)
+ * @return a search engine for the given problem
+ */
+Search::Base<FourVoiceTexture>* make_solver(FourVoiceTexture* pb, int type);
+
+/**
+ * Returns the next solution space for the problem
+ * @param solver a solver for the problem
+ * @return an instance of the FourVoiceTexture class representing the next solution to the problem
+ */
+FourVoiceTexture* get_next_solution_space(Search::Base<FourVoiceTexture>* solver);
+
 /**
  * Returns the best solution for the problem pb. It uses a branch and bound solver with lexico-minimization of the costs
  * @param pb an instance of a FourVoiceTexture problem

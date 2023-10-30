@@ -1,12 +1,13 @@
 
-Thu Oct 19 11:27:49 2023
+Mon Oct 30 14:58:01 2023
 
 -----------------------------------------parameters-----------------------------------------
-Number of chords: 2
+Number of chords: 3
 Tonality: C Major
 Chords: 
+Second degree in Fundamental state,
 First degree in First inversion,
-Fourth degree in Fundamental state.
+Second degree in First inversion.
 
 Solver type: BAB
 
@@ -20,47 +21,47 @@ Solution1:
 ********************************************************************************************
 
 -----------------------------------------parameters-----------------------------------------
-Number of chords: 2
+Number of chords: 3
 Tonality: C Major
 Chords: 
+Second degree in Fundamental state,
 First degree in First inversion,
-Fourth degree in Fundamental state.
+Second degree in First inversion.
 
 -----------------------------------------variables------------------------------------------
-BassTenorHarmonicIntervals = {8, 7}
-TenorAltoHarmonicIntervals = {7, 9}
-AltoSopranoHarmonicIntervals = {5, 3}
+BassTenorHarmonicIntervals = {3, 8, 12}
+TenorAltoHarmonicIntervals = {4, 7, 4}
+AltoSopranoHarmonicIntervals = {5, 5, 5}
 
-BassMelodicIntervals = {1}
-TenorMelodicIntervals = {0}
-AltoMelodicIntervals = {2}
-SopranoMelodicIntervals = {0}
+BassMelodicIntervals = {-10, 1}
+TenorMelodicIntervals = {-5, 5}
+AltoMelodicIntervals = {-2, 2}
+SopranoMelodicIntervals = {-2, 2}
 
-absoluteBassMelodicIntervals = {1}
-absoluteTenorMelodicIntervals = {0}
-absoluteAltoMelodicIntervals = {2}
-absoluteSopranoMelodicIntervals = {0}
+absoluteBassMelodicIntervals = {10, 1}
+absoluteTenorMelodicIntervals = {5, 5}
+absoluteAltoMelodicIntervals = {2, 2}
+absoluteSopranoMelodicIntervals = {2, 2}
 
 🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵
 
-FullChordsVoicing = {40, 48, 55, 60, 41, 48, 57, 60}
+FullChordsVoicing = {50, 53, 57, 62, 40, 48, 55, 60, 41, 53, 57, 62}
 
 🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵
 
 -------------------------------cost-related auxiliary arrays------------------------------
-nDifferentValuesInDiminishedChord = {0, 0}
-nDifferentValuesInAllChords = {4, 4}
-nOccurrencesBassInFundamentalState = {0, 1}
+nDifferentValuesInDiminishedChord = {0, 0, 0}
+nDifferentValuesInAllChords = {4, 4, 4}
+nOccurrencesBassInFundamentalState = {2, 0, 0}
 
-nCommonNotesInSoprano = {1}
+nCommonNotesInSoprano = {0, 0}
 
 ------------------------------------cost variables----------------------------------------
 nOfDiminishedChordsWith4notes = 0
 nOfChordsWithLessThan4notes = 0
-nOfFundamentalStateChordsWithoutDoubledBass = 1
-sumOfMelodicIntervals = 3
-
-nOfCommonNotesInSoprano = 1
+nOfFundamentalStateChordsWithoutDoubledBass = 0
+nOfCommonNotesInSoprano = 0
+sumOfMelodicIntervals = 29
 
 
 
@@ -72,60 +73,151 @@ Solution2:
 ********************************************************************************************
 
 -----------------------------------------parameters-----------------------------------------
-Number of chords: 2
+Number of chords: 3
 Tonality: C Major
 Chords: 
+Second degree in Fundamental state,
 First degree in First inversion,
-Fourth degree in Fundamental state.
+Second degree in First inversion.
 
 -----------------------------------------variables------------------------------------------
-BassTenorHarmonicIntervals = {8, 7}
-TenorAltoHarmonicIntervals = {7, 9}
-AltoSopranoHarmonicIntervals = {12, 8}
+BassTenorHarmonicIntervals = {3, 15, 16}
+TenorAltoHarmonicIntervals = {4, 5, 5}
+AltoSopranoHarmonicIntervals = {5, 7, 3}
 
-BassMelodicIntervals = {1}
-TenorMelodicIntervals = {0}
-AltoMelodicIntervals = {2}
-SopranoMelodicIntervals = {-2}
+BassMelodicIntervals = {-10, 1}
+TenorMelodicIntervals = {2, 2}
+AltoMelodicIntervals = {3, 2}
+SopranoMelodicIntervals = {5, -2}
 
-absoluteBassMelodicIntervals = {1}
-absoluteTenorMelodicIntervals = {0}
-absoluteAltoMelodicIntervals = {2}
-absoluteSopranoMelodicIntervals = {2}
+absoluteBassMelodicIntervals = {10, 1}
+absoluteTenorMelodicIntervals = {2, 2}
+absoluteAltoMelodicIntervals = {3, 2}
+absoluteSopranoMelodicIntervals = {5, 2}
 
 🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵
 
-FullChordsVoicing = {40, 48, 55, 67, 41, 48, 57, 65}
+FullChordsVoicing = {50, 53, 57, 62, 40, 55, 60, 67, 41, 57, 62, 65}
 
 🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵
 
 -------------------------------cost-related auxiliary arrays------------------------------
-nDifferentValuesInDiminishedChord = {0, 0}
-nDifferentValuesInAllChords = {4, 4}
-nOccurrencesBassInFundamentalState = {0, 2}
+nDifferentValuesInDiminishedChord = {0, 0, 0}
+nDifferentValuesInAllChords = {4, 4, 4}
+nOccurrencesBassInFundamentalState = {2, 0, 0}
 
-nCommonNotesInSoprano = {0}
+nCommonNotesInSoprano = {0, 0}
 
 ------------------------------------cost variables----------------------------------------
 nOfDiminishedChordsWith4notes = 0
 nOfChordsWithLessThan4notes = 0
 nOfFundamentalStateChordsWithoutDoubledBass = 0
-sumOfMelodicIntervals = 5
-
 nOfCommonNotesInSoprano = 0
+sumOfMelodicIntervals = 27
 
 
 
-
-Thu Oct 19 11:28:11 2023
+Solution3: 
+********************************************************************************************
+*                                                                                          *
+*                                          Solution                                        *
+*                                                                                          *
+********************************************************************************************
 
 -----------------------------------------parameters-----------------------------------------
 Number of chords: 3
 Tonality: C Major
 Chords: 
-Second degree in First inversion,
-Fifth degree in Fundamental state,
-First degree in Fundamental state.
+Second degree in Fundamental state,
+First degree in First inversion,
+Second degree in First inversion.
 
-Solver type: BAB
+-----------------------------------------variables------------------------------------------
+BassTenorHarmonicIntervals = {3, 3, 4}
+TenorAltoHarmonicIntervals = {4, 5, 5}
+AltoSopranoHarmonicIntervals = {5, 7, 3}
+
+BassMelodicIntervals = {2, 1}
+TenorMelodicIntervals = {2, 2}
+AltoMelodicIntervals = {3, 2}
+SopranoMelodicIntervals = {5, -2}
+
+absoluteBassMelodicIntervals = {2, 1}
+absoluteTenorMelodicIntervals = {2, 2}
+absoluteAltoMelodicIntervals = {3, 2}
+absoluteSopranoMelodicIntervals = {5, 2}
+
+🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵
+
+FullChordsVoicing = {50, 53, 57, 62, 52, 55, 60, 67, 53, 57, 62, 65}
+
+🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵
+
+-------------------------------cost-related auxiliary arrays------------------------------
+nDifferentValuesInDiminishedChord = {0, 0, 0}
+nDifferentValuesInAllChords = {4, 4, 4}
+nOccurrencesBassInFundamentalState = {2, 0, 0}
+
+nCommonNotesInSoprano = {0, 0}
+
+------------------------------------cost variables----------------------------------------
+nOfDiminishedChordsWith4notes = 0
+nOfChordsWithLessThan4notes = 0
+nOfFundamentalStateChordsWithoutDoubledBass = 0
+nOfCommonNotesInSoprano = 0
+sumOfMelodicIntervals = 19
+
+
+
+Solution4: 
+********************************************************************************************
+*                                                                                          *
+*                                          Solution                                        *
+*                                                                                          *
+********************************************************************************************
+
+-----------------------------------------parameters-----------------------------------------
+Number of chords: 3
+Tonality: C Major
+Chords: 
+Second degree in Fundamental state,
+First degree in First inversion,
+Second degree in First inversion.
+
+-----------------------------------------variables------------------------------------------
+BassTenorHarmonicIntervals = {7, 3, 4}
+TenorAltoHarmonicIntervals = {5, 5, 5}
+AltoSopranoHarmonicIntervals = {3, 7, 3}
+
+BassMelodicIntervals = {2, 1}
+TenorMelodicIntervals = {-2, 2}
+AltoMelodicIntervals = {-2, 2}
+SopranoMelodicIntervals = {2, -2}
+
+absoluteBassMelodicIntervals = {2, 1}
+absoluteTenorMelodicIntervals = {2, 2}
+absoluteAltoMelodicIntervals = {2, 2}
+absoluteSopranoMelodicIntervals = {2, 2}
+
+🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵
+
+FullChordsVoicing = {50, 57, 62, 65, 52, 55, 60, 67, 53, 57, 62, 65}
+
+🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵
+
+-------------------------------cost-related auxiliary arrays------------------------------
+nDifferentValuesInDiminishedChord = {0, 0, 0}
+nDifferentValuesInAllChords = {4, 4, 4}
+nOccurrencesBassInFundamentalState = {2, 0, 0}
+
+nCommonNotesInSoprano = {0, 0}
+
+------------------------------------cost variables----------------------------------------
+nOfDiminishedChordsWith4notes = 0
+nOfChordsWithLessThan4notes = 0
+nOfFundamentalStateChordsWithoutDoubledBass = 0
+nOfCommonNotesInSoprano = 0
+sumOfMelodicIntervals = 15
+
+
 

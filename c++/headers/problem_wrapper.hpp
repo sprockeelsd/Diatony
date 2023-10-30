@@ -8,6 +8,7 @@
 #include "MajorTonality.hpp"
 #include "MinorTonality.hpp"
 #include "FourVoiceTexture.hpp"
+#include "Solver.hpp"
 
 #ifdef __cplusplus
 extern "C" {

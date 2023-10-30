@@ -60,40 +60,9 @@ void set_bass(const Home& home, Tonality *tonality, int degree, int state, IntVa
  * @param nDifferentValuesInDiminishedChord the number of different values in the diminished chord
  * @param currentChord the array containing a chord in the form [bass, alto, tenor, soprano]
  */
-void chord_note_occurrence_fundamental_state(Home home, int degree, int nVoices, Tonality *tonality,
-                                             const IntVar &nDifferentValuesInDiminishedChord,
-                                             const IntVarArgs &currentChord);
-
-/**
- * Computes the cost for the number of notes in a chord, that is the number of chords that have less than 4 different
- * values
- * @param home the instance of the problem
- * @param size the size of the chord
- * @param nVoices the number of voices
- * @param tonality the tonality of the piece
- * @param fullChordsVoicing the array containing all the chords in the form [bass, alto, tenor, soprano]
- * @param nOfDifferentNotes the array containing the number of different notes in each chord
- * @param costVar the variable that will contain the cost
- */
-void compute_n_of_notes_in_chord_cost(const Home& home, int size, int nVoices, IntVarArray fullChordsVoicing,
-                                      IntVarArray nOfDifferentNotes, const IntVar& costVar);
-
-/**
- * Computes the cost for the number of times the fundamental is not doubled in fundamental state chords.
- * @param home the instance of the problem
- * @param size the size of the chord
- * @param nVoices the number of voices
- * @param tonality the tonality of the piece
- * @param chordStas the array containing the state of each chord
- * @param chordDegs the array containing the degree of each chord
- * @param fullChordsVoicing the array containing all the chords in the form [bass, alto, tenor, soprano]
- * @param nOccurrencesFund the array containing the number of times the fundamental is present in each chord
- * @param costVar the variable that will contain the cost
- */
-void compute_fundamental_state_doubling_cost(const Home& home, int size, int nVoices, Tonality *tonality,
-                                             vector<int> chordStas, vector<int> chordDegs,
-                                             IntVarArray fullChordsVoicing, IntVarArray nOccurrencesFund,
-                                             const IntVar& costVar);
+void chord_note_occurrence_fundamental_state(Home home, int nVoices, int degree, Tonality *tonality,
+                                             const IntVarArgs &currentChord,
+                                             const IntVar &nDifferentValuesInDiminishedChord);
 
 /***********************************************************************************************************************
  *                                                                                                                     *
@@ -105,9 +74,11 @@ void compute_fundamental_state_doubling_cost(const Home& home, int size, int nVo
  * Sets the number of time each note of the chord are present in the chord
  * @param home the instance of the problem
  * @param tonality the tonality of the piece
- * @param degree the degree of the chord
+ * @param degrees the degree of the chord
  * @param currentChord the array containing a chord in the form [bass, alto, tenor, soprano]
  */
-void chord_note_occurrence_first_inversion(const Home& home, Tonality *tonality, int degree, const IntVarArgs& currentChord);
+void chord_note_occurrence_first_inversion(Home home, int size, int nVoices, int currentPos, Tonality *tonality,
+                                           vector<int> degrees, const IntVarArgs &currentChord,
+                                           IntVarArray bassMelodicIntervals, IntVarArray sopranoMelodicIntervals);
 
 #endif
