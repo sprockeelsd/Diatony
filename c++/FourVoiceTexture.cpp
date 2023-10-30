@@ -67,6 +67,23 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
 
     /**-----------------------------------------------------------------------------------------------------------------
     |                                                                                                                  |
+    |                                              link the arrays together                                            |
+    |                                                                                                                  |
+    -------------------------------------------------------------------------------------------------------------------*/
+
+    link_melodic_arrays(*this, size, nOfVoices, FullChordsVoicing, bassMelodicIntervals,
+                        altoMelodicIntervals, tenorMelodicIntervals, sopranoMelodicIntervals);
+
+    link_absolute_melodic_arrays(*this, bassMelodicIntervals, tenorMelodicIntervals, altoMelodicIntervals,
+                                 sopranoMelodicIntervals, absoluteBassMelodicIntervals, absoluteTenorMelodicIntervals,
+                                 absoluteAltoMelodicIntervals, absoluteSopranoMelodicIntervals);
+
+    link_harmonic_arrays(*this, size, nOfVoices, FullChordsVoicing, bassTenorHarmonicIntervals,
+                         bassAltoHarmonicIntervals, bassSopranoHarmonicIntervals, tenorAltoHarmonicIntervals,
+                         tenorSopranoHarmonicIntervals, altoSopranoHarmonicIntervals);
+
+    /**-----------------------------------------------------------------------------------------------------------------
+    |                                                                                                                  |
     |                                              generic constraints                                                 |
     |                                                                                                                  |
     -------------------------------------------------------------------------------------------------------------------*/
@@ -86,26 +103,11 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
 
     /**-----------------------------------------------------------------------------------------------------------------
     |                                                                                                                  |
-    |                                              link the arrays together                                            |
-    |                                                                                                                  |
-    -------------------------------------------------------------------------------------------------------------------*/
-
-    link_melodic_arrays(*this, size, nOfVoices, FullChordsVoicing, bassMelodicIntervals,
-                        altoMelodicIntervals, tenorMelodicIntervals, sopranoMelodicIntervals);
-
-    link_absolute_melodic_arrays(*this, bassMelodicIntervals, tenorMelodicIntervals, altoMelodicIntervals,
-                                 sopranoMelodicIntervals, absoluteBassMelodicIntervals, absoluteTenorMelodicIntervals,
-                                 absoluteAltoMelodicIntervals, absoluteSopranoMelodicIntervals);
-
-    link_harmonic_arrays(*this, size, nOfVoices, FullChordsVoicing, bassTenorHarmonicIntervals,
-                         bassAltoHarmonicIntervals, bassSopranoHarmonicIntervals, tenorAltoHarmonicIntervals,
-                         tenorSopranoHarmonicIntervals, altoSopranoHarmonicIntervals);
-
-    /**-----------------------------------------------------------------------------------------------------------------
-    |                                                                                                                  |
     |                                             set up costs computation                                             |
     |                                                                                                                  |
     -------------------------------------------------------------------------------------------------------------------*/
+
+    // @todo add a cost for doubled notes that are not tonal notes
 
     /// number of diminished chords in fundamental state with more than 3 notes (cost to minimize)
     compute_diminished_chords_cost(*this, size, nOfVoices, tonality, chordDegrees,
@@ -117,18 +119,16 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     compute_n_of_notes_in_chord_cost(*this, size, nOfVoices, FullChordsVoicing,
                                      nDifferentValuesAllChords,nOfChordsWithLessThan4notes);
 
-    ///@todo keep doing the refactoring from here
-
     /// number of fundamental state chords without doubled bass (cost to minimize)
-    /// @todo maybe add suggestion to which note to double next (tonal notes)
-    compute_fundamental_state_doubling_cost(*this, size, nOfVoices, tonality, chordStates,
-                                            chordDegrees, FullChordsVoicing,
+    compute_fundamental_state_doubling_cost(*this, size, nOfVoices, tonality,
+                                            chordDegrees, chordStates, FullChordsVoicing,
                                             nOccurrencesBassInFundamentalState,
                                             nOfFundamentalStateChordsWithoutDoubledBass);
 
     /// number of common notes in soprano with first inversion chord going to another chord (cost to minimize)
-    compute_cost_for_common_note_in_soprano(*this, size, nOfVoices, commonNotesInSoprano,
-                                            nOfCommonNotesInSoprano, chordStates, FullChordsVoicing);
+    compute_cost_for_common_note_in_soprano(*this, size, nOfVoices, chordStates, FullChordsVoicing,
+                                            commonNotesInSoprano,
+                                            nOfCommonNotesInSoprano);
 
     /// sum of melodic intervals (cost to minimize)
     linear(*this, IntVarArgs() << absoluteTenorMelodicIntervals << absoluteAltoMelodicIntervals <<
@@ -147,14 +147,15 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
         /// post the constraints depending on the chord's state
         if(chordStas[i] == FUNDAMENTAL_STATE){
             /// each note should be present at least once, doubling is determined with costs
-            chord_note_occurrence_fundamental_state(*this, chordDegrees[i], nOfVoices, tonality,
-                                                    nDifferentValuesInDiminishedChord[i],
-                                                    currentChord);
+            chord_note_occurrence_fundamental_state(*this, nOfVoices, chordDegrees[i], tonality,
+                                                    currentChord,
+                                                    nDifferentValuesInDiminishedChord[i]);
         }
         /// post the constraints specific to first inversion chords
         else if(chordStas[i] == FIRST_INVERSION){
-            chord_note_occurrence_first_inversion(*this, size, nOfVoices, i, tonality, chordDegrees,
-                                                  currentChord, bassMelodicIntervals, sopranoMelodicIntervals);
+            chord_note_occurrence_first_inversion(*this, size, nOfVoices, i, tonality,
+                                                  chordDegrees, currentChord, bassMelodicIntervals,
+                                                  sopranoMelodicIntervals);
         }
         /// post the constraints specific to second inversion chords
         else if(chordStas[i] == SECOND_INVERSION){
@@ -177,16 +178,17 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
         /// parallel unissons, fifths and octaves are forbidden unless we have the same chord twice in a row
         if(chordDegrees[i] != chordDegrees[i + 1]){
             forbid_parallel_intervals(*this, size, nOfVoices, {PERFECT_FIFTH, PERFECT_OCTAVE, UNISSON},
-                                      bassTenorHarmonicIntervals, bassAltoHarmonicIntervals, bassSopranoHarmonicIntervals,
+                                      FullChordsVoicing,
+                                      bassTenorHarmonicIntervals, bassAltoHarmonicIntervals,
+                                      bassSopranoHarmonicIntervals,
                                       tenorAltoHarmonicIntervals, tenorSopranoHarmonicIntervals,
-                                      altoSopranoHarmonicIntervals,
-                                      FullChordsVoicing);
+                                      altoSopranoHarmonicIntervals);
         }
 
         /// resolve the tritone if there is one and it needs to be resolved
         if (chordDegs[i] == SEVENTH_DEGREE && chordDegs[i + 1] == FIRST_DEGREE) {
             //@todo add other chords that have the tritone
-            tritone_resolution(*this, i, nOfVoices, tonality,
+            tritone_resolution(*this, nOfVoices, i, tonality,
                                bassMelodicIntervals, tenorMelodicIntervals,
                                altoMelodicIntervals, sopranoMelodicIntervals,
                                FullChordsVoicing);
@@ -197,20 +199,17 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
         /// special rule for interrupted cadence
         if (chordDegs[i] == FIFTH_DEGREE && chordStas[i] == FUNDAMENTAL_STATE &&
         chordDegs[i + 1] == SIXTH_DEGREE && chordStas[i + 1] == FUNDAMENTAL_STATE) {
-            interrupted_cadence(*this, i, tonality, tenorMelodicIntervals,
-                                altoMelodicIntervals, sopranoMelodicIntervals,
-                                FullChordsVoicing);
+            interrupted_cadence(*this, i, tonality,
+                                FullChordsVoicing, tenorMelodicIntervals,
+                                altoMelodicIntervals, sopranoMelodicIntervals);
         }
         /// general voice leading rules
         else {
             /// If the bass moves by a step, other voices should move in contrary motion
-            // note at the bass of the first chord
             int bassFirstChord = (tonality->get_degree_note(chordDegrees[i] + 2 * chordStates[i])
                     % PERFECT_OCTAVE);
-            // note at the bass of the second chord
             int bassSecondChord = (tonality->get_degree_note(chordDegrees[i + 1] + 2 * chordStates[i + 1])
                     % PERFECT_OCTAVE);
-            // difference in degrees between the two bass notes
             int bassMelodicMotion = abs(bassSecondChord - bassFirstChord);
             /// if the bass moves by a step between fund. state chords @todo check if this needs to apply in other cases
             if ((bassMelodicMotion == MINOR_SECOND || bassMelodicMotion == MAJOR_SECOND ||
@@ -221,7 +220,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
                                         tenorMelodicIntervals,altoMelodicIntervals,
                                         sopranoMelodicIntervals);
             }
-            /// if II -> V, move voices in contrary motion to bass @todo check that its not only for 1st inversion II
+            /// if II -> V, move voices in contrary motion to bass
             else if(chordDegs[i] == SECOND_DEGREE && chordDegs[i+1] == FIFTH_DEGREE){
                 contrary_motion_to_bass(*this, i, bassMelodicIntervals,
                                         tenorMelodicIntervals, altoMelodicIntervals,
@@ -229,12 +228,9 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
             }
             else if(chordDegrees[i] != chordDegrees[i + 1]){
                 /// Otherwise, keep common notes in the same voice
-                // @todo maybe this doesn't need to be in an else statement and can be applied all the time
-
                 keep_common_notes_in_same_voice(*this, nOfVoices, i, chordDegrees, tonality,
                                                 FullChordsVoicing);
             }
-
             /// move voices as closely as possible (implemented with costs)
         }
     }

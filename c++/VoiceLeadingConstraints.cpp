@@ -19,22 +19,21 @@
  * @param size the size of the chord progression
  * @param nOfVoices the number of voices
  * @param intervals the list of intervals to forbid
+ * @param FullChordsVoicing the array containing all the notes of the chords in the progression
  * @param bassTenorHarmonicIntervals the array containing the harmonic intervals between bass and tenor
  * @param bassAltoHarmonicIntervals the array containing the harmonic intervals between bass and alto
  * @param bassSopranoHarmonicIntervals the array containing the harmonic intervals between bass and soprano
  * @param tenorAltoHarmonicIntervals the array containing the harmonic intervals between tenor and alto
  * @param tenorSopranoHarmonicIntervals the array containing the harmonic intervals between tenor and soprano
  * @param altoSopranoHarmonicIntervals the array containing the harmonic intervals between alto and soprano
- * @param FullChordsVoicing the array containing all the notes of the chords in the progression
  */
-void forbid_parallel_intervals(const Home& home, int size, int nOfVoices, const vector<int>& intervals,
-                               const IntVarArray& bassTenorHarmonicIntervals,
-                               const IntVarArray& bassAltoHarmonicIntervals,
-                               const IntVarArray& bassSopranoHarmonicIntervals,
-                               const IntVarArray& tenorAltoHarmonicIntervals,
-                               const IntVarArray& tenorSopranoHarmonicIntervals,
-                               const IntVarArray& altoSopranoHarmonicIntervals,
-                               const IntVarArray& FullChordsVoicing){
+void forbid_parallel_intervals(const Home &home, int size, int nOfVoices, const vector<int> &intervals,
+                               const IntVarArray &FullChordsVoicing, const IntVarArray &bassTenorHarmonicIntervals,
+                               const IntVarArray &bassAltoHarmonicIntervals,
+                               const IntVarArray &bassSopranoHarmonicIntervals,
+                               const IntVarArray &tenorAltoHarmonicIntervals,
+                               const IntVarArray &tenorSopranoHarmonicIntervals,
+                               const IntVarArray &altoSopranoHarmonicIntervals) {
     for(int chord = 0; chord < size - 1; chord++){ /// for each chord
         for(int interval : intervals){ /// for each interval
             /// from bass
@@ -201,14 +200,14 @@ void contrary_motion_to_bass(const Home& home, int currentPosition, const IntVar
  * @param home the instance of the problem
  * @param currentPosition the current position in the chord progression
  * @param tonality the tonality of the piece
+ * @param fullChordsVoicing the array containing the notes of the chords in the progression
  * @param tenorMelodicInterval the melodic intervals of the tenor
  * @param altoMelodicInterval the melodic intervals of the alto
  * @param sopranoMelodicInterval the melodic intervals of the soprano
- * @param fullChordsVoicing the array containing the notes of the chords in the progression
  */
-void interrupted_cadence(const Home& home, int currentPosition, Tonality *tonality,
-                         const IntVarArray& tenorMelodicInterval, const IntVarArray& altoMelodicInterval,
-                         const IntVarArray& sopranoMelodicInterval, IntVarArray fullChordsVoicing){
+void interrupted_cadence(const Home &home, int currentPosition, Tonality *tonality, IntVarArray fullChordsVoicing,
+                         const IntVarArray &tenorMelodicInterval, const IntVarArray &altoMelodicInterval,
+                         const IntVarArray &sopranoMelodicInterval) {
     // @todo make it cleaner with loops
 
     /// if the mode is major, then this rule only applies to the soprano voice. Otherwise, it applies for all voices
@@ -268,21 +267,22 @@ void interrupted_cadence(const Home& home, int currentPosition, Tonality *tonali
  * @param home the instance of the problem
  * @param nChords the number of chords in the progression
  * @param nVoices the number of voices in the piece
+ * @param chordStates the state of the chord (fundamental, first inversion, second inversion)
+ * @param FullChordsVoicing the array containing all the notes of the chords in the progression
  * @param commonNotesInSoprano an array containing 1 if there is a common note in the soprano voice between this chord and
  * the next, and if the first chord is in first inversion
  * @param nOfCommonNotesInSoprano the number of times when there is a common note in the soprano voice
- * @param chordStates the state of the chord (fundamental, first inversion, second inversion)
- * @param FullChordsVoicing the array containing all the notes of the chords in the progression
  */
-void compute_cost_for_common_note_in_soprano(const Home& home, int nChords, int nVoices, IntVarArray commonNotesInSoprano,
-                                             const IntVar& nOfCommonNotesInSoprano, vector<int> chordStates, IntVarArray FullChordsVoicing){
+void compute_cost_for_common_note_in_soprano(const Home &home, int nChords, int nVoices, vector<int> chordStates,
+                                             IntVarArray FullChordsVoicing, IntVarArray commonNotesInSoprano,
+                                             const IntVar &nOfCommonNotesInSoprano) {
     for(int chord = 0; chord < nChords - 1; chord++){
         if (chordStates[chord] == FIRST_INVERSION || chordStates[chord + 1] == FIRST_INVERSION){
             rel(home, expr(home, FullChordsVoicing[nVoices * chord + SOPRANO] ==
-                                 FullChordsVoicing[nVoices * (chord + 1) + SOPRANO]), BOT_IMP,
+                                 FullChordsVoicing[nVoices * (chord + 1) + SOPRANO]), BOT_EQV,
                 expr(home, commonNotesInSoprano[chord] == 1), true);
             rel(home, expr(home, FullChordsVoicing[nVoices * chord + SOPRANO] !=
-                                 FullChordsVoicing[nVoices * (chord + 1) + SOPRANO]), BOT_IMP,
+                                 FullChordsVoicing[nVoices * (chord + 1) + SOPRANO]), BOT_EQV,
                 expr(home, commonNotesInSoprano[chord] == 0), true);
         }
         else{
@@ -302,8 +302,8 @@ void compute_cost_for_common_note_in_soprano(const Home& home, int nChords, int 
 /**
  * Forces the tritone to resolve properly
  * @param home the instance of the problem
- * @param currentPosition the current position in the chord progression
  * @param nvoices the number of voices in the piece
+ * @param currentPosition the current position in the chord progression
  * @param tonality the tonality of the piece
  * @param bassMelodicInterval the melodic interval of the bass between the current position and the next
  * @param tenorMelodicInterval the melodic interval of the tenor between the current position and the next
@@ -311,24 +311,21 @@ void compute_cost_for_common_note_in_soprano(const Home& home, int nChords, int 
  * @param sopranoMelodicInterval the melodic interval of the soprano between the current position and the next
  * @param fullChordsVoicing the array containing all the notes of the chords in the progression
  */
-void tritone_resolution(const Home& home, int currentPosition, int nVoices, Tonality *tonality,
-                        const IntVarArray& bassMelodicInterval, const IntVarArray& tenorMelodicInterval,
-                        const IntVarArray& altoMelodicInterval, const IntVarArray& sopranoMelodicInterval,
-                        IntVarArray fullChordsVoicing){
+void tritone_resolution(const Home &home, int nVoices, int currentPosition, Tonality *tonality,
+                        const IntVarArray &bassMelodicInterval, const IntVarArray &tenorMelodicInterval,
+                        const IntVarArray &altoMelodicInterval, const IntVarArray &sopranoMelodicInterval,
+                        IntVarArray fullChordsVoicing) {
 
     IntVarArgs currentChord(fullChordsVoicing.slice(nVoices * currentPosition, 1, nVoices));
 
     vector<IntVarArray> melodicIntervals(
             {bassMelodicInterval, tenorMelodicInterval, altoMelodicInterval, sopranoMelodicInterval});
-    // @todo marche pas en 1ère inversion -> regarder
     for(int voice = BASS; voice <= SOPRANO; voice++){
         /// if the note is the fourth of the scale, it must go down by step to the third of the scale
-        /// must be descending
+        /// must be descending and must be a second
         rel(home,expr(home, currentChord[voice] % PERFECT_OCTAVE == (tonality->get_tonic() + PERFECT_FOURTH) %
-            PERFECT_OCTAVE),BOT_IMP,expr(home, melodicIntervals[voice][currentPosition] < 0), true);
-        /// must be a second
-        rel(home,expr(home, currentChord[voice] % PERFECT_OCTAVE == (tonality->get_tonic() + PERFECT_FOURTH) %
-            PERFECT_OCTAVE),BOT_IMP, expr(home, melodicIntervals[voice][currentPosition] >= -2), true);
+            PERFECT_OCTAVE),BOT_IMP,expr(home, expr(home, melodicIntervals[voice][currentPosition] < 0) &&
+            expr(home, melodicIntervals[voice][currentPosition] >= -2)), true);
 
         /// if the note is the major seventh of the scale, it must go up to the tonic by step
         rel(home, expr(home, currentChord[voice] % PERFECT_OCTAVE == (tonality->get_tonic() + MAJOR_SEVENTH) % PERFECT_OCTAVE),

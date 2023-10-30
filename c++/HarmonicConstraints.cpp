@@ -103,20 +103,20 @@ void compute_n_of_notes_in_chord_cost(const Home& home, int size, int nVoices, I
  * @todo maybe make it a preference later
  * Sets the number of times each note of the notes of the chord are present in the chord
  * @param home the instance of the problem
- * @param degree the degree of the chord
  * @param nVoices the number of voices
+ * @param degree the degree of the chord
  * @param tonality the tonality of the piece
- * @param nDifferentValuesInDiminishedChord the number of different values in the diminished chord
  * @param currentChord the array containing a chord in the form [bass, alto, tenor, soprano]
+ * @param nDifferentValuesInDiminishedChord the number of different values in the diminished chord
  */
-void chord_note_occurrence_fundamental_state(Home home, int degree, int nVoices, Tonality *tonality,
-                                             const IntVar &nDifferentValuesInDiminishedChord,
-                                             const IntVarArgs &currentChord) {
+void chord_note_occurrence_fundamental_state(Home home, int nVoices, int degree, Tonality *tonality,
+                                             const IntVarArgs &currentChord,
+                                             const IntVar &nDifferentValuesInDiminishedChord) {
     /// if the chord is a diminished seventh degree, the third must be doubled
     if(degree == SEVENTH_DEGREE && tonality->get_chord_qualities()[degree] == DIMINISHED_CHORD){
-        IntVar nOfThirds(home,0,nVoices); // @todo make argument variable
+        IntVar nOfThirds(home,0,nVoices);
         count(home, currentChord, tonality->get_scale_degree(degree), IRT_EQ,nOfThirds);
-        rel(home, expr(home, nDifferentValuesInDiminishedChord == nVoices), BOT_IMP,
+        rel(home, expr(home, nDifferentValuesInDiminishedChord == nVoices), BOT_EQV,
             expr(home, nOfThirds == 2), true);
     }
     /// each note is present at least once, doubling is determined by the costs
@@ -131,22 +131,23 @@ void chord_note_occurrence_fundamental_state(Home home, int degree, int nVoices,
  * @param size the size of the chord
  * @param nVoices the number of voices
  * @param tonality the tonality of the piece
- * @param chordStas the array containing the state of each chord
  * @param chordDegs the array containing the degree of each chord
+ * @param chordStas the array containing the state of each chord
  * @param fullChordsVoicing the array containing all the chords in the form [bass, alto, tenor, soprano]
  * @param nOccurrencesFund the array containing the number of times the fundamental is present in each chord
  * @param costVar the variable that will contain the cost
  */
-void compute_fundamental_state_doubling_cost(const Home& home, int size, int nVoices, Tonality *tonality,
-                                             vector<int> chordStas, vector<int> chordDegs,
+void compute_fundamental_state_doubling_cost(const Home &home, int size, int nVoices, Tonality *tonality,
+                                             vector<int> chordDegs, vector<int> chordStas,
                                              IntVarArray fullChordsVoicing, IntVarArray nOccurrencesFund,
-                                             const IntVar& costVar){
+                                             const IntVar &costVar) {
     for(int i = 0; i < size; ++i){// for each chord
         /// if the chord is in fundamental state
         if(chordStas[i] == FUNDAMENTAL_STATE){
             IntVarArgs currentChord(fullChordsVoicing.slice(nVoices * i, 1, nVoices)); // current chord
             /// nOccurencesFund[i] = nb of times the fundamental is present in the chord
-            count(home, currentChord, tonality->get_scale_degree(chordDegs[i]), IRT_EQ,nOccurrencesFund[i]);
+            count(home, currentChord, tonality->get_scale_degree(chordDegs[i]), IRT_EQ,
+                  nOccurrencesFund[i]);
         }
         else{ /// if not fundamental state, then we ignore it so it's 0
             rel(home, nOccurrencesFund[i], IRT_EQ, 0); // don't care
@@ -185,29 +186,29 @@ void chord_note_occurrence_first_inversion(Home home, int size, int nVoices, int
     else{ /// default case: double the fundamental or the fifth of the chord unless the top and bottom voices move down and up respectively
         if(currentPos < size-1 && currentPos > 0){ /// this special case cannot happen on the first and last chord
             ///BoolVar to see if the bass rises for the first motion
-            BoolVar bassStep1 = expr(home,bassMelodicIntervals[currentPos-1] > 0);
-            BoolVar bassStep2 = expr(home, bassMelodicIntervals[currentPos-1] <= 2);
-            BoolVar bassRises1 = expr(home, bassStep1 && bassStep2);
+            BoolVar bassRises1 = expr(home, expr(home,bassMelodicIntervals[currentPos-1] > 0) &&
+                expr(home, bassMelodicIntervals[currentPos-1] <= 2));
             /// BoolVar to see if the bass rises for the second motion
-            BoolVar bassStep3 = expr(home, bassMelodicIntervals[currentPos] > 0);
-            BoolVar bassStep4 = expr(home, bassMelodicIntervals[currentPos] <= 2);
-            BoolVar bassRises2 = expr(home, bassStep3 && bassStep4);
+            BoolVar bassRises2 = expr(home, expr(home, bassMelodicIntervals[currentPos] > 0) &&
+                expr(home, bassMelodicIntervals[currentPos] <= 2));
+
             /// BoolVar to see if the bass rises overall
             BoolVar bassRisesOverall = expr(home, bassRises1 && bassRises2);
+
             /// BoolVar to see if the soprano rises for the first motion
-            BoolVar sopranoStep1 = expr(home, sopranoMelodicIntervals[currentPos-1] < 0);
-            BoolVar sopranoStep2 = expr(home, sopranoMelodicIntervals[currentPos-1] >= -2);
-            BoolVar sopranoFalls1 = expr(home, sopranoStep1 && sopranoStep2);
+            BoolVar sopranoFalls1 = expr(home, expr(home, sopranoMelodicIntervals[currentPos-1] < 0) &&
+                expr(home, sopranoMelodicIntervals[currentPos-1] >= -2));
             /// BoolVar to see if the soprano rises for the second motion
-            BoolVar sopranoStep3 = expr(home, sopranoMelodicIntervals[currentPos] < 0);
-            BoolVar sopranoStep4 = expr(home, sopranoMelodicIntervals[currentPos] >= -2);
-            BoolVar sopranoFalls2 = expr(home, sopranoStep3 && sopranoStep4);
+            BoolVar sopranoFalls2 = expr(home, expr(home, sopranoMelodicIntervals[currentPos] < 0) &&
+                expr(home, sopranoMelodicIntervals[currentPos] >= -2));
+
             /// BoolVar to see if the soprano rises overall
             BoolVar sopranoFallsOverall = expr(home, sopranoFalls1 && sopranoFalls2);
+
             /// BoolVar to see if the voices move step wise by contrary motion over the three chords
             BoolVar contraryMotion = expr(home, bassRisesOverall && sopranoFallsOverall);
 
-            IntVar nOfBassNotes(home,0,nVoices); // @todo make argument variable
+            IntVar nOfBassNotes(home,0,nVoices);
             count(home, currentChord, tonality->get_scale_degree(degrees[currentPos] + THIRD_DEGREE), IRT_EQ,nOfBassNotes);
             rel(home, contraryMotion, BOT_EQV, expr(home, nOfBassNotes == 2), true);
             rel(home, expr(home, !contraryMotion), BOT_EQV, expr(home, nOfBassNotes == 1), true);
