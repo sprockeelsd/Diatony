@@ -49,39 +49,6 @@ void set_bass(const Home& home, Tonality *tonality, int degree, int state, IntVa
  ***********************************************************************************************************************/
 
 /**
- * Computes the cost for diminished intervals, that is the number of diminished chords that don't respect the preference
- * Here, the preference is that they should be used in 3 voices instead of 4.
- * If the chord is not diminished, the value is forced to 0 since it doesn't matter
- * @param home the instance of the problem
- * @param size the number of chords
- * @param nVoices the number of voices
- * @param tonality the tonality of the piece
- * @param chordDegs the degrees of the chords
- * @param chordStas the state of the chord (inversion)
- * @param fullChordsVoicing the array containing all the chords in the form
- *          [bass0, alto0, tenor0, soprano0, bass1, alto1, tenor1, soprano1, ...]
- * @param nOfDifferentNotes the array containing the number of different notes in each diminished chord.
- * @param costVar the variable that will contain the number of diminished chords that don't respect the preference
- */
-void compute_diminished_chords_cost(const Home& home, int size, int nVoices, Tonality *tonality, vector<int> chordDegs,
-                                    vector<int> chordStas, IntVarArray fullChordsVoicing, IntVarArray nOfDifferentNotes,
-                                    const IntVar& costVar);
-
-/**
- * Computes the cost for the number of notes in a chord, that is the number of chords that have less than 4 different
- * values
- * @param home the instance of the problem
- * @param size the size of the chord
- * @param nVoices the number of voices
- * @param tonality the tonality of the piece
- * @param fullChordsVoicing the array containing all the chords in the form [bass, alto, tenor, soprano]
- * @param nOfDifferentNotes the array containing the number of different notes in each chord
- * @param costVar the variable that will contain the cost
- */
-void compute_n_of_notes_in_chord_cost(const Home& home, int size, int nVoices, IntVarArray fullChordsVoicing,
-                                      IntVarArray nOfDifferentNotes, const IntVar& costVar);
-
-/**
  * @todo change this for complete and incomplete chords later (third must be <=1 depending on the chord before and
  * @todo after if they are 5->1 and complete/incomplete)
  * @todo maybe make it a preference later
@@ -96,23 +63,6 @@ void compute_n_of_notes_in_chord_cost(const Home& home, int size, int nVoices, I
 void chord_note_occurrence_fundamental_state(Home home, int nVoices, int degree, Tonality *tonality,
                                              const IntVarArgs &currentChord,
                                              const IntVar &nDifferentValuesInDiminishedChord);
-
-/**
- * Computes the cost for the number of times the fundamental is not doubled in fundamental state chords.
- * @param home the instance of the problem
- * @param size the size of the chord
- * @param nVoices the number of voices
- * @param tonality the tonality of the piece
- * @param chordDegs the array containing the degree of each chord
- * @param chordStas the array containing the state of each chord
- * @param fullChordsVoicing the array containing all the chords in the form [bass, alto, tenor, soprano]
- * @param nOccurrencesFund the array containing the number of times the fundamental is present in each chord
- * @param costVar the variable that will contain the cost
- */
-void compute_fundamental_state_doubling_cost(const Home &home, int size, int nVoices, Tonality *tonality,
-                                             vector<int> chordDegs, vector<int> chordStas,
-                                             IntVarArray fullChordsVoicing, IntVarArray nOccurrencesFund,
-                                             const IntVar &costVar);
 
 /***********************************************************************************************************************
  *                                                                                                                     *

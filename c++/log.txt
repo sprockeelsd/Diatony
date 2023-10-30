@@ -1,5 +1,5 @@
 
-Mon Oct 30 11:29:09 2023
+Mon Oct 30 14:58:01 2023
 
 -----------------------------------------parameters-----------------------------------------
 Number of chords: 3
@@ -220,60 +220,4 @@ nOfCommonNotesInSoprano = 0
 sumOfMelodicIntervals = 15
 
 
-
-
-Mon Oct 30 11:30:06 2023
-
------------------------------------------parameters-----------------------------------------
-Number of chords: 2
-Tonality: C Major
-Chords: 
-Seventh degree in First inversion,
-First degree in Fundamental state.
-
-Solver type: BAB
-
-
-Mon Oct 30 11:38:06 2023
-
------------------------------------------parameters-----------------------------------------
-Number of chords: 2
-Tonality: C Major
-Chords: 
-Seventh degree in First inversion,
-First degree in Fundamental state.
-
-Solver type: BAB
-
-Solver type: BAB
-
-
-Mon Oct 30 11:38:27 2023
-
------------------------------------------parameters-----------------------------------------
-Number of chords: 2
-Tonality: C Major
-Chords: 
-Seventh degree in First inversion,
-First degree in Fundamental state.
-
-Solver type: BAB
-
-Solver type: DFS
-
-
-Mon Oct 30 11:39:26 2023
-
------------------------------------------parameters-----------------------------------------
-Number of chords: 2
-Tonality: C Minor
-Chords: 
-Seventh degree in First inversion,
-First degree in Fundamental state.
-
-Solver type: DFS
-
-Solver type: BAB
-
-Solver type: DFS
 

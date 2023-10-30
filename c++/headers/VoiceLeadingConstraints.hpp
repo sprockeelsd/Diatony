@@ -132,20 +132,4 @@ void interrupted_cadence(const Home &home, int currentPosition, Tonality *tonali
  *                                                                                                                     *
  ***********************************************************************************************************************/
 
-/**
- * This function counts the number of times when a common note in the soprano voice when moving from a chord in first
- * inversion to another chord.
- * @param home the instance of the problem
- * @param nChords the number of chords in the progression
- * @param nVoices the number of voices in the piece
- * @param chordStates the state of the chord (fundamental, first inversion, second inversion)
- * @param FullChordsVoicing the array containing all the notes of the chords in the progression
- * @param commonNotesInSoprano an array containing 1 if there is a common note in the soprano voice between this chord and
- * the next, and if the first chord is in first inversion
- * @param nOfCommonNotesInSoprano the number of times when there is a common note in the soprano voice
- */
-void compute_cost_for_common_note_in_soprano(const Home &home, int nChords, int nVoices, vector<int> chordStates,
-                                             IntVarArray FullChordsVoicing, IntVarArray commonNotesInSoprano,
-                                             const IntVar &nOfCommonNotesInSoprano);
-
 #endif

@@ -21,6 +21,7 @@
 #include "GeneralConstraints.hpp"
 #include "HarmonicConstraints.hpp"
 #include "VoiceLeadingConstraints.hpp"
+#include "Preferences.hpp"
 
 using namespace Gecode;
 using namespace Gecode::Search;

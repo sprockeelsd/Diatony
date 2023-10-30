@@ -240,7 +240,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     |                                                       Branching                                                  |
     |                                                                                                                  |
     -------------------------------------------------------------------------------------------------------------------*/
-    // @todo make it smart when it becomes necessary
+    // @todo make it smarter when it becomes necessary
     branch(*this, FullChordsVoicing, INT_VAR_DEGREE_MAX(), INT_VAL_MIN());
 }
 
@@ -253,9 +253,9 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
  * @return the cost variables in order of importance
  */
 IntVarArgs FourVoiceTexture::cost() const {
+    // @todo maybe give the voices a priority + check the order depending on what is more important
     return {nOfDiminishedChordsWith4notes, nOfChordsWithLessThan4notes, nOfFundamentalStateChordsWithoutDoubledBass,
-            nOfCommonNotesInSoprano, sumOfMelodicIntervals};// @todo maybe give the voices a priority + check if we want
-            //@todo to first minimize the sum of melodic intervals or the number of common notes in soprano
+            sumOfMelodicIntervals, nOfCommonNotesInSoprano};
 }
 
 /**
@@ -264,7 +264,6 @@ IntVarArgs FourVoiceTexture::cost() const {
  * @return a copy of the given instance of the FourVoiceTexture class
  */
 FourVoiceTexture::FourVoiceTexture(FourVoiceTexture& s): IntLexMinimizeSpace(s){
-    //IntVars update
     size = s.size;
     tonality = s.tonality;
     chordDegrees = s.chordDegrees;
