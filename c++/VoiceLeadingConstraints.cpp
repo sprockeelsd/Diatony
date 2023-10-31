@@ -273,27 +273,38 @@ void interrupted_cadence(const Home &home, int currentPosition, Tonality *tonali
  * @param nvoices the number of voices in the piece
  * @param currentPosition the current position in the chord progression
  * @param tonality the tonality of the piece
+ * @param chordDegs the degrees of the chords
+ * @param chordStas the state of the chords
  * @param bassMelodicInterval the melodic interval of the bass between the current position and the next
  * @param tenorMelodicInterval the melodic interval of the tenor between the current position and the next
  * @param altoMelodicInterval the melodic interval of the alto between the current position and the next
  * @param sopranoMelodicInterval the melodic interval of the soprano between the current position and the next
  * @param fullChordsVoicing the array containing all the notes of the chords in the progression
  */
-void tritone_resolution(const Home &home, int nVoices, int currentPosition, Tonality *tonality,
-                        const IntVarArray &bassMelodicInterval, const IntVarArray &tenorMelodicInterval,
-                        const IntVarArray &altoMelodicInterval, const IntVarArray &sopranoMelodicInterval,
-                        IntVarArray fullChordsVoicing) {
+void tritone_resolution(const Home &home, int nVoices, int currentPosition, Tonality *tonality, vector<int> chordDegs,
+                        vector<int> chordStas, const IntVarArray &bassMelodicInterval,
+                        const IntVarArray &tenorMelodicInterval, const IntVarArray &altoMelodicInterval,
+                        const IntVarArray &sopranoMelodicInterval, IntVarArray fullChordsVoicing) {
 
     IntVarArgs currentChord(fullChordsVoicing.slice(nVoices * currentPosition, 1, nVoices));
 
     vector<IntVarArray> melodicIntervals(
             {bassMelodicInterval, tenorMelodicInterval, altoMelodicInterval, sopranoMelodicInterval});
     for(int voice = BASS; voice <= SOPRANO; voice++){
-        /// if the note is the fourth of the scale, it must go down by step to the third of the scale
-        /// must be descending and must be a second
-        rel(home,expr(home, currentChord[voice] % PERFECT_OCTAVE == (tonality->get_tonic() + PERFECT_FOURTH) %
-            PERFECT_OCTAVE),BOT_IMP,expr(home, expr(home, melodicIntervals[voice][currentPosition] < 0) &&
-            expr(home, melodicIntervals[voice][currentPosition] >= -2)), true);
+        /// special case
+        /// if the chords are VII (1st inversion) -> I (1st inversion)
+        if (chordDegs[currentPosition] == SEVENTH_DEGREE && chordStas[currentPosition] == FIRST_INVERSION &&
+            chordDegs[currentPosition+1] == FIRST_DEGREE && chordStas[currentPosition+1] == FIRST_INVERSION){
+            /// the fourth of the scale must go up by a step
+            rel(home, expr(home, currentChord[voice] % PERFECT_OCTAVE == (tonality->get_tonic() + PERFECT_FOURTH) %
+            PERFECT_OCTAVE), BOT_IMP, expr(home, expr(home, melodicIntervals[voice][currentPosition] > 0) &&
+            expr(home, melodicIntervals[voice][currentPosition] <= 2)), true);
+        }
+        else{ /// the fourth of the scale must go down by a step
+            rel(home,expr(home, currentChord[voice] % PERFECT_OCTAVE == (tonality->get_tonic() + PERFECT_FOURTH) %
+                PERFECT_OCTAVE),BOT_IMP,expr(home, expr(home, melodicIntervals[voice][currentPosition] < 0)
+                && expr(home, melodicIntervals[voice][currentPosition] >= -2)), true);
+        }
 
         /// if the note is the major seventh of the scale, it must go up to the tonic by step
         rel(home, expr(home, currentChord[voice] % PERFECT_OCTAVE == (tonality->get_tonic() + MAJOR_SEVENTH) % PERFECT_OCTAVE),
