@@ -134,4 +134,26 @@ void interrupted_cadence(const Home &home, int currentPosition, Tonality *tonali
  *                                                                                                                     *
  ***********************************************************************************************************************/
 
+/***********************************************************************************************************************
+ *                                                                                                                     *
+ *                                           Second inversion chord constraints                                        *
+ *                                                                                                                     *
+ ***********************************************************************************************************************/
+
+/**
+ * Sets the constraint for a first degree in second inversion followed by a fifth degree (appogiatura)
+ * @param home the instance of the problem
+ * @param nVoices the number of voices in the piece
+ * @param currentPosition the current position in the chord progression
+ * @param tonality the tonality of the piece
+ * @param fullChordsVoicing the array containing all the notes of the chords in the progression
+ * @param bassMelodicInterval the melodic interval of the bass between the current position and the next
+ * @param tenorMelodicInterval the melodic interval of the tenor between the current position and the next
+ * @param altoMelodicInterval the melodic interval of the alto between the current position and the next
+ * @param sopranoMelodicInterval the melodic interval of the soprano between the current position and the next
+ */
+void fifth_degree_appogiatura(Home home, int nVoices, int currentPosition, Tonality *tonality, IntVarArray fullChordsVoicing,
+                              IntVarArray bassMelodicInterval, IntVarArray tenorMelodicInterval,
+                              IntVarArray altoMelodicInterval, IntVarArray sopranoMelodicInterval);
+
 #endif

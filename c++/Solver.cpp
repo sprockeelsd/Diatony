@@ -70,16 +70,18 @@ vector<const FourVoiceTexture*> find_all_solutions(FourVoiceTexture *pb, int sol
     vector<const FourVoiceTexture*> sols;
     // create the search engine
     auto* solver = make_solver(pb, solverType);
-    write_to_log_file("\n Searching for all solutions to the problem with the given solver type:");
+    write_to_log_file("\nSearching for solutions:\n");
 
     int nbSol = 0;
     while(FourVoiceTexture *sol= get_next_solution_space(solver)){
         nbSol++;
         sols.push_back(sol);
-        string message = "Solution" + to_string(nbSol) + ": \n" + sol->to_string() + "\n";
+        string message = "Solution found: \nSolution" + to_string(nbSol) + ": \n" + sol->to_string() + "\n";
         write_to_log_file(message.c_str());
         if (nbSol >= maxNOfSols)
             break;
     }
+    if(nbSol == 0)
+        write_to_log_file("No solutions found.");
     return sols;
 }

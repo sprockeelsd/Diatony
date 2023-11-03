@@ -118,7 +118,6 @@ void forbid_parallel_interval(Home home, int nVoices, int forbiddenParallelInter
  * @param tonality the tonality of the piece
  * @param fullChordsVoicing the array containing all the notes of the chords in the progression
  */
- // @todo add nVoices to the arguments
  void keep_common_notes_in_same_voice(const Home &home, int nVoices, int currentPosition, vector<int> chordDegrees,
                                       Tonality *tonality, IntVarArray fullChordsVoicing) {
     /// keep common notes in the same voice and move other voices as closely as possible (cost)
@@ -260,6 +259,45 @@ void interrupted_cadence(const Home &home, int currentPosition, Tonality *tonali
  *                                           First inversion chord constraints                                         *
  *                                                                                                                     *
  ***********************************************************************************************************************/
+
+/***********************************************************************************************************************
+ *                                                                                                                     *
+ *                                           Second inversion chord constraints                                        *
+ *                                                                                                                     *
+ ***********************************************************************************************************************/
+
+/**
+ * Sets the constraint for a first degree in second inversion followed by a fifth degree (appogiatura)
+ * @param home the instance of the problem
+ * @param nVoices the number of voices in the piece
+ * @param currentPosition the current position in the chord progression
+ * @param tonality the tonality of the piece
+ * @param fullChordsVoicing the array containing all the notes of the chords in the progression
+ * @param bassMelodicInterval the melodic interval of the bass between the current position and the next
+ * @param tenorMelodicInterval the melodic interval of the tenor between the current position and the next
+ * @param altoMelodicInterval the melodic interval of the alto between the current position and the next
+ * @param sopranoMelodicInterval the melodic interval of the soprano between the current position and the next
+ */
+void fifth_degree_appogiatura(Home home, int nVoices, int currentPosition, Tonality *tonality, IntVarArray fullChordsVoicing,
+                              IntVarArray bassMelodicInterval, IntVarArray tenorMelodicInterval,
+                              IntVarArray altoMelodicInterval, IntVarArray sopranoMelodicInterval){
+    BoolVar bassRises(home, 0,1);/// = 1 if the bass goes up, 0 if it goes down
+    rel(home, expr(home,bassMelodicInterval[currentPosition] < 0), BOT_EQV,expr(home, !bassRises), true);
+    rel(home, expr(home,bassMelodicInterval[currentPosition] >= 0), BOT_EQV,bassRises, true);
+
+    vector<IntVarArray> melodicIntervals({bassMelodicInterval, tenorMelodicInterval, altoMelodicInterval, sopranoMelodicInterval});
+
+    for(int voice = TENOR; voice <= SOPRANO; ++voice){
+        /// if voice is playing the tonic and the bass rises, this voice must go down or stay the same
+        rel(home,expr(home,fullChordsVoicing[(currentPosition + 1) * nVoices + voice] % 12 == tonality->get_tonic() % 12),
+            BOT_IMP,
+            expr(home,melodicIntervals[voice][currentPosition] <= 0), bassRises);
+        /// if voice is playing the tonic and the bass goes down, this voice must go up or stay the same
+        rel(home,expr(home,fullChordsVoicing[(currentPosition + 1) * nVoices + voice] % 12 == tonality->get_tonic() % 12),
+            BOT_IMP,
+            expr(home,melodicIntervals[voice][currentPosition] >= 0), expr(home, !bassRises));
+    }
+}
 
 /***********************************************************************************************************************
  *                                                                                                                     *

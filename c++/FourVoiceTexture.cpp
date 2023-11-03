@@ -64,6 +64,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     write_to_log_file(parameters().c_str());
 
     /// Test constraints
+    rel(*this, FullChordsVoicing[4], IRT_EQ, 55);
 
     /**-----------------------------------------------------------------------------------------------------------------
     |                                                                                                                  |
@@ -159,7 +160,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
         }
         /// post the constraints specific to second inversion chords
         else if(chordStas[i] == SECOND_INVERSION){
-
+            chord_note_occurrence_second_inversion(*this, size, nOfVoices, i, tonality, chordDegrees, currentChord);
         }
         else{
             //@todo add the other cases here (4 note chords, etc)
@@ -202,6 +203,13 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
             interrupted_cadence(*this, i, tonality,
                                 FullChordsVoicing, tenorMelodicIntervals,
                                 altoMelodicIntervals, sopranoMelodicIntervals);
+        }
+        /// if we have an appogiatura for the V degree chord, the voice with the fundamental must move in contrary motion to the bass
+        else if(i < size - 2 && chordDegs[i + 1] == FIRST_DEGREE && chordStas[i + 1] == SECOND_INVERSION &&
+                chordDegs[i+2] == FIFTH_DEGREE){
+            fifth_degree_appogiatura(*this, nOfVoices, i, tonality, FullChordsVoicing,
+                                     bassMelodicIntervals,tenorMelodicIntervals,
+                                     altoMelodicIntervals, sopranoMelodicIntervals);
         }
         /// general voice leading rules
         else {

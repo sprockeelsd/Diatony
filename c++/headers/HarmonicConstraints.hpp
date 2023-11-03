@@ -81,4 +81,22 @@ void chord_note_occurrence_first_inversion(Home home, int size, int nVoices, int
                                            vector<int> degrees, const IntVarArgs &currentChord,
                                            IntVarArray bassMelodicIntervals, IntVarArray sopranoMelodicIntervals);
 
+/***********************************************************************************************************************
+ *                                                                                                                     *
+ *                                            First inversion chord constraints                                        *
+ *                                                                                                                     *
+ ***********************************************************************************************************************/
+
+/**
+ * Sets the number of time each note of the chord are present in the chord
+ * @param home the instance of the problem
+ * @param size the size of the chord progression
+ * @param nVoices the number of voices
+ * @param currentPos the current position in the chord progression
+ * @param tonality the tonality of the piece
+ * @param degrees the degree of the chord
+ * @param currentChord the array containing a chord in the form [bass, alto, tenor, soprano]
+ */
+void chord_note_occurrence_second_inversion(Home home, int size, int nVoices, int currentPos, Tonality *tonality,
+                                            vector<int> degrees, const IntVarArgs &currentChord);
 #endif
