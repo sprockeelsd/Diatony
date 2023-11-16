@@ -9,18 +9,18 @@ using namespace Gecode;
 using namespace std;
 
 int main(int argc, char* argv[]) {
-    Tonality* tonality = new MajorTonality(C);
+    Tonality* tonality = new MinorTonality(C);
 
     write_to_log_file(time().c_str());
-//    vector<int> chords = {FIRST_DEGREE, FOURTH_DEGREE, SEVENTH_DEGREE,
-//                          THIRD_DEGREE, SIXTH_DEGREE, SECOND_DEGREE, FIRST_DEGREE,
-//                          FIFTH_DEGREE, FIRST_DEGREE};
-//
-//    vector<int> states = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FIRST_INVERSION, FUNDAMENTAL_STATE,
-//                          FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, SECOND_INVERSION, FUNDAMENTAL_STATE,
-//                          FUNDAMENTAL_STATE};
-    vector<int> chords = {FOURTH_DEGREE, FIRST_DEGREE, FIFTH_DEGREE};//, FOURTH_DEGREE, THIRD_DEGREE, FOURTH_DEGREE, FIFTH_DEGREE, FIRST_DEGREE};
-    vector<int> states = {FUNDAMENTAL_STATE, SECOND_INVERSION, FUNDAMENTAL_STATE};
+    vector<int> chords = {FIRST_DEGREE, FOURTH_DEGREE, SEVENTH_DEGREE,
+                          THIRD_DEGREE, SIXTH_DEGREE, SECOND_DEGREE, FIRST_DEGREE,
+                          FIFTH_DEGREE, SIXTH_DEGREE, FIRST_DEGREE, FOURTH_DEGREE, FIRST_DEGREE, FIFTH_DEGREE, FIRST_DEGREE};
+
+    vector<int> states = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FIRST_INVERSION, FUNDAMENTAL_STATE,
+                          FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, SECOND_INVERSION, FUNDAMENTAL_STATE,
+                          FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, SECOND_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
+//    vector<int> chords = {FOURTH_DEGREE, FIRST_DEGREE, FIFTH_DEGREE};//, FOURTH_DEGREE, THIRD_DEGREE, FOURTH_DEGREE, FIFTH_DEGREE, FIRST_DEGREE};
+//    vector<int> states = {FUNDAMENTAL_STATE, SECOND_INVERSION, FUNDAMENTAL_STATE};
     int size = chords.size();
 
     /// create a new problem

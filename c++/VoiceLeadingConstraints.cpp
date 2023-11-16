@@ -281,22 +281,21 @@ void interrupted_cadence(const Home &home, int currentPosition, Tonality *tonali
 void fifth_degree_appogiatura(Home home, int nVoices, int currentPosition, Tonality *tonality, IntVarArray fullChordsVoicing,
                               IntVarArray bassMelodicInterval, IntVarArray tenorMelodicInterval,
                               IntVarArray altoMelodicInterval, IntVarArray sopranoMelodicInterval){
-    BoolVar bassRises(home, 0,1);/// = 1 if the bass goes up, 0 if it goes down
-    rel(home, expr(home,bassMelodicInterval[currentPosition] < 0), BOT_EQV,expr(home, !bassRises), true);
-    rel(home, expr(home,bassMelodicInterval[currentPosition] >= 0), BOT_EQV,bassRises, true);
-
-    vector<IntVarArray> melodicIntervals({bassMelodicInterval, tenorMelodicInterval, altoMelodicInterval, sopranoMelodicInterval});
-
-    for(int voice = TENOR; voice <= SOPRANO; ++voice){
-        /// if voice is playing the tonic and the bass rises, this voice must go down or stay the same
-        rel(home,expr(home,fullChordsVoicing[(currentPosition + 1) * nVoices + voice] % 12 == tonality->get_tonic() % 12),
-            BOT_IMP,
-            expr(home,melodicIntervals[voice][currentPosition] <= 0), bassRises);
-        /// if voice is playing the tonic and the bass goes down, this voice must go up or stay the same
-        rel(home,expr(home,fullChordsVoicing[(currentPosition + 1) * nVoices + voice] % 12 == tonality->get_tonic() % 12),
-            BOT_IMP,
-            expr(home,melodicIntervals[voice][currentPosition] >= 0), expr(home, !bassRises));
+    IntVarArgs currentChord = fullChordsVoicing.slice(nVoices * currentPosition, 1, nVoices);
+    vector<IntVarArray> melodicIntervals(
+            {bassMelodicInterval, tenorMelodicInterval, altoMelodicInterval, sopranoMelodicInterval});
+    /// appogiatura of the fifth degree
+    for(int voice = TENOR; voice <= SOPRANO; voice++){
+        /// the fundamental of the tonality must go down by a half step
+        rel(home, expr(home, currentChord[voice] % PERFECT_OCTAVE == tonality->get_tonic()), BOT_IMP,
+            expr(home, melodicIntervals[voice][currentPosition] == -1), true);
+        /// the third of the scale must go down to the second by step
+        rel(home, expr(home, currentChord[voice] % PERFECT_OCTAVE == tonality->get_degree_note(THIRD_DEGREE)),
+                       BOT_IMP, expr(home, melodicIntervals[voice][currentPosition] < 0), true);
+        rel(home, expr(home, currentChord[voice] % PERFECT_OCTAVE == tonality->get_degree_note(THIRD_DEGREE)),
+            BOT_IMP, expr(home, melodicIntervals[voice][currentPosition] >= -2), true);
     }
+
 }
 
 /***********************************************************************************************************************

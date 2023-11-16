@@ -31,6 +31,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     tenorMelodicIntervals = IntVarArray(*this, size - 1, -PERFECT_OCTAVE, PERFECT_OCTAVE);
     altoMelodicIntervals = IntVarArray(*this, size - 1, -PERFECT_OCTAVE, PERFECT_OCTAVE);
     sopranoMelodicIntervals = IntVarArray(*this, size - 1, -PERFECT_OCTAVE, PERFECT_OCTAVE);
+    allMelodicIntervals = IntVarArray(*this, nOfVoices* (size - 1), -PERFECT_OCTAVE, PERFECT_OCTAVE);
 
     /// variable arrays for absolute melodic intervals for each voice
     absoluteBassMelodicIntervals = IntVarArray(*this, size - 1, 0, PERFECT_OCTAVE);
@@ -64,7 +65,6 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     write_to_log_file(parameters().c_str());
 
     /// Test constraints
-    rel(*this, FullChordsVoicing[4], IRT_EQ, 55);
 
     /**-----------------------------------------------------------------------------------------------------------------
     |                                                                                                                  |
@@ -75,9 +75,19 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     link_melodic_arrays(*this, size, nOfVoices, FullChordsVoicing, bassMelodicIntervals,
                         altoMelodicIntervals, tenorMelodicIntervals, sopranoMelodicIntervals);
 
-    link_absolute_melodic_arrays(*this, bassMelodicIntervals, tenorMelodicIntervals, altoMelodicIntervals,
-                                 sopranoMelodicIntervals, absoluteBassMelodicIntervals, absoluteTenorMelodicIntervals,
-                                 absoluteAltoMelodicIntervals, absoluteSopranoMelodicIntervals);
+    /// global array
+    for(int i = 0; i < size-1; i++){
+        rel(*this, expr(*this, allMelodicIntervals[nOfVoices * i + BASS] == bassMelodicIntervals[i]));
+        rel(*this, expr(*this, allMelodicIntervals[nOfVoices * i + TENOR] == tenorMelodicIntervals[i]));
+        rel(*this, expr(*this, allMelodicIntervals[nOfVoices * i + ALTO] == altoMelodicIntervals[i]));
+        rel(*this, expr(*this, allMelodicIntervals[nOfVoices * i + SOPRANO] == sopranoMelodicIntervals[i]));
+    }
+
+
+    link_absolute_melodic_arrays(*this, nOfVoices, bassMelodicIntervals, tenorMelodicIntervals,
+                                 altoMelodicIntervals, sopranoMelodicIntervals, absoluteBassMelodicIntervals,
+                                 absoluteTenorMelodicIntervals, absoluteAltoMelodicIntervals,
+                                 absoluteSopranoMelodicIntervals);
 
     link_harmonic_arrays(*this, size, nOfVoices, FullChordsVoicing, bassTenorHarmonicIntervals,
                          bassAltoHarmonicIntervals, bassSopranoHarmonicIntervals, tenorAltoHarmonicIntervals,
@@ -205,8 +215,8 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
                                 altoMelodicIntervals, sopranoMelodicIntervals);
         }
         /// if we have an appogiatura for the V degree chord, the voice with the fundamental must move in contrary motion to the bass
-        else if(i < size - 2 && chordDegs[i + 1] == FIRST_DEGREE && chordStas[i + 1] == SECOND_INVERSION &&
-                chordDegs[i+2] == FIFTH_DEGREE){
+        else if(chordDegs[i] == FIRST_DEGREE && chordStas[i] == SECOND_INVERSION &&
+                chordDegs[i+1] == FIFTH_DEGREE){
             fifth_degree_appogiatura(*this, nOfVoices, i, tonality, FullChordsVoicing,
                                      bassMelodicIntervals,tenorMelodicIntervals,
                                      altoMelodicIntervals, sopranoMelodicIntervals);
@@ -249,7 +259,9 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     |                                                                                                                  |
     -------------------------------------------------------------------------------------------------------------------*/
     // @todo make it smarter when it becomes necessary
-    branch(*this, FullChordsVoicing, INT_VAR_DEGREE_MAX(), INT_VAL_MIN());
+    //branch(*this, allMelodicIntervals, INT_VAR_SIZE_MIN(), INT_VAL_MED());
+    Rnd r(1U);
+    branch(*this, FullChordsVoicing, INT_VAR_DEGREE_MAX(), INT_VAL_RND(r));
 }
 
 /**
@@ -286,6 +298,7 @@ FourVoiceTexture::FourVoiceTexture(FourVoiceTexture& s): IntLexMinimizeSpace(s){
     absoluteTenorMelodicIntervals.update(*this, s.absoluteTenorMelodicIntervals);
     absoluteAltoMelodicIntervals.update(*this, s.absoluteAltoMelodicIntervals);
     absoluteSopranoMelodicIntervals.update(*this, s.absoluteSopranoMelodicIntervals);
+    allMelodicIntervals.update(*this, s.allMelodicIntervals);
 
     bassTenorHarmonicIntervals.update(*this, s.bassTenorHarmonicIntervals);
     tenorAltoHarmonicIntervals.update(*this, s.tenorAltoHarmonicIntervals);
@@ -400,7 +413,8 @@ string FourVoiceTexture::to_string(){
     message += "absoluteBassMelodicIntervals = " + intVarArray_to_string(absoluteBassMelodicIntervals) + "\n";
     message += "absoluteTenorMelodicIntervals = " + intVarArray_to_string(absoluteTenorMelodicIntervals) + "\n";
     message += "absoluteAltoMelodicIntervals = " + intVarArray_to_string(absoluteAltoMelodicIntervals) + "\n";
-    message += "absoluteSopranoMelodicIntervals = " + intVarArray_to_string(absoluteSopranoMelodicIntervals) + "\n\n";
+    message += "absoluteSopranoMelodicIntervals = " + intVarArray_to_string(absoluteSopranoMelodicIntervals) + "\n";
+    message += "allMelodicIntervals = " + intVarArray_to_string(allMelodicIntervals) + "\n\n";
 
     message += "🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵\n\n";
     message += "FullChordsVoicing = " + intVarArray_to_string(FullChordsVoicing) + "\n\n";

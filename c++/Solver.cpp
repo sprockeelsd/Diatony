@@ -78,6 +78,7 @@ vector<const FourVoiceTexture*> find_all_solutions(FourVoiceTexture *pb, int sol
         sols.push_back(sol);
         string message = "Solution found: \nSolution" + to_string(nbSol) + ": \n" + sol->to_string() + "\n";
         write_to_log_file(message.c_str());
+        write_to_log_file(statistics_to_string(solver->statistics()).c_str());
         if (nbSol >= maxNOfSols)
             break;
     }
