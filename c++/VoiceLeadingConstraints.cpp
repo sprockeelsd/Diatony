@@ -282,9 +282,10 @@ void fifth_degree_appogiatura(Home home, int nVoices, int currentPosition, Tonal
                               IntVarArray bassMelodicInterval, IntVarArray tenorMelodicInterval,
                               IntVarArray altoMelodicInterval, IntVarArray sopranoMelodicInterval){
     IntVarArgs currentChord = fullChordsVoicing.slice(nVoices * currentPosition, 1, nVoices);
+
     vector<IntVarArray> melodicIntervals(
             {bassMelodicInterval, tenorMelodicInterval, altoMelodicInterval, sopranoMelodicInterval});
-    /// appogiatura of the fifth degree
+    /// appogiatura of the fifth degree: the fundamental and third of the I chord must go down
     for(int voice = TENOR; voice <= SOPRANO; voice++){
         /// the fundamental of the tonality must go down by a half step
         rel(home, expr(home, currentChord[voice] % PERFECT_OCTAVE == tonality->get_tonic()), BOT_IMP,
@@ -294,6 +295,15 @@ void fifth_degree_appogiatura(Home home, int nVoices, int currentPosition, Tonal
                        BOT_IMP, expr(home, melodicIntervals[voice][currentPosition] < 0), true);
         rel(home, expr(home, currentChord[voice] % PERFECT_OCTAVE == tonality->get_degree_note(THIRD_DEGREE)),
             BOT_IMP, expr(home, melodicIntervals[voice][currentPosition] >= -2), true);
+    }
+    if (currentPosition > 0){ /// if it is not the first chord in the progression
+        /// the voice containing the tonic must go in opposite or oblique motion to the bass
+        BoolVar bassRises = expr(home, bassMelodicInterval[currentPosition-1] >= 0);
+        for(int voice = TENOR; voice <= SOPRANO; voice++){
+            /// if the voice is playing the tonic and the bass rises, this voice must go down or stay the same
+            rel(home, expr(home, fullChordsVoicing[currentPosition * nVoices + voice] % PERFECT_OCTAVE ==
+                    tonality->get_tonic()), BOT_IMP, expr(home, melodicIntervals[voice][currentPosition - 1] <= 0), bassRises);
+        }
     }
 
 }

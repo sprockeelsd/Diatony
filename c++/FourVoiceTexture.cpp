@@ -75,7 +75,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     link_melodic_arrays(*this, size, nOfVoices, FullChordsVoicing, bassMelodicIntervals,
                         altoMelodicIntervals, tenorMelodicIntervals, sopranoMelodicIntervals);
 
-    /// global array
+    /// global array for branching (not used for now)
     for(int i = 0; i < size-1; i++){
         rel(*this, expr(*this, allMelodicIntervals[nOfVoices * i + BASS] == bassMelodicIntervals[i]));
         rel(*this, expr(*this, allMelodicIntervals[nOfVoices * i + TENOR] == tenorMelodicIntervals[i]));
@@ -170,7 +170,8 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
         }
         /// post the constraints specific to second inversion chords
         else if(chordStas[i] == SECOND_INVERSION){
-            chord_note_occurrence_second_inversion(*this, size, nOfVoices, i, tonality, chordDegrees, currentChord);
+            chord_note_occurrence_second_inversion(*this, size, nOfVoices, i, tonality,
+                                                   chordDegrees, currentChord);
         }
         else{
             //@todo add the other cases here (4 note chords, etc)
@@ -215,7 +216,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
                                 altoMelodicIntervals, sopranoMelodicIntervals);
         }
         /// if we have an appogiatura for the V degree chord, the voice with the fundamental must move in contrary motion to the bass
-        else if(chordDegs[i] == FIRST_DEGREE && chordStas[i] == SECOND_INVERSION &&
+        else if(chordDegs[i] == FIRST_DEGREE && chordStates[i] == SECOND_INVERSION &&
                 chordDegs[i+1] == FIFTH_DEGREE){
             fifth_degree_appogiatura(*this, nOfVoices, i, tonality, FullChordsVoicing,
                                      bassMelodicIntervals,tenorMelodicIntervals,
@@ -409,12 +410,12 @@ string FourVoiceTexture::to_string(){
     message += "TenorMelodicIntervals = " + intVarArray_to_string(tenorMelodicIntervals) + "\n";
     message += "AltoMelodicIntervals = " + intVarArray_to_string(altoMelodicIntervals) + "\n";
     message += "SopranoMelodicIntervals = " + intVarArray_to_string(sopranoMelodicIntervals) + "\n\n";
+    //message += "allMelodicIntervals = " + intVarArray_to_string(allMelodicIntervals) + "\n\n";
 
     message += "absoluteBassMelodicIntervals = " + intVarArray_to_string(absoluteBassMelodicIntervals) + "\n";
     message += "absoluteTenorMelodicIntervals = " + intVarArray_to_string(absoluteTenorMelodicIntervals) + "\n";
     message += "absoluteAltoMelodicIntervals = " + intVarArray_to_string(absoluteAltoMelodicIntervals) + "\n";
-    message += "absoluteSopranoMelodicIntervals = " + intVarArray_to_string(absoluteSopranoMelodicIntervals) + "\n";
-    message += "allMelodicIntervals = " + intVarArray_to_string(allMelodicIntervals) + "\n\n";
+    message += "absoluteSopranoMelodicIntervals = " + intVarArray_to_string(absoluteSopranoMelodicIntervals) + "\n\n";
 
     message += "🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵\n\n";
     message += "FullChordsVoicing = " + intVarArray_to_string(FullChordsVoicing) + "\n\n";
