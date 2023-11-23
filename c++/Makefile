@@ -30,7 +30,6 @@ run_mac_os:
 	rm -f $(LOG_FILE)
 	g++ -std=c++11 -F/Library/Frameworks -framework gecode -o Main $(PROBLEM_FILES) Main.cpp
 	./Main
-	cat $(LOG_FILE)
 
 test_tonality:
 	g++ -std=c++11 -F/Library/Frameworks -framework gecode -o testTonality Utilities.cpp Tonality.cpp MajorTonality.cpp \

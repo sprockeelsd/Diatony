@@ -15,10 +15,9 @@
  * @return a search engine for the given problem
  */
 Search::Base<FourVoiceTexture>* make_solver(FourVoiceTexture* pb, int type){
-    Search::Stop *stop = Search::Stop::time(60000); // stop after 60 seconds
-    Search::Options opts; //@todo add options when necessary
+    Search::Options opts;
     opts.threads = 0;
-    opts.stop = stop;
+    opts.stop = Search::Stop::time(60000); // stop after 60 seconds
 
     if (type == BAB_SOLVER){
         write_to_log_file("Solver type: BAB\n");
