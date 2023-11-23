@@ -38,6 +38,7 @@ FourVoiceTexture* get_next_solution_space(Search::Base<FourVoiceTexture>* solver
     FourVoiceTexture* sol_space = solver->next();
     if (sol_space == nullptr) // handle the case of no solution or time out, necessary when sending the data to OM
         return nullptr;
+    write_to_log_file(sol_space->to_string().c_str());
     return sol_space;
 }
 
