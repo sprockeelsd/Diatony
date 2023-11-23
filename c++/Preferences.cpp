@@ -118,3 +118,30 @@ void compute_cost_for_common_note_in_soprano(const Home &home, int nChords, int 
     /// costVar = 1 if there is a common note in the soprano voice
     count(home, commonNotesInSoprano, 1, IRT_EQ, nOfCommonNotesInSoprano);
 }
+/**
+ * This function sets the cost for the number of times when there is a common note in the same voice between consecutive
+ * This has to be MAXIMIZED!
+ * @param home the instance of the problem
+ * @param absoluteBassMelodicIntervals the array of absolute melodic intervals for the bass
+ * @param absoluteTenorMelodicIntervals the array of absolute melodic intervals for the tenor
+ * @param absoluteAltoMelodicIntervals the array of absolute melodic intervals for the alto
+ * @param absoluteSopranoMelodicIntervals the array of absolute melodic intervals for the soprano
+ * @param commonNotesInSameVoice an array containing the number of times when there is a common note in the same voice for each voice
+ * @param nOfCommonNotesInSameVoice the total number of times when there is a common note in the same voice
+ */
+void compute_cost_for_common_notes_not_in_same_voice(const Home &home, IntVarArray absoluteBassMelodicIntervals,
+                                                     IntVarArray absoluteTenorMelodicIntervals,
+                                                     IntVarArray absoluteAltoMelodicIntervals,
+                                                     IntVarArray absoluteSopranoMelodicIntervals,
+                                                     IntVarArray commonNotesInSameVoice,
+                                                     IntVar nOfCommonNotesInSameVoice){
+
+    vector<IntVarArray> absoluteMelodicIntervals = {absoluteBassMelodicIntervals, absoluteTenorMelodicIntervals,
+                                                    absoluteAltoMelodicIntervals, absoluteSopranoMelodicIntervals};
+    /// costsForEachVoice[voice] = nb of times where the interval is 0
+    for(int voice = BASS; voice <= SOPRANO; voice++){
+        count(home, absoluteMelodicIntervals[voice], 0, IRT_EQ, commonNotesInSameVoice[voice]);
+    }
+    /// the sum of costs for each voice = the number of times where there is a common note in the same voice
+    linear(home,{-1,-1,-1,-1}, commonNotesInSameVoice, IRT_EQ, nOfCommonNotesInSameVoice);
+}

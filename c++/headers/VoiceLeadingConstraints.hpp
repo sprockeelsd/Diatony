@@ -64,18 +64,6 @@ void forbid_parallel_interval(Home home, int nVoices, int forbiddenParallelInter
                               int voice2ID, IntVarArray voicesHarmonicIntervals, IntVarArray FullChordsVoicing);
 
 /**
- * Sets the general rules for the melodic movements between chords
- * Ensures that common notes between chords are kept in the same voice
- * @param home the instance of the problem
- * @param currentPosition the current position in the chord progression
- * @param chordDegrees the array containing the degrees of the chords in the progression
- * @param tonality the tonality of the piece
- * @param fullChordsVoicing the array containing all the notes of the chords in the progression
- */
-void keep_common_notes_in_same_voice(const Home &home, int nVoices, int currentPosition, vector<int> chordDegrees,
-                                     Tonality *tonality, IntVarArray fullChordsVoicing);
-
-/**
  * Adds the constraint that Soprano, Alto and Tenor must move in contrary motion to the bass
  * @param home the instance of the problem
  * @param currentPosition the current position in the chord progression

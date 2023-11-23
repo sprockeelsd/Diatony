@@ -110,56 +110,6 @@ void forbid_parallel_interval(Home home, int nVoices, int forbiddenParallelInter
 }
 
 /**
- * Sets the general rules for the melodic movements between chords
- * Ensures that common notes between chords are kept in the same voice
- * @param home the instance of the problem
- * @param currentPosition the current position in the chord progression
- * @param chordDegrees the array containing the degrees of the chords in the progression
- * @param tonality the tonality of the piece
- * @param fullChordsVoicing the array containing all the notes of the chords in the progression
- */
- void keep_common_notes_in_same_voice(const Home &home, int nVoices, int currentPosition, vector<int> chordDegrees,
-                                      Tonality *tonality, IntVarArray fullChordsVoicing) {
-    /// keep common notes in the same voice and move other voices as closely as possible (cost)
-    // chord qualities
-    vector<int> thisChordQuality = tonality->get_chord_qualities()[chordDegrees[currentPosition]];
-    vector<int> nextChordQuality = tonality->get_chord_qualities()[chordDegrees[currentPosition+1]];
-
-    /// notes of the current chord @todo maybe add sets in the tonality class with the notes for each chord
-    int new_note = tonality->get_degree_note(chordDegrees[currentPosition]);
-    set<int> thisChord = {new_note}; // notes of the chord
-    for(int i = 0; i < thisChordQuality.size() - 1; ++i){ // -1 because the last note is the same as the first
-        new_note = (new_note + thisChordQuality[i]) % PERFECT_OCTAVE;
-        thisChord.insert(new_note);
-    }
-
-    /// notes of the next chord
-    int new_note_new_chord = tonality->get_degree_note(chordDegrees[currentPosition+1]);
-    set<int> nextChord = {new_note_new_chord};
-    for(int i = 0; i < nextChordQuality.size() - 1; ++i){ // -1 because the last note is the same as the first
-        new_note_new_chord = (new_note_new_chord + nextChordQuality[i]) % PERFECT_OCTAVE;
-        nextChord.insert(new_note_new_chord);
-    }
-
-    /// for each note in the current chord domain, if the note is in the next chord as well, it has to be in the same voice
-    /// but if it is in the soprano, then increase the cost
-    for(auto it : thisChord){ // for each note in the current chord domain
-        if(nextChord.find(it) != nextChord.end()){ // if the note is in the next chord as well
-            for(int i = TENOR; i <= SOPRANO; ++i){ // for all voices except the bass
-                // the note in the current chord in the voice i must be the same in the next chord
-                BoolVar thisVoiceThisChordContainsTheNote = expr(home, fullChordsVoicing[currentPosition * nVoices + i] % PERFECT_OCTAVE == it);
-                BoolVar thisVoiceNextChordContainsTheNote = expr(home, fullChordsVoicing[(currentPosition + 1) * nVoices + i] % PERFECT_OCTAVE == it);
-
-                rel(home, thisVoiceThisChordContainsTheNote,BOT_IMP,expr(home,fullChordsVoicing[(currentPosition + 1) * nVoices + i] ==
-                               fullChordsVoicing[currentPosition * nVoices + i]), true);
-                rel(home, thisVoiceNextChordContainsTheNote,BOT_IMP, expr(home, fullChordsVoicing[currentPosition * nVoices + i] ==
-                                fullChordsVoicing[(currentPosition + 1) * nVoices + i]), true);
-            }
-        }
-    }
-}
-
-/**
  * Adds the constraint that Soprano, Alto and Tenor must move in contrary motion to the bass
  * @param home the instance of the problem
  * @param currentPosition the current position in the chord progression
