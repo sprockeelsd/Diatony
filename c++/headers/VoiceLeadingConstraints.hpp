@@ -64,18 +64,6 @@ void forbid_parallel_interval(Home home, int nVoices, int forbiddenParallelInter
                               int voice2ID, IntVarArray voicesHarmonicIntervals, IntVarArray FullChordsVoicing);
 
 /**
- * Sets the general rules for the melodic movements between chords
- * Ensures that common notes between chords are kept in the same voice
- * @param home the instance of the problem
- * @param currentPosition the current position in the chord progression
- * @param chordDegrees the array containing the degrees of the chords in the progression
- * @param tonality the tonality of the piece
- * @param fullChordsVoicing the array containing all the notes of the chords in the progression
- */
-void keep_common_notes_in_same_voice(const Home &home, int nVoices, int currentPosition, vector<int> chordDegrees,
-                                     Tonality *tonality, IntVarArray fullChordsVoicing);
-
-/**
  * Adds the constraint that Soprano, Alto and Tenor must move in contrary motion to the bass
  * @param home the instance of the problem
  * @param currentPosition the current position in the chord progression
@@ -100,16 +88,18 @@ void contrary_motion_to_bass(const Home& home, int currentPosition, const IntVar
  * @param nvoices the number of voices in the piece
  * @param currentPosition the current position in the chord progression
  * @param tonality the tonality of the piece
+ * @param chordDegs the degrees of the chords
+ * @param chordStas the state of the chords
  * @param bassMelodicInterval the melodic interval of the bass between the current position and the next
  * @param tenorMelodicInterval the melodic interval of the tenor between the current position and the next
  * @param altoMelodicInterval the melodic interval of the alto between the current position and the next
  * @param sopranoMelodicInterval the melodic interval of the soprano between the current position and the next
  * @param fullChordsVoicing the array containing all the notes of the chords in the progression
  */
-void tritone_resolution(const Home &home, int nVoices, int currentPosition, Tonality *tonality,
-                        const IntVarArray &bassMelodicInterval, const IntVarArray &tenorMelodicInterval,
-                        const IntVarArray &altoMelodicInterval, const IntVarArray &sopranoMelodicInterval,
-                        IntVarArray fullChordsVoicing);
+void tritone_resolution(const Home &home, int nVoices, int currentPosition, Tonality *tonality, vector<int> chordDegs,
+                        vector<int> chordStas, const IntVarArray &bassMelodicInterval,
+                        const IntVarArray &tenorMelodicInterval, const IntVarArray &altoMelodicInterval,
+                        const IntVarArray &sopranoMelodicInterval, IntVarArray fullChordsVoicing);
 
 /**
  * Sets the constraint for a fifth degree followed by a sixth degree in fundamental state
@@ -131,5 +121,27 @@ void interrupted_cadence(const Home &home, int currentPosition, Tonality *tonali
  *                                           First inversion chord constraints                                         *
  *                                                                                                                     *
  ***********************************************************************************************************************/
+
+/***********************************************************************************************************************
+ *                                                                                                                     *
+ *                                           Second inversion chord constraints                                        *
+ *                                                                                                                     *
+ ***********************************************************************************************************************/
+
+/**
+ * Sets the constraint for a first degree in second inversion followed by a fifth degree (appogiatura)
+ * @param home the instance of the problem
+ * @param nVoices the number of voices in the piece
+ * @param currentPosition the current position in the chord progression
+ * @param tonality the tonality of the piece
+ * @param fullChordsVoicing the array containing all the notes of the chords in the progression
+ * @param bassMelodicInterval the melodic interval of the bass between the current position and the next
+ * @param tenorMelodicInterval the melodic interval of the tenor between the current position and the next
+ * @param altoMelodicInterval the melodic interval of the alto between the current position and the next
+ * @param sopranoMelodicInterval the melodic interval of the soprano between the current position and the next
+ */
+void fifth_degree_appogiatura(Home home, int nVoices, int currentPosition, Tonality *tonality, IntVarArray fullChordsVoicing,
+                              IntVarArray bassMelodicInterval, IntVarArray tenorMelodicInterval,
+                              IntVarArray altoMelodicInterval, IntVarArray sopranoMelodicInterval);
 
 #endif

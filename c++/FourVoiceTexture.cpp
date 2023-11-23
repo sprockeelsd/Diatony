@@ -31,6 +31,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     tenorMelodicIntervals = IntVarArray(*this, size - 1, -PERFECT_OCTAVE, PERFECT_OCTAVE);
     altoMelodicIntervals = IntVarArray(*this, size - 1, -PERFECT_OCTAVE, PERFECT_OCTAVE);
     sopranoMelodicIntervals = IntVarArray(*this, size - 1, -PERFECT_OCTAVE, PERFECT_OCTAVE);
+    allMelodicIntervals = IntVarArray(*this, nOfVoices* (size - 1), -PERFECT_OCTAVE, PERFECT_OCTAVE);
 
     /// variable arrays for absolute melodic intervals for each voice
     absoluteBassMelodicIntervals = IntVarArray(*this, size - 1, 0, PERFECT_OCTAVE);
@@ -51,6 +52,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     nDifferentValuesAllChords = IntVarArray(*this, size, 0, nOfVoices);
     nOccurrencesBassInFundamentalState = IntVarArray(*this, size, 0, nOfVoices);
     commonNotesInSoprano = IntVarArray(*this, size-1, 0, 1); // 1 because if it is at the bass we can't prevent it, so it only counts for the soprano
+    commonNotesInSameVoice = IntVarArray(*this, nOfVoices, 0, size - 1);
 
     /// cost variables
     sumOfMelodicIntervals = IntVar(*this, 0, PERFECT_OCTAVE * nOfVoices * (size - 1));
@@ -58,6 +60,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     nOfChordsWithLessThan4notes = IntVar(*this, 0, size);
     nOfFundamentalStateChordsWithoutDoubledBass = IntVar(*this, 0, size);
     nOfCommonNotesInSoprano = IntVar(*this, 0, size);
+    nOfCommonNotesInSameVoice = IntVar(*this, - nOfVoices * (size - 1), 0);
 
 
     /// print parameters to log file
@@ -74,9 +77,19 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     link_melodic_arrays(*this, size, nOfVoices, FullChordsVoicing, bassMelodicIntervals,
                         altoMelodicIntervals, tenorMelodicIntervals, sopranoMelodicIntervals);
 
-    link_absolute_melodic_arrays(*this, bassMelodicIntervals, tenorMelodicIntervals, altoMelodicIntervals,
-                                 sopranoMelodicIntervals, absoluteBassMelodicIntervals, absoluteTenorMelodicIntervals,
-                                 absoluteAltoMelodicIntervals, absoluteSopranoMelodicIntervals);
+    /// global array for branching (not used for now)
+    for(int i = 0; i < size-1; i++){
+        rel(*this, expr(*this, allMelodicIntervals[nOfVoices * i + BASS] == bassMelodicIntervals[i]));
+        rel(*this, expr(*this, allMelodicIntervals[nOfVoices * i + TENOR] == tenorMelodicIntervals[i]));
+        rel(*this, expr(*this, allMelodicIntervals[nOfVoices * i + ALTO] == altoMelodicIntervals[i]));
+        rel(*this, expr(*this, allMelodicIntervals[nOfVoices * i + SOPRANO] == sopranoMelodicIntervals[i]));
+    }
+
+
+    link_absolute_melodic_arrays(*this, nOfVoices, bassMelodicIntervals, tenorMelodicIntervals,
+                                 altoMelodicIntervals, sopranoMelodicIntervals, absoluteBassMelodicIntervals,
+                                 absoluteTenorMelodicIntervals, absoluteAltoMelodicIntervals,
+                                 absoluteSopranoMelodicIntervals);
 
     link_harmonic_arrays(*this, size, nOfVoices, FullChordsVoicing, bassTenorHarmonicIntervals,
                          bassAltoHarmonicIntervals, bassSopranoHarmonicIntervals, tenorAltoHarmonicIntervals,
@@ -135,6 +148,14 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
                                absoluteSopranoMelodicIntervals << absoluteBassMelodicIntervals,
                                IRT_EQ, sumOfMelodicIntervals);
 
+    /// count the number of common notes in the same voice between consecutive chords (cost to MAXIMIZE)
+    /// /!\ The variable nOfCommonNotesInSameVoice has a NEGATIVE value so the minimization will maximize its absolute value
+    compute_cost_for_common_notes_not_in_same_voice(*this, absoluteBassMelodicIntervals, absoluteTenorMelodicIntervals,
+                                                    absoluteAltoMelodicIntervals,
+                                                    absoluteSopranoMelodicIntervals,
+                                                    commonNotesInSameVoice,
+                                                    nOfCommonNotesInSameVoice);
+
     /**-----------------------------------------------------------------------------------------------------------------
     |                                                                                                                  |
     |     Harmonic constraints: loop over each chord and post the constraints depending on the degree and state        |
@@ -159,7 +180,8 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
         }
         /// post the constraints specific to second inversion chords
         else if(chordStas[i] == SECOND_INVERSION){
-
+            chord_note_occurrence_second_inversion(*this, size, nOfVoices, i, tonality,
+                                                   chordDegrees, currentChord);
         }
         else{
             //@todo add the other cases here (4 note chords, etc)
@@ -188,10 +210,10 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
         /// resolve the tritone if there is one and it needs to be resolved
         if (chordDegs[i] == SEVENTH_DEGREE && chordDegs[i + 1] == FIRST_DEGREE) {
             //@todo add other chords that have the tritone
-            tritone_resolution(*this, nOfVoices, i, tonality,
-                               bassMelodicIntervals, tenorMelodicIntervals,
-                               altoMelodicIntervals, sopranoMelodicIntervals,
-                               FullChordsVoicing);
+            tritone_resolution(*this, nOfVoices, i, tonality, chordDegrees,
+                               chordStates,bassMelodicIntervals,
+                               tenorMelodicIntervals,altoMelodicIntervals,
+                               sopranoMelodicIntervals, FullChordsVoicing);
         }
 
         /// Exceptions to the general voice leading rules
@@ -202,6 +224,13 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
             interrupted_cadence(*this, i, tonality,
                                 FullChordsVoicing, tenorMelodicIntervals,
                                 altoMelodicIntervals, sopranoMelodicIntervals);
+        }
+        /// if we have an appogiatura for the V degree chord, the voice with the fundamental must move in contrary motion to the bass
+        else if(chordDegs[i] == FIRST_DEGREE && chordStates[i] == SECOND_INVERSION &&
+                chordDegs[i+1] == FIFTH_DEGREE){
+            fifth_degree_appogiatura(*this, nOfVoices, i, tonality, FullChordsVoicing,
+                                     bassMelodicIntervals,tenorMelodicIntervals,
+                                     altoMelodicIntervals, sopranoMelodicIntervals);
         }
         /// general voice leading rules
         else {
@@ -227,9 +256,9 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
                                         sopranoMelodicIntervals);
             }
             else if(chordDegrees[i] != chordDegrees[i + 1]){
-                /// Otherwise, keep common notes in the same voice
-                keep_common_notes_in_same_voice(*this, nOfVoices, i, chordDegrees, tonality,
-                                                FullChordsVoicing);
+                /// Otherwise, keep common notes in the same voice whenever possible
+//                keep_common_notes_in_same_voice(*this, nOfVoices, i, chordDegrees, tonality,
+//                                                FullChordsVoicing);
             }
             /// move voices as closely as possible (implemented with costs)
         }
@@ -241,7 +270,9 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     |                                                                                                                  |
     -------------------------------------------------------------------------------------------------------------------*/
     // @todo make it smarter when it becomes necessary
-    branch(*this, FullChordsVoicing, INT_VAR_DEGREE_MAX(), INT_VAL_MIN());
+    //branch(*this, allMelodicIntervals, INT_VAR_SIZE_MIN(), INT_VAL_MED());
+    Rnd r(1U);
+    branch(*this, FullChordsVoicing, INT_VAR_DEGREE_MAX(), INT_VAL_RND(r));
 }
 
 /**
@@ -255,7 +286,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
 IntVarArgs FourVoiceTexture::cost() const {
     // @todo maybe give the voices a priority + check the order depending on what is more important
     return {nOfDiminishedChordsWith4notes, nOfChordsWithLessThan4notes, nOfFundamentalStateChordsWithoutDoubledBass,
-            sumOfMelodicIntervals, nOfCommonNotesInSoprano};
+            sumOfMelodicIntervals, nOfCommonNotesInSoprano, nOfCommonNotesInSameVoice};
 }
 
 /**
@@ -278,6 +309,7 @@ FourVoiceTexture::FourVoiceTexture(FourVoiceTexture& s): IntLexMinimizeSpace(s){
     absoluteTenorMelodicIntervals.update(*this, s.absoluteTenorMelodicIntervals);
     absoluteAltoMelodicIntervals.update(*this, s.absoluteAltoMelodicIntervals);
     absoluteSopranoMelodicIntervals.update(*this, s.absoluteSopranoMelodicIntervals);
+    allMelodicIntervals.update(*this, s.allMelodicIntervals);
 
     bassTenorHarmonicIntervals.update(*this, s.bassTenorHarmonicIntervals);
     tenorAltoHarmonicIntervals.update(*this, s.tenorAltoHarmonicIntervals);
@@ -289,12 +321,14 @@ FourVoiceTexture::FourVoiceTexture(FourVoiceTexture& s): IntLexMinimizeSpace(s){
     nDifferentValuesAllChords.update(*this, s.nDifferentValuesAllChords);
     nOccurrencesBassInFundamentalState.update(*this, s.nOccurrencesBassInFundamentalState);
     commonNotesInSoprano.update(*this, s.commonNotesInSoprano);
+    commonNotesInSameVoice.update(*this, s.commonNotesInSameVoice);
 
     sumOfMelodicIntervals.update(*this, s.sumOfMelodicIntervals);
     nOfDiminishedChordsWith4notes.update(*this, s.nOfDiminishedChordsWith4notes);
     nOfChordsWithLessThan4notes.update(*this, s.nOfChordsWithLessThan4notes);
     nOfFundamentalStateChordsWithoutDoubledBass.update(*this, s.nOfFundamentalStateChordsWithoutDoubledBass);
     nOfCommonNotesInSoprano.update(*this, s.nOfCommonNotesInSoprano);
+    nOfCommonNotesInSameVoice.update(*this, s.nOfCommonNotesInSameVoice);
 }
 
 /**
@@ -388,6 +422,7 @@ string FourVoiceTexture::to_string(){
     message += "TenorMelodicIntervals = " + intVarArray_to_string(tenorMelodicIntervals) + "\n";
     message += "AltoMelodicIntervals = " + intVarArray_to_string(altoMelodicIntervals) + "\n";
     message += "SopranoMelodicIntervals = " + intVarArray_to_string(sopranoMelodicIntervals) + "\n\n";
+    //message += "allMelodicIntervals = " + intVarArray_to_string(allMelodicIntervals) + "\n\n";
 
     message += "absoluteBassMelodicIntervals = " + intVarArray_to_string(absoluteBassMelodicIntervals) + "\n";
     message += "absoluteTenorMelodicIntervals = " + intVarArray_to_string(absoluteTenorMelodicIntervals) + "\n";
@@ -402,8 +437,10 @@ string FourVoiceTexture::to_string(){
 
     message += "nDifferentValuesInDiminishedChord = " + intVarArray_to_string(nDifferentValuesInDiminishedChord) + "\n";
     message += "nDifferentValuesInAllChords = " + intVarArray_to_string(nDifferentValuesAllChords) + "\n";
-    message += "nOccurrencesBassInFundamentalState = " + intVarArray_to_string(nOccurrencesBassInFundamentalState) + "\n\n";
-    message += "nCommonNotesInSoprano = " + intVarArray_to_string(commonNotesInSoprano) + "\n\n";
+    message += "nOccurrencesBassInFundamentalState = " + intVarArray_to_string(nOccurrencesBassInFundamentalState) + "\n";
+    message += "nCommonNotesInSoprano = " + intVarArray_to_string(commonNotesInSoprano) + "\n";
+    message += "commonNotesInSameVoice" +
+               intVarArray_to_string(commonNotesInSameVoice) + "\n\n";
 
     message += "------------------------------------cost variables----------------------------------------\n";
 
@@ -413,6 +450,8 @@ string FourVoiceTexture::to_string(){
             intVar_to_string(nOfFundamentalStateChordsWithoutDoubledBass) + "\n";
     message += "nOfCommonNotesInSoprano = " + intVar_to_string(nOfCommonNotesInSoprano) + "\n";
     message += "sumOfMelodicIntervals = " + intVar_to_string(sumOfMelodicIntervals) + "\n\n";
+    message += "nOfCommonNotesInSameVoice = " +
+               intVar_to_string(nOfCommonNotesInSameVoice) + "\n\n";
 
     return message;
 }

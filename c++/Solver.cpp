@@ -15,8 +15,9 @@
  * @return a search engine for the given problem
  */
 Search::Base<FourVoiceTexture>* make_solver(FourVoiceTexture* pb, int type){
-
-    Gecode::Search::Options opts; //@todo add options when necessary
+    Search::Options opts;
+    opts.threads = 0;
+    opts.stop = Search::Stop::time(60000); // stop after 60 seconds
 
     if (type == BAB_SOLVER){
         write_to_log_file("Solver type: BAB\n");
@@ -70,16 +71,20 @@ vector<const FourVoiceTexture*> find_all_solutions(FourVoiceTexture *pb, int sol
     vector<const FourVoiceTexture*> sols;
     // create the search engine
     auto* solver = make_solver(pb, solverType);
-    write_to_log_file("\n Searching for all solutions to the problem with the given solver type:");
+    write_to_log_file("\nSearching for solutions:\n");
 
     int nbSol = 0;
     while(FourVoiceTexture *sol= get_next_solution_space(solver)){
         nbSol++;
         sols.push_back(sol);
-        string message = "Solution" + to_string(nbSol) + ": \n" + sol->to_string() + "\n";
+        string message = "Solution found: \nSolution" + to_string(nbSol) + ": \n" + sol->to_string() + "\n";
         write_to_log_file(message.c_str());
+        std::cout << message << std::endl  << statistics_to_string(solver->statistics()) << std::endl;
+        write_to_log_file(statistics_to_string(solver->statistics()).c_str());
         if (nbSol >= maxNOfSols)
             break;
     }
+    if(nbSol == 0)
+        write_to_log_file("No solutions found.");
     return sols;
 }

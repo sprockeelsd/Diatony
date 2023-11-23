@@ -83,10 +83,11 @@ void link_melodic_arrays(const Home &home, int size, int nVoices, IntVarArray Fu
  * @param absoluteAltoMelodicIntervals the absolute melodic intervals of the alto
  * @param absoluteSopranoMelodicIntervals the absolute melodic intervals of the soprano
  */
-void link_absolute_melodic_arrays(const Home& home, IntVarArray bassMelodicIntervals, IntVarArray tenorMelodicIntervals,
-                                  IntVarArray altoMelodicIntervals, IntVarArray sopranoMelodicIntervals,
-                                  IntVarArray absoluteBassMelodicIntervals, IntVarArray absoluteTenorMelodicIntervals,
-                                  IntVarArray absoluteAltoMelodicIntervals, IntVarArray absoluteSopranoMelodicIntervals){
+void link_absolute_melodic_arrays(const Home &home, int nVoices, IntVarArray bassMelodicIntervals,
+                                  IntVarArray tenorMelodicIntervals, IntVarArray altoMelodicIntervals,
+                                  IntVarArray sopranoMelodicIntervals, IntVarArray absoluteBassMelodicIntervals,
+                                  IntVarArray absoluteTenorMelodicIntervals, IntVarArray absoluteAltoMelodicIntervals,
+                                  IntVarArray absoluteSopranoMelodicIntervals) {
     for(int i = 0; i < bassMelodicIntervals.size(); ++i){
         abs(home, bassMelodicIntervals[i], absoluteBassMelodicIntervals[i]);
         abs(home, tenorMelodicIntervals[i], absoluteTenorMelodicIntervals[i]);

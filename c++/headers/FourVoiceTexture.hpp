@@ -51,6 +51,7 @@ protected:
     IntVarArray tenorMelodicIntervals;
     IntVarArray altoMelodicIntervals;
     IntVarArray sopranoMelodicIntervals;
+    IntVarArray allMelodicIntervals;
 
     /// absolute melodic intervals
     IntVarArray absoluteBassMelodicIntervals;
@@ -74,6 +75,7 @@ protected:
     IntVarArray nDifferentValuesAllChords;
     IntVarArray nOccurrencesBassInFundamentalState;     // number of chords that don't double the bass in fundamental state
     IntVarArray commonNotesInSoprano;                   // chords with common notes in outside voices
+    IntVarArray commonNotesInSameVoice; // chords with common notes in the same voice between consecutive chords
 
     /// cost variables
     IntVar sumOfMelodicIntervals;                       // for minimizing voice movement between voices
@@ -81,6 +83,8 @@ protected:
     IntVar nOfChordsWithLessThan4notes;                 // number of chords with less than 4 notes
     IntVar nOfFundamentalStateChordsWithoutDoubledBass; // number of fundamental state chords that don't follow the preferences
     IntVar nOfCommonNotesInSoprano;                     // number of common notes in outside voices
+    IntVar nOfCommonNotesInSameVoice;                   // number of common notes in the same voice between consecutive chords
+    /// /!\ this cost needs to be maximized, so its value is negative
 
 public:
     /**

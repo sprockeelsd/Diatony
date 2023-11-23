@@ -110,57 +110,6 @@ void forbid_parallel_interval(Home home, int nVoices, int forbiddenParallelInter
 }
 
 /**
- * Sets the general rules for the melodic movements between chords
- * Ensures that common notes between chords are kept in the same voice
- * @param home the instance of the problem
- * @param currentPosition the current position in the chord progression
- * @param chordDegrees the array containing the degrees of the chords in the progression
- * @param tonality the tonality of the piece
- * @param fullChordsVoicing the array containing all the notes of the chords in the progression
- */
- // @todo add nVoices to the arguments
- void keep_common_notes_in_same_voice(const Home &home, int nVoices, int currentPosition, vector<int> chordDegrees,
-                                      Tonality *tonality, IntVarArray fullChordsVoicing) {
-    /// keep common notes in the same voice and move other voices as closely as possible (cost)
-    // chord qualities
-    vector<int> thisChordQuality = tonality->get_chord_qualities()[chordDegrees[currentPosition]];
-    vector<int> nextChordQuality = tonality->get_chord_qualities()[chordDegrees[currentPosition+1]];
-
-    /// notes of the current chord @todo maybe add sets in the tonality class with the notes for each chord
-    int new_note = tonality->get_degree_note(chordDegrees[currentPosition]);
-    set<int> thisChord = {new_note}; // notes of the chord
-    for(int i = 0; i < thisChordQuality.size() - 1; ++i){ // -1 because the last note is the same as the first
-        new_note = (new_note + thisChordQuality[i]) % PERFECT_OCTAVE;
-        thisChord.insert(new_note);
-    }
-
-    /// notes of the next chord
-    int new_note_new_chord = tonality->get_degree_note(chordDegrees[currentPosition+1]);
-    set<int> nextChord = {new_note_new_chord};
-    for(int i = 0; i < nextChordQuality.size() - 1; ++i){ // -1 because the last note is the same as the first
-        new_note_new_chord = (new_note_new_chord + nextChordQuality[i]) % PERFECT_OCTAVE;
-        nextChord.insert(new_note_new_chord);
-    }
-
-    /// for each note in the current chord domain, if the note is in the next chord as well, it has to be in the same voice
-    /// but if it is in the soprano, then increase the cost
-    for(auto it : thisChord){ // for each note in the current chord domain
-        if(nextChord.find(it) != nextChord.end()){ // if the note is in the next chord as well
-            for(int i = TENOR; i <= SOPRANO; ++i){ // for all voices except the bass
-                // the note in the current chord in the voice i must be the same in the next chord
-                BoolVar thisVoiceThisChordContainsTheNote = expr(home, fullChordsVoicing[currentPosition * nVoices + i] % PERFECT_OCTAVE == it);
-                BoolVar thisVoiceNextChordContainsTheNote = expr(home, fullChordsVoicing[(currentPosition + 1) * nVoices + i] % PERFECT_OCTAVE == it);
-
-                rel(home, thisVoiceThisChordContainsTheNote,BOT_IMP,expr(home,fullChordsVoicing[(currentPosition + 1) * nVoices + i] ==
-                               fullChordsVoicing[currentPosition * nVoices + i]), true);
-                rel(home, thisVoiceNextChordContainsTheNote,BOT_IMP, expr(home, fullChordsVoicing[currentPosition * nVoices + i] ==
-                                fullChordsVoicing[(currentPosition + 1) * nVoices + i]), true);
-            }
-        }
-    }
-}
-
-/**
  * Adds the constraint that Soprano, Alto and Tenor must move in contrary motion to the bass
  * @param home the instance of the problem
  * @param currentPosition the current position in the chord progression
@@ -263,6 +212,54 @@ void interrupted_cadence(const Home &home, int currentPosition, Tonality *tonali
 
 /***********************************************************************************************************************
  *                                                                                                                     *
+ *                                           Second inversion chord constraints                                        *
+ *                                                                                                                     *
+ ***********************************************************************************************************************/
+
+/**
+ * Sets the constraint for a first degree in second inversion followed by a fifth degree (appogiatura)
+ * @param home the instance of the problem
+ * @param nVoices the number of voices in the piece
+ * @param currentPosition the current position in the chord progression
+ * @param tonality the tonality of the piece
+ * @param fullChordsVoicing the array containing all the notes of the chords in the progression
+ * @param bassMelodicInterval the melodic interval of the bass between the current position and the next
+ * @param tenorMelodicInterval the melodic interval of the tenor between the current position and the next
+ * @param altoMelodicInterval the melodic interval of the alto between the current position and the next
+ * @param sopranoMelodicInterval the melodic interval of the soprano between the current position and the next
+ */
+void fifth_degree_appogiatura(Home home, int nVoices, int currentPosition, Tonality *tonality, IntVarArray fullChordsVoicing,
+                              IntVarArray bassMelodicInterval, IntVarArray tenorMelodicInterval,
+                              IntVarArray altoMelodicInterval, IntVarArray sopranoMelodicInterval){
+    IntVarArgs currentChord = fullChordsVoicing.slice(nVoices * currentPosition, 1, nVoices);
+
+    vector<IntVarArray> melodicIntervals(
+            {bassMelodicInterval, tenorMelodicInterval, altoMelodicInterval, sopranoMelodicInterval});
+    /// appogiatura of the fifth degree: the fundamental and third of the I chord must go down
+    for(int voice = TENOR; voice <= SOPRANO; voice++){
+        /// the fundamental of the tonality must go down by a half step
+        rel(home, expr(home, currentChord[voice] % PERFECT_OCTAVE == tonality->get_tonic()), BOT_IMP,
+            expr(home, melodicIntervals[voice][currentPosition] == -1), true);
+        /// the third of the scale must go down to the second by step
+        rel(home, expr(home, currentChord[voice] % PERFECT_OCTAVE == tonality->get_degree_note(THIRD_DEGREE)),
+                       BOT_IMP, expr(home, melodicIntervals[voice][currentPosition] < 0), true);
+        rel(home, expr(home, currentChord[voice] % PERFECT_OCTAVE == tonality->get_degree_note(THIRD_DEGREE)),
+            BOT_IMP, expr(home, melodicIntervals[voice][currentPosition] >= -2), true);
+    }
+    if (currentPosition > 0){ /// if it is not the first chord in the progression
+        /// the voice containing the tonic must go in opposite or oblique motion to the bass
+        BoolVar bassRises = expr(home, bassMelodicInterval[currentPosition-1] >= 0);
+        for(int voice = TENOR; voice <= SOPRANO; voice++){
+            /// if the voice is playing the tonic and the bass rises, this voice must go down or stay the same
+            rel(home, expr(home, fullChordsVoicing[currentPosition * nVoices + voice] % PERFECT_OCTAVE ==
+                    tonality->get_tonic()), BOT_IMP, expr(home, melodicIntervals[voice][currentPosition - 1] <= 0), bassRises);
+        }
+    }
+
+}
+
+/***********************************************************************************************************************
+ *                                                                                                                     *
  *                                         Constraints independent of chord state                                      *
  *                                                                                                                     *
  ***********************************************************************************************************************/
@@ -273,27 +270,38 @@ void interrupted_cadence(const Home &home, int currentPosition, Tonality *tonali
  * @param nvoices the number of voices in the piece
  * @param currentPosition the current position in the chord progression
  * @param tonality the tonality of the piece
+ * @param chordDegs the degrees of the chords
+ * @param chordStas the state of the chords
  * @param bassMelodicInterval the melodic interval of the bass between the current position and the next
  * @param tenorMelodicInterval the melodic interval of the tenor between the current position and the next
  * @param altoMelodicInterval the melodic interval of the alto between the current position and the next
  * @param sopranoMelodicInterval the melodic interval of the soprano between the current position and the next
  * @param fullChordsVoicing the array containing all the notes of the chords in the progression
  */
-void tritone_resolution(const Home &home, int nVoices, int currentPosition, Tonality *tonality,
-                        const IntVarArray &bassMelodicInterval, const IntVarArray &tenorMelodicInterval,
-                        const IntVarArray &altoMelodicInterval, const IntVarArray &sopranoMelodicInterval,
-                        IntVarArray fullChordsVoicing) {
+void tritone_resolution(const Home &home, int nVoices, int currentPosition, Tonality *tonality, vector<int> chordDegs,
+                        vector<int> chordStas, const IntVarArray &bassMelodicInterval,
+                        const IntVarArray &tenorMelodicInterval, const IntVarArray &altoMelodicInterval,
+                        const IntVarArray &sopranoMelodicInterval, IntVarArray fullChordsVoicing) {
 
     IntVarArgs currentChord(fullChordsVoicing.slice(nVoices * currentPosition, 1, nVoices));
 
     vector<IntVarArray> melodicIntervals(
             {bassMelodicInterval, tenorMelodicInterval, altoMelodicInterval, sopranoMelodicInterval});
     for(int voice = BASS; voice <= SOPRANO; voice++){
-        /// if the note is the fourth of the scale, it must go down by step to the third of the scale
-        /// must be descending and must be a second
-        rel(home,expr(home, currentChord[voice] % PERFECT_OCTAVE == (tonality->get_tonic() + PERFECT_FOURTH) %
-            PERFECT_OCTAVE),BOT_IMP,expr(home, expr(home, melodicIntervals[voice][currentPosition] < 0) &&
-            expr(home, melodicIntervals[voice][currentPosition] >= -2)), true);
+        /// special case
+        /// if the chords are VII (1st inversion) -> I (1st inversion)
+        if (chordDegs[currentPosition] == SEVENTH_DEGREE && chordStas[currentPosition] == FIRST_INVERSION &&
+            chordDegs[currentPosition+1] == FIRST_DEGREE && chordStas[currentPosition+1] == FIRST_INVERSION){
+            /// the fourth of the scale must go up by a step
+            rel(home, expr(home, currentChord[voice] % PERFECT_OCTAVE == (tonality->get_tonic() + PERFECT_FOURTH) %
+            PERFECT_OCTAVE), BOT_IMP, expr(home, expr(home, melodicIntervals[voice][currentPosition] > 0) &&
+            expr(home, melodicIntervals[voice][currentPosition] <= 2)), true);
+        }
+        else{ /// the fourth of the scale must go down by a step
+            rel(home,expr(home, currentChord[voice] % PERFECT_OCTAVE == (tonality->get_tonic() + PERFECT_FOURTH) %
+                PERFECT_OCTAVE),BOT_IMP,expr(home, expr(home, melodicIntervals[voice][currentPosition] < 0)
+                && expr(home, melodicIntervals[voice][currentPosition] >= -2)), true);
+        }
 
         /// if the note is the major seventh of the scale, it must go up to the tonic by step
         rel(home, expr(home, currentChord[voice] % PERFECT_OCTAVE == (tonality->get_tonic() + MAJOR_SEVENTH) % PERFECT_OCTAVE),
