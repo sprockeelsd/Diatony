@@ -5,7 +5,7 @@ PROBLEM_FILES = Utilities.cpp Tonality.cpp MajorTonality.cpp MinorTonality.cpp V
 				HarmonicConstraints.cpp GeneralConstraints.cpp Preferences.cpp FourVoiceTexture.cpp Solver.cpp
 
 # Define the log file where all the results are printed
-LOG_FILE = log.txt
+LOG_FILE = ../out/log.txt
 
 #gecode libraries
 LIBRARIES = -lgecodedriver -lgecodeflatzinc -lgecodefloat -lgecodeint -lgecodekernel -lgecodeminimodel \
@@ -14,22 +14,22 @@ LIBRARIES = -lgecodedriver -lgecodeflatzinc -lgecodefloat -lgecodeint -lgecodeke
 #compile the dynamic library for macOS
 dylib: problem_wrapper.cpp
 	g++ $(PROBLEM_FILES) problem_wrapper.cpp -std=c++11 -dynamiclib -fPIC -F/Library/Frameworks -framework gecode -o \
-			../sources/libgecode.dylib  -ffast-math -O3
+			../out/libgecode.dylib  -ffast-math -O3
 	# replace the relative path to the Gecode library in the dylib by an absolute path
 	install_name_tool -change gecode.framework/Versions/49/gecode /Library/Frameworks/gecode.framework/Versions/49/gecode\
- 			../sources/libgecode.dylib
+ 			../out/libgecode.dylib
 
 #compile the dynamic library for linux
 so:
-	g++ -fPIC $(PROBLEM_FILES) problem_wrapper.cpp -std=c++11 -shared $(LIBRARIES) -o ../sources/libgecode.so -O3 \
+	g++ -fPIC $(PROBLEM_FILES) problem_wrapper.cpp -std=c++11 -shared $(LIBRARIES) -o ../out/libgecode.so -O3 \
 		-ffast-math
 
 #run the main.cpp file on macOS
 run_mac_os:
 	clear
 	rm -f $(LOG_FILE)
-	g++ -std=c++11 -F/Library/Frameworks -framework gecode -o Main $(PROBLEM_FILES) Main.cpp
-	./Main
+	g++ -std=c++11 -F/Library/Frameworks -framework gecode -o ../out/Main $(PROBLEM_FILES) Main.cpp
+	./../out/Main
 
 test_tonality:
 	g++ -std=c++11 -F/Library/Frameworks -framework gecode -o testTonality Utilities.cpp Tonality.cpp MajorTonality.cpp \
@@ -43,5 +43,5 @@ find_gecode_mac_os:
 
 #remove temporary files and dynamic library files
 clean:
-	rm -f  log.txt *.o *.so *.dylib ../sources/*.so ../sources/*.dylib Main testTonality
+	rm -f  ../out/log.txt ../out/*.o *.so *.dylib ../out/*.so ../out/*.dylib ../out/Main testTonality
 
