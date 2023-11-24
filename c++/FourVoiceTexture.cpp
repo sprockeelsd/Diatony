@@ -95,24 +95,6 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
                          bassAltoHarmonicIntervals, bassSopranoHarmonicIntervals, tenorAltoHarmonicIntervals,
                          tenorSopranoHarmonicIntervals, altoSopranoHarmonicIntervals);
 
-    /**-----------------------------------------------------------------------------------------------------------------
-    |                                                                                                                  |
-    |                                              generic constraints                                                 |
-    |                                                                                                                  |
-    -------------------------------------------------------------------------------------------------------------------*/
-
-    /// restrain the domain of the voices to their range + state that bass <= tenor <= alto <= soprano
-    restrain_voices_domains(*this, size, nOfVoices, FullChordsVoicing);
-
-    for(int i = 0; i < size; i++) {
-        IntVarArgs currentChord(FullChordsVoicing.slice(nOfVoices * i, 1, nOfVoices));
-
-        /// set the chord's domain to the notes of the degree chordDegrees[i]'s chord
-        set_to_chord(*this, tonality, chordDegrees[i], currentChord);
-
-        /// set the bass based on the chord's state
-        set_bass(*this, tonality, chordDegrees[i], chordStates[i], currentChord);
-    }
 
     /**-----------------------------------------------------------------------------------------------------------------
     |                                                                                                                  |
@@ -155,6 +137,25 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
                                                     absoluteSopranoMelodicIntervals,
                                                     commonNotesInSameVoice,
                                                     nOfCommonNotesInSameVoice);
+
+    /**-----------------------------------------------------------------------------------------------------------------
+    |                                                                                                                  |
+    |                                              generic constraints                                                 |
+    |                                                                                                                  |
+    -------------------------------------------------------------------------------------------------------------------*/
+
+    /// restrain the domain of the voices to their range + state that bass <= tenor <= alto <= soprano
+    restrain_voices_domains(*this, size, nOfVoices, FullChordsVoicing);
+
+    for(int i = 0; i < size; i++) {
+        IntVarArgs currentChord(FullChordsVoicing.slice(nOfVoices * i, 1, nOfVoices));
+
+        /// set the chord's domain to the notes of the degree chordDegrees[i]'s chord
+        set_to_chord(*this, tonality, chordDegrees[i], currentChord);
+
+        /// set the bass based on the chord's state
+        set_bass(*this, tonality, chordDegrees[i], chordStates[i], currentChord);
+    }
 
     /**-----------------------------------------------------------------------------------------------------------------
     |                                                                                                                  |
