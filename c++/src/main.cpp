@@ -59,20 +59,24 @@ int main(int argc, char* argv[]) {
     int tpq = 120;            // default value in MIDI file is 48
     outputFile.setTicksPerQuarterNote(tpq);
 
-    /// data
-    // C5 C  G G A A G-  F F  E  E  D D C-
-    int melody[50]  = {72,72,79,79,81,81,79,77,77,76,76,74,74,72,-1};
-    int mrhythm[50] = { 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 2,-1};
+    /// get the best solution
+    //@todo fix this to get the notes from the solution
+    auto bestSolution = sols[sols.size() - 1]; // the last one is the best
+    int* notes = bestSolution->return_solution();
+    int rhythm[size];
+
+    for(int i = 0; i < 4*size; i++)
+        rhythm[i] = 1;
 
     /// Fill the MidiFile object
     int i = 0;
     int actionTime = 0; // temporary storage for MIDI event time
     midiEvent[2] = 64; // store attack/release velocity for note command
-    while (melody[i] >= 0) {
+    while (notes[i] >= 0) {
         midiEvent[0] = 0x90;     // store a note on command (MIDI channel 1)
-        midiEvent[1] = melody[i];
+        midiEvent[1] = notes[i];
         outputFile.addEvent(1, actionTime, midiEvent);
-        actionTime += tpq * mrhythm[i];
+        actionTime += tpq * rhythm[i];
         midiEvent[0] = 0x80;     // store a note on command (MIDI channel 1)
         outputFile.addEvent(1, actionTime, midiEvent);
         i++;

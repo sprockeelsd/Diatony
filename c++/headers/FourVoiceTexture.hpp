@@ -114,7 +114,7 @@ public:
      * Returns the values taken by the variables vars in a solution
      * @return an array of integers representing the values of the variables in a solution
      */
-    int* return_solution();
+    int* return_solution() const;
 
     /**
      * Copy method
