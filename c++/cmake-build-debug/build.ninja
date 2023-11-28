@@ -49,96 +49,96 @@ cmake_ninja_workdir = /Users/sprockeelsd/Documents/Libraries/MusicConstraints/c+
 
 build cmake_object_order_depends_target_damien: phony || CMakeFiles/damien.dir
 
-build CMakeFiles/damien.dir/FourVoiceTexture.cpp.o: CXX_COMPILER__damien_unscanned_Debug /Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++/FourVoiceTexture.cpp || cmake_object_order_depends_target_damien
-  DEP_FILE = CMakeFiles/damien.dir/FourVoiceTexture.cpp.o.d
+build CMakeFiles/damien.dir/src/FourVoiceTexture.cpp.o: CXX_COMPILER__damien_unscanned_Debug /Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++/src/FourVoiceTexture.cpp || cmake_object_order_depends_target_damien
+  DEP_FILE = CMakeFiles/damien.dir/src/FourVoiceTexture.cpp.o.d
   FLAGS = -g -std=gnu++11 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk -fcolor-diagnostics -F/Library/Frameworks
   INCLUDES = -I/Library/Frameworks/Gecode.framework/Headers -I/Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++/headers
   OBJECT_DIR = CMakeFiles/damien.dir
-  OBJECT_FILE_DIR = CMakeFiles/damien.dir
+  OBJECT_FILE_DIR = CMakeFiles/damien.dir/src
 
-build CMakeFiles/damien.dir/main.cpp.o: CXX_COMPILER__damien_unscanned_Debug /Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++/main.cpp || cmake_object_order_depends_target_damien
-  DEP_FILE = CMakeFiles/damien.dir/main.cpp.o.d
+build CMakeFiles/damien.dir/src/main.cpp.o: CXX_COMPILER__damien_unscanned_Debug /Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++/src/main.cpp || cmake_object_order_depends_target_damien
+  DEP_FILE = CMakeFiles/damien.dir/src/main.cpp.o.d
   FLAGS = -g -std=gnu++11 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk -fcolor-diagnostics -F/Library/Frameworks
   INCLUDES = -I/Library/Frameworks/Gecode.framework/Headers -I/Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++/headers
   OBJECT_DIR = CMakeFiles/damien.dir
-  OBJECT_FILE_DIR = CMakeFiles/damien.dir
+  OBJECT_FILE_DIR = CMakeFiles/damien.dir/src
 
-build CMakeFiles/damien.dir/Tonality.cpp.o: CXX_COMPILER__damien_unscanned_Debug /Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++/Tonality.cpp || cmake_object_order_depends_target_damien
-  DEP_FILE = CMakeFiles/damien.dir/Tonality.cpp.o.d
+build CMakeFiles/damien.dir/src/Tonality.cpp.o: CXX_COMPILER__damien_unscanned_Debug /Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++/src/Tonality.cpp || cmake_object_order_depends_target_damien
+  DEP_FILE = CMakeFiles/damien.dir/src/Tonality.cpp.o.d
   FLAGS = -g -std=gnu++11 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk -fcolor-diagnostics -F/Library/Frameworks
   INCLUDES = -I/Library/Frameworks/Gecode.framework/Headers -I/Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++/headers
   OBJECT_DIR = CMakeFiles/damien.dir
-  OBJECT_FILE_DIR = CMakeFiles/damien.dir
+  OBJECT_FILE_DIR = CMakeFiles/damien.dir/src
 
-build CMakeFiles/damien.dir/Utilities.cpp.o: CXX_COMPILER__damien_unscanned_Debug /Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++/Utilities.cpp || cmake_object_order_depends_target_damien
-  DEP_FILE = CMakeFiles/damien.dir/Utilities.cpp.o.d
+build CMakeFiles/damien.dir/src/Utilities.cpp.o: CXX_COMPILER__damien_unscanned_Debug /Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++/src/Utilities.cpp || cmake_object_order_depends_target_damien
+  DEP_FILE = CMakeFiles/damien.dir/src/Utilities.cpp.o.d
   FLAGS = -g -std=gnu++11 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk -fcolor-diagnostics -F/Library/Frameworks
   INCLUDES = -I/Library/Frameworks/Gecode.framework/Headers -I/Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++/headers
   OBJECT_DIR = CMakeFiles/damien.dir
-  OBJECT_FILE_DIR = CMakeFiles/damien.dir
+  OBJECT_FILE_DIR = CMakeFiles/damien.dir/src
 
-build CMakeFiles/damien.dir/MajorTonality.cpp.o: CXX_COMPILER__damien_unscanned_Debug /Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++/MajorTonality.cpp || cmake_object_order_depends_target_damien
-  DEP_FILE = CMakeFiles/damien.dir/MajorTonality.cpp.o.d
+build CMakeFiles/damien.dir/src/MajorTonality.cpp.o: CXX_COMPILER__damien_unscanned_Debug /Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++/src/MajorTonality.cpp || cmake_object_order_depends_target_damien
+  DEP_FILE = CMakeFiles/damien.dir/src/MajorTonality.cpp.o.d
   FLAGS = -g -std=gnu++11 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk -fcolor-diagnostics -F/Library/Frameworks
   INCLUDES = -I/Library/Frameworks/Gecode.framework/Headers -I/Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++/headers
   OBJECT_DIR = CMakeFiles/damien.dir
-  OBJECT_FILE_DIR = CMakeFiles/damien.dir
+  OBJECT_FILE_DIR = CMakeFiles/damien.dir/src
 
-build CMakeFiles/damien.dir/testTonality.cpp.o: CXX_COMPILER__damien_unscanned_Debug /Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++/testTonality.cpp || cmake_object_order_depends_target_damien
-  DEP_FILE = CMakeFiles/damien.dir/testTonality.cpp.o.d
+build CMakeFiles/damien.dir/src/testTonality.cpp.o: CXX_COMPILER__damien_unscanned_Debug /Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++/src/testTonality.cpp || cmake_object_order_depends_target_damien
+  DEP_FILE = CMakeFiles/damien.dir/src/testTonality.cpp.o.d
   FLAGS = -g -std=gnu++11 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk -fcolor-diagnostics -F/Library/Frameworks
   INCLUDES = -I/Library/Frameworks/Gecode.framework/Headers -I/Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++/headers
   OBJECT_DIR = CMakeFiles/damien.dir
-  OBJECT_FILE_DIR = CMakeFiles/damien.dir
+  OBJECT_FILE_DIR = CMakeFiles/damien.dir/src
 
-build CMakeFiles/damien.dir/GeneralConstraints.cpp.o: CXX_COMPILER__damien_unscanned_Debug /Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++/GeneralConstraints.cpp || cmake_object_order_depends_target_damien
-  DEP_FILE = CMakeFiles/damien.dir/GeneralConstraints.cpp.o.d
+build CMakeFiles/damien.dir/src/GeneralConstraints.cpp.o: CXX_COMPILER__damien_unscanned_Debug /Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++/src/GeneralConstraints.cpp || cmake_object_order_depends_target_damien
+  DEP_FILE = CMakeFiles/damien.dir/src/GeneralConstraints.cpp.o.d
   FLAGS = -g -std=gnu++11 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk -fcolor-diagnostics -F/Library/Frameworks
   INCLUDES = -I/Library/Frameworks/Gecode.framework/Headers -I/Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++/headers
   OBJECT_DIR = CMakeFiles/damien.dir
-  OBJECT_FILE_DIR = CMakeFiles/damien.dir
+  OBJECT_FILE_DIR = CMakeFiles/damien.dir/src
 
-build CMakeFiles/damien.dir/MinorTonality.cpp.o: CXX_COMPILER__damien_unscanned_Debug /Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++/MinorTonality.cpp || cmake_object_order_depends_target_damien
-  DEP_FILE = CMakeFiles/damien.dir/MinorTonality.cpp.o.d
+build CMakeFiles/damien.dir/src/MinorTonality.cpp.o: CXX_COMPILER__damien_unscanned_Debug /Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++/src/MinorTonality.cpp || cmake_object_order_depends_target_damien
+  DEP_FILE = CMakeFiles/damien.dir/src/MinorTonality.cpp.o.d
   FLAGS = -g -std=gnu++11 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk -fcolor-diagnostics -F/Library/Frameworks
   INCLUDES = -I/Library/Frameworks/Gecode.framework/Headers -I/Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++/headers
   OBJECT_DIR = CMakeFiles/damien.dir
-  OBJECT_FILE_DIR = CMakeFiles/damien.dir
+  OBJECT_FILE_DIR = CMakeFiles/damien.dir/src
 
-build CMakeFiles/damien.dir/HarmonicConstraints.cpp.o: CXX_COMPILER__damien_unscanned_Debug /Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++/HarmonicConstraints.cpp || cmake_object_order_depends_target_damien
-  DEP_FILE = CMakeFiles/damien.dir/HarmonicConstraints.cpp.o.d
+build CMakeFiles/damien.dir/src/HarmonicConstraints.cpp.o: CXX_COMPILER__damien_unscanned_Debug /Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++/src/HarmonicConstraints.cpp || cmake_object_order_depends_target_damien
+  DEP_FILE = CMakeFiles/damien.dir/src/HarmonicConstraints.cpp.o.d
   FLAGS = -g -std=gnu++11 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk -fcolor-diagnostics -F/Library/Frameworks
   INCLUDES = -I/Library/Frameworks/Gecode.framework/Headers -I/Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++/headers
   OBJECT_DIR = CMakeFiles/damien.dir
-  OBJECT_FILE_DIR = CMakeFiles/damien.dir
+  OBJECT_FILE_DIR = CMakeFiles/damien.dir/src
 
-build CMakeFiles/damien.dir/VoiceLeadingConstraints.cpp.o: CXX_COMPILER__damien_unscanned_Debug /Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++/VoiceLeadingConstraints.cpp || cmake_object_order_depends_target_damien
-  DEP_FILE = CMakeFiles/damien.dir/VoiceLeadingConstraints.cpp.o.d
+build CMakeFiles/damien.dir/src/VoiceLeadingConstraints.cpp.o: CXX_COMPILER__damien_unscanned_Debug /Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++/src/VoiceLeadingConstraints.cpp || cmake_object_order_depends_target_damien
+  DEP_FILE = CMakeFiles/damien.dir/src/VoiceLeadingConstraints.cpp.o.d
   FLAGS = -g -std=gnu++11 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk -fcolor-diagnostics -F/Library/Frameworks
   INCLUDES = -I/Library/Frameworks/Gecode.framework/Headers -I/Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++/headers
   OBJECT_DIR = CMakeFiles/damien.dir
-  OBJECT_FILE_DIR = CMakeFiles/damien.dir
+  OBJECT_FILE_DIR = CMakeFiles/damien.dir/src
 
-build CMakeFiles/damien.dir/Solver.cpp.o: CXX_COMPILER__damien_unscanned_Debug /Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++/Solver.cpp || cmake_object_order_depends_target_damien
-  DEP_FILE = CMakeFiles/damien.dir/Solver.cpp.o.d
+build CMakeFiles/damien.dir/src/Solver.cpp.o: CXX_COMPILER__damien_unscanned_Debug /Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++/src/Solver.cpp || cmake_object_order_depends_target_damien
+  DEP_FILE = CMakeFiles/damien.dir/src/Solver.cpp.o.d
   FLAGS = -g -std=gnu++11 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk -fcolor-diagnostics -F/Library/Frameworks
   INCLUDES = -I/Library/Frameworks/Gecode.framework/Headers -I/Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++/headers
   OBJECT_DIR = CMakeFiles/damien.dir
-  OBJECT_FILE_DIR = CMakeFiles/damien.dir
+  OBJECT_FILE_DIR = CMakeFiles/damien.dir/src
 
-build CMakeFiles/damien.dir/Preferences.cpp.o: CXX_COMPILER__damien_unscanned_Debug /Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++/Preferences.cpp || cmake_object_order_depends_target_damien
-  DEP_FILE = CMakeFiles/damien.dir/Preferences.cpp.o.d
+build CMakeFiles/damien.dir/src/Preferences.cpp.o: CXX_COMPILER__damien_unscanned_Debug /Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++/src/Preferences.cpp || cmake_object_order_depends_target_damien
+  DEP_FILE = CMakeFiles/damien.dir/src/Preferences.cpp.o.d
   FLAGS = -g -std=gnu++11 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk -fcolor-diagnostics -F/Library/Frameworks
   INCLUDES = -I/Library/Frameworks/Gecode.framework/Headers -I/Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++/headers
   OBJECT_DIR = CMakeFiles/damien.dir
-  OBJECT_FILE_DIR = CMakeFiles/damien.dir
+  OBJECT_FILE_DIR = CMakeFiles/damien.dir/src
 
-build CMakeFiles/damien.dir/problem_wrapper.cpp.o: CXX_COMPILER__damien_unscanned_Debug /Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++/problem_wrapper.cpp || cmake_object_order_depends_target_damien
-  DEP_FILE = CMakeFiles/damien.dir/problem_wrapper.cpp.o.d
+build CMakeFiles/damien.dir/src/problem_wrapper.cpp.o: CXX_COMPILER__damien_unscanned_Debug /Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++/src/problem_wrapper.cpp || cmake_object_order_depends_target_damien
+  DEP_FILE = CMakeFiles/damien.dir/src/problem_wrapper.cpp.o.d
   FLAGS = -g -std=gnu++11 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk -fcolor-diagnostics -F/Library/Frameworks
   INCLUDES = -I/Library/Frameworks/Gecode.framework/Headers -I/Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++/headers
   OBJECT_DIR = CMakeFiles/damien.dir
-  OBJECT_FILE_DIR = CMakeFiles/damien.dir
+  OBJECT_FILE_DIR = CMakeFiles/damien.dir/src
 
 
 # =============================================================================
@@ -148,7 +148,7 @@ build CMakeFiles/damien.dir/problem_wrapper.cpp.o: CXX_COMPILER__damien_unscanne
 #############################################
 # Link the static library libdamien.a
 
-build libdamien.a: CXX_STATIC_LIBRARY_LINKER__damien_Debug CMakeFiles/damien.dir/FourVoiceTexture.cpp.o CMakeFiles/damien.dir/main.cpp.o CMakeFiles/damien.dir/Tonality.cpp.o CMakeFiles/damien.dir/Utilities.cpp.o CMakeFiles/damien.dir/MajorTonality.cpp.o CMakeFiles/damien.dir/testTonality.cpp.o CMakeFiles/damien.dir/GeneralConstraints.cpp.o CMakeFiles/damien.dir/MinorTonality.cpp.o CMakeFiles/damien.dir/HarmonicConstraints.cpp.o CMakeFiles/damien.dir/VoiceLeadingConstraints.cpp.o CMakeFiles/damien.dir/Solver.cpp.o CMakeFiles/damien.dir/Preferences.cpp.o CMakeFiles/damien.dir/problem_wrapper.cpp.o
+build libdamien.a: CXX_STATIC_LIBRARY_LINKER__damien_Debug CMakeFiles/damien.dir/src/FourVoiceTexture.cpp.o CMakeFiles/damien.dir/src/main.cpp.o CMakeFiles/damien.dir/src/Tonality.cpp.o CMakeFiles/damien.dir/src/Utilities.cpp.o CMakeFiles/damien.dir/src/MajorTonality.cpp.o CMakeFiles/damien.dir/src/testTonality.cpp.o CMakeFiles/damien.dir/src/GeneralConstraints.cpp.o CMakeFiles/damien.dir/src/MinorTonality.cpp.o CMakeFiles/damien.dir/src/HarmonicConstraints.cpp.o CMakeFiles/damien.dir/src/VoiceLeadingConstraints.cpp.o CMakeFiles/damien.dir/src/Solver.cpp.o CMakeFiles/damien.dir/src/Preferences.cpp.o CMakeFiles/damien.dir/src/problem_wrapper.cpp.o
   ARCH_FLAGS = -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk
   LANGUAGE_COMPILE_FLAGS = -g
   OBJECT_DIR = CMakeFiles/damien.dir

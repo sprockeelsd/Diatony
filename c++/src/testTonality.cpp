@@ -1,8 +1,8 @@
-#include "headers/FourVoiceTexture.hpp"
-#include "headers/Utilities.hpp"
-#include "headers/Tonality.hpp"
-#include "headers/MajorTonality.hpp"
-#include "headers/MinorTonality.hpp"
+#include "FourVoiceTexture.hpp"
+#include "Utilities.hpp"
+#include "Tonality.hpp"
+#include "MajorTonality.hpp"
+#include "MinorTonality.hpp"
 
 using namespace Gecode;
 using namespace std;

@@ -1,4 +1,4 @@
-#include "headers/VoiceLeadingConstraints.hpp"
+#include "../headers/VoiceLeadingConstraints.hpp"
 
 /***********************************************************************************************************************
  *                                                                                                                     *
@@ -62,7 +62,7 @@ void forbid_parallel_intervals(const Home &home, int size, int nOfVoices, const 
 }
 
 /**
- * Forbids a given parallel interval between two voices
+ * Forbids a given parallel interval between two given voices
  * @todo make it with argument variables + make it cleaner
  * @param home the instance of the problem
  * @param nVoices the number of voices

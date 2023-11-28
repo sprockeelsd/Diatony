@@ -1,4 +1,4 @@
-#include "headers/Solver.hpp"
+#include "../headers/Solver.hpp"
 
 /***********************************************************************************************************************
  *                                                                                                                     *
@@ -16,8 +16,8 @@
  */
 Search::Base<FourVoiceTexture>* make_solver(FourVoiceTexture* pb, int type){
     Search::Options opts;
-    opts.threads = 0;
-    opts.stop = Search::Stop::time(60000); // stop after 60 seconds
+    //opts.threads = 0; /// as many as available
+    //opts.stop = Search::Stop::time(120000); // stop after 120 seconds
 
     if (type == BAB_SOLVER){
         write_to_log_file("Solver type: BAB\n");
@@ -38,6 +38,7 @@ FourVoiceTexture* get_next_solution_space(Search::Base<FourVoiceTexture>* solver
     FourVoiceTexture* sol_space = solver->next();
     if (sol_space == nullptr) // handle the case of no solution or time out, necessary when sending the data to OM
         return nullptr;
+    write_to_log_file(sol_space->to_string().c_str());
     return sol_space;
 }
 
@@ -77,7 +78,8 @@ vector<const FourVoiceTexture*> find_all_solutions(FourVoiceTexture *pb, int sol
     while(FourVoiceTexture *sol= get_next_solution_space(solver)){
         nbSol++;
         sols.push_back(sol);
-        string message = "Solution found: \nSolution" + to_string(nbSol) + ": \n" + sol->to_string() + "\n";
+        string message = "Solution found: \nSolution" + to_string(nbSol) + ": \n" + sol->to_string() + "\n"
+                + "Solution " + to_string(nbSol) + "\n";
         write_to_log_file(message.c_str());
         std::cout << message << std::endl  << statistics_to_string(solver->statistics()) << std::endl;
         write_to_log_file(statistics_to_string(solver->statistics()).c_str());
@@ -85,6 +87,7 @@ vector<const FourVoiceTexture*> find_all_solutions(FourVoiceTexture *pb, int sol
             break;
     }
     if(nbSol == 0)
+        std::cout << "No solutions" << std::endl;
         write_to_log_file("No solutions found.");
     return sols;
 }
