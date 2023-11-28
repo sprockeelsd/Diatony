@@ -21,11 +21,21 @@ set(MY_HEADERS headers/problem_wrapper.hpp headers/FourVoiceTexture.hpp src/Four
         headers/Solver.hpp
         src/Preferences.cpp
         headers/Preferences.hpp
+        src/MidiFile.cpp
+        src/Binasc.cpp
+        src/MidiEvent.cpp
+        src/MidiEventList.cpp
+        src/MidiMessage.cpp
+        src/Options.cpp
 )
 add_library(damien ${MY_HEADERS} src/problem_wrapper.cpp src/main.cpp src/Tonality.cpp headers/Tonality.hpp src/Utilities.cpp headers/Utilities.hpp src/MajorTonality.cpp headers/MajorTonality.hpp src/testTonality.cpp src/GeneralConstraints.cpp headers/GeneralConstraints.hpp src/MinorTonality.cpp headers/MinorTonality.hpp src/HarmonicConstraints.cpp headers/HarmonicConstraints.hpp src/VoiceLeadingConstraints.cpp headers/VoiceLeadingConstraints.hpp
         src/Solver.cpp
         headers/Solver.hpp
         src/Preferences.cpp
         headers/Preferences.hpp
+        src/MidiFile.cpp
+        src/Binasc.cpp
+        src/MidiEvent.cpp
+        src/Options.cpp
 )
 target_link_libraries(damien ${GECODE_LIBRARY})
