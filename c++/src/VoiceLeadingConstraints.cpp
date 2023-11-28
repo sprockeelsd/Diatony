@@ -1,4 +1,4 @@
-#include "headers/VoiceLeadingConstraints.hpp"
+#include "../headers/VoiceLeadingConstraints.hpp"
 
 /***********************************************************************************************************************
  *                                                                                                                     *

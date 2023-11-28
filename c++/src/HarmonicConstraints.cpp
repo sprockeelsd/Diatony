@@ -1,4 +1,4 @@
-#include "headers/HarmonicConstraints.hpp"
+#include "../headers/HarmonicConstraints.hpp"
 
 /***********************************************************************************************************************
  *                                                                                                                     *
@@ -154,13 +154,16 @@ void chord_note_occurrence_first_inversion(Home home, int size, int nVoices, int
  */
 void chord_note_occurrence_second_inversion(Home home, int size, int nVoices, int currentPos, Tonality *tonality,
                                            vector<int> degrees, const IntVarArgs &currentChord) {
-    if(degrees[currentPos] == SEVENTH_DEGREE){ /// double the sixth (third degree of the scale)
+    if(degrees[currentPos] == SEVENTH_DEGREE){
+        count(home, currentChord, tonality->get_scale_degree((degrees[currentPos] + FIRST_DEGREE) % 7), IRT_EQ, 1);
         count(home, currentChord, tonality->get_scale_degree((degrees[currentPos] + THIRD_DEGREE) % 7), IRT_EQ, 2);
+        count(home, currentChord, tonality->get_scale_degree((degrees[currentPos] + FIFTH_DEGREE) % 7), IRT_EQ, 1);
     }
-    else{
-        count(home, currentChord, tonality->get_scale_degree((degrees[currentPos] + THIRD_DEGREE) % 7), IRT_GQ, 1);
-        count(home, currentChord, tonality->get_scale_degree((degrees[currentPos] + THIRD_DEGREE) % 7), IRT_EQ, 2); /// temporary until I do the general rule
+    else{ /// default case: if the fourth or the sixth of the chord are in the chord before, they can be doubled if it is in the chord before at the same height
+        /// the bass can always be doubled -> @todo
+        count(home, currentChord, tonality->get_scale_degree((degrees[currentPos] + FIFTH_DEGREE) % 7), IRT_GQ, 1);
+        /// @todo other voices
+        count(home, currentChord, tonality->get_scale_degree((degrees[currentPos] + FIRST_DEGREE) % 7), IRT_EQ, 1);
+        count(home, currentChord, tonality->get_scale_degree((degrees[currentPos] + THIRD_DEGREE) % 7), IRT_EQ, 1);
     }
-    count(home, currentChord, tonality->get_scale_degree((degrees[currentPos] + FIRST_DEGREE) % 7), IRT_GQ, 1);
-    count(home, currentChord, tonality->get_scale_degree((degrees[currentPos] + FIFTH_DEGREE) % 7), IRT_GQ, 1);
 }
