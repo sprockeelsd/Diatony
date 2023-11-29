@@ -10,6 +10,9 @@ PROBLEM_FILES = $(SRC_DIR)/Utilities.cpp $(SRC_DIR)/Tonality.cpp $(SRC_DIR)/Majo
 				$(SRC_DIR)/GeneralConstraints.cpp $(SRC_DIR)/Preferences.cpp $(SRC_DIR)/FourVoiceTexture.cpp \
 				$(SRC_DIR)/Solver.cpp
 
+MIDI_FILES = $(SRC_DIR)/Options.cpp $(SRC_DIR)/MidiMessage.cpp $(SRC_DIR)/MidiEvent.cpp $(SRC_DIR)/MidiEventList.cpp \
+			$(SRC_DIR)/Binasc.cpp $(SRC_DIR)/MidiFile.cpp
+
 # Define the log file where all the results are printed
 LOG_FILE = ../out/log.txt
 
@@ -31,10 +34,10 @@ so:
 		-ffast-math
 
 #run the main.cpp file on macOS
-run_mac_os:
+midifile:
 	clear
 	rm -f $(LOG_FILE)
-	g++ -std=c++11 -F/Library/Frameworks -framework gecode -o ../out/Main $(PROBLEM_FILES) src/Main.cpp
+	g++ -std=c++11 -F/Library/Frameworks -framework gecode -o ../out/Main $(PROBLEM_FILES) $(MIDI_FILES) src/Main.cpp
 	./../out/Main
 
 test_tonality:

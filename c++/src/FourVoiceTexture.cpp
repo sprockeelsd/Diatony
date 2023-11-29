@@ -347,7 +347,7 @@ Space* FourVoiceTexture::copy() {
  * Returns the values taken by the variables vars in a solution
  * @return an array of integers representing the values of the variables in a solution
  */
-int* FourVoiceTexture::return_solution(){
+int* FourVoiceTexture::return_solution() const{
     int* solution = new int[size*4];
     for(int i = 0; i < 4*size; i++){
         solution[i] = FullChordsVoicing[i].val();
