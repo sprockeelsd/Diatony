@@ -282,7 +282,8 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
 IntVarArgs FourVoiceTexture::cost() const {
     // @todo maybe give the voices a priority + check the order depending on what is more important
     return {nOfDiminishedChordsWith4notes, nOfChordsWithLessThan4notes, nOfFundamentalStateChordsWithoutDoubledBass,
-            nOfCommonNotesInSoprano, nOfCommonNotesInSameVoice, sumOfMelodicIntervals};
+            //nOfCommonNotesInSoprano,
+            sumOfMelodicIntervals, nOfCommonNotesInSameVoice};
 }
 
 /**

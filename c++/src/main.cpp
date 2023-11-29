@@ -11,7 +11,7 @@ using namespace std;
 using namespace smf;
 
 int main(int argc, char* argv[]) {
-    Tonality* tonality = new MinorTonality(C);
+    Tonality* tonality = new MajorTonality(A);
 
     write_to_log_file(time().c_str());
 //    vector<int> chords = {FIRST_DEGREE, FOURTH_DEGREE, SEVENTH_DEGREE,
@@ -21,21 +21,21 @@ int main(int argc, char* argv[]) {
 //    vector<int> states = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FIRST_INVERSION, FUNDAMENTAL_STATE,
 //                          FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, SECOND_INVERSION, FUNDAMENTAL_STATE,
 //                          FUNDAMENTAL_STATE};
-//    vector<int> chords = {FIRST_DEGREE, FIFTH_DEGREE, SIXTH_DEGREE, FIRST_DEGREE, FIFTH_DEGREE, FIRST_DEGREE, THIRD_DEGREE,
-//                          SIXTH_DEGREE, SECOND_DEGREE, FIFTH_DEGREE, FIRST_DEGREE, FOURTH_DEGREE, FIFTH_DEGREE, FIFTH_DEGREE,
-//                          FIRST_DEGREE};
-//    vector<int> states = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, SECOND_INVERSION, FUNDAMENTAL_STATE,
-//                          FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FIRST_INVERSION, FUNDAMENTAL_STATE,
-//                          FIRST_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
-    /// vectors representing the chords and the states
-    vector<int> chords = {FIRST_DEGREE, SIXTH_DEGREE, FOURTH_DEGREE, FIRST_DEGREE, FIFTH_DEGREE, FIRST_DEGREE,
-                          SECOND_INVERSION, FIRST_DEGREE, FIFTH_DEGREE, FIRST_DEGREE};
+    vector<int> chords = {FIRST_DEGREE, FIFTH_DEGREE, SIXTH_DEGREE, FIRST_DEGREE, FIFTH_DEGREE, FIRST_DEGREE, THIRD_DEGREE,
+                          SIXTH_DEGREE, SECOND_DEGREE, FIFTH_DEGREE, FIRST_DEGREE, FOURTH_DEGREE, FIFTH_DEGREE, FIFTH_DEGREE,
+                          FIRST_DEGREE};
     vector<int> states = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, SECOND_INVERSION, FUNDAMENTAL_STATE,
-                          FIRST_INVERSION, FIRST_INVERSION, SECOND_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
+                          FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FIRST_INVERSION, FUNDAMENTAL_STATE,
+                          FIRST_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
+    /// vectors representing the chords and the states
+//    vector<int> chords = {FIRST_DEGREE, SIXTH_DEGREE, FOURTH_DEGREE, FIRST_DEGREE, FIFTH_DEGREE, FIRST_DEGREE,
+//                          SECOND_INVERSION, FIRST_DEGREE, FIFTH_DEGREE, FIRST_DEGREE};
+//    vector<int> states = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, SECOND_INVERSION, FUNDAMENTAL_STATE,
+//                          FIRST_INVERSION, FIRST_INVERSION, SECOND_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
     int size = chords.size();
     /// array of integers representing the rhythm
     int rhythm[size];
-    for(int i = 0; i < 4*size; i++)
+    for(int i = 0; i < size; i++)
         rhythm[i] = 4;
 
     /// create a new problem
@@ -54,7 +54,7 @@ int main(int argc, char* argv[]) {
     std::cout << "Execution time: " << duration.count() << " seconds" << std::endl;
 
     ///-------------------------------------------create the MIDI file-----------------------------------------------///
-    MidiFile outputFile; // create an empty MIDI file with one track
+    MidiFile outputFile;
     outputFile.absoluteTicks(); // time information stored as absolute time, will be converted to delta time when written
 
     outputFile.addTrack(1);   // Add a track to the file (track 0 must be left empty, so add as many as we use

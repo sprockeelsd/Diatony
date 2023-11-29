@@ -2,8 +2,6 @@ all: clean run_mac_os dylib
 
 SRC_DIR = src
 
-
-
 #define auxiliary files
 PROBLEM_FILES = $(SRC_DIR)/Utilities.cpp $(SRC_DIR)/Tonality.cpp $(SRC_DIR)/MajorTonality.cpp \
 				$(SRC_DIR)/MinorTonality.cpp $(SRC_DIR)/VoiceLeadingConstraints.cpp	$(SRC_DIR)/HarmonicConstraints.cpp \
@@ -39,6 +37,9 @@ midifile:
 	rm -f $(LOG_FILE)
 	g++ -std=c++11 -F/Library/Frameworks -framework gecode -o ../out/Main $(PROBLEM_FILES) $(MIDI_FILES) src/Main.cpp
 	./../out/Main
+
+debug:
+	g++ -g -std=c++11 -F/Library/Frameworks -framework gecode -o ../out/Main $(PROBLEM_FILES) $(MIDI_FILES) src/Main.cpp
 
 test_tonality:
 	g++ -std=c++11 -F/Library/Frameworks -framework gecode -o testTonality Utilities.cpp Tonality.cpp MajorTonality.cpp \
