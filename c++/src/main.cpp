@@ -27,11 +27,16 @@ int main(int argc, char* argv[]) {
 //    vector<int> states = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, SECOND_INVERSION, FUNDAMENTAL_STATE,
 //                          FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FIRST_INVERSION, FUNDAMENTAL_STATE,
 //                          FIRST_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
+    /// vectors representing the chords and the states
     vector<int> chords = {FIRST_DEGREE, SIXTH_DEGREE, FOURTH_DEGREE, FIRST_DEGREE, FIFTH_DEGREE, FIRST_DEGREE,
                           SECOND_INVERSION, FIRST_DEGREE, FIFTH_DEGREE, FIRST_DEGREE};
     vector<int> states = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, SECOND_INVERSION, FUNDAMENTAL_STATE,
                           FIRST_INVERSION, FIRST_INVERSION, SECOND_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
     int size = chords.size();
+    /// array of integers representing the rhythm
+    int rhythm[size];
+    for(int i = 0; i < 4*size; i++)
+        rhythm[i] = 4;
 
     /// create a new problem
     auto *pb = new FourVoiceTexture(size, tonality, chords, states);
@@ -42,7 +47,6 @@ int main(int argc, char* argv[]) {
     auto start = std::chrono::high_resolution_clock::now();/// start time
     auto sols = find_all_solutions(pb, BAB_SOLVER);
     auto end = std::chrono::high_resolution_clock::now();/// end time
-
     delete pb;
 
     /// total time spent searching
@@ -55,36 +59,34 @@ int main(int argc, char* argv[]) {
 
     outputFile.addTrack(1);   // Add a track to the file (track 0 must be left empty, so add as many as we use
     vector<uchar> midiEvent;   // temporary storage of MIDI events
-    midiEvent.resize(3);   //set the size of the array to 3 bites
-    int tpq = 120;            // default value in MIDI file is 48
+    midiEvent.resize(3);   //set the size of the array to 3 bites (first bite = Start or end of a note, second bite = note value, third bite = velocity
+    int tpq = 120;            // default value in MIDI file is 48 (tempo)
     outputFile.setTicksPerQuarterNote(tpq);
 
     /// get the best solution
-    //@todo fix this to get the notes from the solution
     auto bestSolution = sols[sols.size() - 1]; // the last one is the best
-    int* notes = bestSolution->return_solution();
-    int rhythm[size];
-
-    for(int i = 0; i < 4*size; i++)
-        rhythm[i] = 1;
+    int* sol_notes = bestSolution->return_solution();
 
     /// Fill the MidiFile object
-    int i = 0;
-    int actionTime = 0; // temporary storage for MIDI event time
+    int actionTime = 0; // relative time for MIDI events (equivalent to rhythm)
     midiEvent[2] = 64; // store attack/release velocity for note command
-    while (notes[i] >= 0) {
-        midiEvent[0] = 0x90;     // store a note on command (MIDI channel 1)
-        midiEvent[1] = notes[i];
-        outputFile.addEvent(1, actionTime, midiEvent);
-        actionTime += tpq * rhythm[i];
-        midiEvent[0] = 0x80;     // store a note on command (MIDI channel 1)
-        outputFile.addEvent(1, actionTime, midiEvent);
-        i++;
-    }
 
+    for(int i = 0; i < size; i++){
+        midiEvent[0] = 0x90; /// add the start of the note
+        for(int j = 0; j < 4; j++){
+            midiEvent[1] = sol_notes[4*i+j];
+            outputFile.addEvent(1, actionTime, midiEvent);
+        }
+        actionTime += tpq*rhythm[i]; // increase relative time to the end of these events
+        midiEvent[0] = 0x80; /// add the end of the note
+        for(int j = 0; j < 4; j++){
+            midiEvent[1] = sol_notes[4*i+j];
+            outputFile.addEvent(1, actionTime, midiEvent);
+        }
+    }
     outputFile.sortTracks(); // make sure data is in correct order
     outputFile.write("../out/output.mid");
-
+    std::cout << "MIDIfile created." << std::endl;
 
     return 0;
 }
