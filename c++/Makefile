@@ -42,8 +42,8 @@ debug:
 	g++ -g -std=c++11 -F/Library/Frameworks -framework gecode -o ../out/Main $(PROBLEM_FILES) $(MIDI_FILES) src/Main.cpp
 
 test_tonality:
-	g++ -std=c++11 -F/Library/Frameworks -framework gecode -o testTonality Utilities.cpp Tonality.cpp MajorTonality.cpp \
-		MinorTonality.cpp testTonality.cpp
+	g++ -std=c++11 -F/Library/Frameworks -framework gecode -o testTonality $(SRC_DIR)/Utilities.cpp \
+	$(SRC_DIR)/Tonality.cpp $(SRC_DIR)/MajorTonality.cpp $(SRC_DIR)/MinorTonality.cpp $(SRC_DIR)/testTonality.cpp
 	./testTonality
 
 #Allows the executable generated to find Gecode. To execute only once

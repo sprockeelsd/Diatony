@@ -10,7 +10,7 @@ MajorTonality::MajorTonality(int t) : Tonality(t, MAJOR_MODE, MAJOR_SCALE){ // c
     chord_qualities[1] = MINOR_CHORD;
     chord_qualities[2] = MINOR_CHORD;
     chord_qualities[3] = MAJOR_CHORD;
-    chord_qualities[4] = MAJOR_CHORD;
+    chord_qualities[4] = DOMINANT_SEVENTH_CHORD;
     chord_qualities[5] = MINOR_CHORD;
     chord_qualities[6] = DIMINISHED_CHORD;
 

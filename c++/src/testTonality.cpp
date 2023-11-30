@@ -1,8 +1,8 @@
-#include "FourVoiceTexture.hpp"
-#include "Utilities.hpp"
-#include "Tonality.hpp"
-#include "MajorTonality.hpp"
-#include "MinorTonality.hpp"
+#include "../headers/FourVoiceTexture.hpp"
+#include "../headers/Utilities.hpp"
+#include "../headers/Tonality.hpp"
+#include "../headers/MajorTonality.hpp"
+#include "../headers/MinorTonality.hpp"
 
 using namespace Gecode;
 using namespace std;
@@ -30,7 +30,7 @@ int main(int argc, char* argv[]) {
         std::cout << elem << " ";
     std::cout << std::endl;
 
-    std::cout << "\n Tonic chord : " << tonality->get_scale_degree_chord(FIRST_DEGREE) << ", leading tone chord : "
+    std::cout << "\n Dominant chord : " << tonality->get_scale_degree_chord(FIFTH_DEGREE) << ", leading tone chord : "
     << tonality->get_scale_degree_chord(SEVENTH_DEGREE) << std::endl;
 
     return 0;

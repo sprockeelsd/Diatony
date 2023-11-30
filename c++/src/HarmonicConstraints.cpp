@@ -19,7 +19,7 @@
  * @param currentChord the array containing a chord in the form [bass, alto, tenor, soprano]
  */
 void set_to_chord(const Home& home, Tonality *tonality, int degree, const IntVarArgs& currentChord){
-    dom(home, currentChord, tonality->get_scale_degree_chord(degree));
+    dom(home, currentChord, tonality->get_scale_degree_chord(degree % 7));
 }
 
 /**
@@ -59,15 +59,30 @@ void chord_note_occurrence_fundamental_state(Home home, int nVoices, int degree,
                                              const IntVar &nDifferentValuesInDiminishedChord) {
     /// if the chord is a diminished seventh degree, the third must be doubled
     if(degree == SEVENTH_DEGREE && tonality->get_chord_qualities()[degree] == DIMINISHED_CHORD){
+        /// If there are 4 different notes, then the third must be doubled. Otherwise any note can be doubled as
+        /// there are only 3 values
         IntVar nOfThirds(home,0,nVoices);
-        count(home, currentChord, tonality->get_scale_degree(degree), IRT_EQ,nOfThirds);
+        count(home, currentChord, tonality->get_scale_degree((degree + 2) % 7), IRT_EQ,nOfThirds);
         rel(home, expr(home, nDifferentValuesInDiminishedChord == nVoices), BOT_EQV,
             expr(home, nOfThirds == 2), true);
+        /// each note is present at least once, doubling is determined by the costs
+        count(home, currentChord, tonality->get_scale_degree(degree), IRT_GQ,1);
+        count(home, currentChord, tonality->get_scale_degree((degree + 2) % 7), IRT_GQ,1);
+        count(home, currentChord, tonality->get_scale_degree((degree + 4) % 7), IRT_GQ, 1);
     }
-    /// each note is present at least once, doubling is determined by the costs
-    count(home, currentChord, tonality->get_scale_degree(degree), IRT_GQ,1);
-    count(home, currentChord, tonality->get_scale_degree((degree + 2) % 7), IRT_GQ,1);
-    count(home, currentChord, tonality->get_scale_degree((degree + 4) % 7), IRT_GQ, 1);
+    if(degree == FIFTH_DEGREE){
+        /// If there is a perfect cadence, then one of the chords must be incomplete.
+        count(home, currentChord, tonality->get_scale_degree(degree), IRT_GQ,1);
+        count(home, currentChord, tonality->get_scale_degree((degree + 2) % 7), IRT_LQ,1);
+        count(home, currentChord, tonality->get_scale_degree((degree + 4) % 7), IRT_EQ, 1);
+        count(home, currentChord, tonality->get_scale_degree((degree + 6) % 7), IRT_EQ, 1);
+    }
+    else{
+        /// each note is present at least once, doubling is determined by the costs
+        count(home, currentChord, tonality->get_scale_degree(degree), IRT_GQ,1);
+        count(home, currentChord, tonality->get_scale_degree((degree + 2) % 7), IRT_GQ,1);
+        count(home, currentChord, tonality->get_scale_degree((degree + 4) % 7), IRT_GQ, 1);
+    }
 }
 
 /***********************************************************************************************************************

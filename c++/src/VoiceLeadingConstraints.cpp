@@ -289,7 +289,7 @@ void tritone_resolution(const Home &home, int nVoices, int currentPosition, Tona
             {bassMelodicInterval, tenorMelodicInterval, altoMelodicInterval, sopranoMelodicInterval});
     for(int voice = BASS; voice <= SOPRANO; voice++){
         /// special case
-        /// if the chords are VII (1st inversion) -> I (1st inversion)
+        /// if the chords are VII (1st inversion) -> I (1st inversion) or V(fund) -> I(fund)
         if (chordDegs[currentPosition] == SEVENTH_DEGREE && chordStas[currentPosition] == FIRST_INVERSION &&
             chordDegs[currentPosition+1] == FIRST_DEGREE && chordStas[currentPosition+1] == FIRST_INVERSION){
             /// the fourth of the scale must go up by a step
@@ -304,8 +304,10 @@ void tritone_resolution(const Home &home, int nVoices, int currentPosition, Tona
         }
 
         /// if the note is the major seventh of the scale, it must go up to the tonic by step
-        rel(home, expr(home, currentChord[voice] % PERFECT_OCTAVE == (tonality->get_tonic() + MAJOR_SEVENTH) % PERFECT_OCTAVE),
-            BOT_IMP, expr(home, melodicIntervals[voice][currentPosition] == 1), true); /// must move up by a semitone to (the tonic)
+        rel(home, expr(home, currentChord[voice] % PERFECT_OCTAVE == (tonality->get_tonic() + MAJOR_SEVENTH) %
+            PERFECT_OCTAVE),
+            BOT_IMP, expr(home, melodicIntervals[voice][currentPosition] == 1), true);
+            /// must move up by a semitone to (the tonic)
     }
 }
 
