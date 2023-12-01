@@ -12,14 +12,17 @@
  ***********************************************************************************************************************/
 
 /**
- * Set the notes of the currentChord array to the notes of the given chord
+ * Set the notes of the FullChordsVoicing array to the notes of the given chord
  * @param home the instance of the problem
  * @param tonality the tonality of the piece
  * @param degree the degree of the chord
+ * @param quality the quality of the chord
  * @param currentChord the array containing a chord in the form [bass, alto, tenor, soprano]
  */
-void set_to_chord(const Home& home, Tonality *tonality, int degree, const IntVarArgs& currentChord){
-    dom(home, currentChord, tonality->get_scale_degree_chord(degree % 7));
+void set_to_chord(const Home& home, Tonality* tonality, int degree, int quality, const IntVarArgs& currentChord){
+    IntSet set(get_all_notes_from_chord(tonality->get_degree_note(degree), chordQualities[quality]));
+    std::cout << "set: " << set << std::endl;
+    dom(home, currentChord, set);
 }
 
 /**
@@ -48,17 +51,18 @@ void set_bass(const Home& home, Tonality *tonality, int degree, int state, IntVa
  * @todo maybe make it a preference later
  * Sets the number of times each note of the notes of the chord are present in the chord
  * @param home the instance of the problem
- * @param nVoices the number of voices
  * @param degree the degree of the chord
+ * @param quality the quality of the chord
+ * @param nVoices the number of voices
  * @param tonality the tonality of the piece
- * @param currentChord the array containing a chord in the form [bass, alto, tenor, soprano]
  * @param nDifferentValuesInDiminishedChord the number of different values in the diminished chord
+ * @param currentChord the array containing a chord in the form [bass, alto, tenor, soprano]
  */
-void chord_note_occurrence_fundamental_state(Home home, int nVoices, int degree, Tonality *tonality,
+void chord_note_occurrence_fundamental_state(Home home, int nVoices, int degree, int quality, Tonality *tonality,
                                              const IntVarArgs &currentChord,
-                                             const IntVar &nDifferentValuesInDiminishedChord) {
+                                             const IntVar &nDifferentValuesInDiminishedChord){
     /// if the chord is a diminished seventh degree, the third must be doubled
-    if(degree == SEVENTH_DEGREE && tonality->get_chord_qualities()[degree] == DIMINISHED_CHORD){
+    if(degree == SEVENTH_DEGREE && quality == DIMINISHED_CHORD){
         /// If there are 4 different notes, then the third must be doubled. Otherwise any note can be doubled as
         /// there are only 3 values
         IntVar nOfThirds(home,0,nVoices);
@@ -73,9 +77,12 @@ void chord_note_occurrence_fundamental_state(Home home, int nVoices, int degree,
     if(degree == FIFTH_DEGREE){
         /// If there is a perfect cadence, then one of the chords must be incomplete.
         count(home, currentChord, tonality->get_scale_degree(degree), IRT_GQ,1);
-        count(home, currentChord, tonality->get_scale_degree((degree + 2) % 7), IRT_LQ,1);
-        count(home, currentChord, tonality->get_scale_degree((degree + 4) % 7), IRT_EQ, 1);
-        count(home, currentChord, tonality->get_scale_degree((degree + 6) % 7), IRT_EQ, 1);
+        count(home, currentChord, tonality->get_scale_degree((degree + 2) % 7), IRT_EQ,1);
+        count(home, currentChord, tonality->get_scale_degree((degree + 4) % 7), IRT_LQ, 1);
+        //@todo change by > minor chord ou >= dominant 7 chord
+        if(quality == DOMINANT_SEVENTH_CHORD || quality == MAJOR_SEVENTH_CHORD || quality == MINOR_SEVENTH_CHORD){
+            count(home, currentChord, tonality->get_scale_degree((degree + 6) % 7), IRT_EQ, 1);
+        }
     }
     else{
         /// each note is present at least once, doubling is determined by the costs
@@ -94,21 +101,28 @@ void chord_note_occurrence_fundamental_state(Home home, int nVoices, int degree,
 /**
  * Sets the number of time each note of the chord are present in the chord
  * @param home the instance of the problem
+ * @param size the size of the chord progression
+ * @param nVoices the number of voices
+ * @param currentPos the current position in the chord progression
  * @param tonality the tonality of the piece
  * @param degrees the degree of the chord
+ * @param qualities the quality of the chord
  * @param currentChord the array containing a chord in the form [bass, alto, tenor, soprano]
+ * @param bassMelodicIntervals the array containing the melodic intervals of the bass
+ * @param sopranoMelodicIntervals the array containing the melodic intervals of the soprano
  */
 void chord_note_occurrence_first_inversion(Home home, int size, int nVoices, int currentPos, Tonality *tonality,
-                                           vector<int> degrees, const IntVarArgs &currentChord,
-                                           IntVarArray bassMelodicIntervals, IntVarArray sopranoMelodicIntervals) {
+                                           vector<int> degrees, vector<int> qualities,
+                                           const IntVarArgs &currentChord, IntVarArray bassMelodicIntervals,
+                                           IntVarArray sopranoMelodicIntervals){
     /// if the third is a tonal note, then double it
     set<int> tonalNotes = tonality->get_tonal_notes();
     if(tonalNotes.find(tonality->get_degree_note((degrees[currentPos] + THIRD_DEGREE) % 7)) !=
        tonalNotes.end()) { /// double the third and other notes should be present at least once
         count(home, currentChord, tonality->get_scale_degree((degrees[currentPos] + THIRD_DEGREE) % 7), IRT_EQ, 2);
     }
-    /// if the chord is the seventh degree diminished chord @todo make the difference between b7 and 7° chords
-    else if(degrees[currentPos] == SEVENTH_DEGREE) { /// double the third and other notes should be present at least once
+    else if(degrees[currentPos] == SEVENTH_DEGREE && qualities[currentPos] == DIMINISHED_CHORD) {
+        /// double the third and other notes should be present at least once
         count(home, currentChord, tonality->get_scale_degree((degrees[currentPos] + THIRD_DEGREE) % 7), IRT_EQ, 2);
     }
     else{ /// default case: double the fundamental or the fifth of the chord unless the top and bottom voices move down and up respectively
@@ -153,7 +167,7 @@ void chord_note_occurrence_first_inversion(Home home, int size, int nVoices, int
 
 /***********************************************************************************************************************
  *                                                                                                                     *
- *                                            First inversion chord constraints                                        *
+ *                                           Second inversion chord constraints                                        *
  *                                                                                                                     *
  ***********************************************************************************************************************/
 
@@ -165,11 +179,12 @@ void chord_note_occurrence_first_inversion(Home home, int size, int nVoices, int
  * @param currentPos the current position in the chord progression
  * @param tonality the tonality of the piece
  * @param degrees the degree of the chord
+ * @param qualities the qualities of the chords
  * @param currentChord the array containing a chord in the form [bass, alto, tenor, soprano]
  */
 void chord_note_occurrence_second_inversion(Home home, int size, int nVoices, int currentPos, Tonality *tonality,
-                                           vector<int> degrees, const IntVarArgs &currentChord) {
-    if(degrees[currentPos] == SEVENTH_DEGREE){
+                                            vector<int> degrees, vector<int> qualities, const IntVarArgs &currentChord){
+    if(degrees[currentPos] == SEVENTH_DEGREE && qualities[currentPos] == DIMINISHED_CHORD) {
         count(home, currentChord, tonality->get_scale_degree((degrees[currentPos] + FIRST_DEGREE) % 7), IRT_EQ, 1);
         count(home, currentChord, tonality->get_scale_degree((degrees[currentPos] + THIRD_DEGREE) % 7), IRT_EQ, 2);
         count(home, currentChord, tonality->get_scale_degree((degrees[currentPos] + FIFTH_DEGREE) % 7), IRT_EQ, 1);

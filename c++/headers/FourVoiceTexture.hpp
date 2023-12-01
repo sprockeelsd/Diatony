@@ -40,11 +40,12 @@ using namespace std;
 class FourVoiceTexture: public IntLexMinimizeSpace {
 protected:
     /// Data
-    int nOfVoices = 4;        // The number of voices
-    int size;                   // The size of the variable array of interest
-    Tonality *tonality;         // The tonality of the piece
-    vector<int> chordDegrees;   // The degrees of the chord of the chord progression
-    vector<int> chordStates;    // The states of the chord of the chord progression (fundamental, 1st inversion,...)
+    int nOfVoices = 4;                  // The number of voices
+    int size;                           // The size of the variable array of interest
+    Tonality *tonality;                 // The tonality of the piece
+    vector<int> chordDegrees;           // The degrees of the chord of the chord progression
+    vector<int> chordQualities; // The qualities of the chord of the chord progression
+    vector<int> chordStates;            // The states of the chord of the chord progression (fundamental, 1st inversion,...)
 
     /// variable arrays for melodic intervals for each voice (not absolute value)
     IntVarArray bassMelodicIntervals;
@@ -92,10 +93,11 @@ public:
      * @param s the number of chords in the progression
      * @param *t a pointer to a Tonality object
      * @param chordDegs the degrees of the chord of the chord progression
+     * @param chordQuals the qualities of the chord of the chord progression
      * @param chordStas the states of the chord of the chord progression (fundamental, 1st inversion,...)
      * @return a FourVoiceTexture object
      */
-    FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, vector<int> chordStas);
+    FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, vector<int> chordQuals, vector<int> chordStas);
 
     /**
      * Copy constructor

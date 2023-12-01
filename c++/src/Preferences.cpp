@@ -20,7 +20,7 @@ void compute_diminished_chords_cost(const Home& home, int size, int nVoices, Ton
                                     const IntVar& costVar) {
     for(int i = 0; i < size; ++i){// for each chord
         /// if the chord is diminished and in fundamental state
-        if(tonality->get_chord_qualities()[chordDegs[i]] == DIMINISHED_CHORD && chordStas[i] == FUNDAMENTAL_STATE){
+        if(tonality->get_chord_qualities()[chordDegs[i]] == DIMINISHED_CHORD_INTERVALS && chordStas[i] == FUNDAMENTAL_STATE){
             IntVarArgs currentChord(fullChordsVoicing.slice(nVoices * i, 1, nVoices));
             /// nOfDifferentNotes[i] = nOfDiffVals in current chord
             nvalues(home, currentChord, IRT_EQ, nOfDifferentNotes[i]);

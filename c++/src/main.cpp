@@ -11,16 +11,16 @@ using namespace std;
 using namespace smf;
 
 int main(int argc, char* argv[]) {
-    Tonality* tonality = new MajorTonality(C);
+    Tonality* tonality = new MajorTonality(F);
 
     write_to_log_file(time().c_str());
-//    vector<int> chords = {FIRST_DEGREE, FOURTH_DEGREE, SEVENTH_DEGREE,
-//                          THIRD_DEGREE, SIXTH_DEGREE, SECOND_DEGREE, FIRST_DEGREE,
-//                          FIFTH_DEGREE, FIRST_DEGREE};
-//
-//    vector<int> states = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FIRST_INVERSION, FUNDAMENTAL_STATE,
-//                          FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, SECOND_INVERSION, FUNDAMENTAL_STATE,
-//                          FUNDAMENTAL_STATE};
+    vector<int> chords = {FIRST_DEGREE, FIRST_DEGREE, FIFTH_DEGREE, FIFTH_DEGREE, FIRST_DEGREE, SECOND_DEGREE,
+                          FIRST_DEGREE, FIFTH_DEGREE};//, FIRST_DEGREE};
+    vector<int> chords_qualities = {MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, DOMINANT_SEVENTH_CHORD, MAJOR_CHORD,
+                                    MINOR_CHORD, MAJOR_CHORD, DOMINANT_SEVENTH_CHORD};//, MAJOR_CHORD_INTERVALS};
+    vector<int> states = {FUNDAMENTAL_STATE, SECOND_INVERSION, FUNDAMENTAL_STATE, THIRD_INVERSION, FIRST_INVERSION,
+                          FIRST_INVERSION, SECOND_INVERSION, FUNDAMENTAL_STATE};//, FUNDAMENTAL_STATE};
+    //@todo there is a problem when going Vda -> V5 (not V7) and it is not because of // intervals nor because of tritone resolution
 //    vector<int> chords = {FIRST_DEGREE, FIFTH_DEGREE, SIXTH_DEGREE, FIRST_DEGREE, FIFTH_DEGREE, FIRST_DEGREE, THIRD_DEGREE,
 //                          SIXTH_DEGREE, SECOND_DEGREE, FIFTH_DEGREE, FIRST_DEGREE, FOURTH_DEGREE, FIFTH_DEGREE, FIFTH_DEGREE,
 //                          FIRST_DEGREE};
@@ -33,8 +33,9 @@ int main(int argc, char* argv[]) {
 //    vector<int> states = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, SECOND_INVERSION, FUNDAMENTAL_STATE,
 //                          FIRST_INVERSION, FIRST_INVERSION, SECOND_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
 
-    vector<int> chords = {FIRST_DEGREE, SECOND_DEGREE, FIRST_DEGREE, FIFTH_DEGREE, FIRST_DEGREE};
-    vector<int> states = {FUNDAMENTAL_STATE, FIRST_INVERSION, SECOND_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
+//    vector<int> chords = {FIFTH_DEGREE, FIRST_DEGREE};
+//    vector<vector<int>> chords_qualities = {DOMINANT_SEVENTH_CHORD_INTERVALS, MAJOR_CHORD_INTERVALS};
+//    vector<int> states = {THIRD_INVERSION, FIRST_INVERSION};
     int size = chords.size();
     /// array of integers representing the rhythm
     int rhythm[size];
@@ -42,7 +43,7 @@ int main(int argc, char* argv[]) {
         rhythm[i] = 4;
 
     /// create a new problem
-    auto *pb = new FourVoiceTexture(size, tonality, chords, states);
+    auto *pb = new FourVoiceTexture(size, tonality, chords, chords_qualities, states);
 
     /// find the solution that minimizes the costs (maximize the preference satisfaction)
     // const FourVoiceTexture *bestSol = find_best_solution(pb);

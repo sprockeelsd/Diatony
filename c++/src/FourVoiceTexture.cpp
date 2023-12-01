@@ -13,14 +13,17 @@
  * @param s the number of chords in the progression
  * @param *t a pointer to a Tonality object
  * @param chordDegs the degrees of the chord of the chord progression
+ * @param chordQuals the qualities of the chord of the chord progression
  * @param chordStas the states of the chord of the chord progression (fundamental, 1st inversion,...)
  * Returns a FourVoiceTexture object
  */
-FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, vector<int> chordStas){
+FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, vector<int> chordQuals,
+                                   vector<int> chordStas){
     /// basic data
     size = s;
     tonality = t;
     chordDegrees = chordDegs;
+    chordQualities = chordQuals;
     chordStates = chordStas;
 
     /// solution array
@@ -149,7 +152,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
         IntVarArgs currentChord(FullChordsVoicing.slice(nOfVoices * i, 1, nOfVoices));
 
         /// set the chord's domain to the notes of the degree chordDegrees[i]'s chord
-        set_to_chord(*this, tonality, chordDegrees[i], currentChord);
+        set_to_chord(*this, tonality, chordDegrees[i], chordQualities[i], currentChord);
 
         /// set the bass based on the chord's state
         set_bass(*this, tonality, chordDegrees[i], chordStates[i], currentChord);
@@ -167,23 +170,22 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
         /// post the constraints depending on the chord's state
         if(chordStas[i] == FUNDAMENTAL_STATE){
             /// each note should be present at least once, doubling is determined with costs
-            chord_note_occurrence_fundamental_state(*this, nOfVoices, chordDegrees[i], tonality,
-                                                    currentChord,
+            chord_note_occurrence_fundamental_state(*this, nOfVoices, chordDegrees[i],
+                                                    chordQualities[i],tonality, currentChord,
                                                     nDifferentValuesInDiminishedChord[i]);
         }
         /// post the constraints specific to first inversion chords
         else if(chordStas[i] == FIRST_INVERSION){
             chord_note_occurrence_first_inversion(*this, size, nOfVoices, i, tonality,
-                                                  chordDegrees, currentChord, bassMelodicIntervals,
-                                                  sopranoMelodicIntervals);
+                                                  chordDegrees, chordQualities, currentChord,
+                                                  bassMelodicIntervals, sopranoMelodicIntervals);
         }
         /// post the constraints specific to second inversion chords
         else if(chordStas[i] == SECOND_INVERSION){
             chord_note_occurrence_second_inversion(*this, size, nOfVoices, i, tonality,
-                                                   chordDegrees, currentChord);
+                                                   chordDegrees, chordQualities, currentChord);
         }
         else{
-            //@todo add the other cases here (4 note chords, etc)
         }
     }
 
@@ -205,7 +207,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
         }
 
         /// resolve the tritone if there is one and it needs to be resolved
-        if (chordDegrees[i] == SEVENTH_DEGREE && chordDegrees[i + 1] == FIRST_DEGREE ||
+        if (chordDegrees[i] == SEVENTH_DEGREE && chordQualities[i] == DIMINISHED_CHORD && chordDegrees[i + 1] == FIRST_DEGREE ||
             chordDegrees[i] == FIFTH_DEGREE && chordDegrees[i+1] == FIRST_DEGREE) {
             //@todo add other chords that have the tritone
             tritone_resolution(*this, nOfVoices, i, tonality, chordDegrees,
@@ -295,6 +297,7 @@ FourVoiceTexture::FourVoiceTexture(FourVoiceTexture& s): IntLexMinimizeSpace(s){
     size = s.size;
     tonality = s.tonality;
     chordDegrees = s.chordDegrees;
+    chordQualities = s.chordQualities;
     chordStates = s.chordStates;
 
     bassMelodicIntervals.update(*this, s.bassMelodicIntervals);
