@@ -143,7 +143,7 @@ void compute_cost_for_incomplete_chords(const Home &home, int size, int nVoices,
         /// nDiffNotesInChord[i] == the number of different notes regardless of their octave in the current chord
         nvalues(home, currentChordNotes, IRT_EQ,nDiffNotesInChord[i]);
     }
-    /// count the number of incomplete chords
+    /// count the number of incomplete chords (size - the number of chords that have the max amount of notes)
     count(home, nDiffNotesInChord, nNotesInChords, IRT_EQ, expr(home, size - nOfIncompleteChords));
 }
 

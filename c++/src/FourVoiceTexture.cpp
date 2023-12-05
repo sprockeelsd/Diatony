@@ -138,6 +138,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
                                absoluteSopranoMelodicIntervals << absoluteBassMelodicIntervals,
                                IRT_EQ, sumOfMelodicIntervals);
 
+    /// number of chords that don't have all their possible note values (cost to minimize)
     compute_cost_for_incomplete_chords(*this, size, nOfVoices, nOfNotesInChord,
                                        FullChordsVoicing,nOFDifferentNotesInChords, nOfIncompleteChords);
 
@@ -277,7 +278,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     |                                                                                                                  |
     -------------------------------------------------------------------------------------------------------------------*/
     // @todo make it smarter when it becomes necessary
-    Rnd r(1U);
+    Rnd r(2U);
     //branch(*this, allMelodicIntervals, INT_VAR_SIZE_MIN(), INT_VAL_RND(r));
     branch(*this, FullChordsVoicing, INT_VAR_DEGREE_MAX(), INT_VAL_RND(r));
 }
@@ -292,9 +293,9 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
  */
 IntVarArgs FourVoiceTexture::cost() const {
     // @todo maybe give the voices a priority + check the order depending on what is more important
+    //@todo change the sum of melodic intervals to minimize the number of skips and prefer the steps
     return {nOfDiminishedChordsWith4notes, nOfChordsWithLessThan4notes, nOfFundamentalStateChordsWithoutDoubledBass,
-            //nOfCommonNotesInSoprano,
-            sumOfMelodicIntervals, nOfCommonNotesInSameVoice};
+            nOfIncompleteChords, nOfCommonNotesInSameVoice, sumOfMelodicIntervals};//nOfCommonNotesInSoprano,
 }
 
 /**
@@ -464,10 +465,10 @@ string FourVoiceTexture::to_string(){
     message += "nOfChordsWithLessThan4notes = " + intVar_to_string(nOfChordsWithLessThan4notes) + "\n";
     message += "nOfFundamentalStateChordsWithoutDoubledBass = " +
             intVar_to_string(nOfFundamentalStateChordsWithoutDoubledBass) + "\n";
-    message += "nOfCommonNotesInSoprano = " + intVar_to_string(nOfCommonNotesInSoprano) + "\n";
     message += "nOfIncompleteChords = " + intVar_to_string(nOfIncompleteChords) + "\n";
+    message += "nOfCommonNotesInSameVoice = " + intVar_to_string(nOfCommonNotesInSameVoice) + "\n";
     message += "sumOfMelodicIntervals = " + intVar_to_string(sumOfMelodicIntervals) + "\n";
-    message += "nOfCommonNotesInSameVoice = " + intVar_to_string(nOfCommonNotesInSameVoice) + "\n\n";
+    message += "nOfCommonNotesInSoprano = " + intVar_to_string(nOfCommonNotesInSoprano) + "\n\n";
 
     return message;
 }

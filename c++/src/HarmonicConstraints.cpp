@@ -65,34 +65,34 @@ void chord_note_occurrence_fundamental_state(Home home, int nVoices, int degree,
         /// If there are 4 different notes, then the third must be doubled. Otherwise any note can be doubled as
         /// there are only 3 values
         IntVar nOfThirds(home,0,nVoices);
-        count(home, currentChord, tonality->get_scale_degree((degree + 2) % 7), IRT_EQ,nOfThirds);
+        count(home, currentChord, tonality->get_scale_degree((degree + THIRD_DEGREE) % 7), IRT_EQ,nOfThirds);
         rel(home, expr(home, nDifferentValuesInDiminishedChord == nVoices), BOT_EQV,
             expr(home, nOfThirds == 2), true);
         /// each note is present at least once, doubling is determined by the costs
         count(home, currentChord, tonality->get_scale_degree(degree), IRT_GQ,1);
-        count(home, currentChord, tonality->get_scale_degree((degree + 2) % 7), IRT_GQ,1);
-        count(home, currentChord, tonality->get_scale_degree((degree + 4) % 7), IRT_GQ, 1);
+        count(home, currentChord, tonality->get_scale_degree((degree + THIRD_DEGREE) % 7), IRT_GQ,1);
+        count(home, currentChord, tonality->get_scale_degree((degree + FIFTH_DEGREE) % 7), IRT_GQ,1);
     }
     if(degree == FIFTH_DEGREE){
         /// If there is a perfect cadence, then one of the chords must be incomplete.
         count(home, currentChord, tonality->get_scale_degree(degree), IRT_GQ,1);
-        count(home, currentChord, tonality->get_scale_degree((degree + 2) % 7), IRT_EQ,1);
-        count(home, currentChord, tonality->get_scale_degree((degree + 4) % 7), IRT_LQ, 1);
+        count(home, currentChord, tonality->get_scale_degree((degree + THIRD_DEGREE) % 7), IRT_EQ,1);
+        count(home, currentChord, tonality->get_scale_degree((degree + FIFTH_DEGREE) % 7), IRT_LQ, 1);
         //@todo change by > minor chord ou >= dominant 7 chord
-        if(quality == DOMINANT_SEVENTH_CHORD || quality == MAJOR_SEVENTH_CHORD || quality == MINOR_SEVENTH_CHORD){
-            count(home, currentChord, tonality->get_scale_degree((degree + 6) % 7), IRT_EQ, 1);
+        if(quality >= DOMINANT_SEVENTH_CHORD){
+            count(home, currentChord, tonality->get_scale_degree((degree + SEVENTH_DEGREE) % 7), IRT_EQ, 1);
         }
     }
     else if(degree == FIRST_DEGREE){
         count(home, currentChord, tonality->get_scale_degree(degree), IRT_GQ,1);
-        count(home, currentChord, tonality->get_scale_degree((degree + 2) % 7), IRT_GQ,1);
-        count(home, currentChord, tonality->get_scale_degree((degree + 4) % 7), IRT_LQ, 1);
+        count(home, currentChord, tonality->get_scale_degree((degree + THIRD_DEGREE) % 7), IRT_GQ,1);
+        count(home, currentChord, tonality->get_scale_degree((degree + FIFTH_DEGREE) % 7), IRT_LQ, 1);
     }
     else{
         /// each note is present at least once, doubling is determined by the costs
         count(home, currentChord, tonality->get_scale_degree(degree), IRT_GQ,1);
-        count(home, currentChord, tonality->get_scale_degree((degree + 2) % 7), IRT_GQ,1);
-        count(home, currentChord, tonality->get_scale_degree((degree + 4) % 7), IRT_GQ, 1);
+        count(home, currentChord, tonality->get_scale_degree((degree + THIRD_DEGREE) % 7), IRT_GQ,1);
+        count(home, currentChord, tonality->get_scale_degree((degree + FIFTH_DEGREE) % 7), IRT_GQ, 1);
     }
 }
 
@@ -167,6 +167,8 @@ void chord_note_occurrence_first_inversion(Home home, int size, int nVoices, int
     count(home, currentChord, tonality->get_scale_degree((degrees[currentPos] + FIRST_DEGREE) % 7), IRT_GQ, 1);
     count(home, currentChord, tonality->get_scale_degree((degrees[currentPos] + THIRD_DEGREE) % 7), IRT_GQ, 1);
     count(home, currentChord, tonality->get_scale_degree((degrees[currentPos] + FIFTH_DEGREE) % 7), IRT_GQ, 1);
+    if(qualities[currentPos] >= DOMINANT_SEVENTH_CHORD)
+        count(home, currentChord, tonality->get_scale_degree((degrees[currentPos] + SEVENTH_DEGREE) % 7), IRT_GQ, 1);
 }
 
 /***********************************************************************************************************************
@@ -199,5 +201,7 @@ void chord_note_occurrence_second_inversion(Home home, int size, int nVoices, in
         /// @todo other voices
         count(home, currentChord, tonality->get_scale_degree((degrees[currentPos] + FIRST_DEGREE) % 7), IRT_EQ, 1);
         count(home, currentChord, tonality->get_scale_degree((degrees[currentPos] + THIRD_DEGREE) % 7), IRT_EQ, 1);
+        if(qualities[currentPos] >= DOMINANT_SEVENTH_CHORD)
+            count(home, currentChord, tonality->get_scale_degree((degrees[currentPos] + SEVENTH_DEGREE) % 7), IRT_EQ, 1);
     }
 }
