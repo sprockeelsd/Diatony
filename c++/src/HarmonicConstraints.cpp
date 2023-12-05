@@ -20,8 +20,7 @@
  * @param currentChord the array containing a chord in the form [bass, alto, tenor, soprano]
  */
 void set_to_chord(const Home& home, Tonality* tonality, int degree, int quality, const IntVarArgs& currentChord){
-    IntSet set(get_all_notes_from_chord(tonality->get_degree_note(degree), chordQualities[quality]));
-    std::cout << "set: " << set << std::endl;
+    IntSet set(get_all_notes_from_chord(tonality->get_degree_note(degree), chordQualitiesIntervals[quality]));
     dom(home, currentChord, set);
 }
 
@@ -83,6 +82,11 @@ void chord_note_occurrence_fundamental_state(Home home, int nVoices, int degree,
         if(quality == DOMINANT_SEVENTH_CHORD || quality == MAJOR_SEVENTH_CHORD || quality == MINOR_SEVENTH_CHORD){
             count(home, currentChord, tonality->get_scale_degree((degree + 6) % 7), IRT_EQ, 1);
         }
+    }
+    else if(degree == FIRST_DEGREE){
+        count(home, currentChord, tonality->get_scale_degree(degree), IRT_GQ,1);
+        count(home, currentChord, tonality->get_scale_degree((degree + 2) % 7), IRT_GQ,1);
+        count(home, currentChord, tonality->get_scale_degree((degree + 4) % 7), IRT_LQ, 1);
     }
     else{
         /// each note is present at least once, doubling is determined by the costs

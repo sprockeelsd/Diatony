@@ -111,9 +111,13 @@ const vector<int> DOMINANT_SEVENTH_CHORD_INTERVALS = {MAJOR_THIRD, MINOR_THIRD, 
 const vector<int> MAJOR_SEVENTH_CHORD_INTERVALS = {MAJOR_THIRD, MINOR_THIRD, MAJOR_THIRD, MINOR_SECOND};
 const vector<int> MINOR_SEVENTH_CHORD_INTERVALS = {MINOR_THIRD, MAJOR_THIRD, MINOR_THIRD, MAJOR_SECOND};
 
-const vector<vector<int>> chordQualities = {MAJOR_CHORD_INTERVALS, MINOR_CHORD_INTERVALS, DIMINISHED_CHORD_INTERVALS,
-                                        AUGMENTED_CHORD_INTERVALS, DOMINANT_SEVENTH_CHORD_INTERVALS,
-                                        MAJOR_SEVENTH_CHORD_INTERVALS, MINOR_SEVENTH_CHORD_INTERVALS};
+const vector<vector<int>> chordQualitiesIntervals = {MAJOR_CHORD_INTERVALS, MINOR_CHORD_INTERVALS,
+                                                     DIMINISHED_CHORD_INTERVALS,AUGMENTED_CHORD_INTERVALS,
+                                                     DOMINANT_SEVENTH_CHORD_INTERVALS, MAJOR_SEVENTH_CHORD_INTERVALS,
+                                                     MINOR_SEVENTH_CHORD_INTERVALS};
+
+const vector<std::string> chordQualityNames = {"Major", "Minor", "Diminished", "Augmented", "Dominant seventh",
+                                               "Major seventh", "Minor seventh"};
 
 // Chord states
 enum chordStates{

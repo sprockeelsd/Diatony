@@ -118,6 +118,35 @@ void compute_cost_for_common_note_in_soprano(const Home &home, int nChords, int 
     /// costVar = 1 if there is a common note in the soprano voice
     count(home, commonNotesInSoprano, 1, IRT_EQ, nOfCommonNotesInSoprano);
 }
+
+/**
+ * This function counts the number of incomplete chords
+ * @param home the instance of the problem
+ * @param size the number of chords in the chord progression
+ * @param nVoices the number of voices in the chords
+ * @param nNotesInChords the number of notes in each chord if it is complete
+ * @param fullChordsVoicing all the notes of all the chords
+ * @param nDiffNotesInChord An IntVarArray counting the number of different notes (regardless of their octave) in
+ * each chord
+ * @param nOfIncompleteChords an IntVar counting the number of incomplete chords in the chord progression
+ */
+void compute_cost_for_incomplete_chords(const Home &home, int size, int nVoices, IntArgs nNotesInChords,
+                                        IntVarArray fullChordsVoicing, IntVarArray nDiffNotesInChord,
+                                        IntVar nOfIncompleteChords) {
+    for(int i = 0; i < size; i++) {
+        IntVarArgs currentChord(fullChordsVoicing.slice(nVoices * i, 1, nVoices));
+        /// note values regardless of their octave
+        IntVarArgs currentChordNotes;
+        for(int j = 0; j < nVoices; j++)
+            currentChordNotes << expr(home, currentChord[j] % PERFECT_OCTAVE);
+
+        /// nDiffNotesInChord[i] == the number of different notes regardless of their octave in the current chord
+        nvalues(home, currentChordNotes, IRT_EQ,nDiffNotesInChord[i]);
+    }
+    /// count the number of incomplete chords
+    count(home, nDiffNotesInChord, nNotesInChords, IRT_EQ, nOfIncompleteChords);
+}
+
 /**
  * This function sets the cost for the number of times when there is a common note in the same voice between consecutive
  * This has to be MAXIMIZED!
@@ -126,7 +155,8 @@ void compute_cost_for_common_note_in_soprano(const Home &home, int nChords, int 
  * @param absoluteTenorMelodicIntervals the array of absolute melodic intervals for the tenor
  * @param absoluteAltoMelodicIntervals the array of absolute melodic intervals for the alto
  * @param absoluteSopranoMelodicIntervals the array of absolute melodic intervals for the soprano
- * @param commonNotesInSameVoice an array containing the number of times when there is a common note in the same voice for each voice
+ * @param commonNotesInSameVoice an array containing the number of times when there is a common note in the same voice
+ * for each voice
  * @param nOfCommonNotesInSameVoice the total number of times when there is a common note in the same voice
  */
 void compute_cost_for_common_notes_not_in_same_voice(const Home &home, IntVarArray absoluteBassMelodicIntervals,

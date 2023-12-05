@@ -70,6 +70,20 @@ void compute_cost_for_common_note_in_soprano(const Home &home, int nChords, int 
                                              const IntVar &nOfCommonNotesInSoprano);
 
 /**
+ * This function counts the number of incomplete chords
+ * @param home the instance of the problem
+ * @param size the number of chords in the chord progression
+ * @param nVoices the number of voices in the chords
+ * @param fullChordsVoicing all the notes of all the chords
+ * @param nDiffNotesInChord An IntVarArray counting the number of different notes (regardless of their octave) in
+ * each chord
+ * @param nOfIncompleteChords an IntVar counting the number of incomplete chords in the chord progression
+ */
+void compute_cost_for_incomplete_chords(const Home &home, int size, int nVoices, IntArgs nNotesInChords,
+                                        IntVarArray fullChordsVoicing, IntVarArray nDiffNotesInChord,
+                                        IntVar nOfIncompleteChords);
+
+/**
  * This function sets the cost for the number of times when there is a common note in the same voice between consecutive
  * This has to be MAXIMIZED!
  * @param home the instance of the problem

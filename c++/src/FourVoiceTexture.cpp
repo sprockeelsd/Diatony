@@ -25,6 +25,10 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     chordDegrees = chordDegs;
     chordQualities = chordQuals;
     chordStates = chordStas;
+    nOfNotesInChord = IntArgs(size);
+    /// keep track of the number of notes that should be in each chord ideally
+    for(int i = 0; i < size; i++)
+        nOfNotesInChord[i] = chordQualitiesIntervals[chordQualities[i]].size();
 
     /// solution array
     FullChordsVoicing = IntVarArray(*this, nOfVoices * size, 0, 127); // tonality->get_tonality_notes()
@@ -55,6 +59,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     nDifferentValuesAllChords = IntVarArray(*this, size, 0, nOfVoices);
     nOccurrencesBassInFundamentalState = IntVarArray(*this, size, 0, nOfVoices);
     commonNotesInSoprano = IntVarArray(*this, size-1, 0, 1);
+    nOFDifferentNotesInChords = IntVarArray(*this, size, 0, 5);
     commonNotesInSameVoice = IntVarArray(*this, nOfVoices, 0, size - 1);
 
     /// cost variables
@@ -63,6 +68,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     nOfChordsWithLessThan4notes = IntVar(*this, 0, size);
     nOfFundamentalStateChordsWithoutDoubledBass = IntVar(*this, 0, size);
     nOfCommonNotesInSoprano = IntVar(*this, 0, size);
+    nOfIncompleteChords = IntVar(*this, 0, size);
     nOfCommonNotesInSameVoice = IntVar(*this, - nOfVoices * (size - 1), 0);
 
 
@@ -131,6 +137,9 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     linear(*this, IntVarArgs() << absoluteTenorMelodicIntervals << absoluteAltoMelodicIntervals <<
                                absoluteSopranoMelodicIntervals << absoluteBassMelodicIntervals,
                                IRT_EQ, sumOfMelodicIntervals);
+
+    compute_cost_for_incomplete_chords(*this, size, nOfVoices, nOfNotesInChord,
+                                       FullChordsVoicing,nOFDifferentNotesInChords, nOfIncompleteChords);
 
     /// count the number of common notes in the same voice between consecutive chords (cost to MAXIMIZE)
     /// /!\ The variable nOfCommonNotesInSameVoice has a NEGATIVE value so the minimization will maximize its absolute value
@@ -298,6 +307,7 @@ FourVoiceTexture::FourVoiceTexture(FourVoiceTexture& s): IntLexMinimizeSpace(s){
     tonality = s.tonality;
     chordDegrees = s.chordDegrees;
     chordQualities = s.chordQualities;
+    nOfNotesInChord = s.nOfNotesInChord;
     chordStates = s.chordStates;
 
     bassMelodicIntervals.update(*this, s.bassMelodicIntervals);
@@ -321,6 +331,7 @@ FourVoiceTexture::FourVoiceTexture(FourVoiceTexture& s): IntLexMinimizeSpace(s){
     nDifferentValuesAllChords.update(*this, s.nDifferentValuesAllChords);
     nOccurrencesBassInFundamentalState.update(*this, s.nOccurrencesBassInFundamentalState);
     commonNotesInSoprano.update(*this, s.commonNotesInSoprano);
+    nOFDifferentNotesInChords.update(*this, s.nOFDifferentNotesInChords);
     commonNotesInSameVoice.update(*this, s.commonNotesInSameVoice);
 
     sumOfMelodicIntervals.update(*this, s.sumOfMelodicIntervals);
@@ -328,6 +339,7 @@ FourVoiceTexture::FourVoiceTexture(FourVoiceTexture& s): IntLexMinimizeSpace(s){
     nOfChordsWithLessThan4notes.update(*this, s.nOfChordsWithLessThan4notes);
     nOfFundamentalStateChordsWithoutDoubledBass.update(*this, s.nOfFundamentalStateChordsWithoutDoubledBass);
     nOfCommonNotesInSoprano.update(*this, s.nOfCommonNotesInSoprano);
+    nOfIncompleteChords.update(*this, s.nOfIncompleteChords);
     nOfCommonNotesInSameVoice.update(*this, s.nOfCommonNotesInSameVoice);
 }
 
@@ -388,7 +400,7 @@ string FourVoiceTexture::parameters(){
     message += "Tonality: " + midi_to_letter(tonality->get_tonic()) + " " + mode_int_to_name(tonality->get_mode()) + "\n";
     message += "Chords: \n";
     for(int i = 0; i < size; i++){
-        message += degreeNames[chordDegrees[i]] + " in " +
+        message += degreeNames[chordDegrees[i]] + " (" + chordQualityNames[chordQualities[i]] + ") in " +
                    stateNames[chordStates[i]];
         if(i != size - 1)
             message += ",\n";
@@ -398,7 +410,6 @@ string FourVoiceTexture::parameters(){
 
 /**
  * toString method
- * @todo make a toString method for IntVarArrays so the code here is cleaner
  * @return a string representation of the current instance of the FourVoiceTexture class.
  * Right now, it returns a string "FourVoiceTexture object. size = <size>"
  * If a variable is not assigned when this function is called, it writes <not assigned> instead of the value
@@ -440,6 +451,7 @@ string FourVoiceTexture::to_string(){
     message += "nDifferentValuesInAllChords = \t\t" + intVarArray_to_string(nDifferentValuesAllChords) + "\n";
     message += "nOccurrencesBassInFundamentalState = \t" + intVarArray_to_string(nOccurrencesBassInFundamentalState) + "\n";
     message += "commonNotesInSameVoice = \t\t" + intVarArray_to_string(commonNotesInSameVoice) + "\n";
+    message += "nOFDifferentNotesInChords = \t\t" + intVarArray_to_string(nOFDifferentNotesInChords) + "\n";
     message += "nCommonNotesInSoprano = \t\t" + intVarArray_to_string(commonNotesInSoprano) + "\n\n";
 
     message += "------------------------------------cost variables----------------------------------------\n";
@@ -449,6 +461,7 @@ string FourVoiceTexture::to_string(){
     message += "nOfFundamentalStateChordsWithoutDoubledBass = " +
             intVar_to_string(nOfFundamentalStateChordsWithoutDoubledBass) + "\n";
     message += "nOfCommonNotesInSoprano = " + intVar_to_string(nOfCommonNotesInSoprano) + "\n";
+    message += "nOfIncompleteChords = " + intVar_to_string(nOfIncompleteChords) + "\n";
     message += "sumOfMelodicIntervals = " + intVar_to_string(sumOfMelodicIntervals) + "\n";
     message += "nOfCommonNotesInSameVoice = " + intVar_to_string(nOfCommonNotesInSameVoice) + "\n\n";
 

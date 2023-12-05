@@ -44,8 +44,9 @@ protected:
     int size;                           // The size of the variable array of interest
     Tonality *tonality;                 // The tonality of the piece
     vector<int> chordDegrees;           // The degrees of the chord of the chord progression
-    vector<int> chordQualities; // The qualities of the chord of the chord progression
+    vector<int> chordQualities;         // The qualities of the chord of the chord progression
     vector<int> chordStates;            // The states of the chord of the chord progression (fundamental, 1st inversion,...)
+    IntArgs nOfNotesInChord;            // The number of notes in each chord if they are complete
 
     /// variable arrays for melodic intervals for each voice (not absolute value)
     IntVarArray bassMelodicIntervals;
@@ -72,11 +73,13 @@ protected:
     IntVarArray FullChordsVoicing;                      // [bass0, alto0, tenor0, soprano0, bass1, alto1, tenor1, soprano1, ...]
 
     /// cost variables auxiliary arrays
-    IntVarArray nDifferentValuesInDiminishedChord;      // number of different note values in each chord
-    IntVarArray nDifferentValuesAllChords;
+    IntVarArray nDifferentValuesInDiminishedChord;      // number of different note values in each diminished chord
+    IntVarArray nDifferentValuesAllChords;              // The number of different notes (octave included) in each chord
     IntVarArray nOccurrencesBassInFundamentalState;     // number of chords that don't double the bass in fundamental state
     IntVarArray commonNotesInSoprano;                   // chords with common notes in outside voices
-    IntVarArray commonNotesInSameVoice; // chords with common notes in the same voice between consecutive chords
+    IntVarArray nOFDifferentNotesInChords;              // the number of different notes (the octave doesn't matter) in each chord
+    IntVarArray commonNotesInSameVoice;                 // chords with common notes in the same voice between consecutive chords
+
 
     /// cost variables
     IntVar sumOfMelodicIntervals;                       // for minimizing voice movement between voices
@@ -84,8 +87,9 @@ protected:
     IntVar nOfChordsWithLessThan4notes;                 // number of chords with less than 4 notes
     IntVar nOfFundamentalStateChordsWithoutDoubledBass; // number of fundamental state chords that don't follow the preferences
     IntVar nOfCommonNotesInSoprano;                     // number of common notes in outside voices
-    IntVar nOfCommonNotesInSameVoice;                   // number of common notes in the same voice between consecutive chords
+    IntVar nOfIncompleteChords;                         // number of incomplete chords
     /// /!\ this cost needs to be maximized, so its value is negative
+    IntVar nOfCommonNotesInSameVoice;                   // number of common notes in the same voice between consecutive chords
 
 public:
     /**
