@@ -144,7 +144,7 @@ void compute_cost_for_incomplete_chords(const Home &home, int size, int nVoices,
         nvalues(home, currentChordNotes, IRT_EQ,nDiffNotesInChord[i]);
     }
     /// count the number of incomplete chords
-    count(home, nDiffNotesInChord, nNotesInChords, IRT_EQ, nOfIncompleteChords);
+    count(home, nDiffNotesInChord, nNotesInChords, IRT_EQ, expr(home, size - nOfIncompleteChords));
 }
 
 /**

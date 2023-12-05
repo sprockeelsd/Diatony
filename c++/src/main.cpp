@@ -14,12 +14,12 @@ int main(int argc, char* argv[]) {
     Tonality* tonality = new MajorTonality(C);
 
     write_to_log_file(time().c_str());
-//    vector<int> chords = {FIRST_DEGREE, FIRST_DEGREE, FIFTH_DEGREE, FIFTH_DEGREE, FIRST_DEGREE, SECOND_DEGREE,
-//                          FIRST_DEGREE, FIFTH_DEGREE, FIRST_DEGREE};
-//    vector<int> chords_qualities = {MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, DOMINANT_SEVENTH_CHORD, MAJOR_CHORD,
-//                                    MINOR_CHORD, MAJOR_CHORD, DOMINANT_SEVENTH_CHORD, MAJOR_CHORD};
-//    vector<int> states = {FUNDAMENTAL_STATE, SECOND_INVERSION, FUNDAMENTAL_STATE, THIRD_INVERSION, FIRST_INVERSION,
-//                          FIRST_INVERSION, SECOND_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
+    vector<int> chords = {FIRST_DEGREE, FIRST_DEGREE, FIFTH_DEGREE, FIFTH_DEGREE, FIRST_DEGREE, SECOND_DEGREE,
+                          FIRST_DEGREE, FIFTH_DEGREE, FIRST_DEGREE};
+    vector<int> chords_qualities = {MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, DOMINANT_SEVENTH_CHORD, MAJOR_CHORD,
+                                    MINOR_CHORD, MAJOR_CHORD, DOMINANT_SEVENTH_CHORD, MAJOR_CHORD};
+    vector<int> states = {FUNDAMENTAL_STATE, SECOND_INVERSION, FUNDAMENTAL_STATE, THIRD_INVERSION, FIRST_INVERSION,
+                          FIRST_INVERSION, SECOND_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
     //@todo there is a problem when going Vda -> V5 (not V7) and it is not because of // intervals nor because of tritone resolution
 //    vector<int> chords = {FIRST_DEGREE, FIFTH_DEGREE, SIXTH_DEGREE, FIRST_DEGREE, FIFTH_DEGREE, FIRST_DEGREE, THIRD_DEGREE,
 //                          SIXTH_DEGREE, SECOND_DEGREE, FIFTH_DEGREE, FIRST_DEGREE, FOURTH_DEGREE, FIFTH_DEGREE, FIFTH_DEGREE,
@@ -33,9 +33,9 @@ int main(int argc, char* argv[]) {
 //    vector<int> states = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, SECOND_INVERSION, FUNDAMENTAL_STATE,
 //                          FIRST_INVERSION, FIRST_INVERSION, SECOND_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
 
-    vector<int> chords = {FIFTH_DEGREE, FIRST_DEGREE};
-    vector<int> chords_qualities = {DOMINANT_SEVENTH_CHORD, MAJOR_CHORD};
-    vector<int> states = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
+//    vector<int> chords = {FIFTH_DEGREE, FIRST_DEGREE};
+//    vector<int> chords_qualities = {DOMINANT_SEVENTH_CHORD, MAJOR_CHORD};
+//    vector<int> states = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
     int size = chords.size();
     /// array of integers representing the rhythm
     int rhythm[size];

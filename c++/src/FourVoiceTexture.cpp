@@ -405,7 +405,11 @@ string FourVoiceTexture::parameters(){
         if(i != size - 1)
             message += ",\n";
     }
-    return message + ".\n";
+    message += ".\n Maximum number of notes in each chord: { ";
+    for(int i = 0; i < size; i++){
+        message += std::to_string(nOfNotesInChord[i]) + " ";
+    }
+    return message + "}\n";
 }
 
 /**
