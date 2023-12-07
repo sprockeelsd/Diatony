@@ -65,9 +65,8 @@ void compute_fundamental_state_doubling_cost(const Home &home, int size, int nVo
  * the next, and if the first chord is in first inversion
  * @param nOfCommonNotesInSoprano the number of times when there is a common note in the soprano voice
  */
-void compute_cost_for_common_note_in_soprano(const Home &home, int nChords, int nVoices, vector<int> chordStates,
-                                             IntVarArray FullChordsVoicing, IntVarArray commonNotesInSoprano,
-                                             const IntVar &nOfCommonNotesInSoprano);
+void compute_cost_for_common_note_in_soprano(const Home &home, IntVarArray commonNotesInSameVoice,
+                                             IntVar nCommonNotesInSoprano);
 
 /**
  * This function counts the number of incomplete chords

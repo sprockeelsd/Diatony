@@ -38,6 +38,13 @@ midifile:
 	g++ -std=c++11 -F/Library/Frameworks -framework gecode -o ../out/Main $(PROBLEM_FILES) $(MIDI_FILES) src/Main.cpp
 	./../out/Main
 
+#run the main.cpp file on macOS
+gist:
+	clear
+	rm -f $(LOG_FILE)
+	g++ -std=c++11 -F/Library/Frameworks -framework gecode -o ../out/gist $(PROBLEM_FILES) $(MIDI_FILES) src/TestBranching.cpp
+	./../out/Main
+
 debug:
 	g++ -g -std=c++11 -F/Library/Frameworks -framework gecode -o ../out/Main $(PROBLEM_FILES) $(MIDI_FILES) src/Main.cpp
 

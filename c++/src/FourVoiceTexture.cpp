@@ -58,7 +58,6 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     nDifferentValuesInDiminishedChord = IntVarArray(*this, size, 0, nOfVoices);
     nDifferentValuesAllChords = IntVarArray(*this, size, 0, nOfVoices);
     nOccurrencesBassInFundamentalState = IntVarArray(*this, size, 0, nOfVoices);
-    commonNotesInSoprano = IntVarArray(*this, size-1, 0, 1);
     nOFDifferentNotesInChords = IntVarArray(*this, size, 0, 5);
     commonNotesInSameVoice = IntVarArray(*this, nOfVoices, 0, size - 1);
 
@@ -86,14 +85,13 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     link_melodic_arrays(*this, size, nOfVoices, FullChordsVoicing, bassMelodicIntervals,
                         altoMelodicIntervals, tenorMelodicIntervals, sopranoMelodicIntervals);
 
-    /// global array for branching (not used for now)
-    for(int i = 0; i < size-1; i++){
-        rel(*this, expr(*this, allMelodicIntervals[nOfVoices * i + BASS] == bassMelodicIntervals[i]));
-        rel(*this, expr(*this, allMelodicIntervals[nOfVoices * i + TENOR] == tenorMelodicIntervals[i]));
-        rel(*this, expr(*this, allMelodicIntervals[nOfVoices * i + ALTO] == altoMelodicIntervals[i]));
-        rel(*this, expr(*this, allMelodicIntervals[nOfVoices * i + SOPRANO] == sopranoMelodicIntervals[i]));
-    }
-
+//    /// global array for branching (not used for now)
+//    for(int i = 0; i < size-1; i++){
+//        rel(*this, expr(*this, allMelodicIntervals[nOfVoices * i + BASS] == bassMelodicIntervals[i]));
+//        rel(*this, expr(*this, allMelodicIntervals[nOfVoices * i + TENOR] == tenorMelodicIntervals[i]));
+//        rel(*this, expr(*this, allMelodicIntervals[nOfVoices * i + ALTO] == altoMelodicIntervals[i]));
+//        rel(*this, expr(*this, allMelodicIntervals[nOfVoices * i + SOPRANO] == sopranoMelodicIntervals[i]));
+//    }
 
     link_absolute_melodic_arrays(*this, nOfVoices, bassMelodicIntervals, tenorMelodicIntervals,
                                  altoMelodicIntervals, sopranoMelodicIntervals, absoluteBassMelodicIntervals,
@@ -130,8 +128,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
                                             nOfFundamentalStateChordsWithoutDoubledBass);
 
     /// number of common notes in soprano with first inversion chord going to another chord (cost to minimize)
-    compute_cost_for_common_note_in_soprano(*this, size, nOfVoices, chordStates,
-                                            FullChordsVoicing, commonNotesInSoprano, nOfCommonNotesInSoprano);
+    compute_cost_for_common_note_in_soprano(*this, commonNotesInSameVoice, nOfCommonNotesInSoprano);
 
     /// sum of melodic intervals (cost to minimize)
     linear(*this, IntVarArgs() << absoluteTenorMelodicIntervals << absoluteAltoMelodicIntervals <<
@@ -353,7 +350,6 @@ FourVoiceTexture::FourVoiceTexture(FourVoiceTexture& s): IntLexMinimizeSpace(s){
     nDifferentValuesInDiminishedChord.update(*this, s.nDifferentValuesInDiminishedChord);
     nDifferentValuesAllChords.update(*this, s.nDifferentValuesAllChords);
     nOccurrencesBassInFundamentalState.update(*this, s.nOccurrencesBassInFundamentalState);
-    commonNotesInSoprano.update(*this, s.commonNotesInSoprano);
     nOFDifferentNotesInChords.update(*this, s.nOFDifferentNotesInChords);
     commonNotesInSameVoice.update(*this, s.commonNotesInSameVoice);
 
@@ -478,8 +474,7 @@ string FourVoiceTexture::to_string(){
     message += "nDifferentValuesInAllChords = \t\t" + intVarArray_to_string(nDifferentValuesAllChords) + "\n";
     message += "nOccurrencesBassInFundamentalState = \t" + intVarArray_to_string(nOccurrencesBassInFundamentalState) + "\n";
     message += "commonNotesInSameVoice = \t\t" + intVarArray_to_string(commonNotesInSameVoice) + "\n";
-    message += "nOFDifferentNotesInChords = \t\t" + intVarArray_to_string(nOFDifferentNotesInChords) + "\n";
-    message += "nCommonNotesInSoprano = \t\t" + intVarArray_to_string(commonNotesInSoprano) + "\n\n";
+    message += "nOFDifferentNotesInChords = \t\t" + intVarArray_to_string(nOFDifferentNotesInChords) + "\n\n";
 
     message += "------------------------------------cost variables----------------------------------------\n";
 

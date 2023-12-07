@@ -76,7 +76,6 @@ protected:
     IntVarArray nDifferentValuesInDiminishedChord;      // number of different note values in each diminished chord
     IntVarArray nDifferentValuesAllChords;              // The number of different notes (octave included) in each chord
     IntVarArray nOccurrencesBassInFundamentalState;     // number of chords that don't double the bass in fundamental state
-    IntVarArray commonNotesInSoprano;                   // chords with common notes in outside voices
     IntVarArray nOFDifferentNotesInChords;              // the number of different notes (the octave doesn't matter) in each chord
     IntVarArray commonNotesInSameVoice;                 // chords with common notes in the same voice between consecutive chords
 
