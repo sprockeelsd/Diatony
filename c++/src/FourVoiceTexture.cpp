@@ -277,10 +277,32 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     |                                                       Branching                                                  |
     |                                                                                                                  |
     -------------------------------------------------------------------------------------------------------------------*/
-    // @todo make it smarter when it becomes necessary
-    Rnd r(2U);
-    //branch(*this, allMelodicIntervals, INT_VAR_SIZE_MIN(), INT_VAL_RND(r));
-    branch(*this, FullChordsVoicing, INT_VAR_DEGREE_MAX(), INT_VAL_RND(r));
+
+    /// variable selection heuristic
+    /// go <--
+    auto meritFunction = [](const Space& home, IntVar x, int i) {
+        return i;
+    };
+
+    /// value selection heuristic
+    /// choose a note that is not already present in the chord
+    auto branchVal = [](const Space& home, IntVar x, int i) {
+        auto space = (FourVoiceTexture&) home;
+        int chordPos = i / space.nOfVoices; //division entière
+        return x.min();
+    };
+    auto branchCommit = [](Space& home, unsigned int a, IntVar x, int i, int n){
+        if (a == 0U){
+            rel(home, x, IRT_EQ, n);
+        } else {
+            rel(home, x, IRT_NQ, n);
+        }
+    };
+
+    //branch(*this, FullChordsVoicing, INT_VAR_MERIT_MAX(meritFunction), INT_VAL(branchVal, branchCommit));
+
+    /// choose the variable with the highest AFC, in case of a tie choose the one with the highest degree
+    branch(*this, FullChordsVoicing, INT_VAR_DEGREE_MAX(), INT_VAL_MIN()); // choose the smallest melodic intervals possible
 }
 
 /**

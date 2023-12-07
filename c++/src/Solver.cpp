@@ -16,7 +16,7 @@
  */
 Search::Base<FourVoiceTexture>* make_solver(FourVoiceTexture* pb, int type){
     Search::Options opts;
-    opts.threads = 0; /// as many as available
+    //opts.threads = 0; /// as many as available
     opts.stop = Search::Stop::time(60000); // stop after 120 seconds
 
     if (type == BAB_SOLVER){
@@ -34,7 +34,7 @@ Search::Base<FourVoiceTexture>* make_solver(FourVoiceTexture* pb, int type){
  * @param solver a solver for the problem
  * @return an instance of the FourVoiceTexture class representing the next solution to the problem
  */
-FourVoiceTexture* get_next_solution_space(Search::Base<FourVoiceTexture>* solver){
+FourVoiceTexture* get_next_solution_space(Search::Base<FourVoiceTexture>* solver){ 
     FourVoiceTexture* sol_space = solver->next();
     if (sol_space == nullptr) // handle the case of no solution or time out, necessary when sending the data to OM
         return nullptr;
@@ -86,8 +86,11 @@ vector<const FourVoiceTexture*> find_all_solutions(FourVoiceTexture *pb, int sol
         if (nbSol >= maxNOfSols)
             break;
     }
-    if(nbSol == 0)
+    if(nbSol == 0){
         std::cout << "No solutions" << std::endl;
         write_to_log_file("No solutions found.");
+    }
+    write_to_log_file(statistics_to_string(solver->statistics()).c_str());
+    std::cout << statistics_to_string(solver->statistics()) << std::endl;
     return sols;
 }

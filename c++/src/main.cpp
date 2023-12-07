@@ -6,12 +6,14 @@
 #include "../headers/Solver.hpp"
 #include "../headers/MidiFile.h"
 
+#include <gecode/gist.hh>
+
 using namespace Gecode;
 using namespace std;
 using namespace smf;
 
 int main(int argc, char* argv[]) {
-    Tonality* tonality = new MajorTonality(C);
+    Tonality* tonality = new MajorTonality(F);
 
     write_to_log_file(time().c_str());
 //    vector<int> chords = {FIRST_DEGREE, FIRST_DEGREE, FIFTH_DEGREE, FIFTH_DEGREE, FIRST_DEGREE, SECOND_DEGREE,
@@ -32,12 +34,12 @@ int main(int argc, char* argv[]) {
 //                          FIRST_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
     /// vectors representing the chords and the states
     vector<int> chords = {FIRST_DEGREE, SIXTH_DEGREE, FOURTH_DEGREE, FIRST_DEGREE, FIFTH_DEGREE, FIRST_DEGREE, SECOND_DEGREE, FIFTH_DEGREE,
-                          FIRST_DEGREE, FOURTH_DEGREE, SECOND_DEGREE, FIRST_DEGREE, FIFTH_DEGREE, FIRST_DEGREE};
+                          FIRST_DEGREE, SECOND_DEGREE, FIRST_DEGREE, FIFTH_DEGREE, FIRST_DEGREE};
     vector<int> chords_qualities = {MAJOR_CHORD, MINOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD,
-                                    MAJOR_CHORD, MINOR_CHORD, DOMINANT_SEVENTH_CHORD, MAJOR_CHORD, MAJOR_CHORD,
+                                    MAJOR_CHORD, MINOR_CHORD, DOMINANT_SEVENTH_CHORD, MAJOR_CHORD,
                                     MINOR_CHORD, MAJOR_CHORD, DOMINANT_SEVENTH_CHORD, MAJOR_CHORD};
     vector<int> states = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, SECOND_INVERSION, FUNDAMENTAL_STATE,
-                          FUNDAMENTAL_STATE, FIRST_INVERSION, THIRD_INVERSION, FIRST_INVERSION, FUNDAMENTAL_STATE,
+                          FUNDAMENTAL_STATE, FIRST_INVERSION, THIRD_INVERSION, FIRST_INVERSION,
                           FIRST_INVERSION, SECOND_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
 
 //    vector<int> chords = {FIFTH_DEGREE, FIRST_DEGREE};
@@ -62,7 +64,9 @@ int main(int argc, char* argv[]) {
 
     /// total time spent searching
     std::chrono::duration<double> duration = end - start;
-    std::cout << "Execution time: " << duration.count() << " seconds" << std::endl;
+    string m = "Execution time: " + std::to_string(duration.count()) + "seconds.\n";
+    std::cout << m << std::endl;
+    write_to_log_file(m.c_str());
 
     ///-------------------------------------------create the MIDI file-----------------------------------------------///
     if(!sols.empty()){
