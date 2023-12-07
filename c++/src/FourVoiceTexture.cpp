@@ -58,7 +58,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     nDifferentValuesInDiminishedChord = IntVarArray(*this, size, 0, nOfVoices);
     nDifferentValuesAllChords = IntVarArray(*this, size, 0, nOfVoices);
     nOccurrencesBassInFundamentalState = IntVarArray(*this, size, 0, nOfVoices);
-    nOFDifferentNotesInChords = IntVarArray(*this, size, 0, 5);
+    nOFDifferentNotesInChords = IntVarArray(*this, size, 0, nOfVoices);
     commonNotesInSameVoice = IntVarArray(*this, nOfVoices, 0, size - 1);
 
     /// cost variables
@@ -178,8 +178,9 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
         if(chordStas[i] == FUNDAMENTAL_STATE){
             /// each note should be present at least once, doubling is determined with costs
             chord_note_occurrence_fundamental_state(*this, nOfVoices, chordDegrees[i],
-                                                    chordQualities[i],tonality, currentChord,
-                                                    nDifferentValuesInDiminishedChord[i]);
+                                                    chordQualities[i], tonality, currentChord,
+                                                    nDifferentValuesInDiminishedChord[i],
+                                                    nOFDifferentNotesInChords[i % nOfVoices]);
         }
         /// post the constraints specific to first inversion chords
         else if(chordStas[i] == FIRST_INVERSION){
