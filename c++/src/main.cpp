@@ -57,7 +57,7 @@ int main(int argc, char* argv[]) {
 
     vector<int> chords = {FIFTH_DEGREE, FIRST_DEGREE};
     vector<int> chords_qualities = {DOMINANT_SEVENTH_CHORD, MAJOR_CHORD};
-    vector<int> states = {FIRST_INVERSION, FUNDAMENTAL_STATE};
+    vector<int> states = {SECOND_INVERSION, FUNDAMENTAL_STATE};
     int size = chords.size();
 
     /// create a new problem
@@ -82,12 +82,19 @@ int main(int argc, char* argv[]) {
 
     /// check wether we have to create a MIDI file or not
     if(build_midi == "true"){
-        MidiFile outputFile;
+        MidiFile outputFile;            // create an empty MIDI file with one track
+        outputFile.absoluteTicks();     // time information stored as absolute time, will be converted to delta time when written
+        outputFile.addTrack(1);   // Add a track to the file (track 0 must be left empty, so add as many as we use
+
+        int tpq = 120;                  // default value in MIDI file is 48 (tempo)
+        outputFile.setTicksPerQuarterNote(tpq);
+
+        int actionTime = 4800;
         /// array of integers representing the rhythm
         int rhythm[size];
         for(int i = 0; i < size; i++)
             rhythm[i] = 4;
-        writeSolToMIDIFile(size, sols);
+        writeSolToMIDIFile(size, actionTime, tpq, sols, outputFile);
     }
 
     return 0;

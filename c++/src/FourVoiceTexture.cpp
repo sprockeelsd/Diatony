@@ -219,9 +219,8 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
             chordDegrees[i] == FIFTH_DEGREE && chordDegrees[i+1] == FIRST_DEGREE) {
             //@todo add other chords that have the tritone
             tritone_resolution(*this, nOfVoices, i, tonality, chordDegrees,
-                               chordStates,bassMelodicIntervals,
-                               tenorMelodicIntervals,altoMelodicIntervals,
-                               sopranoMelodicIntervals, FullChordsVoicing);
+                               chordQualities, chordStates, bassMelodicIntervals,
+                               tenorMelodicIntervals, altoMelodicIntervals, sopranoMelodicIntervals, FullChordsVoicing);
         }
 
         /// Exceptions to the general voice leading rules

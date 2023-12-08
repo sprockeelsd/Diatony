@@ -16,7 +16,7 @@
  */
 Search::Base<FourVoiceTexture>* make_solver(FourVoiceTexture* pb, int type){
     Search::Options opts;
-    //opts.threads = 0; /// as many as available
+    opts.threads = 0; /// as many as available
     opts.stop = Search::Stop::time(60000); // stop after 120 seconds
 
     if (type == BAB_SOLVER){

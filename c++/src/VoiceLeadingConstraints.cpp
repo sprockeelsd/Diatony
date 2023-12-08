@@ -272,26 +272,29 @@ void fifth_degree_appogiatura(Home home, int nVoices, int currentPosition, Tonal
  * @param tonality the tonality of the piece
  * @param chordDegs the degrees of the chords
  * @param chordStas the state of the chords
- * @param bassMelodicInterval the melodic interval of the bass between the current position and the next
- * @param tenorMelodicInterval the melodic interval of the tenor between the current position and the next
- * @param altoMelodicInterval the melodic interval of the alto between the current position and the next
- * @param sopranoMelodicInterval the melodic interval of the soprano between the current position and the next
+ * @param bassMelodicIntervals the melodic interval of the bass between the current position and the next
+ * @param tenorMelodicIntervals the melodic interval of the tenor between the current position and the next
+ * @param altoMelodicIntervals the melodic interval of the alto between the current position and the next
+ * @param sopranoMelodicIntervals the melodic interval of the soprano between the current position and the next
  * @param fullChordsVoicing the array containing all the notes of the chords in the progression
  */
 void tritone_resolution(const Home &home, int nVoices, int currentPosition, Tonality *tonality, vector<int> chordDegs,
-                        vector<int> chordStas, const IntVarArray &bassMelodicInterval,
-                        const IntVarArray &tenorMelodicInterval, const IntVarArray &altoMelodicInterval,
-                        const IntVarArray &sopranoMelodicInterval, IntVarArray fullChordsVoicing) {
+                        vector<int> chordQuals, vector<int> chordStas, const IntVarArray &bassMelodicIntervals,
+                        const IntVarArray &tenorMelodicIntervals, const IntVarArray &altoMelodicIntervals,
+                        const IntVarArray &sopranoMelodicIntervals, IntVarArray fullChordsVoicing) {
 
     IntVarArgs currentChord(fullChordsVoicing.slice(nVoices * currentPosition, 1, nVoices));
 
     vector<IntVarArray> melodicIntervals(
-            {bassMelodicInterval, tenorMelodicInterval, altoMelodicInterval, sopranoMelodicInterval});
+            {bassMelodicIntervals, tenorMelodicIntervals, altoMelodicIntervals, sopranoMelodicIntervals});
     for(int voice = BASS; voice <= SOPRANO; voice++){
         /// special case
-        /// if the chords are VII (1st inversion) -> I (1st inversion)
+        /// if the chords are VII (1st inversion) -> I (1st inversion) or V(+6)->I(6)
         if (chordDegs[currentPosition] == SEVENTH_DEGREE && chordStas[currentPosition] == FIRST_INVERSION &&
-            chordDegs[currentPosition+1] == FIRST_DEGREE && chordStas[currentPosition+1] == FIRST_INVERSION){
+            chordDegs[currentPosition+1] == FIRST_DEGREE && chordStas[currentPosition+1] == FIRST_INVERSION ||
+            chordDegs[currentPosition] == FIFTH_DEGREE && chordQuals[currentPosition] == DOMINANT_SEVENTH_CHORD &&
+            chordStas[currentPosition] == SECOND_INVERSION && chordDegs[currentPosition+1] == FIRST_DEGREE &&
+            chordStas[currentPosition+1] == FIRST_INVERSION){
             /// the fourth of the scale must go up by a step
             rel(home, expr(home, currentChord[voice] % PERFECT_OCTAVE == (tonality->get_tonic() + PERFECT_FOURTH) %
             PERFECT_OCTAVE), BOT_IMP, expr(home, expr(home, melodicIntervals[voice][currentPosition] > 0) &&

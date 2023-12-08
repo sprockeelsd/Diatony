@@ -90,16 +90,16 @@ void contrary_motion_to_bass(const Home& home, int currentPosition, const IntVar
  * @param tonality the tonality of the piece
  * @param chordDegs the degrees of the chords
  * @param chordStas the state of the chords
- * @param bassMelodicInterval the melodic interval of the bass between the current position and the next
- * @param tenorMelodicInterval the melodic interval of the tenor between the current position and the next
- * @param altoMelodicInterval the melodic interval of the alto between the current position and the next
- * @param sopranoMelodicInterval the melodic interval of the soprano between the current position and the next
+ * @param bassMelodicIntervals the melodic interval of the bass between the current position and the next
+ * @param tenorMelodicIntervals the melodic interval of the tenor between the current position and the next
+ * @param altoMelodicIntervals the melodic interval of the alto between the current position and the next
+ * @param sopranoMelodicIntervals the melodic interval of the soprano between the current position and the next
  * @param fullChordsVoicing the array containing all the notes of the chords in the progression
  */
 void tritone_resolution(const Home &home, int nVoices, int currentPosition, Tonality *tonality, vector<int> chordDegs,
-                        vector<int> chordStas, const IntVarArray &bassMelodicInterval,
-                        const IntVarArray &tenorMelodicInterval, const IntVarArray &altoMelodicInterval,
-                        const IntVarArray &sopranoMelodicInterval, IntVarArray fullChordsVoicing);
+                        vector<int> chordQuals, vector<int> chordStas, const IntVarArray &bassMelodicIntervals,
+                        const IntVarArray &tenorMelodicIntervals, const IntVarArray &altoMelodicIntervals,
+                        const IntVarArray &sopranoMelodicIntervals, IntVarArray fullChordsVoicing);
 
 /**
  * Sets the constraint for a fifth degree followed by a sixth degree in fundamental state
