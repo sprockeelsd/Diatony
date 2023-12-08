@@ -19,10 +19,10 @@ extern "C" {
  * @todo modify this to include any parameters your FourVoiceTexture constructor requires
  * @param size an integer representing the size of the problem
  * @param chord_degrees an integer array representing the chord degrees
- * @param chord_positions an integer array representing the chord positions
+ * @param chord_states an integer array representing the chord positions
  * @return A pointer to a FourVoiceTexture object casted as a void*
  */
-void* create_new_problem(int size, int key, int mode, int* chord_degrees, int* chord_positions);
+void *create_new_problem(int size, int key, int mode, int *chord_degrees, int *chord_qualities, int *chord_positions);
 
 /**
  * returns the size of the problem

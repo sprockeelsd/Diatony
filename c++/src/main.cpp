@@ -44,7 +44,7 @@ int main(int argc, char* argv[]) {
 
     vector<int> chords = {FIFTH_DEGREE, FIRST_DEGREE};
     vector<int> chords_qualities = {DOMINANT_SEVENTH_CHORD, MAJOR_CHORD};
-    vector<int> states = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
+    vector<int> states = {FIRST_INVERSION, FUNDAMENTAL_STATE};
     int size = chords.size();
     /// array of integers representing the rhythm
     int rhythm[size];
