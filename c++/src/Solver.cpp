@@ -57,7 +57,9 @@ const FourVoiceTexture* find_best_solution(FourVoiceTexture *pb){
     while(FourVoiceTexture *sol = get_next_solution_space(solver)){
         bestSol = sol;
     }
+    string message = "Best solution found: \n" + bestSol->to_string() + "\n";
     write_to_log_file(bestSol->to_string().c_str());
+    std::cout << message << std::endl  << statistics_to_string(solver->statistics()) << std::endl;
     return bestSol;
 }
 

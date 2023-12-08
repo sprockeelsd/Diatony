@@ -2,11 +2,16 @@ all: clean run_mac_os dylib
 
 SRC_DIR = src
 
+ALL_SOLS = 		all
+BEST_SOL = 		best
+BUILD_MIDI = 	true
+NO_MIDI = 		false
+
 #define auxiliary files
 PROBLEM_FILES = $(SRC_DIR)/Utilities.cpp $(SRC_DIR)/Tonality.cpp $(SRC_DIR)/MajorTonality.cpp \
 				$(SRC_DIR)/MinorTonality.cpp $(SRC_DIR)/VoiceLeadingConstraints.cpp	$(SRC_DIR)/HarmonicConstraints.cpp \
 				$(SRC_DIR)/GeneralConstraints.cpp $(SRC_DIR)/Preferences.cpp $(SRC_DIR)/FourVoiceTexture.cpp \
-				$(SRC_DIR)/Solver.cpp
+				$(SRC_DIR)/Solver.cpp $(SRC_DIR)/MidiFileGeneration.cpp
 
 MIDI_FILES = $(SRC_DIR)/Options.cpp $(SRC_DIR)/MidiMessage.cpp $(SRC_DIR)/MidiEvent.cpp $(SRC_DIR)/MidiEventList.cpp \
 			$(SRC_DIR)/Binasc.cpp $(SRC_DIR)/MidiFile.cpp
@@ -36,7 +41,25 @@ midifile:
 	clear
 	rm -f $(LOG_FILE)
 	g++ -std=c++11 -F/Library/Frameworks -framework gecode -o ../out/Main $(PROBLEM_FILES) $(MIDI_FILES) src/Main.cpp
-	./../out/Main
+	./../out/Main $(BEST_SOL) $(BUILD_MIDI)
+
+all_midifile:
+	clear
+	rm -f $(LOG_FILE)
+	g++ -std=c++11 -F/Library/Frameworks -framework gecode -o ../out/Main $(PROBLEM_FILES) $(MIDI_FILES) src/Main.cpp
+	./../out/Main $(ALL_SOLS) $(BUILD_MIDI)
+
+all_sols:
+	clear
+	rm -f $(LOG_FILE)
+	g++ -std=c++11 -F/Library/Frameworks -framework gecode -o ../out/Main $(PROBLEM_FILES) $(MIDI_FILES) src/Main.cpp
+	./../out/Main $(ALL_SOLS) $(NO_MIDI)
+
+best_sol:
+	clear
+	rm -f $(LOG_FILE)
+	g++ -std=c++11 -F/Library/Frameworks -framework gecode -o ../out/Main $(PROBLEM_FILES) $(MIDI_FILES) src/Main.cpp
+	./../out/Main $(BEST_SOL) $(NO_MIDI)
 
 #run the main.cpp file on macOS
 gist:

@@ -15,7 +15,9 @@ using namespace std;
 using namespace Gecode;
 
 /***********************************************************************************************************************
+ *                                                                                                                     *
  *                                                  Useful constants                                                   *
+ *                                                                                                                     *
  ***********************************************************************************************************************/
 
 /** Types of search engines */
@@ -48,8 +50,9 @@ const int B_FLAT = 10;
 const int B = 11;
 const int C_FLAT = 11;
 
-const vector<std::string> noteNames = {"C", "C#", "D", "Eb", "E", "F", "F#", "G", "Ab", "A", "Bb", "B"}; // @todo turn into a bi-directional map
+const vector<std::string> noteNames = {"C", "C#", "D", "Eb", "E", "F", "F#", "G", "Ab", "A", "Bb", "B"};
 
+/** Voice positions */
 enum voices{
     BASS,       //0
     TENOR,      //1
@@ -57,6 +60,9 @@ enum voices{
     SOPRANO     //3
 };
 
+const vector<std::string> voiceNames = {"Bass", "Tenor", "Alto", "Soprano"};
+
+/** scale degrees */
 enum degrees{
     FIRST_DEGREE,       //0
     SECOND_DEGREE,      //1
@@ -102,7 +108,7 @@ enum chordTypes{
     MINOR_SEVENTH_CHORD         //6
 };
 
-// Types of chords represented by the intervals between their notes in root position up to an octave
+/// Types of chords represented by the intervals between their notes in root position up to an octave
 const vector<int> MAJOR_CHORD_INTERVALS = {MAJOR_THIRD, MINOR_THIRD, PERFECT_FOURTH};
 const vector<int> MINOR_CHORD_INTERVALS = {MINOR_THIRD, MAJOR_THIRD, PERFECT_FOURTH};
 const vector<int> DIMINISHED_CHORD_INTERVALS = {MINOR_THIRD, MINOR_THIRD, TRITONE};
@@ -130,10 +136,6 @@ enum chordStates{
 const vector<std::string> stateNames = {"Fundamental state", "First inversion", "Second inversion", "Third inversion"};
 
 /** Modes */
-// syntactic sugar for more commonly used modes
-const int MAJOR_MODE = 0;
-const int MINOR_MODE = 5;   // to correspond to the enum Mode
-
 enum Mode {
     IONIAN,     //0 , major mode
     DORIAN,     //1
@@ -143,6 +145,10 @@ enum Mode {
     AEOLIAN,    //5 , natural minor mode
     LOCRIAN     //6
 };
+
+// syntactic sugar for more commonly used modes
+const int MAJOR_MODE = IONIAN;
+const int MINOR_MODE = AEOLIAN;
 
 const vector<std::string> modeNames = {"Major", "Dorian", "Phrygian", "Lydian", "Mixolydian", "Minor", "Locrian"};
 
@@ -157,7 +163,9 @@ const vector<int> HARMONIC_MINOR_SCALE = {MAJOR_SECOND, MINOR_SECOND, MAJOR_SECO
 const vector<int> MELODIC_MINOR_SCALE = {MAJOR_SECOND, MINOR_SECOND, MAJOR_SECOND, MAJOR_SECOND, MAJOR_SECOND, MAJOR_SECOND, MINOR_SECOND};
 
 /***********************************************************************************************************************
+ *                                                                                                                     *
  *                                                      Functions                                                      *
+ *                                                                                                                     *
  ***********************************************************************************************************************/
 
 /**
@@ -199,8 +207,6 @@ vector<int> get_all_given_note(int note);
  * @return a vector<int> containing the same values as the array
  */
 vector<int> int_pointer_to_vector(int* ptr, int size);
-
-
 
 /**
  * Transforms a vector of integers into a string
