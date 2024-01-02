@@ -30,6 +30,6 @@ void writeSolToMIDIFile(int size, vector<const FourVoiceTexture *> sols, MidiFil
  * @param sols the solutions to write
  * @param file the MIDI file to write to
  */
-void writeSolsToMIDIFile(int size, int *rhythm, vector<const FourVoiceTexture *> sols);
+void writeSolsToMIDIFile(int size, vector<const FourVoiceTexture *> sols);
 
 #endif //MYPROJECT_MIDIFILEGENERATION_HPP

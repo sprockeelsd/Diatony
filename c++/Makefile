@@ -74,5 +74,8 @@ find_gecode_mac_os:
 
 #remove temporary files and dynamic library files
 clean:
-	rm -f  ../out/log.txt ../out/*.o *.so *.dylib ../out/*.so ../out/*.dylib ../out/Main testTonality
+	rm -f  ../out/log.txt ../out/*.o *.so *.dylib ../out/*.so ../out/*.dylib ../out/Main testTonality *.mid
+
+remove_midi:
+	rm -f ../out/MidiFiles/*.mid
 

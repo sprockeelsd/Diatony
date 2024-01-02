@@ -15,11 +15,11 @@ void writeSolToMIDIFile(int size, int solNumber, const FourVoiceTexture *sol) {
     outputFile.setTicksPerQuarterNote(tpq);
 
     int actionTime = 0;
-
     /// array of integers representing the rhythm
     int rhythm[size];
-    for(int i = 0; i < size; i++)
+    for(int i = 0; i < size; i++){
         rhythm[i] = 4;
+    }
 
     vector<uchar> midiEvent;        // temporary storage of MIDI events
     midiEvent.resize(3);        //set the size of the array to 3 bites (first bite = Start or end of a note, second bite = note value, third bite = velocity
@@ -31,18 +31,17 @@ void writeSolToMIDIFile(int size, int solNumber, const FourVoiceTexture *sol) {
         midiEvent[0] = 0x90; /// add the start of the note
         for(int j = 0; j < 4; j++){
             midiEvent[1] = sol_notes[4*i+j];
-            outputFile.addEvent(solNumber, actionTime, midiEvent);
+            outputFile.addEvent(1, actionTime, midiEvent);
         }
         actionTime += tpq*rhythm[i]; // increase relative time to the end of these events
         midiEvent[0] = 0x80; /// add the end of the note
         for(int j = 0; j < 4; j++){
             midiEvent[1] = sol_notes[4*i+j];
-            outputFile.addEvent(solNumber, actionTime, midiEvent);
+            outputFile.addEvent(1, actionTime, midiEvent);
         }
     }
     outputFile.sortTracks(); // make sure data is in correct order
-    outputFile.write("../out/output" + to_string(solNumber) + ".mid");
-    std::cout << "MIDI file created." << std::endl;
+    outputFile.write("../out/MidiFiles/output" + to_string(solNumber) + ".mid");
 }
 
 /**
@@ -52,9 +51,9 @@ void writeSolToMIDIFile(int size, int solNumber, const FourVoiceTexture *sol) {
  * @param sols the solutions to write
  * @param file the MIDI file to write to
  */
-void writeSolsToMIDIFile(int size, int *rhythm, vector<const FourVoiceTexture *> sols) {
+void writeSolsToMIDIFile(int size, vector<const FourVoiceTexture *> sols) {
     for (int i = 0; i < sols.size(); i++){
-        writeSolToMIDIFile(size, i, sols[i]); // i+1 because track 0 is always taken
+        writeSolToMIDIFile(size, i, sols[i]);
     }
     std::cout << to_string(sols.size()) + " MIDI files created." << std::endl;
 }

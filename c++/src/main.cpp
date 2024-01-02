@@ -46,18 +46,16 @@ int main(int argc, char* argv[]) {
 //                          FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FIRST_INVERSION, FUNDAMENTAL_STATE,
 //                          FIRST_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
     /// vectors representing the chords and the states
-//    vector<int> chords = {FIRST_DEGREE, SIXTH_DEGREE, FOURTH_DEGREE, FIRST_DEGREE, FIFTH_DEGREE, FIRST_DEGREE, SECOND_DEGREE, FIFTH_DEGREE,
-//                          FIRST_DEGREE, SECOND_DEGREE, FIRST_DEGREE, FIFTH_DEGREE, FIRST_DEGREE};
-//    vector<int> chords_qualities = {MAJOR_CHORD, MINOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD,
-//                                    MAJOR_CHORD, MINOR_CHORD, DOMINANT_SEVENTH_CHORD, MAJOR_CHORD,
-//                                    MINOR_CHORD, MAJOR_CHORD, DOMINANT_SEVENTH_CHORD, MAJOR_CHORD};
-//    vector<int> states = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, SECOND_INVERSION, FUNDAMENTAL_STATE,
-//                          FUNDAMENTAL_STATE, FIRST_INVERSION, THIRD_INVERSION, FIRST_INVERSION,
-//                          FIRST_INVERSION, SECOND_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
+    vector<int> chords = {FIRST_DEGREE, SIXTH_DEGREE, FOURTH_DEGREE, FIRST_DEGREE, FIFTH_DEGREE, FIRST_DEGREE, SECOND_DEGREE, FIFTH_DEGREE,
+                          FIRST_DEGREE};
+    vector<int> chords_qualities = {MAJOR_CHORD, MINOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD,
+                                    MAJOR_CHORD, MINOR_CHORD, DOMINANT_SEVENTH_CHORD, MAJOR_CHORD};
+    vector<int> states = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, SECOND_INVERSION, FUNDAMENTAL_STATE,
+                          FUNDAMENTAL_STATE, FIRST_INVERSION, THIRD_INVERSION, FIRST_INVERSION};
 
-    vector<int> chords = {FIFTH_DEGREE, FIRST_DEGREE};
-    vector<int> chords_qualities = {DOMINANT_SEVENTH_CHORD, MAJOR_CHORD};
-    vector<int> states = {SECOND_INVERSION, FUNDAMENTAL_STATE};
+//    vector<int> chords = {FIFTH_DEGREE, FIRST_DEGREE};
+//    vector<int> chords_qualities = {DOMINANT_SEVENTH_CHORD, MAJOR_CHORD};
+//    vector<int> states = {SECOND_INVERSION, FUNDAMENTAL_STATE};
     int size = chords.size();
 
     /// create a new problem
@@ -82,11 +80,7 @@ int main(int argc, char* argv[]) {
 
     /// check wether we have to create a MIDI file or not
     if(build_midi == "true"){
-        /// array of integers representing the rhythm
-        int rhythm[size];
-        for(int i = 0; i < size; i++)
-            rhythm[i] = 4;
-        writeSolsToMIDIFile(size, rhythm, sols);
+        writeSolsToMIDIFile(size, sols);
     }
 
     return 0;
