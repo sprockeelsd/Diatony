@@ -1,4 +1,4 @@
-all: clean run_mac_os dylib
+all: clean compile midifile
 
 SRC_DIR = src
 
@@ -36,37 +36,28 @@ so:
 	g++ -fPIC $(PROBLEM_FILES) src/problem_wrapper.cpp -std=c++11 -shared $(LIBRARIES) -o ../out/libgecode.so -O3 \
 		-ffast-math
 
+compile:
+	g++ -std=c++11 -F/Library/Frameworks -framework gecode -o ../out/Main $(PROBLEM_FILES) $(MIDI_FILES) src/Main.cpp
 #run the main.cpp file on macOS
-midifile:
+midifile: compile
 	clear
 	rm -f $(LOG_FILE)
-	g++ -std=c++11 -F/Library/Frameworks -framework gecode -o ../out/Main $(PROBLEM_FILES) $(MIDI_FILES) src/Main.cpp
 	./../out/Main $(BEST_SOL) $(BUILD_MIDI)
 
-all_midifile:
+all_midifile: compile
 	clear
 	rm -f $(LOG_FILE)
-	g++ -std=c++11 -F/Library/Frameworks -framework gecode -o ../out/Main $(PROBLEM_FILES) $(MIDI_FILES) src/Main.cpp
 	./../out/Main $(ALL_SOLS) $(BUILD_MIDI)
 
-all_sols:
+best_sol: compile
 	clear
 	rm -f $(LOG_FILE)
-	g++ -std=c++11 -F/Library/Frameworks -framework gecode -o ../out/Main $(PROBLEM_FILES) $(MIDI_FILES) src/Main.cpp
-	./../out/Main $(ALL_SOLS) $(NO_MIDI)
-
-best_sol:
-	clear
-	rm -f $(LOG_FILE)
-	g++ -std=c++11 -F/Library/Frameworks -framework gecode -o ../out/Main $(PROBLEM_FILES) $(MIDI_FILES) src/Main.cpp
 	./../out/Main $(BEST_SOL) $(NO_MIDI)
 
-#run the main.cpp file on macOS
-gist:
+all_sols: compile
 	clear
 	rm -f $(LOG_FILE)
-	g++ -std=c++11 -F/Library/Frameworks -framework gecode -o ../out/gist $(PROBLEM_FILES) $(MIDI_FILES) src/TestBranching.cpp
-	./../out/Main
+	./../out/Main $(ALL_SOLS) $(NO_MIDI)
 
 debug:
 	g++ -g -std=c++11 -F/Library/Frameworks -framework gecode -o ../out/Main $(PROBLEM_FILES) $(MIDI_FILES) src/Main.cpp

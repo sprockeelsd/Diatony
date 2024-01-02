@@ -1,5 +1,5 @@
 
-Fri Dec  8 17:00:37 2023
+Tue Jan  2 16:18:13 2024
 
 -----------------------------------------parameters-----------------------------------------
 Number of chords: 2
@@ -11,7 +11,8 @@ First degree (Major) in Fundamental state.
 
 Solver type: BAB
 
-Searching for the optimal solution based on preferences:
+
+Searching for solutions:
 
 ********************************************************************************************
 *                                                                                          *
@@ -65,6 +66,69 @@ sumOfMelodicIntervals = 11
 nOfCommonNotesInSoprano = 0
 
 
+Solution found: 
+Solution1: 
+********************************************************************************************
+*                                                                                          *
+*                                          Solution                                        *
+*                                                                                          *
+********************************************************************************************
+
+-----------------------------------------parameters-----------------------------------------
+Number of chords: 2
+Tonality: C Major
+Chords: 
+Fifth degree (Dominant seventh) in Second inversion,
+First degree (Major) in Fundamental state.
+ Maximum number of notes in each chord: { 4 3 }
+
+-----------------------------------------variables------------------------------------------
+BassTenorHarmonicIntervals = 	{3, 4}
+TenorAltoHarmonicIntervals = 	{6, 8}
+AltoSopranoHarmonicIntervals = 	{8, 0}
+
+BassMelodicIntervals = 		{-2}
+TenorMelodicIntervals = 	{-1}
+AltoMelodicIntervals = 		{1}
+SopranoMelodicIntervals = 	{-7}
+
+absoluteBassMelodicIntervals = 		{2}
+absoluteTenorMelodicIntervals = 	{1}
+absoluteAltoMelodicIntervals = 		{1}
+absoluteSopranoMelodicIntervals = 	{7}
+
+🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵
+
+FullChordsVoicing = {50, 53, 59, 67, 48, 52, 60, 60}
+
+🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵
+
+-------------------------------cost-related auxiliary arrays------------------------------
+nDifferentValuesInDiminishedChord = 	{0, 0}
+nDifferentValuesInAllChords = 		{4, 3}
+nOccurrencesBassInFundamentalState = 	{0, 3}
+commonNotesInSameVoice = 		{0, 0, 0, 0}
+nOFDifferentNotesInChords = 		{4, 2}
+
+------------------------------------cost variables----------------------------------------
+nOfDiminishedChordsWith4notes = 0
+nOfChordsWithLessThan4notes = 1
+nOfFundamentalStateChordsWithoutDoubledBass = 0
+nOfIncompleteChords = 1
+nOfCommonNotesInSameVoice = 0
+sumOfMelodicIntervals = 11
+nOfCommonNotesInSoprano = 0
+
+
+Solution 1
+
+Nodes traversed: 7
+Failed nodes explored: 2
+Restarts performed: 0
+Propagators executed: 1730
+No goods generated: 0
+Maximal depth of explored tree: 3
+
 ********************************************************************************************
 *                                                                                          *
 *                                          Solution                                        *
@@ -117,6 +181,8 @@ sumOfMelodicIntervals = 4
 nOfCommonNotesInSoprano = 1
 
 
+Solution found: 
+Solution2: 
 ********************************************************************************************
 *                                                                                          *
 *                                          Solution                                        *
@@ -169,5 +235,21 @@ sumOfMelodicIntervals = 4
 nOfCommonNotesInSoprano = 1
 
 
-Execution time: 0.012545seconds.
+Solution 2
+
+Nodes traversed: 11
+Failed nodes explored: 3
+Restarts performed: 0
+Propagators executed: 2957
+No goods generated: 0
+Maximal depth of explored tree: 5
+
+Nodes traversed: 41
+Failed nodes explored: 19
+Restarts performed: 0
+Propagators executed: 9543
+No goods generated: 0
+Maximal depth of explored tree: 5
+
+Execution time: 0.008671seconds.
 
