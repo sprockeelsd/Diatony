@@ -1,63 +1,17 @@
-Test case: I5 - V5 - I5 - V65 - I6 - II6 - V64 - V7+ - I5 in C Major
-
-
 Best solution search statistics:
-Nodes traversed: 23454
-Failed nodes explored: 11702
+Nodes traversed: 33
+Failed nodes explored: 7
 Restarts performed: 0
-Propagators executed: 40450187
+Propagators executed: 1690
 No goods generated: 0
-Maximal depth of explored tree: 32
+Maximal depth of explored tree: 7
 
 Total search statistics: 
-Nodes traversed: 75395
-Failed nodes explored: 37677
+Nodes traversed: 37
+Failed nodes explored: 11
 Restarts performed: 0
-Propagators executed: 109522790
+Propagators executed: 1856
 No goods generated: 0
-Maximal depth of explored tree: 32
-
-
-Test case: I5 - V5 - I5 - V65 - I6 - II6 - V64 - V7+ - I5 in C Minor
-
-
-Best solution search statistics:
-Nodes traversed: 42845
-Failed nodes explored: 21398
-Restarts performed: 0
-Propagators executed: 73564415
-No goods generated: 0
-Maximal depth of explored tree: 33
-
-Total search statistics: 
-Nodes traversed: 111503
-Failed nodes explored: 55732
-Restarts performed: 0
-Propagators executed: 161484965
-No goods generated: 0
-Maximal depth of explored tree: 33
-
-
-Test case: I5 - V5 - I5 - V65 - I6 - II6 - V64 - V7+ - I5 in Ab Major
-
-
-Best solution search statistics:
-Nodes traversed: 89353
-Failed nodes explored: 44635
-Restarts performed: 0
-Propagators executed: 100426880
-No goods generated: 0
-Maximal depth of explored tree: 33
-
-Total search statistics: 
-Nodes traversed: 89737
-Failed nodes explored: 44831
-Restarts performed: 0
-Propagators executed: 100980778
-No goods generated: 0
-Maximal depth of explored tree: 33
-
-
-Test case: I5 - V5 - I5 - V65 - I6 - II6 - V64 - V7+ - I5 in Bb Minor
+Maximal depth of explored tree: 7
 
 

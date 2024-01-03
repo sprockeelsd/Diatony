@@ -60,6 +60,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     nOccurrencesBassInFundamentalState = IntVarArray(*this, size, 0, nOfVoices);
     nOFDifferentNotesInChords = IntVarArray(*this, size, 0, nOfVoices);
     commonNotesInSameVoice = IntVarArray(*this, nOfVoices, 0, size - 1);
+    negativeCommonNotesInSameVoice = IntVarArray(*this, nOfVoices, -(size - 1), 0);
 
     /// cost variables
     sumOfMelodicIntervals = IntVar(*this, 0, PERFECT_OCTAVE * nOfVoices * (size - 1));
@@ -141,6 +142,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     compute_cost_for_common_notes_not_in_same_voice(*this, absoluteBassMelodicIntervals,
                                                     absoluteTenorMelodicIntervals, absoluteAltoMelodicIntervals,
                                                     absoluteSopranoMelodicIntervals, commonNotesInSameVoice,
+                                                    negativeCommonNotesInSameVoice,
                                                     nOfCommonNotesInSameVoice);
 
     /**-----------------------------------------------------------------------------------------------------------------
@@ -301,17 +303,22 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
 
 /**
  * Cost function for lexicographical minimization. The order is as follows:
- * 1. number of diminished chords with more than 3 notes
- * 2. number of chords with less than 4 note values
- * 3. number of fundamental state chords without doubled bass
- * 4. sum of melodic intervals minimizes the melodic movement between chords
+ * 1. number of diminished chords with more than 3 notes. @todo maybe efficiency can improve if I add a cst for this
+ * 2. number of chords with less than 4 note values.
+ * 3. number of fundamental state chords without doubled bass.
+ * 4. Number of incomplete chords. They should only occur when necessary.
+ * 5. Number of common notes in the tenor. This cost is negative because we want to maximize it
+ * 6. Number of common notes in the alto. This cost is negative because we want to maximize it
+ * 7. Number of common notes in the soprano. This cost is positive because we want to avoid it. We don't do the same for
+ *      the bass because we want to allow it to jump octaves if it leads to better solutions.
+ * 8. sum of melodic intervals minimizes the melodic movement between chords. @todo change it to give different costs to different intervals
  * @return the cost variables in order of importance
  */
 IntVarArgs FourVoiceTexture::cost() const {
-    // @todo maybe give the voices a priority + check the order depending on what is more important
     //@todo change the sum of melodic intervals to minimize the number of skips and prefer the steps
     return {nOfDiminishedChordsWith4notes, nOfChordsWithLessThan4notes, nOfFundamentalStateChordsWithoutDoubledBass,
-            nOfIncompleteChords, nOfCommonNotesInSoprano, nOfCommonNotesInSameVoice, sumOfMelodicIntervals};
+            nOfIncompleteChords, negativeCommonNotesInSameVoice[TENOR], negativeCommonNotesInSameVoice[ALTO],
+            commonNotesInSameVoice[SOPRANO], sumOfMelodicIntervals};
 }
 
 /**
@@ -349,6 +356,7 @@ FourVoiceTexture::FourVoiceTexture(FourVoiceTexture& s): IntLexMinimizeSpace(s){
     nOccurrencesBassInFundamentalState.update(*this, s.nOccurrencesBassInFundamentalState);
     nOFDifferentNotesInChords.update(*this, s.nOFDifferentNotesInChords);
     commonNotesInSameVoice.update(*this, s.commonNotesInSameVoice);
+    negativeCommonNotesInSameVoice.update(*this, s.negativeCommonNotesInSameVoice);
 
     sumOfMelodicIntervals.update(*this, s.sumOfMelodicIntervals);
     nOfDiminishedChordsWith4notes.update(*this, s.nOfDiminishedChordsWith4notes);
@@ -471,6 +479,7 @@ string FourVoiceTexture::to_string(){
     message += "nDifferentValuesInAllChords = \t\t" + intVarArray_to_string(nDifferentValuesAllChords) + "\n";
     message += "nOccurrencesBassInFundamentalState = \t" + intVarArray_to_string(nOccurrencesBassInFundamentalState) + "\n";
     message += "commonNotesInSameVoice = \t\t" + intVarArray_to_string(commonNotesInSameVoice) + "\n";
+    message += "negativeCommonNotesInSameVoice = \t" + intVarArray_to_string(negativeCommonNotesInSameVoice) + "\n";
     message += "nOFDifferentNotesInChords = \t\t" + intVarArray_to_string(nOFDifferentNotesInChords) + "\n\n";
 
     message += "------------------------------------cost variables----------------------------------------\n";
@@ -481,6 +490,9 @@ string FourVoiceTexture::to_string(){
             intVar_to_string(nOfFundamentalStateChordsWithoutDoubledBass) + "\n";
     message += "nOfIncompleteChords = " + intVar_to_string(nOfIncompleteChords) + "\n";
     message += "nOfCommonNotesInSameVoice = " + intVar_to_string(nOfCommonNotesInSameVoice) + "\n";
+    message += "nOfCommonNotesTenor = " + intVar_to_string(commonNotesInSameVoice[TENOR]) + "\n";
+    message += "nOfCommonNotesAlto = " + intVar_to_string(commonNotesInSameVoice[ALTO]) + "\n";
+    message += "nOfCommonNotesSoprano = " + intVar_to_string(commonNotesInSameVoice[SOPRANO]) + "\n";
     message += "sumOfMelodicIntervals = " + intVar_to_string(sumOfMelodicIntervals) + "\n";
     message += "nOfCommonNotesInSoprano = " + intVar_to_string(nOfCommonNotesInSoprano) + "\n\n";
 

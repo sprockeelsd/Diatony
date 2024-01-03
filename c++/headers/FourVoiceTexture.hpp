@@ -78,6 +78,7 @@ protected:
     IntVarArray nOccurrencesBassInFundamentalState;     // number of chords that don't double the bass in fundamental state
     IntVarArray nOFDifferentNotesInChords;              // the number of different notes (the octave doesn't matter) in each chord
     IntVarArray commonNotesInSameVoice;                 // chords with common notes in the same voice between consecutive chords
+    IntVarArray negativeCommonNotesInSameVoice;         // negative so we can maximize it by minimizing it (makes sense)
 
 
     /// cost variables

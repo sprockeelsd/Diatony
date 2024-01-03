@@ -98,5 +98,6 @@ void compute_cost_for_common_notes_not_in_same_voice(const Home &home, IntVarArr
                                                      IntVarArray absoluteAltoMelodicIntervals,
                                                      IntVarArray absoluteSopranoMelodicIntervals,
                                                      IntVarArray commonNotesInSameVoice,
+                                                     IntVarArray negativeCommonNotesInSameVoice,
                                                      IntVar nOfCommonNotesInSameVoice);
 #endif //MYPROJECT_PREFERENCES_HPP

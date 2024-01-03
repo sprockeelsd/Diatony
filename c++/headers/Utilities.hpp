@@ -20,8 +20,16 @@ using namespace Gecode;
  *                                                                                                                     *
  ***********************************************************************************************************************/
 
+/** Files */
 const string LogFile = "log.txt";
 const string StatisticsFile = "statistics.txt";
+
+/** Melodic costs */
+const int SECOND_COST = 0;
+const int THIRD_COST = 1;
+const int FOURTH_FIFTH_COST = 2;
+const int SIXTH_COST = 3;
+const int SEVENTH_COST = 4;
 
 /** Types of search engines */
 enum solver_types{

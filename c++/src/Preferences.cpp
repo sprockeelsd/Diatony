@@ -97,7 +97,6 @@ void compute_fundamental_state_doubling_cost(const Home &home, int size, int nVo
 void compute_cost_for_common_note_in_soprano(const Home &home, IntVarArray commonNotesInSameVoice,
                                              IntVar nCommonNotesInSoprano) {
     rel(home, commonNotesInSameVoice[SOPRANO], IRT_EQ, nCommonNotesInSoprano);
-
 }
 
 /**
@@ -145,13 +144,15 @@ void compute_cost_for_common_notes_not_in_same_voice(const Home &home, IntVarArr
                                                      IntVarArray absoluteAltoMelodicIntervals,
                                                      IntVarArray absoluteSopranoMelodicIntervals,
                                                      IntVarArray commonNotesInSameVoice,
-                                                     IntVar nOfCommonNotesInSameVoice){
+                                                     IntVarArray negativeCommonNotesInSameVoice,
+                                                     IntVar nOfCommonNotesInSameVoice) {
 
     vector<IntVarArray> absoluteMelodicIntervals = {absoluteBassMelodicIntervals, absoluteTenorMelodicIntervals,
                                                     absoluteAltoMelodicIntervals, absoluteSopranoMelodicIntervals};
     /// costsForEachVoice[voice] = nb of times where the interval is 0
     for(int voice = BASS; voice <= SOPRANO; voice++){
         count(home, absoluteMelodicIntervals[voice], 0, IRT_EQ, commonNotesInSameVoice[voice]);
+        rel(home, expr(home, negativeCommonNotesInSameVoice[voice] == expr(home, - commonNotesInSameVoice[voice])));
     }
     /// the sum of costs for each voice = the number of times where there is a common note in the same voice
     linear(home,{-1,-1,-1,-1}, commonNotesInSameVoice, IRT_EQ, nOfCommonNotesInSameVoice);

@@ -53,9 +53,9 @@ int main(int argc, char* argv[]) {
 //    vector<int> states = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, SECOND_INVERSION, FUNDAMENTAL_STATE,
 //                          FUNDAMENTAL_STATE, FIRST_INVERSION, THIRD_INVERSION, FIRST_INVERSION};
 
-    vector<int> chords = {FIFTH_DEGREE, SIXTH_DEGREE};
-    vector<int> chords_qualities = {MAJOR_CHORD, MINOR_CHORD};
-    vector<int> states = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
+    vector<int> chords = {FIRST_DEGREE, FIRST_DEGREE};
+    vector<int> chords_qualities = {MAJOR_CHORD, MAJOR_CHORD};
+    vector<int> states = {FUNDAMENTAL_STATE, FIRST_INVERSION};
     int size = chords.size();
 
     /// create a new problem
