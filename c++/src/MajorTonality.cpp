@@ -6,13 +6,13 @@
  */
 MajorTonality::MajorTonality(int t) : Tonality(t, MAJOR_MODE, MAJOR_SCALE){ // calls super() constructor
     // set the chord qualities for major tonalities
-    chord_qualities[0] = MAJOR_CHORD;
-    chord_qualities[1] = MINOR_CHORD;
-    chord_qualities[2] = MINOR_CHORD;
-    chord_qualities[3] = MAJOR_CHORD;
-    chord_qualities[4] = MAJOR_CHORD;
-    chord_qualities[5] = MINOR_CHORD;
-    chord_qualities[6] = DIMINISHED_CHORD;
+    chord_qualities[0] = MAJOR_CHORD_INTERVALS;
+    chord_qualities[1] = MINOR_CHORD_INTERVALS;
+    chord_qualities[2] = MINOR_CHORD_INTERVALS;
+    chord_qualities[3] = MAJOR_CHORD_INTERVALS;
+    chord_qualities[4] = DOMINANT_SEVENTH_CHORD_INTERVALS;
+    chord_qualities[5] = MINOR_CHORD_INTERVALS;
+    chord_qualities[6] = DIMINISHED_CHORD_INTERVALS;
 
     for (int i = 0; i < chord_qualities.size(); i++){
         IntSet set(get_all_notes_from_chord(degrees_notes[i], chord_qualities[i]));

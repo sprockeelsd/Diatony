@@ -175,11 +175,11 @@ string time(){
  * Useful for debugging in the OM environment
  * @param message the text to write
  */
-void write_to_log_file(const char* message){
+void write_to_log_file(const char *message, string filename) {
     const char* homeDir = std::getenv("HOME"); // Get the user's home directory
     if (homeDir) {
         std::string filePath(homeDir);
-        filePath += "/Documents/Libraries/MusicConstraints/out/log.txt"; // Specify the desired file path, such as $HOME/log.txt
+        filePath += "/Documents/Libraries/MusicConstraints/out/" + filename; // Specify the desired file path, such as $HOME/log.txt
 
         std::ofstream myfile(filePath, std::ios::app); // append mode
         if (myfile.is_open()) {

@@ -31,22 +31,24 @@
 ;; Problem methods ;;
 ;;;;;;;;;;;;;;;;;;;;;
 
-(defun new-4-voice (key mode chord-degrees chord-states)
+(defun new-4-voice (key mode chord-degrees chord-qualities chord-states)
     (let (
         (x (cffi::foreign-alloc :int :initial-contents chord-degrees))
+        (z (cffi::foreign-alloc :int :initial-contents chord-qualities))
         (y (cffi::foreign-alloc :int :initial-contents chord-states))
         )
-        (new-problem (length chord-degrees) key mode x y)
+        (new-problem (length chord-degrees) key mode x z y)
     )
 )
 
 (cffi::defcfun ("create_new_problem" new-problem) :pointer
     "Creates a new instance of the problem. Returns a void* cast of a Problem*."
-    (size :int) ; an integer representing the size
-    (key :int) ; the key of the tonality
-    (mode :int) ; the mode of the tonality
-    (chord-degrees :pointer :int) ; a void* cast of a int* that are the chord degrees
-    (chord-states :pointer :int)  ; a void* cast of a int* that are the chord states
+    (size :int)                     ; an integer representing the size
+    (key :int)                      ; the key of the tonality
+    (mode :int)                     ; the mode of the tonality
+    (chord-degrees :pointer :int)   ; a void* cast of a int* that are the chord degrees
+    (chord-qualities :pointer :int) ; a void* cast of a int* that are the chord qualities
+    (chord-states :pointer :int)    ; a void* cast of a int* that are the chord states
 )
 
 (cffi::defcfun ("get_size" get-size) :int

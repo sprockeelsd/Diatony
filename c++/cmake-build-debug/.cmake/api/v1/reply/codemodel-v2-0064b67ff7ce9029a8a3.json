@@ -39,7 +39,7 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "damien::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-damien-Debug-176bf20561624eb44c59.json",
+					"jsonFile" : "target-damien-Debug-4ac88da4142a8977d45a.json",
 					"name" : "damien",
 					"projectIndex" : 0
 				}
@@ -55,6 +55,6 @@
 	"version" : 
 	{
 		"major" : 2,
-		"minor" : 5
+		"minor" : 6
 	}
 }

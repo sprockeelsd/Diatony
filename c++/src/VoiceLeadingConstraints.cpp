@@ -154,11 +154,14 @@ void contrary_motion_to_bass(const Home& home, int currentPosition, const IntVar
  * @param altoMelodicInterval the melodic intervals of the alto
  * @param sopranoMelodicInterval the melodic intervals of the soprano
  */
-void interrupted_cadence(const Home &home, int currentPosition, Tonality *tonality, IntVarArray fullChordsVoicing,
-                         const IntVarArray &tenorMelodicInterval, const IntVarArray &altoMelodicInterval,
-                         const IntVarArray &sopranoMelodicInterval) {
-    // @todo make it cleaner with loops
+void interrupted_cadence(const Home &home, int nVoices, int currentPosition, Tonality *tonality,
+                         IntVarArray fullChordsVoicing, const IntVarArray &tenorMelodicInterval,
+                         const IntVarArray &altoMelodicInterval, const IntVarArray &sopranoMelodicInterval) {
+    /// double the third of the chord in the sixth degree chord (the second one)
+    IntVarArgs sixthDegreeChord(fullChordsVoicing.slice(nVoices * (currentPosition + 1), 1, nVoices));
+    count(home, sixthDegreeChord, tonality->get_scale_degree((SIXTH_DEGREE + THIRD_DEGREE) % 7), IRT_EQ,2);
 
+    // @todo make it cleaner with loops
     /// if the mode is major, then this rule only applies to the soprano voice. Otherwise, it applies for all voices
     /// soprano note is the seventh of the scale -> that voice must raise to the tonic by a minor second
 
@@ -272,26 +275,29 @@ void fifth_degree_appogiatura(Home home, int nVoices, int currentPosition, Tonal
  * @param tonality the tonality of the piece
  * @param chordDegs the degrees of the chords
  * @param chordStas the state of the chords
- * @param bassMelodicInterval the melodic interval of the bass between the current position and the next
- * @param tenorMelodicInterval the melodic interval of the tenor between the current position and the next
- * @param altoMelodicInterval the melodic interval of the alto between the current position and the next
- * @param sopranoMelodicInterval the melodic interval of the soprano between the current position and the next
+ * @param bassMelodicIntervals the melodic interval of the bass between the current position and the next
+ * @param tenorMelodicIntervals the melodic interval of the tenor between the current position and the next
+ * @param altoMelodicIntervals the melodic interval of the alto between the current position and the next
+ * @param sopranoMelodicIntervals the melodic interval of the soprano between the current position and the next
  * @param fullChordsVoicing the array containing all the notes of the chords in the progression
  */
 void tritone_resolution(const Home &home, int nVoices, int currentPosition, Tonality *tonality, vector<int> chordDegs,
-                        vector<int> chordStas, const IntVarArray &bassMelodicInterval,
-                        const IntVarArray &tenorMelodicInterval, const IntVarArray &altoMelodicInterval,
-                        const IntVarArray &sopranoMelodicInterval, IntVarArray fullChordsVoicing) {
+                        vector<int> chordQuals, vector<int> chordStas, const IntVarArray &bassMelodicIntervals,
+                        const IntVarArray &tenorMelodicIntervals, const IntVarArray &altoMelodicIntervals,
+                        const IntVarArray &sopranoMelodicIntervals, IntVarArray fullChordsVoicing) {
 
     IntVarArgs currentChord(fullChordsVoicing.slice(nVoices * currentPosition, 1, nVoices));
 
     vector<IntVarArray> melodicIntervals(
-            {bassMelodicInterval, tenorMelodicInterval, altoMelodicInterval, sopranoMelodicInterval});
+            {bassMelodicIntervals, tenorMelodicIntervals, altoMelodicIntervals, sopranoMelodicIntervals});
     for(int voice = BASS; voice <= SOPRANO; voice++){
         /// special case
-        /// if the chords are VII (1st inversion) -> I (1st inversion)
+        /// if the chords are VII (1st inversion) -> I (1st inversion) or V(+6)->I(6)
         if (chordDegs[currentPosition] == SEVENTH_DEGREE && chordStas[currentPosition] == FIRST_INVERSION &&
-            chordDegs[currentPosition+1] == FIRST_DEGREE && chordStas[currentPosition+1] == FIRST_INVERSION){
+            chordDegs[currentPosition+1] == FIRST_DEGREE && chordStas[currentPosition+1] == FIRST_INVERSION ||
+            chordDegs[currentPosition] == FIFTH_DEGREE && chordQuals[currentPosition] == DOMINANT_SEVENTH_CHORD &&
+            chordStas[currentPosition] == SECOND_INVERSION && chordDegs[currentPosition+1] == FIRST_DEGREE &&
+            chordStas[currentPosition+1] == FIRST_INVERSION){
             /// the fourth of the scale must go up by a step
             rel(home, expr(home, currentChord[voice] % PERFECT_OCTAVE == (tonality->get_tonic() + PERFECT_FOURTH) %
             PERFECT_OCTAVE), BOT_IMP, expr(home, expr(home, melodicIntervals[voice][currentPosition] > 0) &&
@@ -302,10 +308,11 @@ void tritone_resolution(const Home &home, int nVoices, int currentPosition, Tona
                 PERFECT_OCTAVE),BOT_IMP,expr(home, expr(home, melodicIntervals[voice][currentPosition] < 0)
                 && expr(home, melodicIntervals[voice][currentPosition] >= -2)), true);
         }
-
         /// if the note is the major seventh of the scale, it must go up to the tonic by step
-        rel(home, expr(home, currentChord[voice] % PERFECT_OCTAVE == (tonality->get_tonic() + MAJOR_SEVENTH) % PERFECT_OCTAVE),
-            BOT_IMP, expr(home, melodicIntervals[voice][currentPosition] == 1), true); /// must move up by a semitone to (the tonic)
+        rel(home, expr(home, currentChord[voice] % PERFECT_OCTAVE == (tonality->get_tonic() + MAJOR_SEVENTH) %
+            PERFECT_OCTAVE),
+            BOT_IMP, expr(home, melodicIntervals[voice][currentPosition] == 1), true);
+            /// must move up by a semitone to (the tonic)
     }
 }
 

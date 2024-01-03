@@ -20,7 +20,7 @@ void compute_diminished_chords_cost(const Home& home, int size, int nVoices, Ton
                                     const IntVar& costVar) {
     for(int i = 0; i < size; ++i){// for each chord
         /// if the chord is diminished and in fundamental state
-        if(tonality->get_chord_qualities()[chordDegs[i]] == DIMINISHED_CHORD && chordStas[i] == FUNDAMENTAL_STATE){
+        if(tonality->get_chord_qualities()[chordDegs[i]] == DIMINISHED_CHORD_INTERVALS && chordStas[i] == FUNDAMENTAL_STATE){
             IntVarArgs currentChord(fullChordsVoicing.slice(nVoices * i, 1, nVoices));
             /// nOfDifferentNotes[i] = nOfDiffVals in current chord
             nvalues(home, currentChord, IRT_EQ, nOfDifferentNotes[i]);
@@ -91,33 +91,43 @@ void compute_fundamental_state_doubling_cost(const Home &home, int size, int nVo
  * This function counts the number of times when a common note in the soprano voice when moving from a chord in first
  * inversion to another chord.
  * @param home the instance of the problem
- * @param nChords the number of chords in the progression
- * @param nVoices the number of voices in the piece
- * @param chordStates the state of the chord (fundamental, first inversion, second inversion)
- * @param FullChordsVoicing the array containing all the notes of the chords in the progression
- * @param commonNotesInSoprano an array containing 1 if there is a common note in the soprano voice between this chord and
- * the next, and if the first chord is in first inversion
+ * @param commonNotesInSameVoice the number of common notes in each voice
  * @param nOfCommonNotesInSoprano the number of times when there is a common note in the soprano voice
  */
-void compute_cost_for_common_note_in_soprano(const Home &home, int nChords, int nVoices, vector<int> chordStates,
-                                             IntVarArray FullChordsVoicing, IntVarArray commonNotesInSoprano,
-                                             const IntVar &nOfCommonNotesInSoprano) {
-    for(int chord = 0; chord < nChords - 1; chord++){
-        if (chordStates[chord] == FIRST_INVERSION || chordStates[chord + 1] == FIRST_INVERSION){
-            rel(home, expr(home, FullChordsVoicing[nVoices * chord + SOPRANO] ==
-                                 FullChordsVoicing[nVoices * (chord + 1) + SOPRANO]), BOT_EQV,
-                expr(home, commonNotesInSoprano[chord] == 1), true);
-            rel(home, expr(home, FullChordsVoicing[nVoices * chord + SOPRANO] !=
-                                 FullChordsVoicing[nVoices * (chord + 1) + SOPRANO]), BOT_EQV,
-                expr(home, commonNotesInSoprano[chord] == 0), true);
-        }
-        else{
-            rel(home, commonNotesInSoprano[chord], IRT_EQ, 0); /// set it to 0 because the rule doesn't apply
-        }
-    }
-    /// costVar = 1 if there is a common note in the soprano voice
-    count(home, commonNotesInSoprano, 1, IRT_EQ, nOfCommonNotesInSoprano);
+void compute_cost_for_common_note_in_soprano(const Home &home, IntVarArray commonNotesInSameVoice,
+                                             IntVar nCommonNotesInSoprano) {
+    rel(home, commonNotesInSameVoice[SOPRANO], IRT_EQ, nCommonNotesInSoprano);
+
 }
+
+/**
+ * This function counts the number of incomplete chords
+ * @param home the instance of the problem
+ * @param size the number of chords in the chord progression
+ * @param nVoices the number of voices in the chords
+ * @param nNotesInChords the number of notes in each chord if it is complete
+ * @param fullChordsVoicing all the notes of all the chords
+ * @param nDiffNotesInChord An IntVarArray counting the number of different notes (regardless of their octave) in
+ * each chord
+ * @param nOfIncompleteChords an IntVar counting the number of incomplete chords in the chord progression
+ */
+void compute_cost_for_incomplete_chords(const Home &home, int size, int nVoices, IntArgs nNotesInChords,
+                                        IntVarArray fullChordsVoicing, IntVarArray nDiffNotesInChord,
+                                        IntVar nOfIncompleteChords) {
+    for(int i = 0; i < size; i++) {
+        IntVarArgs currentChord(fullChordsVoicing.slice(nVoices * i, 1, nVoices));
+        /// note values regardless of their octave
+        IntVarArgs currentChordNotes;
+        for(int j = 0; j < nVoices; j++)
+            currentChordNotes << expr(home, currentChord[j] % PERFECT_OCTAVE);
+
+        /// nDiffNotesInChord[i] == the number of different notes regardless of their octave in the current chord
+        nvalues(home, currentChordNotes, IRT_EQ,nDiffNotesInChord[i]);
+    }
+    /// count the number of incomplete chords (size - the number of chords that have the max amount of notes)
+    count(home, nDiffNotesInChord, nNotesInChords, IRT_EQ, expr(home, size - nOfIncompleteChords));
+}
+
 /**
  * This function sets the cost for the number of times when there is a common note in the same voice between consecutive
  * This has to be MAXIMIZED!
@@ -126,7 +136,8 @@ void compute_cost_for_common_note_in_soprano(const Home &home, int nChords, int 
  * @param absoluteTenorMelodicIntervals the array of absolute melodic intervals for the tenor
  * @param absoluteAltoMelodicIntervals the array of absolute melodic intervals for the alto
  * @param absoluteSopranoMelodicIntervals the array of absolute melodic intervals for the soprano
- * @param commonNotesInSameVoice an array containing the number of times when there is a common note in the same voice for each voice
+ * @param commonNotesInSameVoice an array containing the number of times when there is a common note in the same voice
+ * for each voice
  * @param nOfCommonNotesInSameVoice the total number of times when there is a common note in the same voice
  */
 void compute_cost_for_common_notes_not_in_same_voice(const Home &home, IntVarArray absoluteBassMelodicIntervals,

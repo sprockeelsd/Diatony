@@ -5,88 +5,83 @@
 #include "../headers/MinorTonality.hpp"
 #include "../headers/Solver.hpp"
 #include "../headers/MidiFile.h"
+#include "../headers/MidiFileGeneration.hpp"
+
+#include <gecode/gist.hh>
 
 using namespace Gecode;
 using namespace std;
 using namespace smf;
 
+/**
+ * Finds solutions to a musical problem
+ * Takes 2 arguments:
+ * - the first one specifies whether we need to find all solutions or just the best one
+ * - The second specifies whether we need to create a MIDI file or not
+ */
 int main(int argc, char* argv[]) {
-    Tonality* tonality = new MinorTonality(C);
+    // if there is not exactly 1 argument, there is an error
+    if(argc != 3)
+        return 1;
 
-    write_to_log_file(time().c_str());
-//    vector<int> chords = {FIRST_DEGREE, FOURTH_DEGREE, SEVENTH_DEGREE,
-//                          THIRD_DEGREE, SIXTH_DEGREE, SECOND_DEGREE, FIRST_DEGREE,
-//                          FIFTH_DEGREE, FIRST_DEGREE};
-//
-//    vector<int> states = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FIRST_INVERSION, FUNDAMENTAL_STATE,
-//                          FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, SECOND_INVERSION, FUNDAMENTAL_STATE,
-//                          FUNDAMENTAL_STATE};
+    Tonality* tonality = new MajorTonality(C);
+    write_to_log_file(time().c_str(), LogFile);
+
+    std::string search_type = argv[1];
+    std::string build_midi = argv[2];
+//    vector<int> chords = {FIRST_DEGREE, FIRST_DEGREE, FIFTH_DEGREE, FIFTH_DEGREE, FIRST_DEGREE, SECOND_DEGREE,
+//                          FIRST_DEGREE, FIFTH_DEGREE, FIRST_DEGREE};
+//    vector<int> chords_qualities = {MINOR_CHORD, MINOR_CHORD, MAJOR_CHORD, DOMINANT_SEVENTH_CHORD, MINOR_CHORD,
+//                                    DIMINISHED_CHORD, MINOR_CHORD, DOMINANT_SEVENTH_CHORD, MINOR_CHORD};
+//    vector<int> states = {FUNDAMENTAL_STATE, SECOND_INVERSION, FUNDAMENTAL_STATE, THIRD_INVERSION, FIRST_INVERSION,
+//                          FIRST_INVERSION, SECOND_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
+    //@todo there is a problem when going Vda -> V5 (not V7) and it is not because of // intervals nor because of tritone resolution
 //    vector<int> chords = {FIRST_DEGREE, FIFTH_DEGREE, SIXTH_DEGREE, FIRST_DEGREE, FIFTH_DEGREE, FIRST_DEGREE, THIRD_DEGREE,
 //                          SIXTH_DEGREE, SECOND_DEGREE, FIFTH_DEGREE, FIRST_DEGREE, FOURTH_DEGREE, FIFTH_DEGREE, FIFTH_DEGREE,
 //                          FIRST_DEGREE};
+//    vector<int> chords_qualities = {MAJOR_CHORD, MAJOR_CHORD, MINOR_CHORD, MAJOR_CHORD, DOMINANT_SEVENTH_CHORD, MAJOR_CHORD,
+//                             MINOR_CHORD, MINOR_CHORD, MINOR_CHORD, DOMINANT_SEVENTH_CHORD, MAJOR_CHORD, MAJOR_CHORD,
+//                             MAJOR_CHORD, DOMINANT_SEVENTH_CHORD, MAJOR_CHORD};
 //    vector<int> states = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, SECOND_INVERSION, FUNDAMENTAL_STATE,
 //                          FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FIRST_INVERSION, FUNDAMENTAL_STATE,
 //                          FIRST_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
     /// vectors representing the chords and the states
-    vector<int> chords = {FIRST_DEGREE, SIXTH_DEGREE, FOURTH_DEGREE, FIRST_DEGREE, FIFTH_DEGREE, FIRST_DEGREE,
-                          SECOND_INVERSION, FIRST_DEGREE, FIFTH_DEGREE, FIRST_DEGREE};
-    vector<int> states = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, SECOND_INVERSION, FUNDAMENTAL_STATE,
-                          FIRST_INVERSION, FIRST_INVERSION, SECOND_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
+//    vector<int> chords = {FIRST_DEGREE, SIXTH_DEGREE, FOURTH_DEGREE, FIRST_DEGREE, FIFTH_DEGREE, FIRST_DEGREE, SECOND_DEGREE, FIFTH_DEGREE,
+//                          FIRST_DEGREE};
+//    vector<int> chords_qualities = {MAJOR_CHORD, MINOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD,
+//                                    MAJOR_CHORD, MINOR_CHORD, DOMINANT_SEVENTH_CHORD, MAJOR_CHORD};
+//    vector<int> states = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, SECOND_INVERSION, FUNDAMENTAL_STATE,
+//                          FUNDAMENTAL_STATE, FIRST_INVERSION, THIRD_INVERSION, FIRST_INVERSION};
+
+    vector<int> chords = {FIFTH_DEGREE, SIXTH_DEGREE};
+    vector<int> chords_qualities = {MAJOR_CHORD, MINOR_CHORD};
+    vector<int> states = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
     int size = chords.size();
-    /// array of integers representing the rhythm
-    int rhythm[size];
-    for(int i = 0; i < 4*size; i++)
-        rhythm[i] = 4;
 
     /// create a new problem
-    auto *pb = new FourVoiceTexture(size, tonality, chords, states);
+    auto *pb = new FourVoiceTexture(size, tonality, chords, chords_qualities, states);
 
-    /// find the solution that minimizes the costs (maximize the preference satisfaction)
-    // const FourVoiceTexture *bestSol = find_best_solution(pb);
-    /// find all solutions to the problem
-    auto start = std::chrono::high_resolution_clock::now();/// start time
-    auto sols = find_all_solutions(pb, BAB_SOLVER);
-    auto end = std::chrono::high_resolution_clock::now();/// end time
+    /// find solution(s)
+    vector<const FourVoiceTexture *> sols;
+    auto start = std::chrono::high_resolution_clock::now();     /// start time
+    if(search_type == "all")
+        sols = find_all_solutions(pb, BAB_SOLVER);
+    else
+        sols.push_back(find_best_solution(pb)); // add the solution to the vector (it only has one element)
+    auto end = std::chrono::high_resolution_clock::now();       /// end time
+
     delete pb;
 
     /// total time spent searching
     std::chrono::duration<double> duration = end - start;
-    std::cout << "Execution time: " << duration.count() << " seconds" << std::endl;
+    string m = "Execution time: " + std::to_string(duration.count()) + "seconds.\n";
+    std::cout << m << std::endl;
+    write_to_log_file(m.c_str(), LogFile);
 
-    ///-------------------------------------------create the MIDI file-----------------------------------------------///
-    MidiFile outputFile; // create an empty MIDI file with one track
-    outputFile.absoluteTicks(); // time information stored as absolute time, will be converted to delta time when written
-
-    outputFile.addTrack(1);   // Add a track to the file (track 0 must be left empty, so add as many as we use
-    vector<uchar> midiEvent;   // temporary storage of MIDI events
-    midiEvent.resize(3);   //set the size of the array to 3 bites (first bite = Start or end of a note, second bite = note value, third bite = velocity
-    int tpq = 120;            // default value in MIDI file is 48 (tempo)
-    outputFile.setTicksPerQuarterNote(tpq);
-
-    /// get the best solution
-    auto bestSolution = sols[sols.size() - 1]; // the last one is the best
-    int* sol_notes = bestSolution->return_solution();
-
-    /// Fill the MidiFile object
-    int actionTime = 0; // relative time for MIDI events (equivalent to rhythm)
-    midiEvent[2] = 64; // store attack/release velocity for note command
-
-    for(int i = 0; i < size; i++){
-        midiEvent[0] = 0x90; /// add the start of the note
-        for(int j = 0; j < 4; j++){
-            midiEvent[1] = sol_notes[4*i+j];
-            outputFile.addEvent(1, actionTime, midiEvent);
-        }
-        actionTime += tpq*rhythm[i]; // increase relative time to the end of these events
-        midiEvent[0] = 0x80; /// add the end of the note
-        for(int j = 0; j < 4; j++){
-            midiEvent[1] = sol_notes[4*i+j];
-            outputFile.addEvent(1, actionTime, midiEvent);
-        }
+    /// check wether we have to create a MIDI file or not
+    if(build_midi == "true"){
+        writeSolsToMIDIFile(size, sols);
     }
-    outputFile.sortTracks(); // make sure data is in correct order
-    outputFile.write("../out/output.mid");
-    std::cout << "MIDIfile created." << std::endl;
 
     return 0;
 }

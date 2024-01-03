@@ -41,3 +41,5 @@ Main
 
 
 c++/gecode.framework
+
+*.mid
