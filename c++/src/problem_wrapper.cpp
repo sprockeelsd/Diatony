@@ -12,7 +12,7 @@
  */
 void *create_new_problem(int size, int key, int mode, int *chord_degrees, int *chord_qualities, int *chord_states) {
     /// date and time for logs
-    write_to_log_file(time().c_str(), LogFile);
+    write_to_log_file(time().c_str(), LOG_FILE);
 
     Tonality *t;
     if(mode == MAJOR_MODE) /// major mode
@@ -70,7 +70,7 @@ void* return_best_solution_space(void* solver){
         bestSol = sol;
     }
     std::cout << "Best solution found: \n\n" << bestSol->to_string() << std::endl;
-    write_to_log_file(bestSol->to_string().c_str(), LogFile);
+    write_to_log_file(bestSol->to_string().c_str(), LOG_FILE);
     return (void*) bestSol;
 }
 

@@ -100,4 +100,27 @@ void compute_cost_for_common_notes_not_in_same_voice(const Home &home, IntVarArr
                                                      IntVarArray commonNotesInSameVoice,
                                                      IntVarArray negativeCommonNotesInSameVoice,
                                                      IntVar nOfCommonNotesInSameVoice);
+
+/**
+ * This function sets the cost for the melodic intervals in all voices.
+ * @param home the instance of the problem
+ * @param absoluteBassMelodicIntervals the array of absolute melodic intervals for the bass
+ * @param absoluteTenorMelodicIntervals the array of absolute melodic intervals for the tenor
+ * @param absoluteAltoMelodicIntervals the array of absolute melodic intervals for the alto
+ * @param absoluteSopranoMelodicIntervals the array of absolute melodic intervals for the soprano
+ * @param nOfSeconds the number of intervals that are a second
+ * @param nOfThirds the number of intervals that are a third
+ * @param nOfFourths the number of intervals that are a fourth
+ * @param nOfFifths the number of intervals that are a fifth
+ * @param nOfSixths the number of intervals that are a sixth
+ * @param nOfSevenths the number of intervals that are a seventh
+ * @param nOfOctaves the number of intervals that are an octave
+ * @param costOfMelodicIntervals the cost of the melodic intervals (weighted sum)
+ */
+void compute_cost_for_melodic_intervals(const Home& home, IntVarArray absoluteBassMelodicIntervals,
+                                        IntVarArray absoluteTenorMelodicIntervals, IntVarArray absoluteAltoMelodicIntervals,
+                                        IntVarArray absoluteSopranoMelodicIntervals, IntVar nOfSeconds, IntVar nOfThirds,
+                                        IntVar nOfFourths, IntVar nOfFifths, IntVar nOfSixths, IntVar nOfSevenths,
+                                        IntVar nOfOctaves, IntVar costOfMelodicIntervals);
+
 #endif //MYPROJECT_PREFERENCES_HPP

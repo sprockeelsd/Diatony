@@ -21,15 +21,19 @@ using namespace Gecode;
  ***********************************************************************************************************************/
 
 /** Files */
-const string LogFile = "log.txt";
-const string StatisticsFile = "statistics.txt";
+const string LOG_FILE = "log.txt";
+const string STATISTICS_FILE = "statistics.txt";
 
 /** Melodic costs */
 const int SECOND_COST = 0;
 const int THIRD_COST = 1;
-const int FOURTH_FIFTH_COST = 2;
+const int FOURTH_COST = 2;
+const int FIFTH_COST = 2;
 const int SIXTH_COST = 3;
 const int SEVENTH_COST = 4;
+const int OCTAVE_COST = 0;
+
+const int MAX_MELODIC_COST = SEVENTH_COST;
 
 /** Types of search engines */
 enum solver_types{
@@ -107,6 +111,8 @@ enum intervals{
 
 // augmented/diminished intervals
 const int AUGMENTED_SECOND = 3;
+const int AUGMENTED_FOURTH = TRITONE;
+const int DIMINISHED_FIFTH = TRITONE;
 
 /** Chords */
 enum chordTypes{

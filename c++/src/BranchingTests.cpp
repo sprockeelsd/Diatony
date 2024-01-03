@@ -72,7 +72,7 @@ int main(int argc, char* argv[]) {
                                                      testCase[1], testCase[3]);
             }
             string testConfig = "Test case: " + testCasesNames[j] + " in " + tonalityNames[i] + "\n";
-            write_to_log_file(testConfig.c_str(), StatisticsFile);
+            write_to_log_file(testConfig.c_str(), STATISTICS_FILE);
 
             auto bestSol = find_best_solution(problem);
 

@@ -1,0 +1,120 @@
+Test case: I5 - V5 - I5 - V65 - I6 - II6 - V64 - V7+ - I5 in C Major
+
+
+Best solution search statistics:
+Nodes traversed: 22148
+Failed nodes explored: 11049
+Restarts performed: 0
+Propagators executed: 38487305
+No goods generated: 0
+Maximal depth of explored tree: 32
+
+Total search statistics: 
+Nodes traversed: 67855
+Failed nodes explored: 33907
+Restarts performed: 0
+Propagators executed: 99039864
+No goods generated: 0
+Maximal depth of explored tree: 32
+
+
+Test case: I5 - V5 - I5 - V65 - I6 - II6 - V64 - V7+ - I5 in C Minor
+
+
+Best solution search statistics:
+Nodes traversed: 91056
+Failed nodes explored: 45505
+Restarts performed: 0
+Propagators executed: 134582982
+No goods generated: 0
+Maximal depth of explored tree: 33
+
+Total search statistics: 
+Nodes traversed: 101795
+Failed nodes explored: 50877
+Restarts performed: 0
+Propagators executed: 147228928
+No goods generated: 0
+Maximal depth of explored tree: 33
+
+
+Test case: I5 - V5 - I5 - V65 - I6 - II6 - V64 - V7+ - I5 in Ab Major
+
+
+Best solution search statistics:
+Nodes traversed: 83063
+Failed nodes explored: 41493
+Restarts performed: 0
+Propagators executed: 93552124
+No goods generated: 0
+Maximal depth of explored tree: 33
+
+Total search statistics: 
+Nodes traversed: 83403
+Failed nodes explored: 41668
+Restarts performed: 0
+Propagators executed: 94057652
+No goods generated: 0
+Maximal depth of explored tree: 33
+
+
+Test case: I5 - V5 - I5 - V65 - I6 - II6 - V64 - V7+ - I5 in Bb Minor
+
+
+Best solution search statistics:
+Nodes traversed: 217346
+Failed nodes explored: 108646
+Restarts performed: 0
+Propagators executed: 303798621
+No goods generated: 0
+Maximal depth of explored tree: 32
+
+Total search statistics: 
+Nodes traversed: 247539
+Failed nodes explored: 123746
+Restarts performed: 0
+Propagators executed: 341593351
+No goods generated: 0
+Maximal depth of explored tree: 32
+
+
+Test case: I5 - V5 - I5 - V65 - I6 - II6 - V64 - V7+ - I5 in E Major
+
+
+Best solution search statistics:
+Nodes traversed: 56469
+Failed nodes explored: 28221
+Restarts performed: 0
+Propagators executed: 75620857
+No goods generated: 0
+Maximal depth of explored tree: 31
+
+Total search statistics: 
+Nodes traversed: 74551
+Failed nodes explored: 37268
+Restarts performed: 0
+Propagators executed: 100991651
+No goods generated: 0
+Maximal depth of explored tree: 31
+
+
+Test case: I5 - V5 - I5 - V65 - I6 - II6 - V64 - V7+ - I5 in C# Minor
+
+
+Best solution search statistics:
+Nodes traversed: 43176
+Failed nodes explored: 21561
+Restarts performed: 0
+Propagators executed: 60150557
+No goods generated: 0
+Maximal depth of explored tree: 35
+
+Total search statistics: 
+Nodes traversed: 96009
+Failed nodes explored: 47982
+Restarts performed: 0
+Propagators executed: 129667067
+No goods generated: 0
+Maximal depth of explored tree: 35
+
+
