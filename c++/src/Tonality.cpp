@@ -46,7 +46,7 @@ Tonality::Tonality(int t, int m, vector<int> s) {
     /// chord qualities and scale degrees chords are set in the child classes
 }
 
-string Tonality::get_name() {
+string Tonality::get_name() const {
     return noteNames[tonic] + " " + modeNames[mode] + "\n";
 }
 
@@ -54,7 +54,7 @@ string Tonality::get_name() {
  * Get the tonic of the tonality
  * @return the tonic of the tonality
  */
-int Tonality::get_tonic() {
+int Tonality::get_tonic() const {
     return tonic;
 }
 
@@ -62,7 +62,7 @@ int Tonality::get_tonic() {
  * Get the mode of the tonality
  * @return the mode of the tonality
  */
-int Tonality::get_mode(){
+int Tonality::get_mode() const{
     return mode;
 }
 

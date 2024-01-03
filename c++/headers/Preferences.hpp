@@ -11,15 +11,15 @@
  * @param size the number of chords
  * @param nVoices the number of voices
  * @param tonality the tonality of the piece
- * @param chordDegs the degrees of the chords
- * @param chordStas the state of the chord (inversion)
+ * @param chordDegrees the degrees of the chords
+ * @param chordStates the state of the chord (inversion)
  * @param fullChordsVoicing the array containing all the chords in the form
  *          [bass0, alto0, tenor0, soprano0, bass1, alto1, tenor1, soprano1, ...]
  * @param nOfDifferentNotes the array containing the number of different notes in each diminished chord.
  * @param costVar the variable that will contain the number of diminished chords that don't respect the preference
  */
-void compute_diminished_chords_cost(const Home& home, int size, int nVoices, Tonality *tonality, vector<int> chordDegs,
-                                    vector<int> chordStas, IntVarArray fullChordsVoicing, IntVarArray nOfDifferentNotes,
+void compute_diminished_chords_cost(const Home& home, int size, int nVoices, Tonality *tonality, vector<int> chordDegrees,
+                                    vector<int> chordStates, IntVarArray fullChordsVoicing, IntVarArray nOfDifferentNotes,
                                     const IntVar& costVar);
 
 /**
@@ -42,14 +42,14 @@ void compute_n_of_notes_in_chord_cost(const Home& home, int size, int nVoices, I
  * @param size the size of the chord
  * @param nVoices the number of voices
  * @param tonality the tonality of the piece
- * @param chordDegs the array containing the degree of each chord
- * @param chordStas the array containing the state of each chord
+ * @param chordDegrees the array containing the degree of each chord
+ * @param chordStates the array containing the state of each chord
  * @param fullChordsVoicing the array containing all the chords in the form [bass, alto, tenor, soprano]
  * @param nOccurrencesFund the array containing the number of times the fundamental is present in each chord
  * @param costVar the variable that will contain the cost
  */
 void compute_fundamental_state_doubling_cost(const Home &home, int size, int nVoices, Tonality *tonality,
-                                             vector<int> chordDegs, vector<int> chordStas,
+                                             vector<int> chordDegrees, vector<int> chordStates,
                                              IntVarArray fullChordsVoicing, IntVarArray nOccurrencesFund,
                                              const IntVar &costVar);
 
@@ -66,7 +66,7 @@ void compute_fundamental_state_doubling_cost(const Home &home, int size, int nVo
  * @param nOfCommonNotesInSoprano the number of times when there is a common note in the soprano voice
  */
 void compute_cost_for_common_note_in_soprano(const Home &home, IntVarArray commonNotesInSameVoice,
-                                             IntVar nCommonNotesInSoprano);
+                                             const IntVar& nCommonNotesInSoprano);
 
 /**
  * This function counts the number of incomplete chords
@@ -78,9 +78,9 @@ void compute_cost_for_common_note_in_soprano(const Home &home, IntVarArray commo
  * each chord
  * @param nOfIncompleteChords an IntVar counting the number of incomplete chords in the chord progression
  */
-void compute_cost_for_incomplete_chords(const Home &home, int size, int nVoices, IntArgs nNotesInChords,
+void compute_cost_for_incomplete_chords(const Home &home, int size, int nVoices, const IntArgs& nNotesInChords,
                                         IntVarArray fullChordsVoicing, IntVarArray nDiffNotesInChord,
-                                        IntVar nOfIncompleteChords);
+                                        const IntVar& nOfIncompleteChords);
 
 /**
  * This function sets the cost for the number of times when there is a common note in the same voice between consecutive
@@ -93,10 +93,36 @@ void compute_cost_for_incomplete_chords(const Home &home, int size, int nVoices,
  * @param commonNotesInSameVoice an array containing the number of times when there is a common note in the same voice for each voice
  * @param nOfCommonNotesInSameVoice the total number of times when there is a common note in the same voice
  */
-void compute_cost_for_common_notes_not_in_same_voice(const Home &home, IntVarArray absoluteBassMelodicIntervals,
-                                                     IntVarArray absoluteTenorMelodicIntervals,
-                                                     IntVarArray absoluteAltoMelodicIntervals,
-                                                     IntVarArray absoluteSopranoMelodicIntervals,
+void compute_cost_for_common_notes_not_in_same_voice(const Home &home, const IntVarArray& absoluteBassMelodicIntervals,
+                                                     const IntVarArray& absoluteTenorMelodicIntervals,
+                                                     const IntVarArray& absoluteAltoMelodicIntervals,
+                                                     const IntVarArray& absoluteSopranoMelodicIntervals,
                                                      IntVarArray commonNotesInSameVoice,
-                                                     IntVar nOfCommonNotesInSameVoice);
+                                                     IntVarArray negativeCommonNotesInSameVoice,
+                                                     const IntVar& nOfCommonNotesInSameVoice);
+
+/**
+ * This function sets the cost for the melodic intervals in all voices.
+ * @param home the instance of the problem
+ * @param absoluteBassMelodicIntervals the array of absolute melodic intervals for the bass
+ * @param absoluteTenorMelodicIntervals the array of absolute melodic intervals for the tenor
+ * @param absoluteAltoMelodicIntervals the array of absolute melodic intervals for the alto
+ * @param absoluteSopranoMelodicIntervals the array of absolute melodic intervals for the soprano
+ * @param nOfSeconds the number of intervals that are a second
+ * @param nOfThirds the number of intervals that are a third
+ * @param nOfFourths the number of intervals that are a fourth
+ * @param nOfFifths the number of intervals that are a fifth
+ * @param nOfSixths the number of intervals that are a sixth
+ * @param nOfSevenths the number of intervals that are a seventh
+ * @param nOfOctaves the number of intervals that are an octave
+ * @param costOfMelodicIntervals the cost of the melodic intervals (weighted sum)
+ */
+void compute_cost_for_melodic_intervals(const Home& home, const IntVarArray& absoluteBassMelodicIntervals,
+                                        const IntVarArray& absoluteTenorMelodicIntervals,
+                                        const IntVarArray& absoluteAltoMelodicIntervals,
+                                        const IntVarArray& absoluteSopranoMelodicIntervals, const IntVar& nOfSeconds,
+                                        const IntVar& nOfThirds, const IntVar& nOfFourths, const IntVar& nOfFifths,
+                                        const IntVar& nOfSixths, const IntVar& nOfSevenths, const IntVar& nOfOctaves,
+                                        const IntVar& costOfMelodicIntervals);
+
 #endif //MYPROJECT_PREFERENCES_HPP

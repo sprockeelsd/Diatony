@@ -20,8 +20,20 @@ using namespace Gecode;
  *                                                                                                                     *
  ***********************************************************************************************************************/
 
-const string LogFile = "log.txt";
-const string StatisticsFile = "statistics.txt";
+/** Files */
+const string LOG_FILE = "log.txt";
+const string STATISTICS_FILE = "statistics.txt";
+
+/** Melodic costs */
+const int SECOND_COST = 0;
+const int THIRD_COST = 1;
+const int FOURTH_COST = 2;
+const int FIFTH_COST = 2;
+const int SIXTH_COST = 3;
+const int SEVENTH_COST = 4;
+const int OCTAVE_COST = 0;
+
+const int MAX_MELODIC_COST = SEVENTH_COST;
 
 /** Types of search engines */
 enum solver_types{
@@ -99,6 +111,8 @@ enum intervals{
 
 // augmented/diminished intervals
 const int AUGMENTED_SECOND = 3;
+const int AUGMENTED_FOURTH = TRITONE;
+const int DIMINISHED_FIFTH = TRITONE;
 
 /** Chords */
 enum chordTypes{
@@ -230,7 +244,7 @@ string statistics_to_string(Search::Statistics stats);
  * @param var an integer variable
  * @return a string representing the value of the variable
  */
-string intVar_to_string(IntVar var);
+string intVar_to_string(const IntVar& var);
 
 /**
  * Returns the values of an array of variables as a string. Calls the intVar_to_string function
@@ -262,6 +276,6 @@ string time();
  * Write a text into a log file
  * @param message the text to write
  */
-void write_to_log_file(const char *message, string filename);
+void write_to_log_file(const char *message, const string& filename);
 
 #endif

@@ -26,8 +26,9 @@ int main(int argc, char* argv[]) {
     vector<Tonality*> tonalities = {CMajor, CMinor, AbMajor, BbMinor, EMajor, CsharpMinor};
 
     vector<string> tonalityNames;
-    for(int i = 0; i < tonalities.size();i++)
-        tonalityNames.push_back(tonalities[i]->get_name());
+    tonalityNames.reserve(tonalities.size());
+    for(auto & tonality : tonalities)
+        tonalityNames.push_back(tonality->get_name());
 
 /***********************************************************************************************************************
  *                                                                                                                     *
@@ -63,7 +64,7 @@ int main(int argc, char* argv[]) {
         int j = 0;
         for(auto testCase : testCases){
             FourVoiceTexture* problem;
-            if(MinorTonality* minorPtr = dynamic_cast<MinorTonality*>(tonality)){ /// the tonality is minor
+            if(auto* minorPtr = dynamic_cast<MinorTonality*>(tonality)){ /// the tonality is minor
                 problem = new FourVoiceTexture(testCase[0].size(), tonality, testCase[0],
                                                      testCase[2], testCase[3]);
             }
@@ -72,7 +73,7 @@ int main(int argc, char* argv[]) {
                                                      testCase[1], testCase[3]);
             }
             string testConfig = "Test case: " + testCasesNames[j] + " in " + tonalityNames[i] + "\n";
-            write_to_log_file(testConfig.c_str(), StatisticsFile);
+            write_to_log_file(testConfig.c_str(), STATISTICS_FILE);
 
             auto bestSol = find_best_solution(problem);
 

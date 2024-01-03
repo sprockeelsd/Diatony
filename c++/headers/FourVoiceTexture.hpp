@@ -78,17 +78,24 @@ protected:
     IntVarArray nOccurrencesBassInFundamentalState;     // number of chords that don't double the bass in fundamental state
     IntVarArray nOFDifferentNotesInChords;              // the number of different notes (the octave doesn't matter) in each chord
     IntVarArray commonNotesInSameVoice;                 // chords with common notes in the same voice between consecutive chords
+    IntVarArray negativeCommonNotesInSameVoice;         // negative so we can maximize it by minimizing it (makes sense)
 
+    IntVar nOfSeconds;                                  // number of intervals that are a second
+    IntVar nOfThirds;                                   // number of intervals that are a third
+    IntVar nOfFourths;                                  // number of intervals that are a fourth
+    IntVar nOfFifths;                                   // number of intervals that are a fifth
+    IntVar nOfSixths;                                   // number of intervals that are a sixth
+    IntVar nOfSevenths;                                 // number of intervals that are a seventh
+    IntVar nOfOctaves;                                  // number of intervals that are an octave
 
     /// cost variables
-    IntVar sumOfMelodicIntervals;                       // for minimizing voice movement between voices
     IntVar nOfDiminishedChordsWith4notes;               // number of diminished chords that don't respect the preferences
     IntVar nOfChordsWithLessThan4notes;                 // number of chords with less than 4 notes
     IntVar nOfFundamentalStateChordsWithoutDoubledBass; // number of fundamental state chords that don't follow the preferences
-    IntVar nOfCommonNotesInSoprano;                     // number of common notes in outside voices
     IntVar nOfIncompleteChords;                         // number of incomplete chords
     /// /!\ this cost needs to be maximized, so its value is negative
     IntVar nOfCommonNotesInSameVoice;                   // number of common notes in the same voice between consecutive chords
+    IntVar costOfMelodicIntervals;                      // for minimizing voice movement between voices
 
 public:
     /**
