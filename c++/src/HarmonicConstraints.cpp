@@ -45,9 +45,6 @@ void set_bass(const Home& home, Tonality *tonality, int degree, int state, IntVa
  ***********************************************************************************************************************/
 
 /**
- * @todo change this for complete and incomplete chords later (third must be <=1 depending on the chord before and
- * @todo after if they are 5->1 and complete/incomplete)
- * @todo maybe make it a preference later
  * Sets the number of times each note of the notes of the chord are present in the chord
  * @param home the instance of the problem
  * @param degree the degree of the chord
@@ -59,7 +56,7 @@ void set_bass(const Home& home, Tonality *tonality, int degree, int state, IntVa
  */
 void chord_note_occurrence_fundamental_state(Home home, int nVoices, int degree, int quality, Tonality *tonality,
                                              const IntVarArgs &currentChord,
-                                             const IntVar &nDifferentValuesInDiminishedChord, IntVar nOfNotesInChord) {
+                                             const IntVar &nDifferentValuesInDiminishedChord, const IntVar& nOfNotesInChord) {
     /// if the chord is a diminished seventh degree, the third must be doubled
     if(degree == SEVENTH_DEGREE && quality == DIMINISHED_CHORD){
         /// If there are 4 different notes, then the third must be doubled. Otherwise any note can be doubled as
@@ -78,7 +75,7 @@ void chord_note_occurrence_fundamental_state(Home home, int nVoices, int degree,
         count(home, currentChord, tonality->get_scale_degree(degree), IRT_GQ,1);
         count(home, currentChord, tonality->get_scale_degree((degree + THIRD_DEGREE) % 7), IRT_EQ,1);
         count(home, currentChord, tonality->get_scale_degree((degree + FIFTH_DEGREE) % 7), IRT_LQ, 1);
-        //@todo change by > minor chord ou >= dominant 7 chord
+
         if(quality >= DOMINANT_SEVENTH_CHORD){
             count(home, currentChord, tonality->get_scale_degree((degree + SEVENTH_DEGREE) % 7), IRT_EQ, 1);
             /// if the chord is incomplete, double the bass
@@ -91,7 +88,7 @@ void chord_note_occurrence_fundamental_state(Home home, int nVoices, int degree,
     }
     else if(degree == FIRST_DEGREE){
         count(home, currentChord, tonality->get_scale_degree(degree), IRT_GQ,1);
-        count(home, currentChord, tonality->get_scale_degree((degree + THIRD_DEGREE) % 7), IRT_GQ,1);
+        count(home, currentChord, tonality->get_scale_degree((degree + THIRD_DEGREE) % 7), IRT_EQ,1);
         count(home, currentChord, tonality->get_scale_degree((degree + FIFTH_DEGREE) % 7), IRT_LQ, 1);
         /// if the chord is incomplete, then the bass must be tripled and the third should be there once.
         BoolVar isIncomplete(expr(home, nOfNotesInChord < 3));

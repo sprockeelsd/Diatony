@@ -14,7 +14,7 @@ using namespace std;
 using namespace smf;
 
 /**
- * Creates a MIDI file with the solutions of the problem
+ * Finds solutions to a musical problem
  * Takes 2 arguments:
  * - the first one specifies whether we need to find all solutions or just the best one
  * - The second specifies whether we need to create a MIDI file or not
@@ -25,7 +25,7 @@ int main(int argc, char* argv[]) {
         return 1;
 
     Tonality* tonality = new MajorTonality(C);
-    write_to_log_file(time().c_str());
+    write_to_log_file(time().c_str(), LogFile);
 
     std::string search_type = argv[1];
     std::string build_midi = argv[2];
@@ -46,16 +46,16 @@ int main(int argc, char* argv[]) {
 //                          FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FIRST_INVERSION, FUNDAMENTAL_STATE,
 //                          FIRST_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
     /// vectors representing the chords and the states
-    vector<int> chords = {FIRST_DEGREE, SIXTH_DEGREE, FOURTH_DEGREE, FIRST_DEGREE, FIFTH_DEGREE, FIRST_DEGREE, SECOND_DEGREE, FIFTH_DEGREE,
-                          FIRST_DEGREE};
-    vector<int> chords_qualities = {MAJOR_CHORD, MINOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD,
-                                    MAJOR_CHORD, MINOR_CHORD, DOMINANT_SEVENTH_CHORD, MAJOR_CHORD};
-    vector<int> states = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, SECOND_INVERSION, FUNDAMENTAL_STATE,
-                          FUNDAMENTAL_STATE, FIRST_INVERSION, THIRD_INVERSION, FIRST_INVERSION};
+//    vector<int> chords = {FIRST_DEGREE, SIXTH_DEGREE, FOURTH_DEGREE, FIRST_DEGREE, FIFTH_DEGREE, FIRST_DEGREE, SECOND_DEGREE, FIFTH_DEGREE,
+//                          FIRST_DEGREE};
+//    vector<int> chords_qualities = {MAJOR_CHORD, MINOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD,
+//                                    MAJOR_CHORD, MINOR_CHORD, DOMINANT_SEVENTH_CHORD, MAJOR_CHORD};
+//    vector<int> states = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, SECOND_INVERSION, FUNDAMENTAL_STATE,
+//                          FUNDAMENTAL_STATE, FIRST_INVERSION, THIRD_INVERSION, FIRST_INVERSION};
 
-//    vector<int> chords = {FIFTH_DEGREE, FIRST_DEGREE};
-//    vector<int> chords_qualities = {DOMINANT_SEVENTH_CHORD, MAJOR_CHORD};
-//    vector<int> states = {SECOND_INVERSION, FUNDAMENTAL_STATE};
+    vector<int> chords = {FIFTH_DEGREE, SIXTH_DEGREE};
+    vector<int> chords_qualities = {MAJOR_CHORD, MINOR_CHORD};
+    vector<int> states = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
     int size = chords.size();
 
     /// create a new problem
@@ -76,7 +76,7 @@ int main(int argc, char* argv[]) {
     std::chrono::duration<double> duration = end - start;
     string m = "Execution time: " + std::to_string(duration.count()) + "seconds.\n";
     std::cout << m << std::endl;
-    write_to_log_file(m.c_str());
+    write_to_log_file(m.c_str(), LogFile);
 
     /// check wether we have to create a MIDI file or not
     if(build_midi == "true"){

@@ -20,6 +20,9 @@ using namespace Gecode;
  *                                                                                                                     *
  ***********************************************************************************************************************/
 
+const string LogFile = "log.txt";
+const string StatisticsFile = "statistics.txt";
+
 /** Types of search engines */
 enum solver_types{
     DFS_SOLVER, //0
@@ -259,6 +262,6 @@ string time();
  * Write a text into a log file
  * @param message the text to write
  */
-void write_to_log_file(const char* message);
+void write_to_log_file(const char *message, string filename);
 
 #endif

@@ -64,7 +64,7 @@ void set_bass(const Home& home, Tonality *tonality, int degree, int state, IntVa
  */
 void chord_note_occurrence_fundamental_state(Home home, int nVoices, int degree, int quality, Tonality *tonality,
                                              const IntVarArgs &currentChord,
-                                             const IntVar &nDifferentValuesInDiminishedChord, IntVar nOfNotesInChord);
+                                             const IntVar &nDifferentValuesInDiminishedChord, const IntVar& nOfNotesInChord);
 
 /***********************************************************************************************************************
  *                                                                                                                     *

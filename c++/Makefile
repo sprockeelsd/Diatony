@@ -39,28 +39,26 @@ so:
 compile:
 	g++ -std=c++11 -F/Library/Frameworks -framework gecode -o ../out/Main $(PROBLEM_FILES) $(MIDI_FILES) src/Main.cpp
 #run the main.cpp file on macOS
-midifile: compile
+midifile: clean compile
 	clear
-	rm -f $(LOG_FILE)
 	./../out/Main $(BEST_SOL) $(BUILD_MIDI)
 
 all_midifile: compile
 	clear
-	rm -f $(LOG_FILE)
 	./../out/Main $(ALL_SOLS) $(BUILD_MIDI)
 
 best_sol: compile
 	clear
-	rm -f $(LOG_FILE)
 	./../out/Main $(BEST_SOL) $(NO_MIDI)
 
 all_sols: compile
 	clear
-	rm -f $(LOG_FILE)
 	./../out/Main $(ALL_SOLS) $(NO_MIDI)
 
-debug:
-	g++ -g -std=c++11 -F/Library/Frameworks -framework gecode -o ../out/Main $(PROBLEM_FILES) $(MIDI_FILES) src/Main.cpp
+test_branching: clean
+	g++ -std=c++11 -F/Library/Frameworks -framework gecode -o ../out/branch $(PROBLEM_FILES) $(MIDI_FILES) src/BranchingTests.cpp
+	clear
+	./../out/branch
 
 test_tonality:
 	g++ -std=c++11 -F/Library/Frameworks -framework gecode -o testTonality $(SRC_DIR)/Utilities.cpp \
@@ -74,8 +72,6 @@ find_gecode_mac_os:
 
 #remove temporary files and dynamic library files
 clean:
-	rm -f  ../out/log.txt ../out/*.o *.so *.dylib ../out/*.so ../out/*.dylib ../out/Main testTonality *.mid
-
-remove_midi:
-	rm -f ../out/MidiFiles/*.mid
+	rm -f  ../out/log.txt ../out/statistics.txt ../out/*.o ../out/*.so ../out/*.dylib ../out/Main ../out/branch testTonality  \
+	../out/MidiFiles/*.mid
 

@@ -70,11 +70,8 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     nOfIncompleteChords = IntVar(*this, 0, size);
     nOfCommonNotesInSameVoice = IntVar(*this, - nOfVoices * (size - 1), 0);
 
-
-    /// print parameters to log file
-    write_to_log_file(parameters().c_str());
-
     /// Test constraints
+
 
     /**-----------------------------------------------------------------------------------------------------------------
     |                                                                                                                  |
@@ -228,7 +225,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
         /// special rule for interrupted cadence
         if (chordDegs[i] == FIFTH_DEGREE && chordStas[i] == FUNDAMENTAL_STATE &&
         chordDegs[i + 1] == SIXTH_DEGREE && chordStas[i + 1] == FUNDAMENTAL_STATE) {
-            interrupted_cadence(*this, i, tonality,
+            interrupted_cadence(*this, nOfVoices, i, tonality,
                                 FullChordsVoicing, tenorMelodicIntervals,
                                 altoMelodicIntervals, sopranoMelodicIntervals);
         }
@@ -314,7 +311,7 @@ IntVarArgs FourVoiceTexture::cost() const {
     // @todo maybe give the voices a priority + check the order depending on what is more important
     //@todo change the sum of melodic intervals to minimize the number of skips and prefer the steps
     return {nOfDiminishedChordsWith4notes, nOfChordsWithLessThan4notes, nOfFundamentalStateChordsWithoutDoubledBass,
-            nOfIncompleteChords, nOfCommonNotesInSameVoice, sumOfMelodicIntervals};//nOfCommonNotesInSoprano,
+            nOfIncompleteChords, nOfCommonNotesInSoprano, nOfCommonNotesInSameVoice, sumOfMelodicIntervals};
 }
 
 /**
