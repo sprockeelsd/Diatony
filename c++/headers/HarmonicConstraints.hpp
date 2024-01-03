@@ -107,6 +107,6 @@ void chord_note_occurrence_first_inversion(Home home, int size, int nVoices, int
  * @param qualities the qualities of the chords
  * @param currentChord the array containing a chord in the form [bass, alto, tenor, soprano]
  */
-void chord_note_occurrence_second_inversion(Home home, int size, int nVoices, int currentPos, Tonality *tonality,
+void chord_note_occurrence_second_inversion(const Home& home, int size, int nVoices, int currentPos, Tonality *tonality,
                                             vector<int> degrees, vector<int> qualities, const IntVarArgs &currentChord);
 #endif

@@ -47,19 +47,19 @@ public:
      * Get the name of the tonality
      * @return a string containing the name of the tonality
      */
-    string get_name();
+    string get_name() const;
 
     /**
      * Get the tonic of the tonality
      * @return the tonic of the tonality
      */
-    int get_tonic();
+    int get_tonic() const;
 
     /**
      * Get the mode of the tonality
      * @return the mode of the tonality
      */
-    int get_mode();
+    int get_mode() const;
 
     /**
      * Get the scale of the tonality

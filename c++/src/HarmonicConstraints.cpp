@@ -56,7 +56,8 @@ void set_bass(const Home& home, Tonality *tonality, int degree, int state, IntVa
  */
 void chord_note_occurrence_fundamental_state(Home home, int nVoices, int degree, int quality, Tonality *tonality,
                                              const IntVarArgs &currentChord,
-                                             const IntVar &nDifferentValuesInDiminishedChord, const IntVar& nOfNotesInChord) {
+                                             const IntVar &nDifferentValuesInDiminishedChord,
+                                             const IntVar& nOfNotesInChord) {
     /// if the chord is a diminished seventh degree, the third must be doubled
     if(degree == SEVENTH_DEGREE && quality == DIMINISHED_CHORD){
         /// If there are 4 different notes, then the third must be doubled. Otherwise any note can be doubled as
@@ -197,7 +198,7 @@ void chord_note_occurrence_first_inversion(Home home, int size, int nVoices, int
  * @param qualities the qualities of the chords
  * @param currentChord the array containing a chord in the form [bass, alto, tenor, soprano]
  */
-void chord_note_occurrence_second_inversion(Home home, int size, int nVoices, int currentPos, Tonality *tonality,
+void chord_note_occurrence_second_inversion(const Home& home, int size, int nVoices, int currentPos, Tonality *tonality,
                                             vector<int> degrees, vector<int> qualities, const IntVarArgs &currentChord){
     if(degrees[currentPos] == SEVENTH_DEGREE && qualities[currentPos] == DIMINISHED_CHORD) {
         count(home, currentChord, tonality->get_scale_degree((degrees[currentPos] + FIRST_DEGREE) % 7), IRT_EQ, 1);

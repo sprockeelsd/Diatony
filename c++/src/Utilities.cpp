@@ -110,7 +110,7 @@ string statistics_to_string(Search::Statistics stats){
  * @param var an integer variable
  * @return a string representing the value of the variable
  */
-string intVar_to_string(IntVar var){
+string intVar_to_string(const IntVar& var){
     if (var.assigned())
         return to_string(var.val());
     return "<not assigned>";
@@ -152,14 +152,6 @@ string mode_int_to_name(int mode){
 }
 
 /**
- * Prints a node in MIDIcent value
- * @param var an integer variable
- */
-void print_note_for_OM(IntVar var){
-    std::cout << var.val() * 100 << " ";
-}
-
-/**
  * returns a string with the time
  * @return a string with the time
  */
@@ -175,7 +167,7 @@ string time(){
  * Useful for debugging in the OM environment
  * @param message the text to write
  */
-void write_to_log_file(const char *message, string filename) {
+void write_to_log_file(const char *message, const string& filename) {
     const char* homeDir = std::getenv("HOME"); // Get the user's home directory
     if (homeDir) {
         std::string filePath(homeDir);

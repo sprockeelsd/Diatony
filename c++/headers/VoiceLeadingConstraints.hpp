@@ -140,8 +140,8 @@ void interrupted_cadence(const Home &home, int nVoices, int currentPosition, Ton
  * @param altoMelodicInterval the melodic interval of the alto between the current position and the next
  * @param sopranoMelodicInterval the melodic interval of the soprano between the current position and the next
  */
-void fifth_degree_appogiatura(Home home, int nVoices, int currentPosition, Tonality *tonality, IntVarArray fullChordsVoicing,
-                              IntVarArray bassMelodicInterval, IntVarArray tenorMelodicInterval,
-                              IntVarArray altoMelodicInterval, IntVarArray sopranoMelodicInterval);
+void fifth_degree_appogiatura(const Home& home, int nVoices, int currentPosition, Tonality *tonality, IntVarArray fullChordsVoicing,
+                              IntVarArray bassMelodicInterval, const IntVarArray& tenorMelodicInterval,
+                              const IntVarArray& altoMelodicInterval, const IntVarArray& sopranoMelodicInterval);
 
 #endif
