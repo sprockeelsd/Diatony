@@ -46,6 +46,8 @@ int main(int argc, char* argv[]) {
     vector<int> states1 = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, SECOND_INVERSION, FIRST_INVERSION,
                           FIRST_INVERSION, SECOND_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
     vector<vector<int>> testCase1 = {chords1, chords_qualities_major1, chords_qualities_minor1, states1};
+
+
     auto testCases = {testCase1};
 
     vector<string> testCasesNames = {testCase1Name};
@@ -56,34 +58,38 @@ int main(int argc, char* argv[]) {
  *                                                                                                                     *
  ***********************************************************************************************************************/
 
-    //@todo vary the branching strategies to compare them
+    write_to_log_file(time().c_str(), LOG_FILE);
 
     int solNumber = 0;
     int i = 0;
+    /// for each tonality
     for (auto tonality : tonalities){
         int j = 0;
+        /// for each test case
         for(auto testCase : testCases){
-            FourVoiceTexture* problem;
-            if(auto* minorPtr = dynamic_cast<MinorTonality*>(tonality)){ /// the tonality is minor
-                problem = new FourVoiceTexture(testCase[0].size(), tonality, testCase[0],
-                                                     testCase[2], testCase[3]);
-            }
-            else{/// the tonality is major
-                problem = new FourVoiceTexture(testCase[0].size(), tonality, testCase[0],
-                                                     testCase[1], testCase[3]);
-            }
             string testConfig = "Test case: " + testCasesNames[j] + " in " + tonalityNames[i] + "\n";
             write_to_log_file(testConfig.c_str(), STATISTICS_FILE);
+            /// for each branching strategy
+            for(int strat = DEGREE_MAX_VAL_MIN; strat <= BRANCHING_TEMPLATE; strat++){
+                write_to_log_file(branchingStrategiesNames[strat].c_str(), STATISTICS_FILE);
+                FourVoiceTexture* problem;
+                if(auto* minorPtr = dynamic_cast<MinorTonality*>(tonality)){ /// the tonality is minor
+                    problem = new FourVoiceTexture(testCase[0].size(), tonality, testCase[0],
+                                                   testCase[2], testCase[3], strat);
+                }
+                else{/// the tonality is major
+                    problem = new FourVoiceTexture(testCase[0].size(), tonality, testCase[0],
+                                                   testCase[1], testCase[3], strat);
+                }
 
-            auto bestSol = find_best_solution(problem);
+                auto bestSol = find_best_solution(problem, 90000);
 
-            writeSolToMIDIFile(testCase[0].size(), solNumber, bestSol);
-
-            solNumber++;
+                writeSolToMIDIFile(testCase[0].size(), solNumber, bestSol);
+                solNumber++;
+            }
             j++;
         }
         i++;
     }
-
     return 0;
 }

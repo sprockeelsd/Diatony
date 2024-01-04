@@ -18,7 +18,7 @@
  * Returns a FourVoiceTexture object
  */
 FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, vector<int> chordQuals,
-                                   vector<int> chordStas){
+                                   vector<int> chordStas, int branchingStrategy) {
     /// basic data
     size = s;
     tonality = t;
@@ -278,32 +278,20 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     |                                                       Branching                                                  |
     |                                                                                                                  |
     -------------------------------------------------------------------------------------------------------------------*/
-
-    /// variable selection heuristic
-    /// go <--
-    auto meritFunction = [](const Space& home, IntVar x, int i) {
-        return i;
-    };
-
-    /// value selection heuristic
-    /// choose a note that is not already present in the chord
-    auto branchVal = [](const Space& home, IntVar x, int i) {
-        auto space = (FourVoiceTexture&) home;
-        int chordPos = i / space.nOfVoices; //division entière
-        return x.min();
-    };
-    auto branchCommit = [](Space& home, unsigned int a, IntVar x, int i, int n){
-        if (a == 0U){
-            rel(home, x, IRT_EQ, n);
-        } else {
-            rel(home, x, IRT_NQ, n);
-        }
-    };
-
-    //branch(*this, FullChordsVoicing, INT_VAR_MERIT_MAX(meritFunction), INT_VAL(branchVal, branchCommit));
-
-    /// choose the variable with the highest AFC, in case of a tie choose the one with the highest degree
-    branch(*this, FullChordsVoicing, INT_VAR_DEGREE_MAX(), INT_VAL_MIN()); // choose the smallest melodic intervals possible
+    switch (branchingStrategy) {
+        case DEGREE_MAX_VAL_MIN:
+            branching_max_degree_val_min(*this, FullChordsVoicing);
+            break;
+        case DOM_SIZE_MIN_VAL_MIN:
+            branching_dom_size_min_val_min(*this, FullChordsVoicing);
+            break;
+        case BRANCHING_TEMPLATE:
+            branching_template(*this, FullChordsVoicing);
+            break;
+        default:
+            branching_max_degree_val_min(*this, FullChordsVoicing);
+            break;
+    }
 }
 
 /**
@@ -517,4 +505,53 @@ string FourVoiceTexture::to_string(){
     message += "costOfMelodicIntervals = " + intVar_to_string(costOfMelodicIntervals) + "\n\n";
 
     return message;
+}
+
+/**
+ * Posts the branching heuristic
+ * Variable selection: select the variable with the highest degree
+ * Value selection: select the value with the lowest value
+ * @param home the current space
+ * @param notes the variable array to branch on
+ */
+void branching_max_degree_val_min(const Home& home, const IntVarArray& notes){
+    branch(home, notes, INT_VAR_DEGREE_MAX(), INT_VAL_MIN());
+}
+
+/**
+ * Posts the branching heuristic
+ * Variable selection: select the variable with the smallest domain
+ * Value selection: select the value with the lowest value
+ * @param home the current space
+ * @param notes the variable array to branch on
+ */
+void branching_dom_size_min_val_min(const Home& home, const IntVarArray& notes){
+    branch(home, notes, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
+}
+
+/**
+ * Default template to post the branching heuristic
+ * @param home
+ * @param notes
+ */
+void branching_template(const Home& home, const IntVarArray& notes){
+    /// variable selection heuristic
+    /// go <--
+    auto meritFunction = [](const Space& home, IntVar x, int i) {
+        return i;
+    };
+
+    /// value selection heuristic
+    auto branchVal = [](const Space& home, IntVar x, int i) {
+        return x.min();
+    };
+
+    auto branchCommit = [](Space& home, unsigned int a, IntVar x, int i, int n){
+        if (a == 0U){
+            rel(home, x, IRT_EQ, n);
+        } else {
+            rel(home, x, IRT_NQ, n);
+        }
+    };
+    branch(home, notes, INT_VAR_MERIT_MAX(meritFunction), INT_VAL(branchVal, branchCommit));
 }

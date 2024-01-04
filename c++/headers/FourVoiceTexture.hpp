@@ -107,7 +107,8 @@ public:
      * @param chordStas the states of the chord of the chord progression (fundamental, 1st inversion,...)
      * @return a FourVoiceTexture object
      */
-    FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, vector<int> chordQuals, vector<int> chordStas);
+    FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, vector<int> chordQuals, vector<int> chordStas,
+                     int branchingStrategy);
 
     /**
      * Copy constructor
@@ -161,5 +162,26 @@ public:
      */
     string to_string();
 };
+
+/**
+ * Posts the branching heuristic
+ * Variable selection: select the variable with the highest degree
+ * Value selection: select the value with the lowest value
+ * @param home the current space
+ * @param notes the variable array to branch on
+ */
+void branching_max_degree_val_min(const Home& home, const IntVarArray& notes);
+
+/**
+ * Posts the branching heuristic
+ * Variable selection: select the variable with the smallest domain
+ * Value selection: select the value with the lowest value
+ * @param home the current space
+ * @param notes the variable array to branch on
+ */
+void branching_dom_size_min_val_min(const Home& home, const IntVarArray& notes);
+
+
+void branching_template(const Home& home, const IntVarArray& notes);
 
 #endif

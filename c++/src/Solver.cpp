@@ -12,9 +12,10 @@
  * Creates a search engine for the given problem
  * @param pb an instance of the FourVoiceTexture class representing a given problem
  * @param type the type of search engine to create (see enumeration in headers/gecode_problem.hpp)
+ * @param timeout the maximum time in milliseconds the solver can run for (default value is 60000)
  * @return a search engine for the given problem
  */
-Search::Base<FourVoiceTexture>* make_solver(FourVoiceTexture* pb, int type){
+Base<FourVoiceTexture> *make_solver(FourVoiceTexture *pb, int type, int timeout) {
     Search::Options opts;
     //opts.threads = 0; /// as many as available
     opts.stop = Search::Stop::time(60000); // stop after 120 seconds
@@ -45,11 +46,12 @@ FourVoiceTexture* get_next_solution_space(Search::Base<FourVoiceTexture>* solver
 /**
  * Returns the best solution for the problem pb. It uses a branch and bound solver with lexico-minimization of the costs
  * @param pb an instance of a FourVoiceTexture problem
+ * @param timeout the maximum time in milliseconds the solver can run for (default value is 60000)
  * @return the best solution to the problem
  */
-const FourVoiceTexture* find_best_solution(FourVoiceTexture *pb){
+const FourVoiceTexture *find_best_solution(FourVoiceTexture *pb, int timeout) {
     // create a new search engine
-    auto* solver = make_solver(pb, BAB_SOLVER);
+    auto* solver = make_solver(pb, BAB_SOLVER, timeout);
 
     Search::Statistics bestSolStats = solver->statistics();
 
@@ -75,12 +77,13 @@ const FourVoiceTexture* find_best_solution(FourVoiceTexture *pb){
  * @param pb an instance of a FourVoiceTexture problem
  * @param solverType the type of the solver to use from solver_types
  * @param maxNOfSols the maximum number of solutions we want to find (the default value is 1000)
+ * @param timeout the maximum time in milliseconds the solver can run for (default value is 60000)
  * @return the first maxNOfSols solutions to the problem
  */
-vector<const FourVoiceTexture*> find_all_solutions(FourVoiceTexture *pb, int solverType, int maxNOfSols){
+vector<const FourVoiceTexture *> find_all_solutions(FourVoiceTexture *pb, int solverType, int maxNOfSols, int timeout) {
     vector<const FourVoiceTexture*> sols;
     // create the search engine
-    auto* solver = make_solver(pb, solverType);
+    auto* solver = make_solver(pb, solverType, timeout);
     write_to_log_file("\nSearching for solutions:\n", LOG_FILE);
 
     int nbSol = 0;

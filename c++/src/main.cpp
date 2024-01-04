@@ -59,7 +59,8 @@ int main(int argc, char* argv[]) {
     int size = chords.size();
 
     /// create a new problem
-    auto *pb = new FourVoiceTexture(size, tonality, chords, chords_qualities, states);
+    auto *pb = new FourVoiceTexture(size, tonality, chords, chords_qualities, states,
+                                    BRANCHING_TEMPLATE);
 
     /// find solution(s)
     vector<const FourVoiceTexture *> sols;
@@ -67,7 +68,7 @@ int main(int argc, char* argv[]) {
     if(search_type == "all")
         sols = find_all_solutions(pb, BAB_SOLVER);
     else
-        sols.push_back(find_best_solution(pb)); // add the solution to the vector (it only has one element)
+        sols.push_back(find_best_solution(pb, 60000)); // add the solution to the vector (it only has one element)
     auto end = std::chrono::high_resolution_clock::now();       /// end time
 
     delete pb;

@@ -24,6 +24,22 @@ using namespace Gecode;
 const string LOG_FILE = "log.txt";
 const string STATISTICS_FILE = "statistics.txt";
 
+/** Types of search engines */
+enum solver_types{
+    DFS_SOLVER, //0
+    BAB_SOLVER, //1
+    LDS_SOLVER  //2
+};
+
+/** Branching strategies */
+enum branching_strategies{
+    DEGREE_MAX_VAL_MIN,     //0
+    DOM_SIZE_MIN_VAL_MIN,   //1
+    BRANCHING_TEMPLATE       //2
+};
+
+const vector<string> branchingStrategiesNames = {"Degree max, value min", "Domain size min, value min", "Branching template"};
+
 /** Melodic costs */
 const int SECOND_COST = 0;
 const int THIRD_COST = 1;
@@ -35,12 +51,6 @@ const int OCTAVE_COST = 0;
 
 const int MAX_MELODIC_COST = SEVENTH_COST;
 
-/** Types of search engines */
-enum solver_types{
-    DFS_SOLVER, //0
-    BAB_SOLVER, //1
-    LDS_SOLVER  //2
-};
 
 /** Notes */
 const int B_SHARP = 0;
