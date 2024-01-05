@@ -106,6 +106,21 @@ string statistics_to_string(Search::Statistics stats){
 }
 
 /**
+ * Prints the Search::Statistics object into a csv format (coma separated)
+ * @param stats a Search::Statistics object representing the statistics of a search
+ * @return The string representation of the statistics object
+ */
+string statistics_to_csv_string(Search::Statistics stats){
+    string s = to_string(stats.node) + ",";
+    s += to_string(stats.fail) + ",";
+    s += to_string(stats.restart) + ",";
+    s += to_string(stats.propagate) + ",";
+    s += to_string(stats.nogood) + ",";
+    s += to_string(stats.depth) + ",";
+    return s;
+}
+
+/**
  * Returns the value of a variable as a string
  * @param var an integer variable
  * @return a string representing the value of the variable
@@ -133,6 +148,23 @@ string intVarArray_to_string(IntVarArray vars){
     return res;
 }
 
+/**
+ * Returns the values of an IntVarArgs as a string
+ * @param args an IntVarArgs
+ * @return a string representing the values
+ */
+string intVarArgs_to_string(IntVarArgs args){
+    int s = args.size();
+    string res;
+    for(int i = 0; i < s; i++){
+        res += intVar_to_string(args[i]);
+        if(i != s - 1)
+            res += ", ";
+    }
+    return res;
+}
+
+
 
 /**
  * Returns the name of a note based on its MIDI value
@@ -159,7 +191,7 @@ string time(){
     /// date and time for logs
     std::time_t currentTime = std::time(nullptr); // Get the current time
     std::string timeString = std::asctime(std::localtime(&currentTime)); // Convert to string
-    return "\n" + timeString;
+    return timeString;
 }
 
 /**

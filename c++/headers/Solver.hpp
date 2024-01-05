@@ -42,7 +42,8 @@ FourVoiceTexture* get_next_solution_space(Search::Base<FourVoiceTexture>* solver
  * @param timeout the maximum time in milliseconds the solver can run for (default value is 60000)
  * @return the best solution to the problem
  */
-const FourVoiceTexture *find_best_solution(FourVoiceTexture *pb, int timeout = 60000);
+const FourVoiceTexture * find_best_solution(FourVoiceTexture *pb, int timeout = 60000,
+                                            string csvFileName = STATISTICS_CSV + ".csv", string preMessage = "");
 
 /**
  * Returns the first maxNOfSols solutions for the problem pb using the solver solverType.

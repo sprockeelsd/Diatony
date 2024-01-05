@@ -47,7 +47,7 @@ Tonality::Tonality(int t, int m, vector<int> s) {
 }
 
 string Tonality::get_name() const {
-    return noteNames[tonic] + " " + modeNames[mode] + "\n";
+    return noteNames[tonic] + " " + modeNames[mode];
 }
 
 /**

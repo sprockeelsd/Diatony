@@ -97,6 +97,8 @@ protected:
     IntVar nOfCommonNotesInSameVoice;                   // number of common notes in the same voice between consecutive chords
     IntVar costOfMelodicIntervals;                      // for minimizing voice movement between voices
 
+    IntVarArgs costVector;                             // the costs in lexicographical order for minimization
+
 public:
     /**
      * Constructor
@@ -128,6 +130,12 @@ public:
      * @return an array of integers representing the values of the variables in a solution
      */
     int* return_solution() const;
+
+    /**
+     * Returns the values taken by the cost vector in a solution
+     * @return an IntVarArgs representing the values of the cost vector in a solution
+     */
+    IntVarArgs get_cost_vector() const;
 
     /**
      * Copy method
@@ -181,7 +189,15 @@ void branching_max_degree_val_min(const Home& home, const IntVarArray& notes);
  */
 void branching_dom_size_min_val_min(const Home& home, const IntVarArray& notes);
 
+/**
+ * Posts the branching heuristic
+ * Variable selection: select the first unassigned variable (left to right)
+ * Value selection: select the value with the lowest value
+ * @param home the current space
+ * @param notes the variable array to branch on
+ */
+void branching_first_unassigned_val_min(const Home& home, const IntVarArray& notes);
 
-void branching_template(const Home& home, const IntVarArray& notes);
+void branching_right_to_left_val_min(const Home& home, const IntVarArray& notes);
 
 #endif

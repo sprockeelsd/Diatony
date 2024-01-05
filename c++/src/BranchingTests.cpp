@@ -36,7 +36,7 @@ int main(int argc, char* argv[]) {
  *                                                                                                                     *
  ***********************************************************************************************************************/
 
-    string testCase1Name = "I5 - V5 - I5 - V65 - I6 - II6 - V64 - V7+ - I5";
+    string testCase1Name = "I5-V5-I5-V65-I6-II6-V64-V7+-I5";
     vector<int> chords1 = {FIRST_DEGREE, FIFTH_DEGREE, FIRST_DEGREE, FIFTH_DEGREE, FIRST_DEGREE, SECOND_DEGREE,
                            FIRST_DEGREE, FIFTH_DEGREE, FIRST_DEGREE};
     vector<int> chords_qualities_major1 = {MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, DOMINANT_SEVENTH_CHORD, MAJOR_CHORD,
@@ -52,13 +52,39 @@ int main(int argc, char* argv[]) {
 
     vector<string> testCasesNames = {testCase1Name};
 
+    /// branching strategies
+    vector<int> branchingStrategies = {DEGREE_MAX_VAL_MIN, DOM_SIZE_MIN_VAL_MIN, FIRST_UNASSIGNED_VAL_MIN, RIGHT_TO_LEFT_VAL_MIN};
+
 /***********************************************************************************************************************
  *                                                                                                                     *
  *                                                  Solution generation                                                *
  *                                                                                                                     *
  ***********************************************************************************************************************/
 
+    string timeString = time();
+    timeString.erase(std::remove(timeString.begin(), timeString.end(), '\n'), timeString.end());
+    std::replace(timeString.begin(), timeString.end(), ' ', '-');
+    string statFile = STATISTICS_CSV + timeString.c_str() + ".csv";
+
     write_to_log_file(time().c_str(), LOG_FILE);
+    write_to_log_file(time().c_str(), statFile);
+
+    string headers = "Chord progression , Tonality, Branching strategy, Time to prove optimality, , "
+
+                     "Best solution Statistics, Nodes traversed, Failed nodes explored, Restarts performed, "
+                        "Propagators executed, No goods generated, Maximal depth of explored tree, number of 4 note "
+                        "diminished chords, number of chords with 3 notes, number of fundamental state chords without "
+                        "doubled bass, number of incomplete chords, number of common notes in the tenor, number of "
+                        "common notes in the alto, number of common notes in the soprano, cost of melodic intervals,, "
+
+                     " Total search statistics, Nodes traversed, Failed nodes explored, Restarts performed, "
+                        "Propagators executed, No goods generated, Maximal depth of explored tree, , "
+
+                    "Intermediate solutions ,time, number of 4 note diminished chords, number of chords with 3 notes, "
+                        "number of fundamental state chords without doubled bass, number of incomplete chords, "
+                        "number of common notes in the tenor, number of common notes in the alto, "
+                        "number of common notes in the soprano, cost of melodic intervals, ,";
+    write_to_log_file(headers.c_str(), statFile);
 
     int solNumber = 0;
     int i = 0;
@@ -67,23 +93,27 @@ int main(int argc, char* argv[]) {
         int j = 0;
         /// for each test case
         for(auto testCase : testCases){
-            string testConfig = "Test case: " + testCasesNames[j] + " in " + tonalityNames[i] + "\n";
-            write_to_log_file(testConfig.c_str(), STATISTICS_FILE);
+
             /// for each branching strategy
-            for(int strat = DEGREE_MAX_VAL_MIN; strat <= BRANCHING_TEMPLATE; strat++){
-                write_to_log_file(branchingStrategiesNames[strat].c_str(), STATISTICS_FILE);
+            for(auto strategy: branchingStrategies){
+                /// define the test case
+                string csv_line;
+                csv_line += testCasesNames[j] + " , " + tonalityNames[i] + " , " + branchingStrategiesNames[strategy];
+
+                /// define the problem instance
                 FourVoiceTexture* problem;
                 if(auto* minorPtr = dynamic_cast<MinorTonality*>(tonality)){ /// the tonality is minor
                     problem = new FourVoiceTexture(testCase[0].size(), tonality, testCase[0],
-                                                   testCase[2], testCase[3], strat);
+                                                   testCase[2], testCase[3], strategy);
                 }
-                else{/// the tonality is major
+                else{ /// the tonality is major
                     problem = new FourVoiceTexture(testCase[0].size(), tonality, testCase[0],
-                                                   testCase[1], testCase[3], strat);
+                                                   testCase[1], testCase[3], strategy);
                 }
-
-                auto bestSol = find_best_solution(problem, 90000);
-
+                /// find the best solution (with a timeout of 90 seconds)
+                auto bestSol = find_best_solution(problem, 90000, statFile,
+                                                  csv_line);
+                /// create a MIDI file to hear the solution
                 writeSolToMIDIFile(testCase[0].size(), solNumber, bestSol);
                 solNumber++;
             }

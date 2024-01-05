@@ -49,25 +49,34 @@ FourVoiceTexture* get_next_solution_space(Search::Base<FourVoiceTexture>* solver
  * @param timeout the maximum time in milliseconds the solver can run for (default value is 60000)
  * @return the best solution to the problem
  */
-const FourVoiceTexture *find_best_solution(FourVoiceTexture *pb, int timeout) {
+const FourVoiceTexture *find_best_solution(FourVoiceTexture *pb, int timeout, string csvFileName, string preMessage) {
     // create a new search engine
     auto* solver = make_solver(pb, BAB_SOLVER, timeout);
-
     Search::Statistics bestSolStats = solver->statistics();
 
+    string solsAndTime;
+
     FourVoiceTexture *bestSol; // keep a pointer to the best solution
+    auto start = std::chrono::high_resolution_clock::now();     /// start time
     while(FourVoiceTexture *sol = get_next_solution_space(solver)){
+        auto currTime = std::chrono::high_resolution_clock::now();     /// current time
+        std::chrono::duration<double> duration = currTime - start;
+        solsAndTime += "," + to_string(duration.count()) + " , " + intVarArgs_to_string(sol->get_cost_vector()) + ",";
         bestSol = sol;
         bestSolStats = solver->statistics();
     }
-    string message = "Best solution found: \n" + bestSol->to_string() + "\n";
-    std::cout << message << std::endl  << statistics_to_string(solver->statistics()) << std::endl;
+    auto finalTime = std::chrono::high_resolution_clock::now();     /// final time
+    std::chrono::duration<double> duration = finalTime - start;
 
+    string message = "Best solution found: \n" + bestSol->to_string() + "\n";
+    std::cout << message << std::endl;
     write_to_log_file(message.c_str(), LOG_FILE);
 
-    auto statMsg = "Best solution search statistics:\n" + statistics_to_string(bestSolStats) +
-            "\n" + "Total search statistics: \n" + statistics_to_string(solver->statistics()) + "\n";
-    write_to_log_file(statMsg.c_str(), STATISTICS_FILE);
+    auto statsCSV = preMessage + "," + to_string(duration.count()) + ",,," +
+                    statistics_to_csv_string(bestSolStats) + intVarArgs_to_string(bestSol->get_cost_vector()) +
+                    ",,," + statistics_to_csv_string(solver->statistics()) + "," +
+                    solsAndTime + ",";
+    write_to_log_file(statsCSV.c_str(), csvFileName);
 
     return bestSol;
 }

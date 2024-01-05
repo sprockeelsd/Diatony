@@ -23,6 +23,7 @@ using namespace Gecode;
 /** Files */
 const string LOG_FILE = "log.txt";
 const string STATISTICS_FILE = "statistics.txt";
+const string STATISTICS_CSV = "statistics";
 
 /** Types of search engines */
 enum solver_types{
@@ -33,12 +34,16 @@ enum solver_types{
 
 /** Branching strategies */
 enum branching_strategies{
-    DEGREE_MAX_VAL_MIN,     //0
-    DOM_SIZE_MIN_VAL_MIN,   //1
-    BRANCHING_TEMPLATE       //2
+    DEGREE_MAX_VAL_MIN,         //0
+    DOM_SIZE_MIN_VAL_MIN,       //1
+    FIRST_UNASSIGNED_VAL_MIN,   //2
+    RIGHT_TO_LEFT_VAL_MIN,      //3
+    BRANCHING_TEMPLATE          //4
 };
 
-const vector<string> branchingStrategiesNames = {"Degree max, value min", "Domain size min, value min", "Branching template"};
+const vector<string> branchingStrategiesNames = {"Degree max - value min", "Domain size min - value min",
+                                                    "Left to right - value min", "Right to left - value min",
+                                                    "Branching template"};
 
 /** Melodic costs */
 const int SECOND_COST = 0;
@@ -250,6 +255,13 @@ string int_vector_to_string(vector<int> vector);
 string statistics_to_string(Search::Statistics stats);
 
 /**
+ * Prints the Search::Statistics object into a csv format (coma separated)
+ * @param stats a Search::Statistics object representing the statistics of a search
+ * @return The string representation of the statistics object
+ */
+string statistics_to_csv_string(Search::Statistics stats);
+
+/**
  * Returns the value of a variable as a string. If the variable is unassigned, returns "<unassigned>"
  * @param var an integer variable
  * @return a string representing the value of the variable
@@ -262,6 +274,13 @@ string intVar_to_string(const IntVar& var);
  * @return a string representing the values of the variables
  */
 string intVarArray_to_string(IntVarArray vars);
+
+/**
+ * Returns the values of an IntVarArgs as a string
+ * @param args an IntVarArgs
+ * @return a string representing the values
+ */
+string intVarArgs_to_string(IntVarArgs args);
 
 /**
  * Returns the name of a note based on its MIDI value

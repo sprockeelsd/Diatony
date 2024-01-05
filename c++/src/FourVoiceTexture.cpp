@@ -78,6 +78,10 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     nOfCommonNotesInSameVoice = IntVar(*this, - nOfVoices * (size - 1), 0);
     costOfMelodicIntervals = IntVar(*this, 0, nOfVoices*(size-1)* MAX_MELODIC_COST);
 
+    costVector = {nOfDiminishedChordsWith4notes, nOfChordsWithLessThan4notes, nOfFundamentalStateChordsWithoutDoubledBass,
+                  nOfIncompleteChords, negativeCommonNotesInSameVoice[TENOR], negativeCommonNotesInSameVoice[ALTO],
+                  commonNotesInSameVoice[SOPRANO], costOfMelodicIntervals};
+
     /// Test constraints
 
 
@@ -285,8 +289,14 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
         case DOM_SIZE_MIN_VAL_MIN:
             branching_dom_size_min_val_min(*this, FullChordsVoicing);
             break;
+        case FIRST_UNASSIGNED_VAL_MIN:
+            branching_first_unassigned_val_min(*this, FullChordsVoicing);
+            break;
+        case RIGHT_TO_LEFT_VAL_MIN:
+            branching_right_to_left_val_min(*this, FullChordsVoicing);
+            break;
         case BRANCHING_TEMPLATE:
-            branching_template(*this, FullChordsVoicing);
+            branching_right_to_left_val_min(*this, FullChordsVoicing);
             break;
         default:
             branching_max_degree_val_min(*this, FullChordsVoicing);
@@ -365,15 +375,17 @@ FourVoiceTexture::FourVoiceTexture(FourVoiceTexture& s): IntLexMinimizeSpace(s){
     nOfIncompleteChords.update(*this, s.nOfIncompleteChords);
     nOfCommonNotesInSameVoice.update(*this, s.nOfCommonNotesInSameVoice);
     costOfMelodicIntervals.update(*this, s.costOfMelodicIntervals);
+
+    costVector = {nOfDiminishedChordsWith4notes, nOfChordsWithLessThan4notes, nOfFundamentalStateChordsWithoutDoubledBass,
+                  nOfIncompleteChords, negativeCommonNotesInSameVoice[TENOR], negativeCommonNotesInSameVoice[ALTO],
+                  commonNotesInSameVoice[SOPRANO], costOfMelodicIntervals};
 }
 
 /**
  * Returns the size of the problem
  * @return an integer representing the size of the vars array
  */
-int FourVoiceTexture::get_size() const{
-    return size;
-}
+int FourVoiceTexture::get_size() const{ return size; }
 
 /**
  * Copy method
@@ -393,6 +405,14 @@ int* FourVoiceTexture::return_solution() const{
         solution[i] = FullChordsVoicing[i].val();
     }
     return solution;
+}
+
+/**
+ * Returns the values taken by the cost vector in a solution
+ * @return an IntVarArgs representing the values of the cost vector in a solution
+ */
+IntVarArgs FourVoiceTexture::get_cost_vector() const{
+    return costVector;
 }
 
 /**
@@ -504,6 +524,8 @@ string FourVoiceTexture::to_string(){
     message += "nOfCommonNotesBass = " + intVar_to_string(commonNotesInSameVoice[BASS]) + "\n";
     message += "costOfMelodicIntervals = " + intVar_to_string(costOfMelodicIntervals) + "\n\n";
 
+    message += "Cost vector = {" + intVarArgs_to_string(costVector) + "}\n\n";
+
     return message;
 }
 
@@ -530,11 +552,24 @@ void branching_dom_size_min_val_min(const Home& home, const IntVarArray& notes){
 }
 
 /**
+ * Posts the branching heuristic
+ * Variable selection: select the first unassigned variable (left to right)
+ * Value selection: select the value with the lowest value
+ * @param home the current space
+ * @param notes the variable array to branch on
+ */
+void branching_first_unassigned_val_min(const Home& home, const IntVarArray& notes){
+    branch(home, notes, INT_VAR_NONE(), INT_VAL_MIN());
+}
+
+/**
  * Default template to post the branching heuristic
+ * Variable selection: select the last variable first (<--)
+ * Value selection: select the value with the lowest value
  * @param home
  * @param notes
  */
-void branching_template(const Home& home, const IntVarArray& notes){
+void branching_right_to_left_val_min(const Home& home, const IntVarArray& notes){
     /// variable selection heuristic
     /// go <--
     auto meritFunction = [](const Space& home, IntVar x, int i) {
