@@ -18,7 +18,8 @@
  * Returns a FourVoiceTexture object
  */
 FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, vector<int> chordQuals,
-                                   vector<int> chordStas, int branchingStrategy) {
+                                   vector<int> chordStas, int variableSelectionStrategy,
+                                   int valueSelectionStrategy) {
     /// basic data
     size = s;
     tonality = t;
@@ -282,26 +283,8 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     |                                                       Branching                                                  |
     |                                                                                                                  |
     -------------------------------------------------------------------------------------------------------------------*/
-    switch (branchingStrategy) {
-        case DEGREE_MAX_VAL_MIN:
-            branching_max_degree_val_min(*this, FullChordsVoicing);
-            break;
-        case DOM_SIZE_MIN_VAL_MIN:
-            branching_dom_size_min_val_min(*this, FullChordsVoicing);
-            break;
-        case FIRST_UNASSIGNED_VAL_MIN:
-            branching_first_unassigned_val_min(*this, FullChordsVoicing);
-            break;
-        case RIGHT_TO_LEFT_VAL_MIN:
-            branching_right_to_left_val_min(*this, FullChordsVoicing);
-            break;
-        case BRANCHING_TEMPLATE:
-            branching_right_to_left_val_min(*this, FullChordsVoicing);
-            break;
-        default:
-            branching_max_degree_val_min(*this, FullChordsVoicing);
-            break;
-    }
+    branch(*this, FullChordsVoicing, variable_selection_heuristics[variableSelectionStrategy],
+           value_selection_heuristics[valueSelectionStrategy]);
 }
 
 /**
@@ -529,38 +512,6 @@ string FourVoiceTexture::to_string(){
     return message;
 }
 
-/**
- * Posts the branching heuristic
- * Variable selection: select the variable with the highest degree
- * Value selection: select the value with the lowest value
- * @param home the current space
- * @param notes the variable array to branch on
- */
-void branching_max_degree_val_min(const Home& home, const IntVarArray& notes){
-    branch(home, notes, INT_VAR_DEGREE_MAX(), INT_VAL_MIN());
-}
-
-/**
- * Posts the branching heuristic
- * Variable selection: select the variable with the smallest domain
- * Value selection: select the value with the lowest value
- * @param home the current space
- * @param notes the variable array to branch on
- */
-void branching_dom_size_min_val_min(const Home& home, const IntVarArray& notes){
-    branch(home, notes, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
-}
-
-/**
- * Posts the branching heuristic
- * Variable selection: select the first unassigned variable (left to right)
- * Value selection: select the value with the lowest value
- * @param home the current space
- * @param notes the variable array to branch on
- */
-void branching_first_unassigned_val_min(const Home& home, const IntVarArray& notes){
-    branch(home, notes, INT_VAR_NONE(), INT_VAL_MIN());
-}
 
 /**
  * Default template to post the branching heuristic

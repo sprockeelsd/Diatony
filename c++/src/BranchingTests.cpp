@@ -13,6 +13,12 @@ using namespace smf;
 
 /**
 - Tests different branching strategies on different problems in different tonalities
+ This takes as argument:
+    - The name of the test case
+    - The number of the tonality
+    - The number of the variable branching strategy
+    - The number of the value branching strategy
+    It will write in a CSV file the statistics
  */
 int main(int argc, char* argv[]) {
     /// Tonalities
@@ -52,8 +58,14 @@ int main(int argc, char* argv[]) {
 
     vector<string> testCasesNames = {testCase1Name};
 
-    /// branching strategies
-    vector<int> branchingStrategies = {DEGREE_MAX_VAL_MIN, DOM_SIZE_MIN_VAL_MIN, FIRST_UNASSIGNED_VAL_MIN, RIGHT_TO_LEFT_VAL_MIN};
+/***********************************************************************************************************************
+ *                                                                                                                     *
+ *                                              Branching strategies                                                   *
+ *                                                                                                                     *
+ ***********************************************************************************************************************/
+
+    vector<int> var_sel = {DEGREE_MAX, DOM_SIZE_MIN, LEFT_TO_RIGHT, RIGHT_TO_LEFT}; //@todo add left to right but soprano to bass and not bass to soprano
+    vector<int> val_sel = {VAL_MIN, VAL_MAX, VAL_RND}; // @todo add custom ones
 
 /***********************************************************************************************************************
  *                                                                                                                     *
@@ -69,7 +81,8 @@ int main(int argc, char* argv[]) {
     write_to_log_file(time().c_str(), LOG_FILE);
     write_to_log_file(time().c_str(), statFile);
 
-    string headers = "Chord progression , Tonality, Branching strategy, Time to prove optimality, , "
+    string headers = "Chord progression , Tonality, Variable selection strategy, Value selection strategy, "
+                     "Time to prove optimality, , "
 
                      "Best solution Statistics, Nodes traversed, Failed nodes explored, Restarts performed, "
                         "Propagators executed, No goods generated, Maximal depth of explored tree, number of 4 note "
@@ -94,28 +107,35 @@ int main(int argc, char* argv[]) {
         /// for each test case
         for(auto testCase : testCases){
 
-            /// for each branching strategy
-            for(auto strategy: branchingStrategies){
-                /// define the test case
-                string csv_line;
-                csv_line += testCasesNames[j] + " , " + tonalityNames[i] + " , " + branchingStrategiesNames[strategy];
+            /// for each variable selection strategy
+            for(auto var_strat: var_sel){
+                /// for each value selection strategy
+                for(auto val_strat: val_sel){
+                    /// define the test case
+                    string csv_line;
+                    csv_line += testCasesNames[j] + " , " + tonalityNames[i] + " , " +
+                                variable_selection_heuristics_names[var_strat] + " ," +
+                                value_selection_heuristics_names[val_strat];
 
-                /// define the problem instance
-                FourVoiceTexture* problem;
-                if(auto* minorPtr = dynamic_cast<MinorTonality*>(tonality)){ /// the tonality is minor
-                    problem = new FourVoiceTexture(testCase[0].size(), tonality, testCase[0],
-                                                   testCase[2], testCase[3], strategy);
+                    /// define the problem instance
+                    FourVoiceTexture* problem;
+                    if(auto* minorPtr = dynamic_cast<MinorTonality*>(tonality)){ /// the tonality is minor
+                        problem = new FourVoiceTexture(testCase[0].size(), tonality, testCase[0],
+                                                       testCase[2], testCase[3],
+                                                       var_strat, val_strat);
+                    }
+                    else{ /// the tonality is major
+                        problem = new FourVoiceTexture(testCase[0].size(), tonality, testCase[0],
+                                                       testCase[1], testCase[3],
+                                                       var_strat, val_strat);
+                    }
+                    /// find the best solution (with a timeout of 90 seconds)
+                    auto bestSol = find_best_solution(problem, 90000, statFile,
+                                                      csv_line);
+                    /// create a MIDI file to hear the solution
+                    writeSolToMIDIFile(testCase[0].size(), solNumber, bestSol);
+                    solNumber++;
                 }
-                else{ /// the tonality is major
-                    problem = new FourVoiceTexture(testCase[0].size(), tonality, testCase[0],
-                                                   testCase[1], testCase[3], strategy);
-                }
-                /// find the best solution (with a timeout of 90 seconds)
-                auto bestSol = find_best_solution(problem, 90000, statFile,
-                                                  csv_line);
-                /// create a MIDI file to hear the solution
-                writeSolToMIDIFile(testCase[0].size(), solNumber, bestSol);
-                solNumber++;
             }
             j++;
         }

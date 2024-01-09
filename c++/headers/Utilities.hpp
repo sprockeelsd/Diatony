@@ -33,17 +33,33 @@ enum solver_types{
 };
 
 /** Branching strategies */
-enum branching_strategies{
-    DEGREE_MAX_VAL_MIN,         //0
-    DOM_SIZE_MIN_VAL_MIN,       //1
-    FIRST_UNASSIGNED_VAL_MIN,   //2
-    RIGHT_TO_LEFT_VAL_MIN,      //3
-    BRANCHING_TEMPLATE          //4
+enum variable_selection{
+    DEGREE_MAX,         //0
+    DOM_SIZE_MIN,       //1
+    LEFT_TO_RIGHT,      //2
+    RIGHT_TO_LEFT,      //3
 };
 
-const vector<string> branchingStrategiesNames = {"Degree max - value min", "Domain size min - value min",
-                                                    "Left to right - value min", "Right to left - value min",
-                                                    "Branching template"};
+/// go <--
+auto right_to_left = [](const Space& home, const IntVar& x, int i) {
+    return i;
+};
+
+const vector<IntVarBranch> variable_selection_heuristics = {INT_VAR_DEGREE_MAX(), INT_VAR_SIZE_MIN(), INT_VAR_NONE(),
+                                                      INT_VAR_MERIT_MAX(right_to_left)};
+
+const vector<string> variable_selection_heuristics_names = {"Degree max", "Domain size min", "Left to right",
+                                                            "Right to left"};
+
+enum value_selection{
+    VAL_MIN,            //0
+    VAL_MAX,            //1
+    VAL_RND,            //2
+};
+
+const vector<IntValBranch> value_selection_heuristics = {INT_VAL_MIN(), INT_VAL_MAX(), INT_VAL_RND(1U)};
+
+const vector<string> value_selection_heuristics_names = {"Value min", "Value max", "Value random"};
 
 /** Melodic costs */
 const int SECOND_COST = 0;

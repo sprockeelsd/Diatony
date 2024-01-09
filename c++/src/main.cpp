@@ -60,7 +60,7 @@ int main(int argc, char* argv[]) {
 
     /// create a new problem
     auto *pb = new FourVoiceTexture(size, tonality, chords, chords_qualities, states,
-                                    BRANCHING_TEMPLATE);
+                                    RIGHT_TO_LEFT, VAL_MIN);
 
     /// find solution(s)
     vector<const FourVoiceTexture *> sols;

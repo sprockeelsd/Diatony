@@ -109,8 +109,9 @@ public:
      * @param chordStas the states of the chord of the chord progression (fundamental, 1st inversion,...)
      * @return a FourVoiceTexture object
      */
-    FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, vector<int> chordQuals, vector<int> chordStas,
-                     int branchingStrategy);
+    FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, vector<int> chordQuals,
+                     vector<int> chordStas, int variableSelectionStrategy,
+                     int valueSelectionStrategy);
 
     /**
      * Copy constructor

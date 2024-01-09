@@ -67,13 +67,13 @@ vector<int> get_all_given_note(int note)
  * @return string the string representation of the vector
  */
 string int_vector_to_string(vector<int> vector){
-    string s = "{";
+    string s;
     for (int i = 0; i < vector.size(); ++i) {
         s += to_string(vector[i]);
         if(i != vector.size() - 1)
-            s += ", ";
+            s += " , ";
     }
-    return s + "}";
+    return s;
 }
 
 /**
