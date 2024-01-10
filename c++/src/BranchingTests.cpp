@@ -53,10 +53,22 @@ int main(int argc, char* argv[]) {
                           FIRST_INVERSION, SECOND_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
     vector<vector<int>> testCase1 = {chords1, chords_qualities_major1, chords_qualities_minor1, states1};
 
+    string testCase2Name = "I5-IV5-VII6-I6-III5-VI5-II6-V7+-I5";
+    vector<int> chords2 = {FIRST_DEGREE, FOURTH_DEGREE, SEVENTH_DEGREE, FIRST_DEGREE, THIRD_DEGREE, SIXTH_DEGREE,
+                           SECOND_DEGREE, FIFTH_DEGREE, FIRST_DEGREE};
+    vector<int> chords_qualities_major2 = {MAJOR_CHORD, MAJOR_CHORD, DIMINISHED_CHORD, MAJOR_CHORD, MINOR_CHORD,
+                                           MINOR_CHORD, MINOR_CHORD, DOMINANT_SEVENTH_CHORD, MAJOR_CHORD};
+    vector<int> chords_qualities_minor2 = {MINOR_CHORD, MINOR_CHORD, DIMINISHED_CHORD, MINOR_CHORD, MAJOR_CHORD,
+                                           MAJOR_CHORD, DIMINISHED_CHORD, DOMINANT_SEVENTH_CHORD, MINOR_CHORD};
+    vector<int> states2 = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FIRST_INVERSION, FIRST_INVERSION, FUNDAMENTAL_STATE,
+                           FUNDAMENTAL_STATE, FIRST_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
+    vector<vector<int>> testCase2 = {chords2, chords_qualities_major2, chords_qualities_minor2, states2};
 
-    auto testCases = {testCase1};
 
-    vector<string> testCasesNames = {testCase1Name};
+
+    auto testCases = {testCase1, testCase2};
+
+    vector<string> testCasesNames = {testCase1Name, testCase2Name};
 
 /***********************************************************************************************************************
  *                                                                                                                     *
@@ -65,7 +77,7 @@ int main(int argc, char* argv[]) {
  ***********************************************************************************************************************/
 
     vector<int> var_sel = {DEGREE_MAX, DOM_SIZE_MIN, LEFT_TO_RIGHT, RIGHT_TO_LEFT}; //@todo add left to right but soprano to bass and not bass to soprano
-    vector<int> val_sel = {VAL_MIN, VAL_MAX, VAL_RND}; // @todo add custom ones
+    vector<int> val_sel = {VAL_MIN, VAL_MAX}; // @todo add custom ones
 
 /***********************************************************************************************************************
  *                                                                                                                     *
@@ -101,12 +113,12 @@ int main(int argc, char* argv[]) {
 
     int solNumber = 0;
     int i = 0;
+    int total_number_of_iterations = tonalities.size() * testCases.size() * var_sel.size() * val_sel.size();
     /// for each tonality
     for (auto tonality : tonalities){
         int j = 0;
         /// for each test case
         for(auto testCase : testCases){
-
             /// for each variable selection strategy
             for(auto var_strat: var_sel){
                 /// for each value selection strategy
@@ -116,6 +128,9 @@ int main(int argc, char* argv[]) {
                     csv_line += testCasesNames[j] + " , " + tonalityNames[i] + " , " +
                                 variable_selection_heuristics_names[var_strat] + " ," +
                                 value_selection_heuristics_names[val_strat];
+
+                    std::cout << csv_line << std::endl;
+                    std::cout << to_string(solNumber + 1) + "/" + to_string(total_number_of_iterations) << std::endl;
 
                     /// define the problem instance
                     FourVoiceTexture* problem;
@@ -132,8 +147,10 @@ int main(int argc, char* argv[]) {
                     /// find the best solution (with a timeout of 90 seconds)
                     auto bestSol = find_best_solution(problem, 90000, statFile,
                                                       csv_line);
+                    delete problem;
                     /// create a MIDI file to hear the solution
-                    writeSolToMIDIFile(testCase[0].size(), solNumber, bestSol);
+                    if(bestSol != nullptr)
+                        writeSolToMIDIFile(testCase[0].size(), solNumber, bestSol);
                     solNumber++;
                 }
             }

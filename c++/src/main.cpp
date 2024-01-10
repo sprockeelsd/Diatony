@@ -20,11 +20,11 @@ using namespace smf;
  * - The second specifies whether we need to create a MIDI file or not
  */
 int main(int argc, char* argv[]) {
-    // if there is not exactly 1 argument, there is an error
+    // if there is not exactly 2 argument, there is an error
     if(argc != 3)
         return 1;
 
-    Tonality* tonality = new MajorTonality(C);
+    Tonality* tonality = new MinorTonality(B_FLAT);
     write_to_log_file(time().c_str(), LOG_FILE);
 
     std::string search_type = argv[1];
@@ -35,7 +35,7 @@ int main(int argc, char* argv[]) {
 //                                    DIMINISHED_CHORD, MINOR_CHORD, DOMINANT_SEVENTH_CHORD, MINOR_CHORD};
 //    vector<int> states = {FUNDAMENTAL_STATE, SECOND_INVERSION, FUNDAMENTAL_STATE, THIRD_INVERSION, FIRST_INVERSION,
 //                          FIRST_INVERSION, SECOND_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
-    //@todo there is a problem when going Vda -> V5 (not V7) and it is not because of // intervals nor because of tritone resolution
+
 //    vector<int> chords = {FIRST_DEGREE, FIFTH_DEGREE, SIXTH_DEGREE, FIRST_DEGREE, FIFTH_DEGREE, FIRST_DEGREE, THIRD_DEGREE,
 //                          SIXTH_DEGREE, SECOND_DEGREE, FIFTH_DEGREE, FIRST_DEGREE, FOURTH_DEGREE, FIFTH_DEGREE, FIFTH_DEGREE,
 //                          FIRST_DEGREE};
@@ -53,22 +53,34 @@ int main(int argc, char* argv[]) {
 //    vector<int> states = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, SECOND_INVERSION, FUNDAMENTAL_STATE,
 //                          FUNDAMENTAL_STATE, FIRST_INVERSION, THIRD_INVERSION, FIRST_INVERSION};
 
-    vector<int> chords = {FIRST_DEGREE, FIRST_DEGREE};
-    vector<int> chords_qualities = {MAJOR_CHORD, MAJOR_CHORD};
-    vector<int> states = {FUNDAMENTAL_STATE, FIRST_INVERSION};
+    vector<int> chords = {FIRST_DEGREE, FOURTH_DEGREE, SEVENTH_DEGREE, FIRST_DEGREE, THIRD_DEGREE, SIXTH_DEGREE,
+                           SECOND_DEGREE, FIFTH_DEGREE, FIRST_DEGREE};
+    vector<int> chords_qualities = {MINOR_CHORD, MINOR_CHORD, DIMINISHED_CHORD, MINOR_CHORD, MAJOR_CHORD,
+                                           MAJOR_CHORD, DIMINISHED_CHORD, DOMINANT_SEVENTH_CHORD, MINOR_CHORD};
+    vector<int> states = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FIRST_INVERSION, FIRST_INVERSION, FUNDAMENTAL_STATE,
+                           FUNDAMENTAL_STATE, FIRST_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
+
+//    vector<int> chords = {FIRST_DEGREE, FIRST_DEGREE};
+//    vector<int> chords_qualities = {MAJOR_CHORD, MAJOR_CHORD};
+//    vector<int> states = {FUNDAMENTAL_STATE, FIRST_INVERSION};
     int size = chords.size();
 
     /// create a new problem
     auto *pb = new FourVoiceTexture(size, tonality, chords, chords_qualities, states,
-                                    RIGHT_TO_LEFT, VAL_MIN);
-
+                                    LEFT_TO_RIGHT, VAL_RND);
     /// find solution(s)
     vector<const FourVoiceTexture *> sols;
+    const FourVoiceTexture *sol;
     auto start = std::chrono::high_resolution_clock::now();     /// start time
     if(search_type == "all")
         sols = find_all_solutions(pb, BAB_SOLVER);
-    else
-        sols.push_back(find_best_solution(pb, 60000)); // add the solution to the vector (it only has one element)
+    else{
+        sol = find_best_solution(pb, 60000); // add the solution to the vector (it only has one element)
+        if(sol == nullptr){
+            std::cout << "no solutions found in the given time limit." << std::endl;
+            return 0;
+        }
+    }
     auto end = std::chrono::high_resolution_clock::now();       /// end time
 
     delete pb;
@@ -81,7 +93,8 @@ int main(int argc, char* argv[]) {
 
     /// check wether we have to create a MIDI file or not
     if(build_midi == "true"){
-        writeSolsToMIDIFile(size, sols);
+        if(sols.size() > 0 && sols[0] != nullptr)
+            writeSolsToMIDIFile(size, sols);
     }
 
     return 0;

@@ -48,6 +48,9 @@ protected:
     vector<int> chordStates;            // The states of the chord of the chord progression (fundamental, 1st inversion,...)
     IntArgs nOfNotesInChord;            // The number of notes in each chord if they are complete
 
+    int variableBranchingStrategy;              // The branching strategy to use
+    int valueBranchingStrategy;                 // The value selection strategy to use
+
     /// variable arrays for melodic intervals for each voice (not absolute value)
     IntVarArray bassMelodicIntervals;
     IntVarArray tenorMelodicIntervals;

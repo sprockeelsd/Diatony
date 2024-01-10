@@ -27,6 +27,9 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     chordQualities = chordQuals;
     chordStates = chordStas;
     nOfNotesInChord = IntArgs(size);
+    variableBranchingStrategy = variableSelectionStrategy;
+    valueBranchingStrategy = valueSelectionStrategy;
+
     /// keep track of the number of notes that should be in each chord ideally
     for(int i = 0; i < size; i++)
         nOfNotesInChord[i] = chordQualitiesIntervals[chordQualities[i]].size();
@@ -319,6 +322,8 @@ FourVoiceTexture::FourVoiceTexture(FourVoiceTexture& s): IntLexMinimizeSpace(s){
     chordQualities = s.chordQualities;
     nOfNotesInChord = s.nOfNotesInChord;
     chordStates = s.chordStates;
+    variableBranchingStrategy = s.variableBranchingStrategy;
+    valueBranchingStrategy = s.valueBranchingStrategy;
 
     bassMelodicIntervals.update(*this, s.bassMelodicIntervals);
     tenorMelodicIntervals.update(*this, s.tenorMelodicIntervals);
