@@ -6,7 +6,7 @@
  * @param sol the solution to write
  * @return the time at which the solution ends
  */
-void writeSolToMIDIFile(int size, int solNumber, const FourVoiceTexture *sol) {
+void writeSolToMIDIFile(int size, string fileName, const FourVoiceTexture *sol) {
     MidiFile outputFile;
     outputFile.absoluteTicks();     // time information stored as absolute time, will be converted to delta time when written
     outputFile.addTrack(1);   // Add a track to the file (track 0 must be left empty, so add as many as we use
@@ -41,7 +41,7 @@ void writeSolToMIDIFile(int size, int solNumber, const FourVoiceTexture *sol) {
         }
     }
     outputFile.sortTracks(); // make sure data is in correct order
-    outputFile.write("../out/MidiFiles/output" + to_string(solNumber) + ".mid");
+    outputFile.write("../out/MidiFiles/" + fileName + ".mid");
 }
 
 /**
@@ -53,7 +53,7 @@ void writeSolToMIDIFile(int size, int solNumber, const FourVoiceTexture *sol) {
  */
 void writeSolsToMIDIFile(int size, vector<const FourVoiceTexture *> sols) {
     for (int i = 0; i < sols.size(); i++){
-        writeSolToMIDIFile(size, i, sols[i]);
+        writeSolToMIDIFile(size, "output" + to_string(i), sols[i]);
     }
     std::cout << to_string(sols.size()) + " MIDI files created." << std::endl;
 }

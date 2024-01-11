@@ -70,49 +70,16 @@ const FourVoiceTexture *find_best_solution(FourVoiceTexture *pb, int timeout, st
 
     string message = "Best solution found: \n" + bestSol->to_string() + "\n";
     //std::cout << message << std::endl;
-    write_to_log_file(message.c_str(), LOG_FILE);
+    //write_to_log_file(message.c_str(), LOG_FILE);
 
     auto statsCSV = preMessage + "," + to_string(duration.count()) + ",,," +
                     statistics_to_csv_string(bestSolStats) + intVarArgs_to_string(bestSol->get_cost_vector()) +
                     ",,," + statistics_to_csv_string(solver->statistics()) + "," +
                     solsAndTime + ",";
     std::cout << statsCSV << std::endl;
-    write_to_log_file(statsCSV.c_str(), csvFileName);
+    //write_to_log_file(statsCSV.c_str(), csvFileName);
 
     return bestSol;
-}
-
-string best_sol_stats(FourVoiceTexture *pb, int timeout, string csvFileName, string preMessage){
-    // create a new search engine
-    auto* solver = make_solver(pb, BAB_SOLVER, timeout);
-    Search::Statistics bestSolStats = solver->statistics();
-
-    string solsAndTime;
-
-    FourVoiceTexture *bestSol; // keep a pointer to the best solution
-    auto start = std::chrono::high_resolution_clock::now();     /// start time
-    while(FourVoiceTexture *sol = get_next_solution_space(solver)){
-        auto currTime = std::chrono::high_resolution_clock::now();     /// current time
-        std::chrono::duration<double> duration = currTime - start;
-        solsAndTime += "," + to_string(duration.count()) + " , " + intVarArgs_to_string(sol->get_cost_vector()) + ",";
-        bestSol = sol;
-        bestSolStats = solver->statistics();
-    }
-    auto finalTime = std::chrono::high_resolution_clock::now();     /// final time
-    std::chrono::duration<double> duration = finalTime - start;
-
-    string message = "Best solution found: \n" + bestSol->to_string() + "\n";
-    write_to_log_file(message.c_str(), LOG_FILE);
-
-    if(bestSol == nullptr)
-        return "";
-    auto statsCSV = preMessage + "," + to_string(duration.count()) + ",,," +
-                    statistics_to_csv_string(bestSolStats) + intVarArgs_to_string(bestSol->get_cost_vector()) +
-                    ",,," + statistics_to_csv_string(solver->statistics()) + "," +
-                    solsAndTime + ",";
-    write_to_log_file(statsCSV.c_str(), csvFileName);
-
-    return statsCSV;
 }
 
 /**

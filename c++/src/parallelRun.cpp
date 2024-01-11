@@ -21,7 +21,7 @@ using namespace smf;
     It will write in a CSV file the statistics
  */
 int main(int argc, char* argv[]) {
-    if(argc != 6) return 1; /// If the number of arguments is not right, return error code
+    if(argc < 6) return 1; /// If the number of arguments is not right, return error code
 
 /***********************************************************************************************************************
  *                                                                                                                     *
@@ -70,6 +70,17 @@ int main(int argc, char* argv[]) {
                            FUNDAMENTAL_STATE, FIRST_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
     vector<vector<int>> testCase2 = {chords2, chords_qualities_major2, chords_qualities_minor2, states2};
 
+    string testCase3Name = "I5-V+4-I6-II6-V5-I5-IV5-I64-V7+-I5";
+    vector<int> chords3 = {FIRST_DEGREE, FIFTH_DEGREE, FIRST_DEGREE, SECOND_DEGREE, FIFTH_DEGREE, FIRST_DEGREE,
+                           FOURTH_DEGREE, FIRST_DEGREE, FIFTH_DEGREE, FIRST_DEGREE};
+    vector<int> chords_qualities_major3 = {MAJOR_CHORD, DOMINANT_SEVENTH_CHORD, MAJOR_CHORD, MINOR_CHORD, MAJOR_CHORD,
+                                           MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, DOMINANT_SEVENTH_CHORD, MAJOR_CHORD};
+    vector<int> chords_qualities_minor3 = {MINOR_CHORD, DOMINANT_SEVENTH_CHORD, MINOR_CHORD, DIMINISHED_CHORD, MAJOR_CHORD,
+                                             MINOR_CHORD, MINOR_CHORD, MINOR_CHORD, DOMINANT_SEVENTH_CHORD, MINOR_CHORD};
+    vector<int> states3 = {FUNDAMENTAL_STATE, THIRD_INVERSION, FIRST_INVERSION, FIRST_INVERSION, FUNDAMENTAL_STATE,
+                            FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, SECOND_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
+    vector<vector<int>> testCase3 = {chords3, chords_qualities_major3, chords_qualities_minor3, states3};
+
 
 
     vector<vector<vector<int>>> testCases = {testCase1, testCase2};
@@ -90,10 +101,6 @@ int main(int argc, char* argv[]) {
  *                                                  Solution generation                                                *
  *                                                                                                                     *
  ***********************************************************************************************************************/
-
-    int solNumber = 0;
-    int total_number_of_iterations = tonalities.size() * testCases.size() * var_sel.size() * val_sel.size();
-    ///"test_case_number|tonic|mode|variable_selection_heuristic|value_selection_heuristic"
     try{
 //        for (int i = 0; i < argc; ++i) {
 //            std::cout << "argv[" << i << "]: " << argv[i] << std::endl;
@@ -116,19 +123,24 @@ int main(int argc, char* argv[]) {
         }
 
         string csv_line;
-        csv_line += testCasesNames[test_case_number] + " , " + tonalityNames[tonic] +  " , " +
+        csv_line += testCasesNames[test_case_number] + " , " + tonality->get_name() +  " , " +
                     variable_selection_heuristics_names[variable_selection_heuristic] + " ," +
                     value_selection_heuristics_names[value_selection_heuristic];
 
-        auto pb = new FourVoiceTexture(testCases[test_case_number].size(), tonality,
+        auto pb = new FourVoiceTexture(testCases[test_case_number][0].size(), tonality,
                                                     testCases[test_case_number][0],qualities,
                                                     testCases[test_case_number][3],
                                                     variable_selection_heuristic,
                                                     value_selection_heuristic);
         auto best_sol = find_best_solution(pb, 60000, "test.csv", csv_line);
         delete pb;
-        if(best_sol != nullptr)
-            writeSolToMIDIFile(testCases[test_case_number].size(), rand() % 2000, best_sol);
+        if(best_sol != nullptr){
+            string fileName = testCasesNames[test_case_number] + "|" + tonalityNames[tonic] +  "|" +
+                             variable_selection_heuristics_names[variable_selection_heuristic] + "|" +
+                             value_selection_heuristics_names[value_selection_heuristic];
+            //@todo change the function to take a string instead of an integer
+            //writeSolToMIDIFile(testCases[test_case_number][0].size(), fileName, best_sol);
+        }
         return 0;
     }
     catch (exception& e){

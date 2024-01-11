@@ -516,33 +516,3 @@ string FourVoiceTexture::to_string(){
 
     return message;
 }
-
-
-/**
- * Default template to post the branching heuristic
- * Variable selection: select the last variable first (<--)
- * Value selection: select the value with the lowest value
- * @param home
- * @param notes
- */
-void branching_right_to_left_val_min(const Home& home, const IntVarArray& notes){
-    /// variable selection heuristic
-    /// go <--
-    auto meritFunction = [](const Space& home, IntVar x, int i) {
-        return i;
-    };
-
-    /// value selection heuristic
-    auto branchVal = [](const Space& home, IntVar x, int i) {
-        return x.min();
-    };
-
-    auto branchCommit = [](Space& home, unsigned int a, IntVar x, int i, int n){
-        if (a == 0U){
-            rel(home, x, IRT_EQ, n);
-        } else {
-            rel(home, x, IRT_NQ, n);
-        }
-    };
-    branch(home, notes, INT_VAR_MERIT_MAX(meritFunction), INT_VAL(branchVal, branchCommit));
-}

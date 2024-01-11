@@ -1,9 +1,9 @@
 #!/bin/bash
-# Define the C++ executable
+# Define the useful files
 cpp_executable="../out/parallelRun"
 inputFile="TestCases.txt"
 
-# Define auxiliary files
+# auxiliary files
 PROBLEM_FILES="src/Utilities.cpp src/Tonality.cpp src/MajorTonality.cpp \
                 src/MinorTonality.cpp src/VoiceLeadingConstraints.cpp src/HarmonicConstraints.cpp \
                 src/GeneralConstraints.cpp src/Preferences.cpp src/FourVoiceTexture.cpp \
@@ -19,7 +19,6 @@ echo "compilation complete"
 echo "Initializing the output file"
 currentDate=$(date +%Y-%m-%d_%H-%M-%S);
 outFileOpt="../out/search-stats-${currentDate}.csv"  # filename of the results (with the date at the end of the file)
-mkdir -p "results/stats"
 rm -f $outFileOpt
 echo "Lauching experiments in parallel"
 echo "Chord progression , Tonality, Variable selection strategy, Value selection strategy, Time to prove optimality, , \
@@ -32,5 +31,4 @@ echo "Chord progression , Tonality, Variable selection strategy, Value selection
         number of chords with 3 notes, number of fundamental state chords without doubled bass, number of incomplete chords, \
         number of common notes in the tenor, number of common notes in the alto, \ number of common notes in the soprano, \
         cost of melodic intervals, ," >> $outFileOpt
-#@todo this works sometimes but not always, go figure
-cat $inputFile | parallel --colsep ' ' ./$cpp_executable {} >> $outFileOpt
+cat $inputFile | parallel --bar --colsep ' ' ./$cpp_executable {} >> $outFileOpt

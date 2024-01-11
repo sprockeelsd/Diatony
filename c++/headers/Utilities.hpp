@@ -40,13 +40,19 @@ enum variable_selection{
     RIGHT_TO_LEFT,      //3
 };
 
-/// go <--
+/// go <-- soprano->bass
 auto right_to_left = [](const Space& home, const IntVar& x, int i) {
     return i;
 };
 
-const vector<IntVarBranch> variable_selection_heuristics = {INT_VAR_DEGREE_MAX(), INT_VAR_SIZE_MIN(), INT_VAR_NONE(),
-                                                      INT_VAR_MERIT_MAX(right_to_left)};
+/// go --> soprano->bass
+auto left_to_right_soprano_to_bass = [](const Space& home, const IntVar& x, int i) {
+    return i/4 + (4 - i%4);
+};
+
+const vector<IntVarBranch> variable_selection_heuristics = {INT_VAR_DEGREE_MAX(), INT_VAR_SIZE_MIN(),
+                                                            INT_VAR_MERIT_MIN(left_to_right_soprano_to_bass),
+                                                            INT_VAR_MERIT_MAX(right_to_left)};
 
 const vector<string> variable_selection_heuristics_names = {"Degree max", "Domain size min", "Left to right",
                                                             "Right to left"};
@@ -55,6 +61,20 @@ enum value_selection{
     VAL_MIN,            //0
     VAL_MAX,            //1
     VAL_RND,            //2
+};
+
+/// value selection heuristic
+auto branchVal = [](const Space& home, IntVar x, int i) {
+    return x.min();
+};
+
+/// commit function (EQ and DIFF)
+auto branchCommit = [](Space& home, unsigned int a, IntVar x, int i, int n){
+    if (a == 0U){
+        rel(home, x, IRT_EQ, n);
+    } else {
+        rel(home, x, IRT_NQ, n);
+    }
 };
 
 const vector<IntValBranch> value_selection_heuristics = {INT_VAL_MIN(), INT_VAL_MAX(), INT_VAL_RND(1U)};
@@ -96,7 +116,7 @@ const int B_FLAT = 10;
 const int B = 11;
 const int C_FLAT = 11;
 
-const vector<std::string> noteNames = {"C", "C#", "D", "Eb", "E", "F", "F#", "G", "Ab", "A", "Bb", "B"};
+const vector<std::string> noteNames = {"C", "Csharp", "D", "Eb", "E", "F", "Fsharp", "G", "Ab", "A", "Bb", "B"};
 
 /** Voice positions */
 enum voices{
