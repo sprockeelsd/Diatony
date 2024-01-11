@@ -40,13 +40,11 @@ int main(int argc, char* argv[]) {
 
         std::ofstream myfile(filePath, std::ios::out); // append mode
         if(myfile.is_open()){
-            myfile << time() << endl;
-            myfile << "test_case_number|tonic|mode|variable_selection_heuristic|value_selection_heuristic" << endl;
             for(int j = 0; j < testCases.size(); j++){
                 for (int i = 0; i < tonics.size(); i++){
                     for(auto vsh: var_sel){
                         for(auto valsh : val_sel){
-                            myfile << j << "|" << tonics[i] << "|" << modes[i] << "|" << vsh << "|" << valsh << "|";
+                            myfile << j << " " << tonics[i] << " " << modes[i] << " " << vsh << " " << valsh;// << " ";
                             myfile << endl;
                         }
                     }

@@ -60,6 +60,11 @@ test_branching: clean
 	clear
 	./../out/branch
 
+parallel_run: clean
+	g++ -std=c++11 -F/Library/Frameworks -framework gecode -o ../out/parallelRun $(PROBLEM_FILES) $(MIDI_FILES) src/parallelRun.cpp
+	clear
+	#./../out/parallelRun 0 0 0 0 0
+
 
 test_tonality:
 	g++ -std=c++11 -F/Library/Frameworks -framework gecode -o testTonality $(SRC_DIR)/Utilities.cpp \

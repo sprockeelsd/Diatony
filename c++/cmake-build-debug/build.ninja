@@ -196,6 +196,13 @@ build CMakeFiles/damien.dir/src/HeuristicsTestingSetup.cpp.o: CXX_COMPILER__dami
   OBJECT_DIR = CMakeFiles/damien.dir
   OBJECT_FILE_DIR = CMakeFiles/damien.dir/src
 
+build CMakeFiles/damien.dir/src/parallelRun.cpp.o: CXX_COMPILER__damien_unscanned_Debug /Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++/src/parallelRun.cpp || cmake_object_order_depends_target_damien
+  DEP_FILE = CMakeFiles/damien.dir/src/parallelRun.cpp.o.d
+  FLAGS = -g -std=gnu++11 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk -fcolor-diagnostics
+  INCLUDES = -I/Library/Frameworks/Gecode.framework/Headers -I/Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++/headers -F/Library/Frameworks
+  OBJECT_DIR = CMakeFiles/damien.dir
+  OBJECT_FILE_DIR = CMakeFiles/damien.dir/src
+
 build CMakeFiles/damien.dir/src/problem_wrapper.cpp.o: CXX_COMPILER__damien_unscanned_Debug /Users/sprockeelsd/Documents/Libraries/MusicConstraints/c++/src/problem_wrapper.cpp || cmake_object_order_depends_target_damien
   DEP_FILE = CMakeFiles/damien.dir/src/problem_wrapper.cpp.o.d
   FLAGS = -g -std=gnu++11 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk -fcolor-diagnostics
@@ -211,7 +218,7 @@ build CMakeFiles/damien.dir/src/problem_wrapper.cpp.o: CXX_COMPILER__damien_unsc
 #############################################
 # Link the static library libdamien.a
 
-build libdamien.a: CXX_STATIC_LIBRARY_LINKER__damien_Debug CMakeFiles/damien.dir/src/FourVoiceTexture.cpp.o CMakeFiles/damien.dir/src/main.cpp.o CMakeFiles/damien.dir/src/Tonality.cpp.o CMakeFiles/damien.dir/src/Utilities.cpp.o CMakeFiles/damien.dir/src/MajorTonality.cpp.o CMakeFiles/damien.dir/src/testTonality.cpp.o CMakeFiles/damien.dir/src/GeneralConstraints.cpp.o CMakeFiles/damien.dir/src/MinorTonality.cpp.o CMakeFiles/damien.dir/src/HarmonicConstraints.cpp.o CMakeFiles/damien.dir/src/VoiceLeadingConstraints.cpp.o CMakeFiles/damien.dir/src/Solver.cpp.o CMakeFiles/damien.dir/src/Preferences.cpp.o CMakeFiles/damien.dir/src/MidiFile.cpp.o CMakeFiles/damien.dir/src/Binasc.cpp.o CMakeFiles/damien.dir/src/MidiEvent.cpp.o CMakeFiles/damien.dir/src/MidiEventList.cpp.o CMakeFiles/damien.dir/src/MidiMessage.cpp.o CMakeFiles/damien.dir/src/Options.cpp.o CMakeFiles/damien.dir/src/MidiFileGeneration.cpp.o CMakeFiles/damien.dir/src/BranchingTests.cpp.o CMakeFiles/damien.dir/src/HeuristicsTestingSetup.cpp.o CMakeFiles/damien.dir/src/problem_wrapper.cpp.o
+build libdamien.a: CXX_STATIC_LIBRARY_LINKER__damien_Debug CMakeFiles/damien.dir/src/FourVoiceTexture.cpp.o CMakeFiles/damien.dir/src/main.cpp.o CMakeFiles/damien.dir/src/Tonality.cpp.o CMakeFiles/damien.dir/src/Utilities.cpp.o CMakeFiles/damien.dir/src/MajorTonality.cpp.o CMakeFiles/damien.dir/src/testTonality.cpp.o CMakeFiles/damien.dir/src/GeneralConstraints.cpp.o CMakeFiles/damien.dir/src/MinorTonality.cpp.o CMakeFiles/damien.dir/src/HarmonicConstraints.cpp.o CMakeFiles/damien.dir/src/VoiceLeadingConstraints.cpp.o CMakeFiles/damien.dir/src/Solver.cpp.o CMakeFiles/damien.dir/src/Preferences.cpp.o CMakeFiles/damien.dir/src/MidiFile.cpp.o CMakeFiles/damien.dir/src/Binasc.cpp.o CMakeFiles/damien.dir/src/MidiEvent.cpp.o CMakeFiles/damien.dir/src/MidiEventList.cpp.o CMakeFiles/damien.dir/src/MidiMessage.cpp.o CMakeFiles/damien.dir/src/Options.cpp.o CMakeFiles/damien.dir/src/MidiFileGeneration.cpp.o CMakeFiles/damien.dir/src/BranchingTests.cpp.o CMakeFiles/damien.dir/src/HeuristicsTestingSetup.cpp.o CMakeFiles/damien.dir/src/parallelRun.cpp.o CMakeFiles/damien.dir/src/problem_wrapper.cpp.o
   ARCH_FLAGS = -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk
   LANGUAGE_COMPILE_FLAGS = -g
   OBJECT_DIR = CMakeFiles/damien.dir
