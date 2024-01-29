@@ -21,7 +21,18 @@ using namespace smf;
     It will write in a CSV file the statistics
  */
 int main(int argc, char* argv[]) {
-    if(argc < 6) return 1; /// If the number of arguments is not right, return error code
+    if(argc != 6) return 1; /// If the number of arguments is not right, return error code
+//    for (int i = 0; i < argc; ++i) {
+//        std::cout << "argv[" << i << "]: " << argv[i] << std::endl;
+//    }
+
+//    //@todo parse the string into the 5 numbers temporarily
+//    // Create a string stream to parse the numbers
+//    std::istringstream iss(argv[1]);
+//    // Variables to store each number
+//    int num1, num2, num3, num4, num5;
+//    // Use the string stream to extract each number
+//    iss >> num1 >> num2 >> num3 >> num4 >> num5;
 
 /***********************************************************************************************************************
  *                                                                                                                     *
@@ -83,9 +94,9 @@ int main(int argc, char* argv[]) {
 
 
 
-    vector<vector<vector<int>>> testCases = {testCase1, testCase2};
+    vector<vector<vector<int>>> testCases = {testCase1, testCase2, testCase3};
 
-    vector<string> testCasesNames = {testCase1Name, testCase2Name};
+    vector<string> testCasesNames = {testCase1Name, testCase2Name, testCase3Name};
 
 /***********************************************************************************************************************
  *                                                                                                                     *
@@ -94,57 +105,91 @@ int main(int argc, char* argv[]) {
  ***********************************************************************************************************************/
 
     vector<int> var_sel = {DEGREE_MAX, DOM_SIZE_MIN, LEFT_TO_RIGHT, RIGHT_TO_LEFT}; //@todo add left to right but soprano to bass and not bass to soprano
-    vector<int> val_sel = {VAL_MIN, VAL_MAX}; // @todo add custom ones
+    vector<int> val_sel = {VAL_MIN, VAL_MAX, VAL_RND}; // @todo add custom ones
 
 /***********************************************************************************************************************
  *                                                                                                                     *
  *                                                  Solution generation                                                *
  *                                                                                                                     *
  ***********************************************************************************************************************/
-    try{
-//        for (int i = 0; i < argc; ++i) {
-//            std::cout << "argv[" << i << "]: " << argv[i] << std::endl;
-//        }
-        int test_case_number = stoi(argv[1]);
-        int tonic = stoi(argv[2]);
-        int mode = stoi(argv[3]);
-        int variable_selection_heuristic = stoi(argv[4]);
-        int value_selection_heuristic = stoi(argv[5]);
 
-        Tonality *tonality;
-        vector<int> qualities;
-        if(mode == MAJOR_MODE){
-            tonality = new MajorTonality(tonic);
-            qualities = testCases[test_case_number][1];
-        }
-        else{
-            tonality = new MinorTonality(tonic);
-            qualities = testCases[test_case_number][2];
-        }
+    int test_case_number = stoi(argv[1]);
+    int tonic = stoi(argv[2]);
+    int mode = stoi(argv[3]);
+    int variable_selection_heuristic = stoi(argv[4]);
+    int value_selection_heuristic = stoi(argv[5]);
 
-        string csv_line;
-        csv_line += testCasesNames[test_case_number] + " , " + tonality->get_name() +  " , " +
-                    variable_selection_heuristics_names[variable_selection_heuristic] + " ," +
-                    value_selection_heuristics_names[value_selection_heuristic];
+//    int test_case_number = num1;
+//    int tonic = num2;
+//    int mode = num3;
+//    int variable_selection_heuristic = num4;
+//    int value_selection_heuristic = num5;
 
-        auto pb = new FourVoiceTexture(testCases[test_case_number][0].size(), tonality,
-                                                    testCases[test_case_number][0],qualities,
-                                                    testCases[test_case_number][3],
-                                                    variable_selection_heuristic,
-                                                    value_selection_heuristic);
-        auto best_sol = find_best_solution(pb, 60000, "test.csv", csv_line);
-        delete pb;
-        if(best_sol != nullptr){
-            string fileName = testCasesNames[test_case_number] + "|" + tonalityNames[tonic] +  "|" +
-                             variable_selection_heuristics_names[variable_selection_heuristic] + "|" +
-                             value_selection_heuristics_names[value_selection_heuristic];
-            //@todo change the function to take a string instead of an integer
-            //writeSolToMIDIFile(testCases[test_case_number][0].size(), fileName, best_sol);
-        }
-        return 0;
+    Tonality *tonality;
+    vector<int> qualities;
+    if(mode == MAJOR_MODE){
+        tonality = new MajorTonality(tonic);
+        qualities = testCases[test_case_number][1];
     }
-    catch (exception& e){
-        cout << "Error: " << e.what() << endl;
-        return 1;
+    else{
+        tonality = new MinorTonality(tonic);
+        qualities = testCases[test_case_number][2];
     }
+
+    string csv_line;
+    csv_line += testCasesNames[test_case_number] + " , " + tonality->get_name() +  " , " +
+                variable_selection_heuristics_names[variable_selection_heuristic] + " ," +
+                value_selection_heuristics_names[value_selection_heuristic];
+
+    auto pb = new FourVoiceTexture(testCases[test_case_number][0].size(), tonality,
+                                                testCases[test_case_number][0],qualities,
+                                                testCases[test_case_number][3],
+                                                variable_selection_heuristic,
+                                                value_selection_heuristic);
+    Search::Options opts;
+    opts.stop = Search::Stop::time(60000);
+
+    BAB<FourVoiceTexture> solver(pb, opts);
+    delete pb;
+
+    Search::Statistics bestSolStats = solver.statistics();
+    string solsAndTime;
+    FourVoiceTexture *bestSol = nullptr;
+    bool bestSolFound = false;
+    auto start = std::chrono::high_resolution_clock::now();     /// start time
+
+    while(FourVoiceTexture *sol = solver.next()){
+        bestSol = sol;
+        auto currTime = std::chrono::high_resolution_clock::now();     /// current time
+        std::chrono::duration<double> duration = currTime - start;
+        solsAndTime += "," + to_string(duration.count()) + " , " + intVarArgs_to_string(sol->get_cost_vector()) + ",";
+        bestSol = sol;
+        bestSolStats = solver.statistics();
+    }
+    string csv_entry;
+    if(bestSol == nullptr){/// no solutions found
+        auto currTime = std::chrono::high_resolution_clock::now();     /// current time
+        std::chrono::duration<double> duration = currTime - start;
+        csv_entry = csv_line + "," + to_string(bestSolFound) + " , " + to_string(duration.count());
+    }
+    else if(solver.stopped()){/// optimal solution not found
+        bestSolFound = false;
+        auto currTime = std::chrono::high_resolution_clock::now();     /// current time
+        std::chrono::duration<double> duration = currTime - start;
+        csv_entry = csv_line + "," + to_string(bestSolFound) + "," + to_string(duration.count()) + ",,," +
+                statistics_to_csv_string(bestSolStats) + intVarArgs_to_string(bestSol->get_cost_vector()) +
+                ",,," + statistics_to_csv_string(solver.statistics()) + "," +
+                solsAndTime + ",";;
+    }
+    else{ /// optimal solution found
+        bestSolFound = true;
+        auto currTime = std::chrono::high_resolution_clock::now();     /// current time
+        std::chrono::duration<double> duration = currTime - start;
+        csv_entry = csv_line + "," + to_string(bestSolFound) + "," + to_string(duration.count()) + ",,," +
+                           statistics_to_csv_string(bestSolStats) + intVarArgs_to_string(bestSol->get_cost_vector()) +
+                           ",,," + statistics_to_csv_string(solver.statistics()) + "," +
+                           solsAndTime + ",";
+    }
+    cout << csv_entry << endl;
+    return 0;
 }

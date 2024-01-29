@@ -57,6 +57,7 @@ protected:
     IntVarArray altoMelodicIntervals;
     IntVarArray sopranoMelodicIntervals;
     IntVarArray allMelodicIntervals;
+    IntVarArray allAbsoluteMelodicIntervals;
 
     /// absolute melodic intervals
     IntVarArray absoluteBassMelodicIntervals;

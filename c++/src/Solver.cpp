@@ -50,20 +50,33 @@ FourVoiceTexture* get_next_solution_space(Search::Base<FourVoiceTexture>* solver
  * @return the best solution to the problem
  */
 const FourVoiceTexture *find_best_solution(FourVoiceTexture *pb, int timeout, string csvFileName, string preMessage) {
+    std::cout << "in find_best_solution function" << std::endl;
     // create a new search engine
-    auto* solver = make_solver(pb, BAB_SOLVER, timeout);
+    Search::Options opts;
+    //opts.threads = 0; /// as many as available
+    opts.stop = Search::Stop::time(timeout); // stop after 120 seconds
+
+    auto solver = new BAB<FourVoiceTexture>(pb, opts);
+
     Search::Statistics bestSolStats = solver->statistics();
 
     string solsAndTime;
 
-    FourVoiceTexture *bestSol; // keep a pointer to the best solution
+    FourVoiceTexture *bestSol = nullptr; // keep a pointer to the best solution
     auto start = std::chrono::high_resolution_clock::now();     /// start time
-    while(FourVoiceTexture *sol = get_next_solution_space(solver)){
+    std::cout << "before while" << std::endl;
+    while(FourVoiceTexture *sol = solver->next()){
+        std::cout << "in while" << std::endl;
+        std::cout << "temporary solution found" << std::endl;
         auto currTime = std::chrono::high_resolution_clock::now();     /// current time
         std::chrono::duration<double> duration = currTime - start;
         solsAndTime += "," + to_string(duration.count()) + " , " + intVarArgs_to_string(sol->get_cost_vector()) + ",";
         bestSol = sol;
         bestSolStats = solver->statistics();
+    }
+    delete solver;
+    if(bestSol == nullptr){
+        return nullptr;
     }
     auto finalTime = std::chrono::high_resolution_clock::now();     /// final time
     std::chrono::duration<double> duration = finalTime - start;

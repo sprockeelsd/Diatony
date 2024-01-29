@@ -38,6 +38,7 @@ enum variable_selection{
     DOM_SIZE_MIN,       //1
     LEFT_TO_RIGHT,      //2
     RIGHT_TO_LEFT,      //3
+    AFC_MAX,            //4
 };
 
 /// go <-- soprano->bass
@@ -55,11 +56,12 @@ const vector<IntVarBranch> variable_selection_heuristics = {INT_VAR_DEGREE_MAX()
                                                             INT_VAR_MERIT_MAX(right_to_left)};
 
 const vector<string> variable_selection_heuristics_names = {"Degree max", "Domain size min", "Left to right",
-                                                            "Right to left"};
+                                                            "Right to left", "AFC max"};
 
 enum value_selection{
     VAL_MIN,            //0
     VAL_MAX,            //1
+    VAL_MED,
     VAL_RND,            //2
 };
 
@@ -77,9 +79,9 @@ auto branchCommit = [](Space& home, unsigned int a, IntVar x, int i, int n){
     }
 };
 
-const vector<IntValBranch> value_selection_heuristics = {INT_VAL_MIN(), INT_VAL_MAX(), INT_VAL_RND(1U)};
+const vector<IntValBranch> value_selection_heuristics = {INT_VAL_MIN(), INT_VAL_MAX(), INT_VAL_MED(), INT_VAL_RND(1U)};
 
-const vector<string> value_selection_heuristics_names = {"Value min", "Value max", "Value random"};
+const vector<string> value_selection_heuristics_names = {"Value min", "Value max", "Median value", "Value random"};
 
 /** Melodic costs */
 const int SECOND_COST = 0;

@@ -21,7 +21,7 @@ currentDate=$(date +%Y-%m-%d_%H-%M-%S);
 outFileOpt="../out/search-stats-${currentDate}.csv"  # filename of the results (with the date at the end of the file)
 rm -f $outFileOpt
 echo "Lauching experiments in parallel"
-echo "Chord progression , Tonality, Variable selection strategy, Value selection strategy, Time to prove optimality, , \
+echo "Chord progression , Tonality, Variable selection strategy, Value selection strategy, Optimal solution found, Time to prove optimality, , \
       Best solution Statistics, Nodes traversed, Failed nodes explored, Restarts performed, Propagators executed, No \
       goods generated, Maximal depth of explored tree, number of 4 note diminished chords, number of chords with 3 notes,\
        number of fundamental state chords without doubled bass, number of incomplete chords, number of common notes in \
@@ -32,3 +32,13 @@ echo "Chord progression , Tonality, Variable selection strategy, Value selection
         number of common notes in the tenor, number of common notes in the alto, \ number of common notes in the soprano, \
         cost of melodic intervals, ," >> $outFileOpt
 cat $inputFile | parallel --bar --colsep ' ' ./$cpp_executable {} >> $outFileOpt
+
+#while IFS= read -r line; do
+#    echo "Calling my_program with parameter: $line"
+#    ./$cpp_executable "$line"
+#    echo "Return code: $?"
+#    if [ $? -ne 0 ]; then
+#            echo "Error: Return code is not 0. Printing the line:"
+#            echo "$line" >> "buggy_test_cases.txt"
+#        fi
+#done < $inputFile
