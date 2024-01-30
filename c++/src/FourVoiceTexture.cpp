@@ -293,28 +293,49 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     |                                                       Branching                                                  |
     |                                                                                                                  |
     -------------------------------------------------------------------------------------------------------------------*/
-    /// start by finding the last chord
-    branch(*this, FullChordsVoicing.slice(nOfVoices * (size - 1), 1, nOfVoices),
-           variable_selection_heuristics[RIGHT_TO_LEFT],
-           INT_VAL_RND(1U));
-    /// go right to left branching on melodic intervals, choosing the smallest one in absolute value
+    //branch(*this, costVector, INT_VAR_NONE(), INT_VAL_MIN()); /// in their order because they are sorted by importance
 
-    /// value selection heuristic
-
-
-    //@todo branch on cost values that are the most important
-
-    branch(*this, allAbsoluteMelodicIntervals, variable_selection_heuristics[variableSelectionStrategy],
-           value_selection_heuristics[valueSelectionStrategy]); //@todo change
-
-    branch(*this, allMelodicIntervals, variable_selection_heuristics[variableSelectionStrategy],
-           value_selection_heuristics[valueSelectionStrategy]); //@todo change
-
-
-//    branch(*this, FullChordsVoicing, variable_selection_heuristics[variableSelectionStrategy],
-//           value_selection_heuristics[valueSelectionStrategy]);
-
+    branch(*this, FullChordsVoicing, variable_selection_heuristics[variableBranchingStrategy],
+           value_selection_heuristics[valueBranchingStrategy]);
 }
+
+//void FourVoiceTexture::first(void){//    /// start by finding the last chord
+////    branch(*this, FullChordsVoicing.slice(nOfVoices * (size - 1), 1, nOfVoices),
+////           variable_selection_heuristics[RIGHT_TO_LEFT],
+////           INT_VAL_RND(1U));
+////    /// go right to left branching on melodic intervals, choosing the smallest one in absolute value
+////
+////    /// value selection heuristic
+////
+////
+////    //@todo branch on cost values that are the most important
+////
+////    branch(*this, allAbsoluteMelodicIntervals, variable_selection_heuristics[variableSelectionStrategy],
+////           value_selection_heuristics[valueSelectionStrategy]); //@todo change
+////
+////    branch(*this, allMelodicIntervals, variable_selection_heuristics[variableSelectionStrategy],
+////           value_selection_heuristics[valueSelectionStrategy]); //@todo change
+//
+//
+//    branch(*this, FullChordsVoicing, variable_selection_heuristics[variableBranchingStrategy],
+//           value_selection_heuristics[valueBranchingStrategy]);
+//}
+//
+//void FourVoiceTexture::next(const FourVoiceTexture& s) {
+//    this->constrain(s);
+//    //relax(*this, FullChordsVoicing, s.FullChordsVoicing, Rnd(1U), 0.7); /// relax 70% of the variables based on RNG with seed 1
+//    /// todo post additional constraints for LNS
+//}
+//
+//bool FourVoiceTexture::slave(const MetaInfo& mi){
+//    if(mi.type() == MetaInfo::RESTART && mi.restart() > 0){
+//        next(static_cast<const FourVoiceTexture&>(*mi.last()));
+//        return false; /// search is incomplete
+//    }
+//    else{
+//        return true;
+//    }
+//}
 
 /**
  * Cost function for lexicographical minimization. The order is as follows:
@@ -485,7 +506,6 @@ string FourVoiceTexture::to_string(){
     message += "*                                                                                          *\n";
     message += "********************************************************************************************\n\n";
     message += parameters();
-
     message += "\n-----------------------------------------variables------------------------------------------\n";
 
     message += "BassTenorHarmonicIntervals = \t" + intVarArray_to_string(bassTenorHarmonicIntervals) + "\n";

@@ -117,6 +117,12 @@ public:
                      vector<int> chordStas, int variableSelectionStrategy,
                      int valueSelectionStrategy);
 
+//    void first(void);
+//
+//    void next(const FourVoiceTexture& s);
+//
+//    virtual bool slave(const MetaInfo& mi);
+
     /**
      * Copy constructor
      * @param s an instance of the FourVoiceTexture class

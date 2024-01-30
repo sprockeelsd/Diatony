@@ -81,17 +81,20 @@ int main(int argc, char* argv[]) {
                            FUNDAMENTAL_STATE, FIRST_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
     vector<vector<int>> testCase2 = {chords2, chords_qualities_major2, chords_qualities_minor2, states2};
 
-    string testCase3Name = "I5-V+4-I6-II6-V5-I5-IV5-I64-V7+-I5";
-    vector<int> chords3 = {FIRST_DEGREE, FIFTH_DEGREE, FIRST_DEGREE, SECOND_DEGREE, FIFTH_DEGREE, FIRST_DEGREE,
-                           FOURTH_DEGREE, FIRST_DEGREE, FIFTH_DEGREE, FIRST_DEGREE};
-    vector<int> chords_qualities_major3 = {MAJOR_CHORD, DOMINANT_SEVENTH_CHORD, MAJOR_CHORD, MINOR_CHORD, MAJOR_CHORD,
-                                           MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, DOMINANT_SEVENTH_CHORD, MAJOR_CHORD};
-    vector<int> chords_qualities_minor3 = {MINOR_CHORD, DOMINANT_SEVENTH_CHORD, MINOR_CHORD, DIMINISHED_CHORD, MAJOR_CHORD,
-                                             MINOR_CHORD, MINOR_CHORD, MINOR_CHORD, DOMINANT_SEVENTH_CHORD, MINOR_CHORD};
-    vector<int> states3 = {FUNDAMENTAL_STATE, THIRD_INVERSION, FIRST_INVERSION, FIRST_INVERSION, FUNDAMENTAL_STATE,
-                            FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, SECOND_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
+    string testCase3Name = "I5-V6-VI5-V5-IV5-I6-II5-V5-I5-V6-VI5-V5-IV5-V7+-I5";
+    vector<int> chords3 = {FIRST_DEGREE, FIFTH_DEGREE, SIXTH_DEGREE, FIFTH_DEGREE, FOURTH_DEGREE, FIRST_DEGREE,
+                           SECOND_DEGREE, FIFTH_DEGREE, FIRST_DEGREE, FIFTH_DEGREE, SIXTH_DEGREE, FIFTH_DEGREE,
+                           FOURTH_DEGREE, FIFTH_DEGREE, FIRST_DEGREE};
+    vector<int> chords_qualities_major3 = {MAJOR_CHORD, MAJOR_CHORD, MINOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD,
+                                           MINOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MINOR_CHORD, MAJOR_CHORD,
+                                           MAJOR_CHORD, DOMINANT_SEVENTH_CHORD, MAJOR_CHORD};
+    vector<int> chords_qualities_minor3 = {MINOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MINOR_CHORD, MINOR_CHORD,
+                                           DIMINISHED_CHORD, MAJOR_CHORD, MINOR_CHORD, MAJOR_CHORD, MAJOR_CHORD,
+                                           MAJOR_CHORD, MINOR_CHORD, DOMINANT_SEVENTH_CHORD, MINOR_CHORD};
+    vector<int> states3 = {FUNDAMENTAL_STATE, FIRST_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE,
+                           FIRST_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FIRST_INVERSION,
+                           FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
     vector<vector<int>> testCase3 = {chords3, chords_qualities_major3, chords_qualities_minor3, states3};
-
 
 
     vector<vector<vector<int>>> testCases = {testCase1, testCase2, testCase3};
@@ -105,7 +108,7 @@ int main(int argc, char* argv[]) {
  ***********************************************************************************************************************/
 
     vector<int> var_sel = {DEGREE_MAX, DOM_SIZE_MIN, LEFT_TO_RIGHT, RIGHT_TO_LEFT}; //@todo add left to right but soprano to bass and not bass to soprano
-    vector<int> val_sel = {VAL_MIN, VAL_MAX, VAL_RND}; // @todo add custom ones
+    vector<int> val_sel = {VAL_MIN, VAL_MAX, VAL_MED, VAL_RND}; // @todo add custom ones
 
 /***********************************************************************************************************************
  *                                                                                                                     *
@@ -136,20 +139,27 @@ int main(int argc, char* argv[]) {
         qualities = testCases[test_case_number][2];
     }
 
+    int size = testCases[test_case_number][0].size();
+
     string csv_line;
     csv_line += testCasesNames[test_case_number] + " , " + tonality->get_name() +  " , " +
                 variable_selection_heuristics_names[variable_selection_heuristic] + " ," +
                 value_selection_heuristics_names[value_selection_heuristic];
 
-    auto pb = new FourVoiceTexture(testCases[test_case_number][0].size(), tonality,
-                                                testCases[test_case_number][0],qualities,
-                                                testCases[test_case_number][3],
-                                                variable_selection_heuristic,
-                                                value_selection_heuristic);
+    auto pb = new FourVoiceTexture(size, tonality,testCases[test_case_number][0],qualities,
+                                   testCases[test_case_number][3],
+                                   variable_selection_heuristic,
+                                   value_selection_heuristic);
+    /// Search options
     Search::Options opts;
-    opts.stop = Search::Stop::time(60000);
+    opts.threads = 1;
+    opts.stop = Search::Stop::time(600000); // stop after 120 seconds
+    opts.cutoff = Search::Cutoff::linear(size * 1.5); /// cutoff = size * 2^i
+    opts.nogoods_limit = 30;
 
-    BAB<FourVoiceTexture> solver(pb, opts);
+    //BAB<FourVoiceTexture> solver(pb, opts);
+    /// Restart based solver
+    RBS<FourVoiceTexture, BAB> solver(pb, opts);
     delete pb;
 
     Search::Statistics bestSolStats = solver.statistics();
@@ -159,32 +169,29 @@ int main(int argc, char* argv[]) {
     auto start = std::chrono::high_resolution_clock::now();     /// start time
 
     while(FourVoiceTexture *sol = solver.next()){
-        bestSol = sol;
         auto currTime = std::chrono::high_resolution_clock::now();     /// current time
+        bestSol = (FourVoiceTexture*) sol->copy();
+        bestSolStats = solver.statistics();
         std::chrono::duration<double> duration = currTime - start;
         solsAndTime += "," + to_string(duration.count()) + " , " + intVarArgs_to_string(sol->get_cost_vector()) + ",";
-        bestSol = sol;
-        bestSolStats = solver.statistics();
     }
     string csv_entry;
+
+    auto currTime = std::chrono::high_resolution_clock::now();     /// current time
+    std::chrono::duration<double> duration = currTime - start;
+
     if(bestSol == nullptr){/// no solutions found
-        auto currTime = std::chrono::high_resolution_clock::now();     /// current time
-        std::chrono::duration<double> duration = currTime - start;
         csv_entry = csv_line + "," + to_string(bestSolFound) + " , " + to_string(duration.count());
     }
     else if(solver.stopped()){/// optimal solution not found
         bestSolFound = false;
-        auto currTime = std::chrono::high_resolution_clock::now();     /// current time
-        std::chrono::duration<double> duration = currTime - start;
         csv_entry = csv_line + "," + to_string(bestSolFound) + "," + to_string(duration.count()) + ",,," +
                 statistics_to_csv_string(bestSolStats) + intVarArgs_to_string(bestSol->get_cost_vector()) +
                 ",,," + statistics_to_csv_string(solver.statistics()) + "," +
-                solsAndTime + ",";;
+                solsAndTime + ",";
     }
     else{ /// optimal solution found
         bestSolFound = true;
-        auto currTime = std::chrono::high_resolution_clock::now();     /// current time
-        std::chrono::duration<double> duration = currTime - start;
         csv_entry = csv_line + "," + to_string(bestSolFound) + "," + to_string(duration.count()) + ",,," +
                            statistics_to_csv_string(bestSolStats) + intVarArgs_to_string(bestSol->get_cost_vector()) +
                            ",,," + statistics_to_csv_string(solver.statistics()) + "," +

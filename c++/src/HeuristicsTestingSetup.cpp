@@ -8,12 +8,12 @@ int main(int argc, char* argv[]) {
         std::string filePath(homeDir);
         filePath += "/Documents/Libraries/MusicConstraints/c++/TestCases.txt"; // Specify the desired file path, such as $HOME/log.txt
 
-        vector<int> tonics = {C};//, C, A_FLAT, B_FLAT, E, C_SHARP};
+        vector<int> tonics = {C, C, A_FLAT, B_FLAT, E, C_SHARP};
 
-        vector<int> modes = {MAJOR_MODE};//, MINOR_MODE, MAJOR_MODE, MINOR_MODE, MAJOR_MODE, MINOR_MODE};
+        vector<int> modes = {MAJOR_MODE, MINOR_MODE, MAJOR_MODE, MINOR_MODE, MAJOR_MODE, MINOR_MODE};
 
-        vector<int> var_sel = {RIGHT_TO_LEFT};//DEGREE_MAX, DOM_SIZE_MIN, LEFT_TO_RIGHT, RIGHT_TO_LEFT, AFC_MAX}; //@todo add left to right but soprano to bass and not bass to soprano
-        vector<int> val_sel = {VAL_MIN};//, VAL_MAX, VAL_MED, VAL_RND}; // @todo add custom ones
+        vector<int> var_sel = {DEGREE_MAX, DOM_SIZE_MIN, LEFT_TO_RIGHT, RIGHT_TO_LEFT};
+        vector<int> val_sel = {VAL_MIN, VAL_MAX, VAL_MED, VAL_RND};
 
         vector<vector<vector<int>>> testCases{
                 {
@@ -36,6 +36,20 @@ int main(int argc, char* argv[]) {
                         {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FIRST_INVERSION, FIRST_INVERSION, FUNDAMENTAL_STATE,
                             FUNDAMENTAL_STATE, FIRST_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE}
                 },
+                {
+                        {FIRST_DEGREE, FIFTH_DEGREE, SIXTH_DEGREE, FIFTH_DEGREE, FOURTH_DEGREE, FIRST_DEGREE,
+                            SECOND_DEGREE, FIFTH_DEGREE, FIRST_DEGREE, FIFTH_DEGREE, SIXTH_DEGREE, FIFTH_DEGREE,
+                            FOURTH_DEGREE, FIFTH_DEGREE, FIRST_DEGREE},
+                        {MAJOR_CHORD, MAJOR_CHORD, MINOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD,
+                            MINOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MINOR_CHORD, MAJOR_CHORD,
+                            MAJOR_CHORD, DOMINANT_SEVENTH_CHORD, MAJOR_CHORD},
+                        {MINOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MINOR_CHORD, MINOR_CHORD,
+                            DIMINISHED_CHORD, MAJOR_CHORD, MINOR_CHORD, MAJOR_CHORD, MAJOR_CHORD,
+                            MAJOR_CHORD, MINOR_CHORD, DOMINANT_SEVENTH_CHORD, MINOR_CHORD},
+                        {FUNDAMENTAL_STATE, FIRST_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE,
+                            FIRST_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FIRST_INVERSION,
+                            FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE}
+                }
 //                {
 //                    {FIRST_DEGREE, FIFTH_DEGREE, FIRST_DEGREE, SECOND_DEGREE, FIFTH_DEGREE, FIRST_DEGREE,
 //                                FOURTH_DEGREE, FIRST_DEGREE, FIFTH_DEGREE, FIRST_DEGREE},

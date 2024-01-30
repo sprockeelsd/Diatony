@@ -61,8 +61,8 @@ const vector<string> variable_selection_heuristics_names = {"Degree max", "Domai
 enum value_selection{
     VAL_MIN,            //0
     VAL_MAX,            //1
-    VAL_MED,
-    VAL_RND,            //2
+    VAL_MED,            //2
+    VAL_RND,            //3
 };
 
 /// value selection heuristic
@@ -84,13 +84,14 @@ const vector<IntValBranch> value_selection_heuristics = {INT_VAL_MIN(), INT_VAL_
 const vector<string> value_selection_heuristics_names = {"Value min", "Value max", "Median value", "Value random"};
 
 /** Melodic costs */
-const int SECOND_COST = 0;
-const int THIRD_COST = 1;
-const int FOURTH_COST = 2;
-const int FIFTH_COST = 2;
-const int SIXTH_COST = 3;
-const int SEVENTH_COST = 4;
-const int OCTAVE_COST = 0;
+const int UNISON_COST = 0;
+const int SECOND_COST = 1;
+const int THIRD_COST = 3;
+const int FOURTH_COST = 6;
+const int FIFTH_COST = 6;
+const int SIXTH_COST = 12;
+const int SEVENTH_COST = 18;
+const int OCTAVE_COST = 1;
 
 const int MAX_MELODIC_COST = SEVENTH_COST;
 
