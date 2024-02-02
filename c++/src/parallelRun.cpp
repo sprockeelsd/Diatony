@@ -96,10 +96,22 @@ int main(int argc, char* argv[]) {
                            FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
     vector<vector<int>> testCase3 = {chords3, chords_qualities_major3, chords_qualities_minor3, states3};
 
+    string testCase4Name = "I5-V5-VI5-I5-III5-VI5-II5-I5-V5";
+    vector<int> chords4 = {FIRST_DEGREE, FIFTH_DEGREE, SIXTH_DEGREE, FIRST_DEGREE, THIRD_DEGREE, SIXTH_DEGREE,
+                          SECOND_DEGREE, FIRST_DEGREE, FIFTH_DEGREE};
+    vector<int> chords_qualities_major4 = {MAJOR_CHORD, MAJOR_CHORD, MINOR_CHORD, MAJOR_CHORD, MINOR_CHORD, MINOR_CHORD,
+                                    MINOR_CHORD, MAJOR_CHORD, MAJOR_CHORD};
+    vector<int> chords_qualities_minor4 = {MINOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MINOR_CHORD, MAJOR_CHORD, MAJOR_CHORD,
+                                    DIMINISHED_CHORD, MINOR_CHORD, MINOR_CHORD};
+    vector<int> states4 = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE,
+                          FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
+    vector<vector<int>> testCase4 = {chords4, chords_qualities_major4, chords_qualities_minor4, states4};
 
-    vector<vector<vector<int>>> testCases = {testCase1, testCase2, testCase3};
 
-    vector<string> testCasesNames = {testCase1Name, testCase2Name, testCase3Name};
+
+    vector<vector<vector<int>>> testCases = {testCase1, testCase2, testCase3, testCase4};
+
+    vector<string> testCasesNames = {testCase1Name, testCase2Name, testCase3Name, testCase4Name};
 
 /***********************************************************************************************************************
  *                                                                                                                     *
@@ -107,7 +119,7 @@ int main(int argc, char* argv[]) {
  *                                                                                                                     *
  ***********************************************************************************************************************/
 
-    vector<int> var_sel = {DEGREE_MAX, DOM_SIZE_MIN, LEFT_TO_RIGHT, RIGHT_TO_LEFT}; //@todo add left to right but soprano to bass and not bass to soprano
+    vector<int> var_sel = {RIGHT_TO_LEFT}; //@todo add left to right but soprano to bass and not bass to soprano DEGREE_MAX, DOM_SIZE_MIN, LEFT_TO_RIGHT,
     vector<int> val_sel = {VAL_MIN, VAL_MAX, VAL_MED, VAL_RND}; // @todo add custom ones
 
 /***********************************************************************************************************************

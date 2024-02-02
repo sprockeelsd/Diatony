@@ -60,25 +60,42 @@ for val in values:
 max_t = max([item for sublist in times for item in sublist])
 max_m = max([item for sublist in melodic_intervals_costs for item in sublist])
 
+data = [n4_note_dim_chords, n_3_note_chords, n_fund_chords_no_double_bass, n_incomplete_chords, n_common_notes_tenor, n_common_notes_alto, n_common_notes_soprano, 
+        melodic_intervals_costs]
+labels = ['Number of 4-note diminished chords', 'Number of 3-note chords', 'Number of fundamental chords without double bass', 'Number of incomplete chords',
+          'Number of common notes in the tenor', 'Number of common notes in the alto', 'Number of common notes in the soprano', 'Melodic intervals cost']
+for i in range(len(data)):
+    plt.plot(times[-1], data[i][-1], label = labels[i])
+
+    # plt.xticks(range(round(times[-1][0]), 10, 1))
+    # plt.yticks(range(0, max([abs(x) for x in data[i][-1]]) + 1, 1))
+
+    plt.xlabel('Time')
+    plt.ylabel('Cost Values')
+    plt.title('Evolution of the quality of solutions over time')
+
+    plt.legend()
+    plt.show()
+
 #plot the graph
-plt.scatter(times[-1], n4_note_dim_chords[-1], label = 'Number of 4-note diminished chords')
-plt.scatter(times[-1], n_3_note_chords[-1], label = 'Number of 3-note chords')
-plt.scatter(times[-1], n_fund_chords_no_double_bass[-1], label = 'Number of fundamental chords without double bass')
-plt.scatter(times[-1], n_incomplete_chords[-1], label = 'Number of incomplete chords')
-plt.scatter(times[-1], n_common_notes_tenor[-1], label = 'Number of common notes in the tenor')
-plt.scatter(times[-1], n_common_notes_alto[-1], label = 'Number of common notes in the alto')
-plt.scatter(times[-1], n_common_notes_soprano[-1], label = 'Number of common notes in the soprano')
-plt.scatter(times[-1], melodic_intervals_costs[-1], label = f'Case {i+1}')
-# for i in range(len(times)):
-#     plt.scatter(times[i], melodic_intervals_costs[i], label = f'Case {i+1}')
-#     plt.scatter(times[i][-1], melodic_intervals_costs[i][-1], color = 'black', marker = 'x', label = 'Melodic interval costs')
+# plt.scatter(times[-1], n4_note_dim_chords[-1], label = 'Number of 4-note diminished chords')
+# plt.scatter(times[-1], n_3_note_chords[-1], label = 'Number of 3-note chords')
+# plt.scatter(times[-1], n_fund_chords_no_double_bass[-1], label = 'Number of fundamental chords without double bass')
+# plt.scatter(times[-1], n_incomplete_chords[-1], label = 'Number of incomplete chords')
+# plt.scatter(times[-1], n_common_notes_tenor[-1], label = 'Number of common notes in the tenor')
+# plt.scatter(times[-1], n_common_notes_alto[-1], label = 'Number of common notes in the alto')
+# plt.scatter(times[-1], n_common_notes_soprano[-1], label = 'Number of common notes in the soprano')
+# plt.scatter(times[-1], melodic_intervals_costs[-1], label = f'Melodic intervals cost')
+# # for i in range(len(times)):
+# #     plt.scatter(times[i], melodic_intervals_costs[i], label = f'Case {i+1}')
+# #     plt.scatter(times[i][-1], melodic_intervals_costs[i][-1], color = 'black', marker = 'x', label = 'Melodic interval costs')
 
-plt.xticks(range(round(times[-1][0]), 10, 1))
-plt.yticks(range(0, max_m, 10))
+# plt.xticks(range(round(times[-1][0]), 10, 1))
+# plt.yticks(range(0, max_m, 10))
 
-plt.xlabel('Time')
-plt.ylabel('Cost Values')
-plt.title('Evolution of the quality of solutions over time')
+# plt.xlabel('Time')
+# plt.ylabel('Cost Values')
+# plt.title('Evolution of the quality of solutions over time')
 
-plt.legend()
-plt.show()
+# plt.legend()
+# plt.show()

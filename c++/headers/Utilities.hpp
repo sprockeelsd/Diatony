@@ -91,7 +91,7 @@ const int FOURTH_COST = 6;
 const int FIFTH_COST = 6;
 const int SIXTH_COST = 12;
 const int SEVENTH_COST = 18;
-const int OCTAVE_COST = 1;
+const int OCTAVE_COST = 6;
 
 const int MAX_MELODIC_COST = SEVENTH_COST;
 

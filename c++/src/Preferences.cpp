@@ -119,27 +119,27 @@ void compute_cost_for_incomplete_chords(const Home &home, int size, int nVoices,
  * This function sets the cost for the number of times when there is a common note in the same voice between consecutive
  * This has to be MAXIMIZED!
  * @param home the instance of the problem
- * @param absoluteBassMelodicIntervals the array of absolute melodic intervals for the bass
- * @param absoluteTenorMelodicIntervals the array of absolute melodic intervals for the tenor
- * @param absoluteAltoMelodicIntervals the array of absolute melodic intervals for the alto
- * @param absoluteSopranoMelodicIntervals the array of absolute melodic intervals for the soprano
+ * @param bassMelodicIntervals the array of absolute melodic intervals for the bass
+ * @param tenorMelodicIntervals the array of absolute melodic intervals for the tenor
+ * @param altoMelodicIntervals the array of absolute melodic intervals for the alto
+ * @param sopranoMelodicIntervals the array of absolute melodic intervals for the soprano
  * @param commonNotesInSameVoice an array containing the number of times when there is a common note in the same voice
  * for each voice
  * @param nOfCommonNotesInSameVoice the total number of times when there is a common note in the same voice
  */
-void compute_cost_for_common_notes_not_in_same_voice(const Home &home, const IntVarArray& absoluteBassMelodicIntervals,
-                                                     const IntVarArray& absoluteTenorMelodicIntervals,
-                                                     const IntVarArray& absoluteAltoMelodicIntervals,
-                                                     const IntVarArray& absoluteSopranoMelodicIntervals,
+void compute_cost_for_common_notes_not_in_same_voice(const Home &home, const IntVarArray& bassMelodicIntervals,
+                                                     const IntVarArray& tenorMelodicIntervals,
+                                                     const IntVarArray& altoMelodicIntervals,
+                                                     const IntVarArray& sopranoMelodicIntervals,
                                                      IntVarArray commonNotesInSameVoice,
                                                      IntVarArray negativeCommonNotesInSameVoice,
                                                      const IntVar& nOfCommonNotesInSameVoice) {
 
-    vector<IntVarArray> absoluteMelodicIntervals = {absoluteBassMelodicIntervals, absoluteTenorMelodicIntervals,
-                                                    absoluteAltoMelodicIntervals, absoluteSopranoMelodicIntervals};
+    vector<IntVarArray> melodicIntervals = {bassMelodicIntervals, tenorMelodicIntervals,
+                                            altoMelodicIntervals, sopranoMelodicIntervals};
     /// costsForEachVoice[voice] = nb of times where the interval is 0
     for(int voice = BASS; voice <= SOPRANO; voice++){
-        count(home, absoluteMelodicIntervals[voice], 0, IRT_EQ, commonNotesInSameVoice[voice]);
+        count(home, melodicIntervals[voice], 0, IRT_EQ, commonNotesInSameVoice[voice]);
         rel(home, expr(home, negativeCommonNotesInSameVoice[voice] == expr(home, - commonNotesInSameVoice[voice])));
     }
     /// the sum of costs for each voice = the number of times where there is a common note in the same voice
@@ -150,10 +150,10 @@ void compute_cost_for_common_notes_not_in_same_voice(const Home &home, const Int
  * This function sets the cost for the melodic intervals in all voices. It is a weighted sum of the number of occurence
  * of each interval, and the weights are defined in the Utilities.hpp file.
  * @param home the instance of the problem
- * @param absoluteBassMelodicIntervals the array of absolute melodic intervals for the bass
- * @param absoluteTenorMelodicIntervals the array of absolute melodic intervals for the tenor
- * @param absoluteAltoMelodicIntervals the array of absolute melodic intervals for the alto
- * @param absoluteSopranoMelodicIntervals the array of absolute melodic intervals for the soprano
+ * @param bassMelodicIntervals the array of absolute melodic intervals for the bass
+ * @param tenorMelodicIntervals the array of absolute melodic intervals for the tenor
+ * @param altoMelodicIntervals the array of absolute melodic intervals for the alto
+ * @param sopranoMelodicIntervals the array of absolute melodic intervals for the soprano
  * @param nOfSeconds the number of intervals that are a second
  * @param nOfThirds the number of intervals that are a third
  * @param nOfFourths the number of intervals that are a fourth
@@ -163,24 +163,29 @@ void compute_cost_for_common_notes_not_in_same_voice(const Home &home, const Int
  * @param nOfOctaves the number of intervals that are an octave
  * @param costOfMelodicIntervals the cost of the melodic intervals (weighted sum)
  */
-void compute_cost_for_melodic_intervals(const Home& home, const IntVarArray& absoluteBassMelodicIntervals,
-                                        const IntVarArray& absoluteTenorMelodicIntervals,
-                                        const IntVarArray& absoluteAltoMelodicIntervals,
-                                        const IntVarArray& absoluteSopranoMelodicIntervals, const IntVar& nOfSeconds,
+void compute_cost_for_melodic_intervals(const Home& home, const IntVarArray& bassMelodicIntervals,
+                                        const IntVarArray& tenorMelodicIntervals,
+                                        const IntVarArray& altoMelodicIntervals,
+                                        const IntVarArray& sopranoMelodicIntervals, const IntVar& nOfSeconds,
                                         const IntVar& nOfThirds, const IntVar& nOfFourths, const IntVar& nOfFifths,
                                         const IntVar& nOfSixths, const IntVar& nOfSevenths, const IntVar& nOfOctaves,
                                         const IntVar& costOfMelodicIntervals) {
-    IntVarArgs allMelodicIntervals = IntVarArgs() << absoluteBassMelodicIntervals << absoluteTenorMelodicIntervals
-                                         << absoluteAltoMelodicIntervals << absoluteSopranoMelodicIntervals;
+    IntVarArgs allMelodicIntervals = IntVarArgs() << bassMelodicIntervals << tenorMelodicIntervals
+                                                  << altoMelodicIntervals << sopranoMelodicIntervals;
 
     /// count the number of occurences of each interval
-    count(home, allMelodicIntervals, IntSet({MINOR_SECOND, MAJOR_SECOND}),IRT_EQ, nOfSeconds);
-    count(home, allMelodicIntervals, IntSet({MINOR_THIRD, MAJOR_THIRD}),IRT_EQ, nOfThirds);
-    count(home, allMelodicIntervals, PERFECT_FOURTH,IRT_EQ, nOfFourths);
-    count(home, allMelodicIntervals, IntSet({TRITONE, PERFECT_FIFTH}),IRT_EQ, nOfFifths); // tritones are counted as fifth to only be counted once
-    count(home, allMelodicIntervals, IntSet({MINOR_SIXTH, MAJOR_SIXTH}),IRT_EQ, nOfSixths);
-    count(home, allMelodicIntervals, IntSet({MINOR_SEVENTH, MAJOR_SEVENTH}),IRT_EQ, nOfSevenths);
-    count(home, allMelodicIntervals, PERFECT_OCTAVE,IRT_EQ, nOfOctaves);
+    count(home, allMelodicIntervals, IntSet({-MAJOR_SECOND, -MINOR_SECOND, MINOR_SECOND, MAJOR_SECOND}),
+          IRT_EQ, nOfSeconds);
+    count(home, allMelodicIntervals, IntSet({-MAJOR_THIRD, -MINOR_THIRD, MINOR_THIRD, MAJOR_THIRD}),
+          IRT_EQ, nOfThirds);
+    count(home, allMelodicIntervals, IntSet({-PERFECT_FOURTH, PERFECT_FOURTH}),IRT_EQ, nOfFourths);
+    count(home, allMelodicIntervals, IntSet({-PERFECT_FIFTH, -TRITONE, TRITONE, PERFECT_FIFTH}),
+          IRT_EQ, nOfFifths); // tritones are counted as fifth to only be counted once
+    count(home, allMelodicIntervals, IntSet({-MAJOR_SIXTH, -MINOR_SIXTH, MINOR_SIXTH, MAJOR_SIXTH}),
+          IRT_EQ, nOfSixths);
+    count(home, allMelodicIntervals, IntSet({-MAJOR_SEVENTH, -MINOR_SEVENTH, MINOR_SEVENTH, MAJOR_SEVENTH}),
+          IRT_EQ, nOfSevenths);
+    count(home, allMelodicIntervals, IntSet({-PERFECT_OCTAVE, PERFECT_OCTAVE}),IRT_EQ, nOfOctaves);
 
     /// weighted sum of the number of occurences of each interval
     linear(home, {SECOND_COST, THIRD_COST, FOURTH_COST, FIFTH_COST, SIXTH_COST, SEVENTH_COST, OCTAVE_COST},

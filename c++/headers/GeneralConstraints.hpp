@@ -16,7 +16,7 @@ using namespace std;
  *                                                                                                                     *
  * This file contains all the general constraints. It currently contains:                                              *
  *     - link_melodic_arrays: links the melodic intervals arrays to the FullChordsVoicing array for each voice         *
- *     - link_absolute_melodic_arrays: links the absolute melodic intervals arrays to the corresponding melodic arrays *
+ *     - link_squared_melodic_arrays: links the absolute melodic intervals arrays to the corresponding melodic arrays *
  *     - link_harmonic_arrays: links the harmonic intervals arrays to the FullChordsVoicing array for each voice       *
  *     - restrain_voices_domains: sets the domains of the different voices to their range and gives them their order   *
  *                                                                                                                     *
@@ -59,16 +59,16 @@ void link_melodic_arrays(const Home &home, int size, int nVoices, IntVarArray Fu
  * @param tenorMelodicIntervals the melodic intervals of the tenor
  * @param altoMelodicIntervals the melodic intervals of the alto
  * @param sopranoMelodicIntervals the melodic intervals of the soprano
- * @param absoluteBassMelodicIntervals the absolute melodic intervals of the bass
- * @param absoluteTenorMelodicIntervals the absolute melodic intervals of the tenor
- * @param absoluteAltoMelodicIntervals the absolute melodic intervals of the alto
- * @param absoluteSopranoMelodicIntervals the absolute melodic intervals of the soprano
+ * @param squaredBassMelodicIntervals the absolute melodic intervals of the bass
+ * @param squaredTenorMelodicIntervals the absolute melodic intervals of the tenor
+ * @param squaredAltoMelodicIntervals the absolute melodic intervals of the alto
+ * @param squaredSopranoMelodicIntervals the absolute melodic intervals of the soprano
  */
-void link_absolute_melodic_arrays(const Home &home, IntVarArray bassMelodicIntervals, IntVarArray tenorMelodicIntervals,
-                                  IntVarArray altoMelodicIntervals, IntVarArray sopranoMelodicIntervals,
-                                  IntVarArray absoluteBassMelodicIntervals, IntVarArray absoluteTenorMelodicIntervals,
-                                  IntVarArray absoluteAltoMelodicIntervals,
-                                  IntVarArray absoluteSopranoMelodicIntervals);
+void link_squared_melodic_arrays(const Home &home, IntVarArray bassMelodicIntervals, IntVarArray tenorMelodicIntervals,
+                                 IntVarArray altoMelodicIntervals, IntVarArray sopranoMelodicIntervals,
+                                 IntVarArray squaredBassMelodicIntervals, IntVarArray squaredTenorMelodicIntervals,
+                                 IntVarArray squaredAltoMelodicIntervals,
+                                 IntVarArray squaredSopranoMelodicIntervals);
 
 /**
  * Link the harmonic intervals arrays to the FullChordsVoicing array for each voice

@@ -57,13 +57,13 @@ protected:
     IntVarArray altoMelodicIntervals;
     IntVarArray sopranoMelodicIntervals;
     IntVarArray allMelodicIntervals;
-    IntVarArray allAbsoluteMelodicIntervals;
+    IntVarArray allSquaredMelodicIntervals;
 
     /// absolute melodic intervals
-    IntVarArray absoluteBassMelodicIntervals;
-    IntVarArray absoluteTenorMelodicIntervals;
-    IntVarArray absoluteAltoMelodicIntervals;
-    IntVarArray absoluteSopranoMelodicIntervals;
+    IntVarArray squaredBassMelodicIntervals;
+    IntVarArray squaredTenorMelodicIntervals;
+    IntVarArray squaredAltoMelodicIntervals;
+    IntVarArray squaredSopranoMelodicIntervals;
 
     /// variable arrays for harmonic intervals between adjacent voices (not absolute value but are always positive)
     IntVarArray bassTenorHarmonicIntervals;
