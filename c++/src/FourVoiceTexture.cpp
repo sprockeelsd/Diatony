@@ -68,6 +68,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     commonNotesInSameVoice              = IntVarArray(*this, nOfVoices, 0, size - 1);
     negativeCommonNotesInSameVoice      = IntVarArray(*this, nOfVoices, -(size - 1), 0);
 
+    nOfUnissons = IntVar(*this, 0, nOfVoices * (size - 1));
     nOfSeconds  = IntVar(*this, 0, nOfVoices * (size - 1));
     nOfThirds   = IntVar(*this, 0, nOfVoices * (size - 1));
     nOfFourths  = IntVar(*this, 0, nOfVoices * (size - 1));
@@ -84,9 +85,8 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     nOfCommonNotesInSameVoice                   = IntVar(*this, - nOfVoices * (size - 1), 0);
     costOfMelodicIntervals                      = IntVar(*this, 0, nOfVoices*(size-1)* MAX_MELODIC_COST);
 
-    costVector = {nOfDiminishedChordsWith4notes, nOfChordsWithLessThan4notes, nOfFundamentalStateChordsWithoutDoubledBass,
-                  nOfIncompleteChords, negativeCommonNotesInSameVoice[TENOR], negativeCommonNotesInSameVoice[ALTO],
-                  commonNotesInSameVoice[SOPRANO], costOfMelodicIntervals};
+    costVector = {nOfIncompleteChords, nOfDiminishedChordsWith4notes, nOfChordsWithLessThan4notes,
+                  nOfFundamentalStateChordsWithoutDoubledBass, costOfMelodicIntervals, nOfCommonNotesInSameVoice};
 
     /// Test constraints
     /// example 1
@@ -172,8 +172,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
                                                     nOfCommonNotesInSameVoice);
 
     /// weighted sum of melodic intervals (cost to minimize)
-    compute_cost_for_melodic_intervals(*this, bassMelodicIntervals, tenorMelodicIntervals,
-                                       altoMelodicIntervals, sopranoMelodicIntervals, nOfSeconds,
+    compute_cost_for_melodic_intervals(*this, allMelodicIntervals, nOfUnissons, nOfSeconds,
                                        nOfThirds, nOfFourths, nOfFifths, nOfSixths, nOfSevenths, nOfOctaves,
                                        costOfMelodicIntervals);
 
@@ -305,7 +304,6 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     |                                                       Branching                                                  |
     |                                                                                                                  |
     -------------------------------------------------------------------------------------------------------------------*/
-    //branch(*this, costVector, INT_VAR_NONE(), INT_VAL_MIN()); /// in their order because they are sorted by importance
 
     branch(*this, FullChordsVoicing, variable_selection_heuristics[variableBranchingStrategy],
            value_selection_heuristics[valueBranchingStrategy]);
@@ -363,10 +361,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
  * @return the cost variables in order of importance
  */
 IntVarArgs FourVoiceTexture::cost() const {
-    //@todo change the sum of melodic intervals to minimize the number of skips and prefer the steps
-    return {nOfDiminishedChordsWith4notes, nOfChordsWithLessThan4notes, nOfFundamentalStateChordsWithoutDoubledBass,
-            nOfIncompleteChords, negativeCommonNotesInSameVoice[TENOR],
-            negativeCommonNotesInSameVoice[ALTO], commonNotesInSameVoice[SOPRANO], costOfMelodicIntervals};
+    return costVector;
 }
 
 /**
@@ -409,13 +404,14 @@ FourVoiceTexture::FourVoiceTexture(FourVoiceTexture& s): IntLexMinimizeSpace(s){
     commonNotesInSameVoice.update(*this, s.commonNotesInSameVoice);
     negativeCommonNotesInSameVoice.update(*this, s.negativeCommonNotesInSameVoice);
 
-    nOfSeconds.update(*this, s.nOfSeconds);
-    nOfThirds.update(*this, s.nOfThirds);
-    nOfFourths.update(*this, s.nOfFourths);
-    nOfFifths.update(*this, s.nOfFifths);
-    nOfSixths.update(*this, s.nOfSixths);
-    nOfSevenths.update(*this, s.nOfSevenths);
-    nOfOctaves.update(*this, s.nOfOctaves);
+    nOfUnissons.update( *this, s.nOfUnissons);
+    nOfSeconds.update(  *this, s.nOfSeconds);
+    nOfThirds.update(   *this, s.nOfThirds);
+    nOfFourths.update(  *this, s.nOfFourths);
+    nOfFifths.update(   *this, s.nOfFifths);
+    nOfSixths.update(   *this, s.nOfSixths);
+    nOfSevenths.update( *this, s.nOfSevenths);
+    nOfOctaves.update(  *this, s.nOfOctaves);
 
     nOfDiminishedChordsWith4notes.update(*this, s.nOfDiminishedChordsWith4notes);
     nOfChordsWithLessThan4notes.update(*this, s.nOfChordsWithLessThan4notes);
@@ -424,9 +420,8 @@ FourVoiceTexture::FourVoiceTexture(FourVoiceTexture& s): IntLexMinimizeSpace(s){
     nOfCommonNotesInSameVoice.update(*this, s.nOfCommonNotesInSameVoice);
     costOfMelodicIntervals.update(*this, s.costOfMelodicIntervals);
 
-    costVector = {nOfDiminishedChordsWith4notes, nOfChordsWithLessThan4notes, nOfFundamentalStateChordsWithoutDoubledBass,
-                  nOfIncompleteChords, negativeCommonNotesInSameVoice[TENOR], negativeCommonNotesInSameVoice[ALTO],
-                  commonNotesInSameVoice[SOPRANO], costOfMelodicIntervals};
+    costVector = {nOfIncompleteChords, nOfDiminishedChordsWith4notes, nOfChordsWithLessThan4notes,
+                  nOfFundamentalStateChordsWithoutDoubledBass, costOfMelodicIntervals, nOfCommonNotesInSameVoice};
 }
 
 /**
@@ -551,6 +546,7 @@ string FourVoiceTexture::to_string(){
     message += "negativeCommonNotesInSameVoice = \t" + intVarArray_to_string(negativeCommonNotesInSameVoice) + "\n";
     message += "nOFDifferentNotesInChords = \t\t" + intVarArray_to_string(nOFDifferentNotesInChords) + "\n\n";
 
+    message += "nOfUnissons = \t\t" + intVar_to_string(nOfUnissons) + "\n";
     message += "nOfSeconds = \t\t" + intVar_to_string(nOfSeconds) + "\n";
     message += "nOfThirds = \t\t" + intVar_to_string(nOfThirds) + "\n";
     message += "nOfFourths = \t\t" + intVar_to_string(nOfFourths) + "\n";

@@ -12,8 +12,8 @@ int main(int argc, char* argv[]) {
 
         vector<int> modes = {MAJOR_MODE, MINOR_MODE, MAJOR_MODE, MINOR_MODE, MAJOR_MODE, MINOR_MODE};
 
-        vector<int> var_sel = {DEGREE_MAX, DOM_SIZE_MIN, LEFT_TO_RIGHT, RIGHT_TO_LEFT};
-        vector<int> val_sel = {VAL_MIN, VAL_MAX, VAL_MED, VAL_RND};
+        vector<int> var_sel = {RIGHT_TO_LEFT}; //DEGREE_MAX, DOM_SIZE_MIN, LEFT_TO_RIGHT,
+        vector<int> val_sel = {VAL_RND};//VAL_MIN, VAL_MAX, VAL_MED,
 
         vector<vector<vector<int>>> testCases{
                 {

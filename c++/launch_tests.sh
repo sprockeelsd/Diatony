@@ -25,12 +25,11 @@ echo "Chord progression , Tonality, Variable selection strategy, Value selection
       Best solution Statistics, Nodes traversed, Failed nodes explored, Restarts performed, Propagators executed, No \
       goods generated, Maximal depth of explored tree, number of 4 note diminished chords, number of chords with 3 notes,\
        number of fundamental state chords without doubled bass, number of incomplete chords, number of common notes in \
-       the tenor, number of common notes in the alto, number of common notes in the soprano, cost of melodic intervals,, \
+       the soprano, number of common notes in the same voice, cost of melodic intervals,, \
        Total search statistics, Nodes traversed, Failed nodes explored, Restarts performed, Propagators executed, No \
        goods generated, Maximal depth of explored tree, , Intermediate solutions ,time, number of 4 note diminished chords,\
         number of chords with 3 notes, number of fundamental state chords without doubled bass, number of incomplete chords, \
-        number of common notes in the tenor, number of common notes in the alto, \ number of common notes in the soprano, \
-        cost of melodic intervals, ," >> $outFileOpt
+        number of common notes in the soprano, number of common notes in the same voice, cost of melodic intervals, ," >> $outFileOpt
 cat $inputFile | parallel --bar --colsep ' ' ./$cpp_executable {} >> $outFileOpt
 
 #while IFS= read -r line; do

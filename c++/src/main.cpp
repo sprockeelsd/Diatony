@@ -24,7 +24,7 @@ int main(int argc, char* argv[]) {
     if(argc != 3)
         return 1;
 
-    Tonality* tonality = new MajorTonality(A_FLAT);
+    Tonality* tonality = new MajorTonality(E);
     write_to_log_file(time().c_str(), LOG_FILE);
 
     std::string search_type = argv[1];
@@ -35,13 +35,19 @@ int main(int argc, char* argv[]) {
 //    vector<int> chords_qualities = {MAJOR_CHORD, MAJOR_CHORD};
 //    vector<int> states = {FUNDAMENTAL_STATE, FIRST_INVERSION};
 
-//    vector<int> chords = {FIRST_DEGREE, FIFTH_DEGREE, SIXTH_DEGREE, FIRST_DEGREE, THIRD_DEGREE, SIXTH_DEGREE, SECOND_DEGREE, FIRST_DEGREE, FIFTH_DEGREE};
-//    vector<int> chords_qualities = {MAJOR_CHORD, MAJOR_CHORD, MINOR_CHORD, MAJOR_CHORD, MINOR_CHORD, MINOR_CHORD, MINOR_CHORD, MAJOR_CHORD, MAJOR_CHORD};
-//    vector<int> states = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
+    vector<int> chords = {FIRST_DEGREE, FIFTH_DEGREE, SIXTH_DEGREE, FIFTH_DEGREE, FOURTH_DEGREE, FIRST_DEGREE,
+                           SECOND_DEGREE, FIFTH_DEGREE, FIRST_DEGREE, FIFTH_DEGREE, SIXTH_DEGREE, FIFTH_DEGREE,
+                           FOURTH_DEGREE, FIFTH_DEGREE, FIRST_DEGREE};
+    vector<int> chords_qualities = {MAJOR_CHORD, MAJOR_CHORD, MINOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD,
+                                           MINOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MINOR_CHORD, MAJOR_CHORD,
+                                           MAJOR_CHORD, DOMINANT_SEVENTH_CHORD, MAJOR_CHORD};
+    vector<int> states = {FUNDAMENTAL_STATE, FIRST_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE,
+                           FIRST_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FIRST_INVERSION,
+                           FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
 
-    vector<int> chords = {FOURTH_DEGREE, FIRST_DEGREE, FIFTH_DEGREE, SIXTH_DEGREE, FIFTH_DEGREE};
-    vector<int> chords_qualities = {MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MINOR_CHORD, MAJOR_CHORD};
-    vector<int> states = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FIRST_INVERSION};
+//    vector<int> chords = {FOURTH_DEGREE, FIRST_DEGREE, FIFTH_DEGREE, SIXTH_DEGREE, FIFTH_DEGREE};
+//    vector<int> chords_qualities = {MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MINOR_CHORD, MAJOR_CHORD};
+//    vector<int> states = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FIRST_INVERSION};
 
     int size = chords.size();
 
@@ -52,7 +58,7 @@ int main(int argc, char* argv[]) {
     Search::Options opts;
     opts.threads = 1;
     opts.stop = Search::Stop::time(600000); // stop after 120 seconds
-    opts.cutoff = Search::Cutoff::luby(size);
+    opts.cutoff = Search::Cutoff::luby(2*size);
     opts.nogoods_limit = size * 3;
 
 

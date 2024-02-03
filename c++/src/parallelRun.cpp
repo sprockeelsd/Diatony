@@ -120,7 +120,7 @@ int main(int argc, char* argv[]) {
  ***********************************************************************************************************************/
 
     vector<int> var_sel = {RIGHT_TO_LEFT}; //@todo add left to right but soprano to bass and not bass to soprano DEGREE_MAX, DOM_SIZE_MIN, LEFT_TO_RIGHT,
-    vector<int> val_sel = {VAL_MIN, VAL_MAX, VAL_MED, VAL_RND}; // @todo add custom ones
+    vector<int> val_sel = {VAL_RND}; // @todo add custom ones //VAL_MIN, VAL_MAX, VAL_MED,
 
 /***********************************************************************************************************************
  *                                                                                                                     *
@@ -166,12 +166,12 @@ int main(int argc, char* argv[]) {
     Search::Options opts;
     opts.threads = 1;
     opts.stop = Search::Stop::time(600000); // stop after 120 seconds
-    opts.cutoff = Search::Cutoff::linear(size * 1.5); /// cutoff = size * 2^i
-    opts.nogoods_limit = 30;
+    //opts.cutoff = Search::Cutoff::linear(size * 1.5); /// cutoff = size * 2^i
+    //opts.nogoods_limit = 30;
 
-    //BAB<FourVoiceTexture> solver(pb, opts);
+    BAB<FourVoiceTexture> solver(pb, opts);
     /// Restart based solver
-    RBS<FourVoiceTexture, BAB> solver(pb, opts);
+    //RBS<FourVoiceTexture, BAB> solver(pb, opts);
     delete pb;
 
     Search::Statistics bestSolStats = solver.statistics();

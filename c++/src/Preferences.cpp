@@ -150,10 +150,7 @@ void compute_cost_for_common_notes_not_in_same_voice(const Home &home, const Int
  * This function sets the cost for the melodic intervals in all voices. It is a weighted sum of the number of occurence
  * of each interval, and the weights are defined in the Utilities.hpp file.
  * @param home the instance of the problem
- * @param bassMelodicIntervals the array of absolute melodic intervals for the bass
- * @param tenorMelodicIntervals the array of absolute melodic intervals for the tenor
- * @param altoMelodicIntervals the array of absolute melodic intervals for the alto
- * @param sopranoMelodicIntervals the array of absolute melodic intervals for the soprano
+ * @param allMelodicIntervals the array of absolute melodic intervals for the bass
  * @param nOfSeconds the number of intervals that are a second
  * @param nOfThirds the number of intervals that are a third
  * @param nOfFourths the number of intervals that are a fourth
@@ -163,17 +160,13 @@ void compute_cost_for_common_notes_not_in_same_voice(const Home &home, const Int
  * @param nOfOctaves the number of intervals that are an octave
  * @param costOfMelodicIntervals the cost of the melodic intervals (weighted sum)
  */
-void compute_cost_for_melodic_intervals(const Home& home, const IntVarArray& bassMelodicIntervals,
-                                        const IntVarArray& tenorMelodicIntervals,
-                                        const IntVarArray& altoMelodicIntervals,
-                                        const IntVarArray& sopranoMelodicIntervals, const IntVar& nOfSeconds,
-                                        const IntVar& nOfThirds, const IntVar& nOfFourths, const IntVar& nOfFifths,
-                                        const IntVar& nOfSixths, const IntVar& nOfSevenths, const IntVar& nOfOctaves,
-                                        const IntVar& costOfMelodicIntervals) {
-    IntVarArgs allMelodicIntervals = IntVarArgs() << bassMelodicIntervals << tenorMelodicIntervals
-                                                  << altoMelodicIntervals << sopranoMelodicIntervals;
-
+void
+compute_cost_for_melodic_intervals(const Home &home, const IntVarArray &allMelodicIntervals, const IntVar &nOfUnissons,
+                                   const IntVar &nOfSeconds, const IntVar &nOfThirds, const IntVar &nOfFourths,
+                                   const IntVar &nOfFifths, const IntVar &nOfSixths, const IntVar &nOfSevenths,
+                                   const IntVar &nOfOctaves, const IntVar &costOfMelodicIntervals) {
     /// count the number of occurences of each interval
+    count(home, allMelodicIntervals, UNISSON, IRT_EQ, nOfUnissons);
     count(home, allMelodicIntervals, IntSet({-MAJOR_SECOND, -MINOR_SECOND, MINOR_SECOND, MAJOR_SECOND}),
           IRT_EQ, nOfSeconds);
     count(home, allMelodicIntervals, IntSet({-MAJOR_THIRD, -MINOR_THIRD, MINOR_THIRD, MAJOR_THIRD}),
@@ -188,7 +181,7 @@ void compute_cost_for_melodic_intervals(const Home& home, const IntVarArray& bas
     count(home, allMelodicIntervals, IntSet({-PERFECT_OCTAVE, PERFECT_OCTAVE}),IRT_EQ, nOfOctaves);
 
     /// weighted sum of the number of occurences of each interval
-    linear(home, {SECOND_COST, THIRD_COST, FOURTH_COST, FIFTH_COST, SIXTH_COST, SEVENTH_COST, OCTAVE_COST},
-           IntVarArgs() << nOfSeconds << nOfThirds << nOfFourths << nOfFifths << nOfSixths << nOfSevenths << nOfOctaves,
+    linear(home, {UNISON_COST, SECOND_COST, THIRD_COST, FOURTH_COST, FIFTH_COST, SIXTH_COST, SEVENTH_COST, OCTAVE_COST},
+           IntVarArgs() << nOfUnissons << nOfSeconds << nOfThirds << nOfFourths << nOfFifths << nOfSixths << nOfSevenths << nOfOctaves,
            IRT_EQ, costOfMelodicIntervals);
 }

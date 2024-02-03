@@ -84,6 +84,7 @@ protected:
     IntVarArray commonNotesInSameVoice;                 // chords with common notes in the same voice between consecutive chords
     IntVarArray negativeCommonNotesInSameVoice;         // negative so we can maximize it by minimizing it (makes sense)
 
+    IntVar nOfUnissons;                                 // number of intervals that are a unisson
     IntVar nOfSeconds;                                  // number of intervals that are a second
     IntVar nOfThirds;                                   // number of intervals that are a third
     IntVar nOfFourths;                                  // number of intervals that are a fourth
@@ -98,7 +99,7 @@ protected:
     IntVar nOfFundamentalStateChordsWithoutDoubledBass; // number of fundamental state chords that don't follow the preferences
     IntVar nOfIncompleteChords;                         // number of incomplete chords
     /// /!\ this cost needs to be maximized, so its value is negative
-    IntVar nOfCommonNotesInSameVoice;                   // number of common notes in the same voice between consecutive chords
+    IntVar nOfCommonNotesInSameVoice;                   // number of common notes in the same voice between consecutive chords (this is negative)
     IntVar costOfMelodicIntervals;                      // for minimizing voice movement between voices
 
     IntVarArgs costVector;                             // the costs in lexicographical order for minimization
