@@ -93,13 +93,13 @@ void compute_cost_for_incomplete_chords(const Home &home, int size, int nVoices,
  * @param commonNotesInSameVoice an array containing the number of times when there is a common note in the same voice for each voice
  * @param nOfCommonNotesInSameVoice the total number of times when there is a common note in the same voice
  */
-void compute_cost_for_common_notes_not_in_same_voice(const Home &home, const IntVarArray& bassMelodicIntervals,
-                                                     const IntVarArray& tenorMelodicIntervals,
-                                                     const IntVarArray& altoMelodicIntervals,
-                                                     const IntVarArray& sopranoMelodicIntervals,
-                                                     IntVarArray commonNotesInSameVoice,
+void compute_cost_for_common_notes_not_in_same_voice(const Home &home, const IntVarArray &bassMelodicIntervals,
+                                                     const IntVarArray &tenorMelodicIntervals,
+                                                     const IntVarArray &altoMelodicIntervals,
+                                                     const IntVarArray &sopranoMelodicIntervals,
+                                                     const IntVar &nOfUnissons, IntVarArray commonNotesInSameVoice,
                                                      IntVarArray negativeCommonNotesInSameVoice,
-                                                     const IntVar& nOfCommonNotesInSameVoice);
+                                                     const IntVar &nOfCommonNotesInSameVoice);
 
 /**
  * This function sets the cost for the melodic intervals in all voices.

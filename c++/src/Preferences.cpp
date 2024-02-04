@@ -127,23 +127,24 @@ void compute_cost_for_incomplete_chords(const Home &home, int size, int nVoices,
  * for each voice
  * @param nOfCommonNotesInSameVoice the total number of times when there is a common note in the same voice
  */
-void compute_cost_for_common_notes_not_in_same_voice(const Home &home, const IntVarArray& bassMelodicIntervals,
-                                                     const IntVarArray& tenorMelodicIntervals,
-                                                     const IntVarArray& altoMelodicIntervals,
-                                                     const IntVarArray& sopranoMelodicIntervals,
-                                                     IntVarArray commonNotesInSameVoice,
+void compute_cost_for_common_notes_not_in_same_voice(const Home &home, const IntVarArray &bassMelodicIntervals,
+                                                     const IntVarArray &tenorMelodicIntervals,
+                                                     const IntVarArray &altoMelodicIntervals,
+                                                     const IntVarArray &sopranoMelodicIntervals,
+                                                     const IntVar &nOfUnissons, IntVarArray commonNotesInSameVoice,
                                                      IntVarArray negativeCommonNotesInSameVoice,
-                                                     const IntVar& nOfCommonNotesInSameVoice) {
+                                                     const IntVar &nOfCommonNotesInSameVoice) {
 
     vector<IntVarArray> melodicIntervals = {bassMelodicIntervals, tenorMelodicIntervals,
                                             altoMelodicIntervals, sopranoMelodicIntervals};
     /// costsForEachVoice[voice] = nb of times where the interval is 0
     for(int voice = BASS; voice <= SOPRANO; voice++){
-        count(home, melodicIntervals[voice], 0, IRT_EQ, commonNotesInSameVoice[voice]);
+        count(home, melodicIntervals[voice], UNISSON, IRT_EQ, commonNotesInSameVoice[voice]);
         rel(home, expr(home, negativeCommonNotesInSameVoice[voice] == expr(home, - commonNotesInSameVoice[voice])));
     }
     /// the sum of costs for each voice = the number of times where there is a common note in the same voice
-    linear(home,{-1,-1,-1,-1}, commonNotesInSameVoice, IRT_EQ, nOfCommonNotesInSameVoice);
+    rel(home, expr(home, nOfUnissons + nOfCommonNotesInSameVoice == 0));
+    //linear(home,{-1,-1,-1,-1}, commonNotesInSameVoice, IRT_EQ, nOfCommonNotesInSameVoice);
 }
 
 /**

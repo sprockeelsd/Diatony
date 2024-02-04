@@ -77,7 +77,6 @@ void chord_note_occurrence_fundamental_state(Home home, int nVoices, int degree,
         count(home, currentChord, tonality->get_scale_degree((degree + THIRD_DEGREE) % 7), IRT_EQ,1);
         count(home, currentChord, tonality->get_scale_degree((degree + FIFTH_DEGREE) % 7), IRT_LQ, 1);
 
-
         if(quality >= DOMINANT_SEVENTH_CHORD){
             count(home, currentChord, tonality->get_scale_degree((degree + SEVENTH_DEGREE) % 7), IRT_EQ, 1);
             /// if the chord is incomplete, double the bass

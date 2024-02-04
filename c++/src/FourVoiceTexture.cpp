@@ -89,20 +89,6 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
                   nOfFundamentalStateChordsWithoutDoubledBass, costOfMelodicIntervals, nOfCommonNotesInSameVoice};
 
     /// Test constraints
-    /// example 1
-//    rel(*this, bassMelodicIntervals, IRT_EQ, IntArgs({-1, -2, -2, -2, -1, -2, 5, 5, -1, -2, -2, -2, 2, -7}));
-//
-//    rel(*this, FullChordsVoicing[0* nOfVoices + SOPRANO]            == 68);
-//    rel(*this, FullChordsVoicing[(size-1) * nOfVoices + SOPRANO]    == 68);
-
-    /// example 2 verse
-//    rel(*this, FullChordsVoicing, IRT_LQ, 79);
-    /// example 2 chorus
-//    rel(*this, FullChordsVoicing, IRT_LQ, 68);
-//    rel(*this, FullChordsVoicing[3*nOfVoices + SOPRANO], IRT_GQ, 68);
-    //rel(*this, FullChordsVoicing[4*nOfVoices + SOPRANO], IRT_GQ, 67);
-//    rel(*this, sopranoMelodicIntervals[2] == -1);
-    //rel(*this, sopranoMelodicIntervals[3] == -2);
 
     /**-----------------------------------------------------------------------------------------------------------------
     |                                                                                                                  |
@@ -167,7 +153,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     /// count the number of common notes in the same voice between consecutive chords (cost to MAXIMIZE)
     /// /!\ The variable nOfCommonNotesInSameVoice has a NEGATIVE value so the minimization will maximize its absolute value
     compute_cost_for_common_notes_not_in_same_voice(*this, bassMelodicIntervals, tenorMelodicIntervals,
-                                                    altoMelodicIntervals, sopranoMelodicIntervals,
+                                                    altoMelodicIntervals, sopranoMelodicIntervals, nOfUnissons,
                                                     commonNotesInSameVoice, negativeCommonNotesInSameVoice,
                                                     nOfCommonNotesInSameVoice);
 

@@ -26,13 +26,13 @@ int main(int argc, char* argv[]) {
 //        std::cout << "argv[" << i << "]: " << argv[i] << std::endl;
 //    }
 
-//    //@todo parse the string into the 5 numbers temporarily
-//    // Create a string stream to parse the numbers
-//    std::istringstream iss(argv[1]);
-//    // Variables to store each number
-//    int num1, num2, num3, num4, num5;
-//    // Use the string stream to extract each number
-//    iss >> num1 >> num2 >> num3 >> num4 >> num5;
+    //@todo parse the string into the 5 numbers temporarily
+    // Create a string stream to parse the numbers
+    std::istringstream iss(argv[1]);
+    // Variables to store each number
+    int num1, num2, num3, num4, num5;
+    // Use the string stream to extract each number
+    iss >> num1 >> num2 >> num3 >> num4 >> num5;
 
 /***********************************************************************************************************************
  *                                                                                                                     *
@@ -107,11 +107,38 @@ int main(int argc, char* argv[]) {
                           FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
     vector<vector<int>> testCase4 = {chords4, chords_qualities_major4, chords_qualities_minor4, states4};
 
+    string testCase5Name = "I5-V5-VI5-I5-VI5-VII6-III5-VI5-II6-V7+-I5";
+    vector<int> chords5 = {FIRST_DEGREE, FIFTH_DEGREE, SIXTH_DEGREE, FIRST_DEGREE, FOURTH_DEGREE, SEVENTH_DEGREE,
+                          THIRD_DEGREE, SIXTH_DEGREE, SECOND_DEGREE, FIFTH_DEGREE, FIRST_DEGREE};
+    vector<int> chords_qualities_major5 = {MAJOR_CHORD, MAJOR_CHORD, MINOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, DIMINISHED_CHORD,
+                                          MINOR_CHORD, MINOR_CHORD, MINOR_CHORD, DOMINANT_SEVENTH_CHORD, MAJOR_CHORD};
+    vector<int> chords_qualities_minor5 = {MINOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MINOR_CHORD, MINOR_CHORD, DIMINISHED_CHORD,
+                                    MAJOR_CHORD, MAJOR_CHORD, DIMINISHED_CHORD, DOMINANT_SEVENTH_CHORD, MINOR_CHORD};
+    vector<int> states5 = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE,
+                          FIRST_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FIRST_INVERSION, FUNDAMENTAL_STATE,
+                          FUNDAMENTAL_STATE};
+    vector<vector<int>> testCase5 = {chords5, chords_qualities_major5, chords_qualities_minor5, states5};
+
+    string testCase6Name = "I5-II6-IV5-V+6-I6-III5-VI5-V65/-I5-IV5-I64-V7+-I5";
+    vector<int> chords6 = {FIRST_DEGREE, SECOND_DEGREE, FOURTH_DEGREE, FIFTH_DEGREE, FIRST_DEGREE, THIRD_DEGREE,
+                          SIXTH_DEGREE, FIFTH_DEGREE, FIRST_DEGREE, FOURTH_DEGREE, FIRST_DEGREE, FIFTH_DEGREE,
+                          FIRST_DEGREE};
+    vector<int> chords_qualities_major6 = {MAJOR_CHORD, MINOR_CHORD, MAJOR_CHORD, DOMINANT_SEVENTH_CHORD, MAJOR_CHORD,
+                                    MINOR_CHORD, MINOR_CHORD, DOMINANT_SEVENTH_CHORD, MAJOR_CHORD, MAJOR_CHORD,
+                                    MAJOR_CHORD, DOMINANT_SEVENTH_CHORD, MAJOR_CHORD};
+    vector<int> chords_qualities_minor6 = {MINOR_CHORD, DIMINISHED_CHORD, MINOR_CHORD, DOMINANT_SEVENTH_CHORD, MINOR_CHORD,
+                                          MAJOR_CHORD, MAJOR_CHORD, DOMINANT_SEVENTH_CHORD, MINOR_CHORD, MINOR_CHORD, MINOR_CHORD,
+                                          DOMINANT_SEVENTH_CHORD, MINOR_CHORD};
+    vector<int> states6 = {FUNDAMENTAL_STATE, FIRST_INVERSION, FUNDAMENTAL_STATE, SECOND_INVERSION, FIRST_INVERSION,
+                          FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FIRST_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE,
+                          SECOND_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
+    vector<vector<int>> testCase6 = {chords6, chords_qualities_major6, chords_qualities_minor6, states6};
 
 
-    vector<vector<vector<int>>> testCases = {testCase1, testCase2, testCase3, testCase4};
+    vector<vector<vector<int>>> testCases = {testCase1, testCase2, testCase3, testCase4, testCase5, testCase6};
 
-    vector<string> testCasesNames = {testCase1Name, testCase2Name, testCase3Name, testCase4Name};
+    vector<string> testCasesNames = {testCase1Name, testCase2Name, testCase3Name, testCase4Name, testCase5Name,
+                                     testCase6Name};
 
 /***********************************************************************************************************************
  *                                                                                                                     *
@@ -119,8 +146,8 @@ int main(int argc, char* argv[]) {
  *                                                                                                                     *
  ***********************************************************************************************************************/
 
-    vector<int> var_sel = {RIGHT_TO_LEFT}; //@todo add left to right but soprano to bass and not bass to soprano DEGREE_MAX, DOM_SIZE_MIN, LEFT_TO_RIGHT,
-    vector<int> val_sel = {VAL_RND}; // @todo add custom ones //VAL_MIN, VAL_MAX, VAL_MED,
+    vector<int> var_sel = {RIGHT_TO_LEFT}; //DEGREE_MAX, DOM_SIZE_MIN, LEFT_TO_RIGHT,
+    vector<int> val_sel = {VAL_RND};
 
 /***********************************************************************************************************************
  *                                                                                                                     *
@@ -165,13 +192,13 @@ int main(int argc, char* argv[]) {
     /// Search options
     Search::Options opts;
     opts.threads = 1;
-    opts.stop = Search::Stop::time(600000); // stop after 120 seconds
-    //opts.cutoff = Search::Cutoff::linear(size * 1.5); /// cutoff = size * 2^i
-    //opts.nogoods_limit = 30;
+    opts.stop = Search::Stop::time(300000); // stop after 120 seconds
+    opts.cutoff = Search::Cutoff::luby(2*size);
+    opts.nogoods_limit = size * 3;
 
-    BAB<FourVoiceTexture> solver(pb, opts);
+    //BAB<FourVoiceTexture> solver(pb, opts);
     /// Restart based solver
-    //RBS<FourVoiceTexture, BAB> solver(pb, opts);
+    RBS<FourVoiceTexture, BAB> solver(pb, opts);
     delete pb;
 
     Search::Statistics bestSolStats = solver.statistics();

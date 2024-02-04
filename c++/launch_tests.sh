@@ -23,9 +23,9 @@ rm -f $outFileOpt
 echo "Lauching experiments in parallel"
 echo "Chord progression , Tonality, Variable selection strategy, Value selection strategy, Optimal solution found, Time to prove optimality, , \
       Best solution Statistics, Nodes traversed, Failed nodes explored, Restarts performed, Propagators executed, No \
-      goods generated, Maximal depth of explored tree, number of 4 note diminished chords, number of chords with 3 notes,\
-       number of fundamental state chords without doubled bass, number of incomplete chords, number of common notes in \
-       the soprano, number of common notes in the same voice, cost of melodic intervals,, \
+      goods generated, Maximal depth of explored tree, number of incomplete chords, number of 4 notes diminished chords,\
+      number of chords with less than 4 notes, number of fundamental chords without doubled bass, cost of melodic intervals, \
+      number of common notes in the same voice,, \
        Total search statistics, Nodes traversed, Failed nodes explored, Restarts performed, Propagators executed, No \
        goods generated, Maximal depth of explored tree, , Intermediate solutions ,time, number of 4 note diminished chords,\
         number of chords with 3 notes, number of fundamental state chords without doubled bass, number of incomplete chords, \
