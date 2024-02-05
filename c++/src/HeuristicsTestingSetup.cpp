@@ -8,9 +8,9 @@ int main(int argc, char* argv[]) {
         std::string filePath(homeDir);
         filePath += "/Documents/Libraries/MusicConstraints/c++/TestCases.txt"; // Specify the desired file path, such as $HOME/log.txt
 
-        vector<int> tonics = {C, C, A_FLAT, B_FLAT, E, C_SHARP};
+        vector<int> tonics = {A_FLAT, C, B_FLAT}; //C, C, A_FLAT, B_FLAT, E, C_SHARP
 
-        vector<int> modes = {MAJOR_MODE, MINOR_MODE, MAJOR_MODE, MINOR_MODE, MAJOR_MODE, MINOR_MODE};
+        vector<int> modes = {MAJOR_MODE, MAJOR_MODE, MINOR_MODE}; //MAJOR_MODE, MINOR_MODE, MAJOR_MODE, MINOR_MODE, MAJOR_MODE, MINOR_MODE
 
         vector<int> var_sel = {RIGHT_TO_LEFT}; //DEGREE_MAX, DOM_SIZE_MIN, LEFT_TO_RIGHT,
         vector<int> val_sel = {VAL_RND};
@@ -93,8 +93,15 @@ int main(int argc, char* argv[]) {
                 for (int i = 0; i < tonics.size(); i++){
                     for(auto vsh: var_sel){
                         for(auto valsh : val_sel){
-                            myfile << j << " " << tonics[i] << " " << modes[i] << " " << vsh << " " << valsh;// << " ";
-                            myfile << endl;
+                            for(auto cutoff_depth : {0,1,2,3,4,5}){
+                                for(auto cutoff_strat : {0,1,2}){
+                                    for(auto nogoods_depth : {0,1,2,3}){
+                                        myfile << j << " " << tonics[i] << " " << modes[i] << " " << vsh << " " << valsh
+                                        << " " << cutoff_depth << " " << cutoff_strat << " " << nogoods_depth << " ";
+                                        myfile << endl;
+                                    }
+                                }
+                            }
                         }
                     }
                 }

@@ -21,18 +21,33 @@ using namespace smf;
     It will write in a CSV file the statistics
  */
 int main(int argc, char* argv[]) {
-    if(argc != 6) return 1; /// If the number of arguments is not right, return error code
+    //if(argc != 9) return 1; /// If the number of arguments is not right, return error code
 //    for (int i = 0; i < argc; ++i) {
 //        std::cout << "argv[" << i << "]: " << argv[i] << std::endl;
 //    }
 
-    //@todo parse the string into the 5 numbers temporarily
-    // Create a string stream to parse the numbers
-    std::istringstream iss(argv[1]);
-    // Variables to store each number
-    int num1, num2, num3, num4, num5;
-    // Use the string stream to extract each number
-    iss >> num1 >> num2 >> num3 >> num4 >> num5;
+//    //@todo parse the string into the 5 numbers temporarily
+//    // Create a string stream to parse the numbers
+//    std::istringstream iss(argv[1]);
+//    // Variables to store each number
+//    int num1, num2, num3, num4, num5;
+//    // Use the string stream to extract each number
+//    iss >> num1 >> num2 >> num3 >> num4 >> num5;
+
+//    int test_case_number = num1;
+//    int tonic = num2;
+//    int mode = num3;
+//    int variable_selection_heuristic = num4;
+//    int value_selection_heuristic = num5;
+
+    int test_case_number = stoi(argv[1]);
+    int tonic = stoi(argv[2]);
+    int mode = stoi(argv[3]);
+    int variable_selection_heuristic = stoi(argv[4]);
+    int value_selection_heuristic = stoi(argv[5]);
+    int cutoff_depth = stoi(argv[6]);
+    int cutoff_strategy = stoi(argv[7]);
+    int nogood_depth = stoi(argv[8]);
 
 /***********************************************************************************************************************
  *                                                                                                                     *
@@ -96,7 +111,7 @@ int main(int argc, char* argv[]) {
                            FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
     vector<vector<int>> testCase3 = {chords3, chords_qualities_major3, chords_qualities_minor3, states3};
 
-    string testCase4Name = "I5-V5-VI5-I5-III5-VI5-II5-I5-V5";
+    string testCase4Name = "I5-V5-VI5-I5-III5-VI5-II5-I5-V5"; //todo test strategies with this one in Ab Major
     vector<int> chords4 = {FIRST_DEGREE, FIFTH_DEGREE, SIXTH_DEGREE, FIRST_DEGREE, THIRD_DEGREE, SIXTH_DEGREE,
                           SECOND_DEGREE, FIRST_DEGREE, FIFTH_DEGREE};
     vector<int> chords_qualities_major4 = {MAJOR_CHORD, MAJOR_CHORD, MINOR_CHORD, MAJOR_CHORD, MINOR_CHORD, MINOR_CHORD,
@@ -135,10 +150,9 @@ int main(int argc, char* argv[]) {
     vector<vector<int>> testCase6 = {chords6, chords_qualities_major6, chords_qualities_minor6, states6};
 
 
-    vector<vector<vector<int>>> testCases = {testCase1, testCase2, testCase3, testCase4, testCase5, testCase6};
+    vector<vector<vector<int>>> testCases = {testCase1, testCase2, testCase3, testCase4, testCase5, testCase6}; //testCase1, testCase2, testCase3, testCase4, testCase5, testCase6
 
-    vector<string> testCasesNames = {testCase1Name, testCase2Name, testCase3Name, testCase4Name, testCase5Name,
-                                     testCase6Name};
+    vector<string> testCasesNames = {testCase1Name, testCase2Name, testCase3Name, testCase4Name, testCase5Name, testCase6Name}; //testCase1Name, testCase2Name, testCase3Name, testCase4Name, testCase5Name, testCase6Name
 
 /***********************************************************************************************************************
  *                                                                                                                     *
@@ -151,21 +165,30 @@ int main(int argc, char* argv[]) {
 
 /***********************************************************************************************************************
  *                                                                                                                     *
+ *                                                 Search parameters                                                   *
+ *                                                                                                                     *
+ **********************************************************************************************************************/
+    /// cutoff generators
+    int nVariables = testCases[test_case_number][0].size() * 4;
+    vector<int> cutoff_depths = {nVariables / 2, nVariables, 2 * nVariables, 4 * nVariables, nVariables ^ 2,
+                                 2 * nVariables ^ 2};
+    vector<string> cutoff_depths_names = {"n/2", "n", "2n", "4n", "n^2", "2n^2"};
+
+    Cutoff* geo = Search::Cutoff::geometric(cutoff_depths[cutoff_depth], 2);
+    Cutoff* lin = Search::Cutoff::linear(cutoff_depths[cutoff_depth]);
+    Cutoff* lin_geo = Search::Cutoff::merge(lin, geo);
+    vector<Cutoff*> cutoffs = {geo, lin, lin_geo};
+    vector<string> cutoffs_names = {"geometric", "linear", "linear-geometric"};
+
+    /// no good depth
+    vector<int> nogoods_depths = {nVariables, 2*nVariables, 4*nVariables, nVariables^2};
+    vector<string> nogoods_depths_names = {"n", "2n", "4n", "n^2"};
+
+/***********************************************************************************************************************
+ *                                                                                                                     *
  *                                                  Solution generation                                                *
  *                                                                                                                     *
  ***********************************************************************************************************************/
-
-    int test_case_number = stoi(argv[1]);
-    int tonic = stoi(argv[2]);
-    int mode = stoi(argv[3]);
-    int variable_selection_heuristic = stoi(argv[4]);
-    int value_selection_heuristic = stoi(argv[5]);
-
-//    int test_case_number = num1;
-//    int tonic = num2;
-//    int mode = num3;
-//    int variable_selection_heuristic = num4;
-//    int value_selection_heuristic = num5;
 
     Tonality *tonality;
     vector<int> qualities;
@@ -183,18 +206,25 @@ int main(int argc, char* argv[]) {
     string csv_line;
     csv_line += testCasesNames[test_case_number] + " , " + tonality->get_name() +  " , " +
                 variable_selection_heuristics_names[variable_selection_heuristic] + " ," +
-                value_selection_heuristics_names[value_selection_heuristic];
+                value_selection_heuristics_names[value_selection_heuristic] + " , " +
+                cutoff_depths_names[cutoff_depth] + " , " + cutoffs_names[cutoff_strategy] + " , " +
+                nogoods_depths_names[nogood_depth];
 
     auto pb = new FourVoiceTexture(size, tonality,testCases[test_case_number][0],qualities,
                                    testCases[test_case_number][3],
                                    variable_selection_heuristic,
                                    value_selection_heuristic);
     /// Search options
+    /*
+    opts.cutoff = Search::Cutoff::merge(
+            Search::Cutoff::linear(4*size*4),
+            Search::Cutoff::geometric(4*size*4, 2));
+     */
     Search::Options opts;
     opts.threads = 1;
-    opts.stop = Search::Stop::time(300000); // stop after 120 seconds
-    opts.cutoff = Search::Cutoff::luby(2*size);
-    opts.nogoods_limit = size * 3;
+    opts.stop = Search::Stop::time(180000); // stop after 120 seconds
+    opts.cutoff = cutoffs[cutoff_strategy];
+    opts.nogoods_limit = nogoods_depths[nogood_depth];
 
     //BAB<FourVoiceTexture> solver(pb, opts);
     /// Restart based solver
