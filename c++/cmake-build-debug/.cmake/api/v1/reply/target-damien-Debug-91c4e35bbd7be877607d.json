@@ -26,7 +26,7 @@
 			{
 				"command" : 0,
 				"file" : 0,
-				"line" : 34,
+				"line" : 36,
 				"parent" : 0
 			},
 			{
@@ -100,7 +100,9 @@
 				28,
 				29,
 				31,
-				32
+				32,
+				33,
+				34
 			]
 		}
 	],
@@ -156,7 +158,9 @@
 				28,
 				29,
 				31,
-				32
+				32,
+				33,
+				34
 			]
 		}
 	],
@@ -340,6 +344,18 @@
 			"backtrace" : 1,
 			"compileGroupIndex" : 0,
 			"path" : "src/BranchingTests.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/HeuristicsTestingSetup.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/parallelRun.cpp",
 			"sourceGroupIndex" : 1
 		},
 		{

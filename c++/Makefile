@@ -60,10 +60,22 @@ test_branching: clean
 	clear
 	./../out/branch
 
+parallel_run: clean
+	g++ -std=c++11 -F/Library/Frameworks -framework gecode -o ../out/parallelRun $(PROBLEM_FILES) $(MIDI_FILES) src/parallelRun.cpp
+	clear
+	#./../out/parallelRun 0 0 0 0 0
+
+
 test_tonality:
 	g++ -std=c++11 -F/Library/Frameworks -framework gecode -o testTonality $(SRC_DIR)/Utilities.cpp \
 	$(SRC_DIR)/Tonality.cpp $(SRC_DIR)/MajorTonality.cpp $(SRC_DIR)/MinorTonality.cpp $(SRC_DIR)/testTonality.cpp
 	./testTonality
+
+
+heuristics_setup:
+	g++ -std=c++11 -F/Library/Frameworks -framework gecode -o heuristics src/Utilities.cpp src/HeuristicsTestingSetup.cpp
+	./heuristics
+	rm -f heuristics
 
 #Allows the executable generated to find Gecode. To execute only once
 #With the Sonoma version of MacOS, gecode cannot be found. Creating a symbolic link solves the problem

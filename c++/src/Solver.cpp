@@ -12,12 +12,13 @@
  * Creates a search engine for the given problem
  * @param pb an instance of the FourVoiceTexture class representing a given problem
  * @param type the type of search engine to create (see enumeration in headers/gecode_problem.hpp)
+ * @param timeout the maximum time in milliseconds the solver can run for (default value is 60000)
  * @return a search engine for the given problem
  */
-Search::Base<FourVoiceTexture>* make_solver(FourVoiceTexture* pb, int type){
+Base<FourVoiceTexture> *make_solver(FourVoiceTexture *pb, int type, int timeout) {
     Search::Options opts;
     //opts.threads = 0; /// as many as available
-    opts.stop = Search::Stop::time(60000); // stop after 120 seconds
+    opts.stop = Search::Stop::time(timeout); // stop after 120 seconds
 
     if (type == BAB_SOLVER){
         write_to_log_file("Solver type: BAB\n", LOG_FILE);
@@ -45,27 +46,51 @@ FourVoiceTexture* get_next_solution_space(Search::Base<FourVoiceTexture>* solver
 /**
  * Returns the best solution for the problem pb. It uses a branch and bound solver with lexico-minimization of the costs
  * @param pb an instance of a FourVoiceTexture problem
+ * @param timeout the maximum time in milliseconds the solver can run for (default value is 60000)
  * @return the best solution to the problem
  */
-const FourVoiceTexture* find_best_solution(FourVoiceTexture *pb){
+const FourVoiceTexture *find_best_solution(FourVoiceTexture *pb, int timeout, string csvFileName, string preMessage) {
+    std::cout << "in find_best_solution function" << std::endl;
     // create a new search engine
-    auto* solver = make_solver(pb, BAB_SOLVER);
+    Search::Options opts;
+    //opts.threads = 0; /// as many as available
+    opts.stop = Search::Stop::time(timeout); // stop after 120 seconds
+
+    auto solver = new BAB<FourVoiceTexture>(pb, opts);
 
     Search::Statistics bestSolStats = solver->statistics();
 
-    FourVoiceTexture *bestSol; // keep a pointer to the best solution
-    while(FourVoiceTexture *sol = get_next_solution_space(solver)){
+    string solsAndTime;
+
+    FourVoiceTexture *bestSol = nullptr; // keep a pointer to the best solution
+    auto start = std::chrono::high_resolution_clock::now();     /// start time
+    std::cout << "before while" << std::endl;
+    while(FourVoiceTexture *sol = solver->next()){
+        std::cout << "in while" << std::endl;
+        std::cout << "temporary solution found" << std::endl;
+        auto currTime = std::chrono::high_resolution_clock::now();     /// current time
+        std::chrono::duration<double> duration = currTime - start;
+        solsAndTime += "," + to_string(duration.count()) + " , " + intVarArgs_to_string(sol->get_cost_vector()) + ",";
         bestSol = sol;
         bestSolStats = solver->statistics();
     }
+    delete solver;
+    if(bestSol == nullptr){
+        return nullptr;
+    }
+    auto finalTime = std::chrono::high_resolution_clock::now();     /// final time
+    std::chrono::duration<double> duration = finalTime - start;
+
     string message = "Best solution found: \n" + bestSol->to_string() + "\n";
-    std::cout << message << std::endl  << statistics_to_string(solver->statistics()) << std::endl;
+    //std::cout << message << std::endl;
+    //write_to_log_file(message.c_str(), LOG_FILE);
 
-    write_to_log_file(message.c_str(), LOG_FILE);
-
-    auto statMsg = "Best solution search statistics:\n" + statistics_to_string(bestSolStats) +
-            "\n" + "Total search statistics: \n" + statistics_to_string(solver->statistics()) + "\n";
-    write_to_log_file(statMsg.c_str(), STATISTICS_FILE);
+    auto statsCSV = preMessage + "," + to_string(duration.count()) + ",,," +
+                    statistics_to_csv_string(bestSolStats) + intVarArgs_to_string(bestSol->get_cost_vector()) +
+                    ",,," + statistics_to_csv_string(solver->statistics()) + "," +
+                    solsAndTime + ",";
+    std::cout << statsCSV << std::endl;
+    //write_to_log_file(statsCSV.c_str(), csvFileName);
 
     return bestSol;
 }
@@ -75,12 +100,13 @@ const FourVoiceTexture* find_best_solution(FourVoiceTexture *pb){
  * @param pb an instance of a FourVoiceTexture problem
  * @param solverType the type of the solver to use from solver_types
  * @param maxNOfSols the maximum number of solutions we want to find (the default value is 1000)
+ * @param timeout the maximum time in milliseconds the solver can run for (default value is 60000)
  * @return the first maxNOfSols solutions to the problem
  */
-vector<const FourVoiceTexture*> find_all_solutions(FourVoiceTexture *pb, int solverType, int maxNOfSols){
+vector<const FourVoiceTexture *> find_all_solutions(FourVoiceTexture *pb, int solverType, int maxNOfSols, int timeout) {
     vector<const FourVoiceTexture*> sols;
     // create the search engine
-    auto* solver = make_solver(pb, solverType);
+    auto* solver = make_solver(pb, solverType, timeout);
     write_to_log_file("\nSearching for solutions:\n", LOG_FILE);
 
     int nbSol = 0;

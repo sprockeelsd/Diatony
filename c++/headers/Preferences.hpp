@@ -86,28 +86,25 @@ void compute_cost_for_incomplete_chords(const Home &home, int size, int nVoices,
  * This function sets the cost for the number of times when there is a common note in the same voice between consecutive
  * This has to be MAXIMIZED!
  * @param home the instance of the problem
- * @param absoluteBassMelodicIntervals the array of absolute melodic intervals for the bass
- * @param absoluteTenorMelodicIntervals the array of absolute melodic intervals for the tenor
- * @param absoluteAltoMelodicIntervals the array of absolute melodic intervals for the alto
- * @param absoluteSopranoMelodicIntervals the array of absolute melodic intervals for the soprano
+ * @param bassMelodicIntervals the array of absolute melodic intervals for the bass
+ * @param tenorMelodicIntervals the array of absolute melodic intervals for the tenor
+ * @param altoMelodicIntervals the array of absolute melodic intervals for the alto
+ * @param sopranoMelodicIntervals the array of absolute melodic intervals for the soprano
  * @param commonNotesInSameVoice an array containing the number of times when there is a common note in the same voice for each voice
  * @param nOfCommonNotesInSameVoice the total number of times when there is a common note in the same voice
  */
-void compute_cost_for_common_notes_not_in_same_voice(const Home &home, const IntVarArray& absoluteBassMelodicIntervals,
-                                                     const IntVarArray& absoluteTenorMelodicIntervals,
-                                                     const IntVarArray& absoluteAltoMelodicIntervals,
-                                                     const IntVarArray& absoluteSopranoMelodicIntervals,
-                                                     IntVarArray commonNotesInSameVoice,
+void compute_cost_for_common_notes_not_in_same_voice(const Home &home, const IntVarArray &bassMelodicIntervals,
+                                                     const IntVarArray &tenorMelodicIntervals,
+                                                     const IntVarArray &altoMelodicIntervals,
+                                                     const IntVarArray &sopranoMelodicIntervals,
+                                                     const IntVar &nOfUnissons, IntVarArray commonNotesInSameVoice,
                                                      IntVarArray negativeCommonNotesInSameVoice,
-                                                     const IntVar& nOfCommonNotesInSameVoice);
+                                                     const IntVar &nOfCommonNotesInSameVoice);
 
 /**
  * This function sets the cost for the melodic intervals in all voices.
  * @param home the instance of the problem
- * @param absoluteBassMelodicIntervals the array of absolute melodic intervals for the bass
- * @param absoluteTenorMelodicIntervals the array of absolute melodic intervals for the tenor
- * @param absoluteAltoMelodicIntervals the array of absolute melodic intervals for the alto
- * @param absoluteSopranoMelodicIntervals the array of absolute melodic intervals for the soprano
+ * @param allMelodicIntervals the array of absolute melodic intervals for the bass
  * @param nOfSeconds the number of intervals that are a second
  * @param nOfThirds the number of intervals that are a third
  * @param nOfFourths the number of intervals that are a fourth
@@ -117,12 +114,10 @@ void compute_cost_for_common_notes_not_in_same_voice(const Home &home, const Int
  * @param nOfOctaves the number of intervals that are an octave
  * @param costOfMelodicIntervals the cost of the melodic intervals (weighted sum)
  */
-void compute_cost_for_melodic_intervals(const Home& home, const IntVarArray& absoluteBassMelodicIntervals,
-                                        const IntVarArray& absoluteTenorMelodicIntervals,
-                                        const IntVarArray& absoluteAltoMelodicIntervals,
-                                        const IntVarArray& absoluteSopranoMelodicIntervals, const IntVar& nOfSeconds,
-                                        const IntVar& nOfThirds, const IntVar& nOfFourths, const IntVar& nOfFifths,
-                                        const IntVar& nOfSixths, const IntVar& nOfSevenths, const IntVar& nOfOctaves,
-                                        const IntVar& costOfMelodicIntervals);
+void
+compute_cost_for_melodic_intervals(const Home &home, const IntVarArray &allMelodicIntervals, const IntVar &nOfUnissons,
+                                   const IntVar &nOfSeconds, const IntVar &nOfThirds, const IntVar &nOfFourths,
+                                   const IntVar &nOfFifths, const IntVar &nOfSixths, const IntVar &nOfSevenths,
+                                   const IntVar &nOfOctaves, const IntVar &costOfMelodicIntervals);
 
 #endif //MYPROJECT_PREFERENCES_HPP

@@ -20,67 +20,87 @@ using namespace smf;
  * - The second specifies whether we need to create a MIDI file or not
  */
 int main(int argc, char* argv[]) {
-    // if there is not exactly 1 argument, there is an error
+    // if there is not exactly 2 argument, there is an error
     if(argc != 3)
         return 1;
 
-    Tonality* tonality = new MajorTonality(C);
+    Tonality* tonality = new MinorTonality(C_SHARP);
     write_to_log_file(time().c_str(), LOG_FILE);
 
     std::string search_type = argv[1];
     std::string build_midi = argv[2];
-//    vector<int> chords = {FIRST_DEGREE, FIRST_DEGREE, FIFTH_DEGREE, FIFTH_DEGREE, FIRST_DEGREE, SECOND_DEGREE,
-//                          FIRST_DEGREE, FIFTH_DEGREE, FIRST_DEGREE};
-//    vector<int> chords_qualities = {MINOR_CHORD, MINOR_CHORD, MAJOR_CHORD, DOMINANT_SEVENTH_CHORD, MINOR_CHORD,
-//                                    DIMINISHED_CHORD, MINOR_CHORD, DOMINANT_SEVENTH_CHORD, MINOR_CHORD};
-//    vector<int> states = {FUNDAMENTAL_STATE, SECOND_INVERSION, FUNDAMENTAL_STATE, THIRD_INVERSION, FIRST_INVERSION,
-//                          FIRST_INVERSION, SECOND_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
-    //@todo there is a problem when going Vda -> V5 (not V7) and it is not because of // intervals nor because of tritone resolution
-//    vector<int> chords = {FIRST_DEGREE, FIFTH_DEGREE, SIXTH_DEGREE, FIRST_DEGREE, FIFTH_DEGREE, FIRST_DEGREE, THIRD_DEGREE,
-//                          SIXTH_DEGREE, SECOND_DEGREE, FIFTH_DEGREE, FIRST_DEGREE, FOURTH_DEGREE, FIFTH_DEGREE, FIFTH_DEGREE,
-//                          FIRST_DEGREE};
-//    vector<int> chords_qualities = {MAJOR_CHORD, MAJOR_CHORD, MINOR_CHORD, MAJOR_CHORD, DOMINANT_SEVENTH_CHORD, MAJOR_CHORD,
-//                             MINOR_CHORD, MINOR_CHORD, MINOR_CHORD, DOMINANT_SEVENTH_CHORD, MAJOR_CHORD, MAJOR_CHORD,
-//                             MAJOR_CHORD, DOMINANT_SEVENTH_CHORD, MAJOR_CHORD};
-//    vector<int> states = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, SECOND_INVERSION, FUNDAMENTAL_STATE,
-//                          FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FIRST_INVERSION, FUNDAMENTAL_STATE,
-//                          FIRST_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
-    /// vectors representing the chords and the states
-//    vector<int> chords = {FIRST_DEGREE, SIXTH_DEGREE, FOURTH_DEGREE, FIRST_DEGREE, FIFTH_DEGREE, FIRST_DEGREE, SECOND_DEGREE, FIFTH_DEGREE,
-//                          FIRST_DEGREE};
-//    vector<int> chords_qualities = {MAJOR_CHORD, MINOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD,
-//                                    MAJOR_CHORD, MINOR_CHORD, DOMINANT_SEVENTH_CHORD, MAJOR_CHORD};
-//    vector<int> states = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, SECOND_INVERSION, FUNDAMENTAL_STATE,
-//                          FUNDAMENTAL_STATE, FIRST_INVERSION, THIRD_INVERSION, FIRST_INVERSION};
 
-    vector<int> chords = {FIRST_DEGREE, FIRST_DEGREE};
-    vector<int> chords_qualities = {MAJOR_CHORD, MAJOR_CHORD};
-    vector<int> states = {FUNDAMENTAL_STATE, FIRST_INVERSION};
+    /// vectors representing the chords and the states
+//    vector<int> chords = {FIRST_DEGREE};
+//    vector<int> chords_qualities = {MAJOR_CHORD};
+//    vector<int> states = {FUNDAMENTAL_STATE};
+    vector<int> chords = {FIRST_DEGREE, FIFTH_DEGREE, SIXTH_DEGREE, FIFTH_DEGREE, FOURTH_DEGREE, FIRST_DEGREE,
+                           SECOND_DEGREE, FIFTH_DEGREE, FIRST_DEGREE, FIFTH_DEGREE, SIXTH_DEGREE, FIFTH_DEGREE,
+                           FOURTH_DEGREE, FIFTH_DEGREE, FIRST_DEGREE};
+    vector<int> chords_qualities = {MINOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MINOR_CHORD, MINOR_CHORD,
+                                           DIMINISHED_CHORD, MAJOR_CHORD, MINOR_CHORD, MAJOR_CHORD, MAJOR_CHORD,
+                                           MAJOR_CHORD, MINOR_CHORD, DOMINANT_SEVENTH_CHORD, MINOR_CHORD};
+    vector<int> states = {FUNDAMENTAL_STATE, FIRST_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE,
+                           FIRST_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FIRST_INVERSION,
+                           FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
+
+//    vector<int> chords = {FIRST_DEGREE, FOURTH_DEGREE, SEVENTH_DEGREE, THIRD_DEGREE, SIXTH_DEGREE, SECOND_DEGREE,
+//                          FIFTH_DEGREE, FIRST_DEGREE};
+//    vector<int> chords_qualities = {MAJOR_CHORD, MAJOR_CHORD, DIMINISHED_CHORD, MINOR_CHORD, MINOR_CHORD, MINOR_CHORD,
+//                                    DOMINANT_SEVENTH_CHORD, MAJOR_CHORD};
+//    vector<int> states = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FIRST_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE,
+//                          FIRST_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
+
+
     int size = chords.size();
 
     /// create a new problem
     auto *pb = new FourVoiceTexture(size, tonality, chords, chords_qualities, states);
+    /// Search options
+    Search::Options opts;
+    opts.threads = 1;
+    opts.stop = Search::Stop::time(600000); // stop after 120 seconds
+    opts.cutoff = Search::Cutoff::merge(
+            Search::Cutoff::linear(2*size),
+            Search::Cutoff::geometric((4*size)^2, 2));
+    opts.nogoods_limit = size * 4 * 4;
 
-    /// find solution(s)
-    vector<const FourVoiceTexture *> sols;
-    auto start = std::chrono::high_resolution_clock::now();     /// start time
-    if(search_type == "all")
-        sols = find_all_solutions(pb, BAB_SOLVER);
-    else
-        sols.push_back(find_best_solution(pb)); // add the solution to the vector (it only has one element)
-    auto end = std::chrono::high_resolution_clock::now();       /// end time
 
+    //BAB<FourVoiceTexture> solver(pb, opts);
+    /// Restart based solver
+    RBS<FourVoiceTexture, BAB> solver(pb, opts);
     delete pb;
 
-    /// total time spent searching
-    std::chrono::duration<double> duration = end - start;
-    string m = "Execution time: " + std::to_string(duration.count()) + "seconds.\n";
-    std::cout << m << std::endl;
-    write_to_log_file(m.c_str(), LOG_FILE);
+    FourVoiceTexture* currentBestSol = nullptr;
+    auto start = std::chrono::high_resolution_clock::now();     /// start time
+    while(FourVoiceTexture* next_sol = solver.next()){
+        std::cout << "temporary solution found" << std::endl;
+        currentBestSol = (FourVoiceTexture*) next_sol->copy();
+        std::cout << currentBestSol->to_string() << std::endl;
+        std::cout << statistics_to_string(solver.statistics()) << std::endl;
+        delete next_sol;
+    }
+    std::cout << "search over" << std::endl;
+    auto currTime = std::chrono::high_resolution_clock::now();     /// current time
+    std::chrono::duration<double> duration = currTime - start;
+    if(solver.stopped()){
+        std::cout << "Best solution not found within the time limit." << std::endl;
+        std::cout << currentBestSol->to_string() << std::endl;
+        std::cout << statistics_to_string(solver.statistics()) << std::endl;
+    }
+    else if(currentBestSol == nullptr){
+        std::cout << "No solutions" << std::endl;
+    }
+    else{
+        std::cout << "Best solution found" << std::endl;
+        std::cout << currentBestSol->to_string() << std::endl;
+        std::cout << statistics_to_string(solver.statistics()) << std::endl;
+    }
+    std::cout << "time taken: " << duration.count() << " seconds" << std::endl;
 
-    /// check wether we have to create a MIDI file or not
-    if(build_midi == "true"){
-        writeSolsToMIDIFile(size, sols);
+    if(build_midi == "true" && currentBestSol != nullptr){
+        writeSolToMIDIFile(size, "output", currentBestSol);
+        cout << "MIDI file created" << endl;
     }
 
     return 0;

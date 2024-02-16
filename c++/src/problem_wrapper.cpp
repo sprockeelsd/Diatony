@@ -56,7 +56,7 @@ int* return_solution(void* sp){
  * @return a void* cast of a Base<FourVoiceTexture>* pointer
  */
 void* create_solver(void* sp, int type){
-    return (void*) make_solver(static_cast<FourVoiceTexture*>(sp), type);
+    return (void*) make_solver(static_cast<FourVoiceTexture *>(sp), type, 60000);
 }
 
 /**

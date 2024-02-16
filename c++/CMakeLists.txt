@@ -30,6 +30,8 @@ set(MY_HEADERS headers/problem_wrapper.hpp headers/FourVoiceTexture.hpp src/Four
         src/MidiFileGeneration.cpp
         headers/MidiFileGeneration.hpp
         src/BranchingTests.cpp
+        src/HeuristicsTestingSetup.cpp
+        src/parallelRun.cpp
 )
 add_library(damien ${MY_HEADERS} src/problem_wrapper.cpp src/main.cpp src/Tonality.cpp headers/Tonality.hpp src/Utilities.cpp headers/Utilities.hpp src/MajorTonality.cpp headers/MajorTonality.hpp src/testTonality.cpp src/GeneralConstraints.cpp headers/GeneralConstraints.hpp src/MinorTonality.cpp headers/MinorTonality.hpp src/HarmonicConstraints.cpp headers/HarmonicConstraints.hpp src/VoiceLeadingConstraints.cpp headers/VoiceLeadingConstraints.hpp
         src/Solver.cpp
@@ -41,5 +43,6 @@ add_library(damien ${MY_HEADERS} src/problem_wrapper.cpp src/main.cpp src/Tonali
         src/MidiEvent.cpp
         src/Options.cpp
         src/BranchingTests.cpp
+        src/HeuristicsTestingSetup.cpp
 )
 target_link_libraries(damien ${GECODE_LIBRARY})

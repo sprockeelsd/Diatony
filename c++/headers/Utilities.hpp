@@ -23,17 +23,7 @@ using namespace Gecode;
 /** Files */
 const string LOG_FILE = "log.txt";
 const string STATISTICS_FILE = "statistics.txt";
-
-/** Melodic costs */
-const int SECOND_COST = 0;
-const int THIRD_COST = 1;
-const int FOURTH_COST = 2;
-const int FIFTH_COST = 2;
-const int SIXTH_COST = 3;
-const int SEVENTH_COST = 4;
-const int OCTAVE_COST = 0;
-
-const int MAX_MELODIC_COST = SEVENTH_COST;
+const string STATISTICS_CSV = "statistics";
 
 /** Types of search engines */
 enum solver_types{
@@ -41,6 +31,71 @@ enum solver_types{
     BAB_SOLVER, //1
     LDS_SOLVER  //2
 };
+
+/** Branching strategies */
+enum variable_selection{
+    DEGREE_MAX,                     //0
+    DOM_SIZE_MIN,                   //1
+    RIGHT_TO_LEFT,                  //2
+    LEFT_TO_RIGHT_SOPRANO_TO_BASS,  //3
+    AFC_MAX,                        //4
+};
+
+/// go <-- soprano->bass: 4-3-2-1-8-7-6-5 etc
+auto right_to_left = [](const Space& home, const IntVar& x, int i) {
+    return i;
+};
+
+/// go --> soprano->bass
+auto left_to_right_soprano_to_bass = [](const Space& home, const IntVar& x, int i) {
+    return (i/4) * 4 + (4 - i%4);
+};
+
+const vector<IntVarBranch> variable_selection_heuristics = {INT_VAR_DEGREE_MAX(),
+                                                            INT_VAR_SIZE_MIN(),
+                                                            INT_VAR_MERIT_MAX(right_to_left),
+                                                            INT_VAR_MERIT_MIN(left_to_right_soprano_to_bass)};
+
+const vector<string> variable_selection_heuristics_names = {"Degree max", "Domain size min", "Left to right",
+                                                            "Right to left", "AFC max"};
+
+enum value_selection{
+    VAL_MIN,            //0
+    VAL_MAX,            //1
+    VAL_MED,            //2
+    VAL_RND,            //3
+};
+
+/// value selection heuristic
+auto branchVal = [](const Space& home, IntVar x, int i) {
+    return x.min();
+};
+
+/// commit function (EQ and DIFF)
+auto branchCommit = [](Space& home, unsigned int a, IntVar x, int i, int n){
+    if (a == 0U){
+        rel(home, x, IRT_EQ, n);
+    } else {
+        rel(home, x, IRT_NQ, n);
+    }
+};
+
+const vector<IntValBranch> value_selection_heuristics = {INT_VAL_MIN(), INT_VAL_MAX(), INT_VAL_MED(), INT_VAL_RND(1U)};
+
+const vector<string> value_selection_heuristics_names = {"Value min", "Value max", "Median value", "Value random"};
+
+/** Melodic costs */
+const int UNISON_COST = 0;
+const int SECOND_COST = 1;
+const int THIRD_COST = 3;
+const int FOURTH_COST = 6;
+const int FIFTH_COST = 6;
+const int SIXTH_COST = 12;
+const int SEVENTH_COST = 18;
+const int OCTAVE_COST = 6;
+
+const int MAX_MELODIC_COST = SEVENTH_COST;
+
 
 /** Notes */
 const int B_SHARP = 0;
@@ -65,7 +120,7 @@ const int B_FLAT = 10;
 const int B = 11;
 const int C_FLAT = 11;
 
-const vector<std::string> noteNames = {"C", "C#", "D", "Eb", "E", "F", "F#", "G", "Ab", "A", "Bb", "B"};
+const vector<std::string> noteNames = {"C", "Csharp", "D", "Eb", "E", "F", "Fsharp", "G", "Ab", "A", "Bb", "B"};
 
 /** Voice positions */
 enum voices{
@@ -240,6 +295,13 @@ string int_vector_to_string(vector<int> vector);
 string statistics_to_string(Search::Statistics stats);
 
 /**
+ * Prints the Search::Statistics object into a csv format (coma separated)
+ * @param stats a Search::Statistics object representing the statistics of a search
+ * @return The string representation of the statistics object
+ */
+string statistics_to_csv_string(Search::Statistics stats);
+
+/**
  * Returns the value of a variable as a string. If the variable is unassigned, returns "<unassigned>"
  * @param var an integer variable
  * @return a string representing the value of the variable
@@ -252,6 +314,13 @@ string intVar_to_string(const IntVar& var);
  * @return a string representing the values of the variables
  */
 string intVarArray_to_string(IntVarArray vars);
+
+/**
+ * Returns the values of an IntVarArgs as a string
+ * @param args an IntVarArgs
+ * @return a string representing the values
+ */
+string intVarArgs_to_string(IntVarArgs args);
 
 /**
  * Returns the name of a note based on its MIDI value
