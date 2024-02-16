@@ -45,6 +45,9 @@ c++/gecode.framework
 
 *.mid
 
+# out folder
+/out/*
+
 #logfiles
 /out/log.txt
 /out/statistics.txt
