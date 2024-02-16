@@ -33,76 +33,81 @@ using namespace std;
  *                                                                                                                     *
  ***********************************************************************************************************************/
  /**
-  * This class models a classic 4 voice harmonic problem of tonal music. It takes as arguments a tonality, and a series
-  * of chords identified by their degree and state. It then generates a 4 voice chord progression following traditional
-  * rules of western tonal harmony.
+  * This class models a classic 4 voice harmonic problem of tonal music. It takes as arguments a number of chords, a
+  * tonality, and a series of chords identified by their degree, quality and state. It models a 4 voice chord
+  * progression following traditional rules and preferences of western tonal harmony for diatonic chord progressions.
   */
+
 class FourVoiceTexture: public IntLexMinimizeSpace {
 protected:
-    /// Data
-    int nOfVoices = 4;                  // The number of voices
-    int size;                           // The size of the variable array of interest
-    Tonality *tonality;                 // The tonality of the piece
-    vector<int> chordDegrees;           // The degrees of the chord of the chord progression
-    vector<int> chordQualities;         // The qualities of the chord of the chord progression
-    vector<int> chordStates;            // The states of the chord of the chord progression (fundamental, 1st inversion,...)
-    IntArgs nOfNotesInChord;            // The number of notes in each chord if they are complete
+    /** ----------------------------------Problem parameters-------------------------------------------------------- **/
 
-    int variableBranchingStrategy;              // The branching strategy to use
-    int valueBranchingStrategy;                 // The value selection strategy to use
+    int                         nOfVoices = 4;                              // The number of voices
+    int                         size;                                       // The number of chords
+    Tonality*                   tonality;                                   // The tonality of the piece
+    vector<int>                 chordDegrees;                               // The degrees of the chords
+    vector<int>                 chordQualities;                             // The qualities of the chords
+    vector<int>                 chordStates;                                // The states of the chords
+    IntArgs                     nOfNotesInChord;                            // The max number of notes in each chord
 
-    /// variable arrays for melodic intervals for each voice (not absolute value)
-    IntVarArray bassMelodicIntervals;
-    IntVarArray tenorMelodicIntervals;
-    IntVarArray altoMelodicIntervals;
-    IntVarArray sopranoMelodicIntervals;
-    IntVarArray allMelodicIntervals;
-    IntVarArray allSquaredMelodicIntervals;
-
-    /// absolute melodic intervals
-    IntVarArray squaredBassMelodicIntervals;
-    IntVarArray squaredTenorMelodicIntervals;
-    IntVarArray squaredAltoMelodicIntervals;
-    IntVarArray squaredSopranoMelodicIntervals;
-
-    /// variable arrays for harmonic intervals between adjacent voices (not absolute value but are always positive)
-    IntVarArray bassTenorHarmonicIntervals;
-    IntVarArray bassAltoHarmonicIntervals;
-    IntVarArray bassSopranoHarmonicIntervals;
-    IntVarArray tenorAltoHarmonicIntervals;
-    IntVarArray tenorSopranoHarmonicIntervals;
-    IntVarArray altoSopranoHarmonicIntervals;
+    /** ----------------------------------Problem variables--------------------------------------------------------- **/
 
     ///global array for all the notes for all voices
-    IntVarArray FullChordsVoicing;                      // [bass0, alto0, tenor0, soprano0, bass1, alto1, tenor1, soprano1, ...]
+    IntVarArray                 fullChordsVoicing;
+
+    /// Melodic intervals
+    IntVarArray                 bassMelodicIntervals;
+    IntVarArray                 tenorMelodicIntervals;
+    IntVarArray                 altoMelodicIntervals;
+    IntVarArray                 sopranoMelodicIntervals;
+
+    IntVarArray                 allMelodicIntervals;
+
+    /// Squared melodic intervals
+    IntVarArray                 squaredBassMelodicIntervals;
+    IntVarArray                 squaredTenorMelodicIntervals;
+    IntVarArray                 squaredAltoMelodicIntervals;
+    IntVarArray                 squaredSopranoMelodicIntervals;
+
+    IntVarArray                 allSquaredMelodicIntervals;
+
+    /// Harmonic intervals (always positive)
+    IntVarArray                 bassTenorHarmonicIntervals;
+    IntVarArray                 bassAltoHarmonicIntervals;
+    IntVarArray                 bassSopranoHarmonicIntervals;
+    IntVarArray                 tenorAltoHarmonicIntervals;
+    IntVarArray                 tenorSopranoHarmonicIntervals;
+    IntVarArray                 altoSopranoHarmonicIntervals;
 
     /// cost variables auxiliary arrays
-    IntVarArray nDifferentValuesInDiminishedChord;      // number of different note values in each diminished chord
-    IntVarArray nDifferentValuesAllChords;              // The number of different notes (octave included) in each chord
-    IntVarArray nOccurrencesBassInFundamentalState;     // number of chords that don't double the bass in fundamental state
-    IntVarArray nOFDifferentNotesInChords;              // the number of different notes (the octave doesn't matter) in each chord
-    IntVarArray commonNotesInSameVoice;                 // chords with common notes in the same voice between consecutive chords
-    IntVarArray negativeCommonNotesInSameVoice;         // negative so we can maximize it by minimizing it (makes sense)
+    IntVarArray                 nDifferentValuesInDiminishedChord;
+    IntVarArray                 nDifferentValuesAllChords;
+    IntVarArray                 nOccurrencesBassInFundamentalState;
+    IntVarArray                 nOFDifferentNotesInChords;
+    IntVarArray                 commonNotesInSameVoice;
+    IntVarArray                 negativeCommonNotesInSameVoice;             // negative so we can maximize it by minimizing
 
-    IntVar nOfUnissons;                                 // number of intervals that are a unisson
-    IntVar nOfSeconds;                                  // number of intervals that are a second
-    IntVar nOfThirds;                                   // number of intervals that are a third
-    IntVar nOfFourths;                                  // number of intervals that are a fourth
-    IntVar nOfFifths;                                   // number of intervals that are a fifth
-    IntVar nOfSixths;                                   // number of intervals that are a sixth
-    IntVar nOfSevenths;                                 // number of intervals that are a seventh
-    IntVar nOfOctaves;                                  // number of intervals that are an octave
+    /// Variables for each type of interval
+    IntVar                      nOfUnissons;                                // number of intervals that are a unisson
+    IntVar                      nOfSeconds;                                 // number of intervals that are a second
+    IntVar                      nOfThirds;                                  // number of intervals that are a third
+    IntVar                      nOfFourths;                                 // number of intervals that are a fourth
+    IntVar                      nOfFifths;                                  // number of intervals that are a fifth (tritone included)
+    IntVar                      nOfSixths;                                  // number of intervals that are a sixth
+    IntVar                      nOfSevenths;                                // number of intervals that are a seventh
+    IntVar                      nOfOctaves;                                 // number of intervals that are an octave
 
     /// cost variables
-    IntVar nOfDiminishedChordsWith4notes;               // number of diminished chords that don't respect the preferences
-    IntVar nOfChordsWithLessThan4notes;                 // number of chords with less than 4 notes
-    IntVar nOfFundamentalStateChordsWithoutDoubledBass; // number of fundamental state chords that don't follow the preferences
-    IntVar nOfIncompleteChords;                         // number of incomplete chords
-    /// /!\ this cost needs to be maximized, so its value is negative
-    IntVar nOfCommonNotesInSameVoice;                   // number of common notes in the same voice between consecutive chords (this is negative)
-    IntVar costOfMelodicIntervals;                      // for minimizing voice movement between voices
+    IntVar                      nOfFundStateDiminishedChordsWith4notes;
+    IntVar                      nOfChordsWithLessThan4Values;
+    IntVar                      nOfFundamentalStateChordsWithoutDoubledBass;
+    IntVar                      nOfIncompleteChords;
+    IntVar                      nOfCommonNotesInSameVoice;                  /// /!\ this cost needs to be maximized, so its value is negative
+    IntVar                      costOfMelodicIntervals;
 
-    IntVarArgs costVector;                             // the costs in lexicographical order for minimization
+    IntVarArgs                  costVector;                                 // the costs in lexicographical order for minimization
+
+    /** ---------------------------------------------Methods-------------------------------------------------------- **/
 
 public:
     /**
@@ -112,40 +117,34 @@ public:
      * @param chordDegs the degrees of the chord of the chord progression
      * @param chordQuals the qualities of the chord of the chord progression
      * @param chordStas the states of the chord of the chord progression (fundamental, 1st inversion,...)
-     * @return a FourVoiceTexture object
+     * @return an instance of FourVoiceTexture initialized with the given parameters, constraints and branching strategies
+     * posted as well as the cost vector to minimize in lexicographical order
      */
-    FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, vector<int> chordQuals,
-                     vector<int> chordStas, int variableSelectionStrategy,
-                     int valueSelectionStrategy);
-
-//    void first(void);
-//
-//    void next(const FourVoiceTexture& s);
-//
-//    virtual bool slave(const MetaInfo& mi);
+    FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, vector<int> chordQuals, vector<int> chordStas);
 
     /**
      * Copy constructor
      * @param s an instance of the FourVoiceTexture class
      * @return a copy of the given instance of the FourVoiceTexture class
+     * /!\ It is important to copy every variable instance variable of the given instance to the new instance
      */
     FourVoiceTexture(FourVoiceTexture &s);
 
     /**
-     * Returns the size of the problem
-     * @return an integer representing the size of the vars array
+     * Returns the number of chords of the problem
+     * @return an integer representing the number of chords of the problem
      */
     int get_size() const;
 
     /**
-     * Returns the values taken by the variables vars in a solution
+     * Returns the values taken by the variables vars in a solution as a pointer to an integer array
      * @return an array of integers representing the values of the variables in a solution
      */
     int* return_solution() const;
 
     /**
-     * Returns the values taken by the cost vector in a solution
-     * @return an IntVarArgs representing the values of the cost vector in a solution
+     * Returns the cost variables in lexicographical order
+     * @return an IntVarArgs containing cost variables in lexicographical order ONCE A SOLUTION IS FOUND
      */
     IntVarArgs get_cost_vector() const;
 
@@ -153,20 +152,19 @@ public:
      * Copy method
      * @return a copy of the current instance of the FourVoiceTexture class. Calls the copy constructor
      */
-    virtual Space *copy(void);
+    virtual Space *copy();
 
     /**
-     * Constrain method for bab search
-     * @param _b a space to constrain the current instance of the FourVoiceTexture class with upon finding a solution
+     * Cost function for lexicographical minimization. The order is as follows:
+     * 1. Number of incomplete chords.
+     * 2. Number of diminished chords in fundamental state with 4 notes.
+     * 3. Number of chords with less than 4 note values.
+     * 4. Number of fundamental state chords without doubled bass.
+     * 5. Weighted sum of melodic intervals.
+     * 6. Number of common notes in the same voice between consecutive chords.
+     * @return the cost variables in order of importance
      */
-    // virtual void constrain(const Space& _b);
-
-    virtual IntVarArgs cost(void) const;
-
-    /**
-     * Prints the solution in the console
-     */
-    void print_solution();
+    virtual IntVarArgs cost() const;
 
     /**
      * returns the parameters in a string
@@ -182,34 +180,4 @@ public:
      */
     string to_string();
 };
-
-/**
- * Posts the branching heuristic
- * Variable selection: select the variable with the highest degree
- * Value selection: select the value with the lowest value
- * @param home the current space
- * @param notes the variable array to branch on
- */
-void branching_max_degree_val_min(const Home& home, const IntVarArray& notes);
-
-/**
- * Posts the branching heuristic
- * Variable selection: select the variable with the smallest domain
- * Value selection: select the value with the lowest value
- * @param home the current space
- * @param notes the variable array to branch on
- */
-void branching_dom_size_min_val_min(const Home& home, const IntVarArray& notes);
-
-/**
- * Posts the branching heuristic
- * Variable selection: select the first unassigned variable (left to right)
- * Value selection: select the value with the lowest value
- * @param home the current space
- * @param notes the variable array to branch on
- */
-void branching_first_unassigned_val_min(const Home& home, const IntVarArray& notes);
-
-void branching_right_to_left_val_min(const Home& home, const IntVarArray& notes);
-
 #endif

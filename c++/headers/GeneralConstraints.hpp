@@ -15,9 +15,9 @@ using namespace std;
 /***********************************************************************************************************************
  *                                                                                                                     *
  * This file contains all the general constraints. It currently contains:                                              *
- *     - link_melodic_arrays: links the melodic intervals arrays to the FullChordsVoicing array for each voice         *
+ *     - link_melodic_arrays: links the melodic intervals arrays to the fullChordsVoicing array for each voice         *
  *     - link_squared_melodic_arrays: links the absolute melodic intervals arrays to the corresponding melodic arrays *
- *     - link_harmonic_arrays: links the harmonic intervals arrays to the FullChordsVoicing array for each voice       *
+ *     - link_harmonic_arrays: links the harmonic intervals arrays to the fullChordsVoicing array for each voice       *
  *     - restrain_voices_domains: sets the domains of the different voices to their range and gives them their order   *
  *                                                                                                                     *
  ***********************************************************************************************************************/
@@ -37,7 +37,7 @@ using namespace std;
 void restrain_voices_domains(const Home &home, int n, int nVoices, IntVarArray FullChordsVoicing);
 
 /**
- * Link the melodic intervals arrays to the FullChordsVoicing array
+ * Link the melodic intervals arrays to the fullChordsVoicing array
  * @param home The instance of the problem
  * @param size the number of chords
  * @param nVoices the number of voices
@@ -71,7 +71,7 @@ void link_squared_melodic_arrays(const Home &home, IntVarArray bassMelodicInterv
                                  IntVarArray squaredSopranoMelodicIntervals);
 
 /**
- * Link the harmonic intervals arrays to the FullChordsVoicing array for each voice
+ * Link the harmonic intervals arrays to the fullChordsVoicing array for each voice
  * @param home the instance of the problem
  * @param size the number of chords
  * @param nVoices the number of voices in the chords

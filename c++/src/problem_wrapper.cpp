@@ -26,7 +26,7 @@ void *create_new_problem(int size, int key, int mode, int *chord_degrees, int *c
     vector<int> degrees(int_pointer_to_vector(chord_degrees, size));
     vector<int> qualities(int_pointer_to_vector(chord_qualities, size));
     vector<int> states(int_pointer_to_vector(chord_states, size));
-    auto* pb = new FourVoiceTexture(size, t, degrees, qualities, states, 0, 0);
+    auto* pb = new FourVoiceTexture(size, t, degrees, qualities, states);
     return (void*) pb;
 }
 

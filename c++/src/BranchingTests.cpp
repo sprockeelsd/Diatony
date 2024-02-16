@@ -136,13 +136,11 @@ int main(int argc, char* argv[]) {
                     FourVoiceTexture* problem;
                     if(auto* minorPtr = dynamic_cast<MinorTonality*>(tonality)){ /// the tonality is minor
                         problem = new FourVoiceTexture(testCase[0].size(), tonality, testCase[0],
-                                                       testCase[2], testCase[3],
-                                                       var_strat, val_strat);
+                                                       testCase[2], testCase[3]);
                     }
                     else{ /// the tonality is major
                         problem = new FourVoiceTexture(testCase[0].size(), tonality, testCase[0],
-                                                       testCase[1], testCase[3],
-                                                       var_strat, val_strat);
+                                                       testCase[1], testCase[3]);
                     }
                     /// find the best solution (with a timeout of 90 seconds)
                     auto bestSol = find_best_solution(problem, 90000, statFile,

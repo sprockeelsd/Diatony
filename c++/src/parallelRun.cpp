@@ -45,9 +45,6 @@ int main(int argc, char* argv[]) {
     int mode = stoi(argv[3]);
     int variable_selection_heuristic = stoi(argv[4]);
     int value_selection_heuristic = stoi(argv[5]);
-    int cutoff_depth = stoi(argv[6]);
-    int cutoff_strategy = stoi(argv[7]);
-    int nogood_depth = stoi(argv[8]);
 
 /***********************************************************************************************************************
  *                                                                                                                     *
@@ -170,19 +167,12 @@ int main(int argc, char* argv[]) {
  **********************************************************************************************************************/
     /// cutoff generators
     int nVariables = testCases[test_case_number][0].size() * 4;
-    vector<int> cutoff_depths = {nVariables / 2, nVariables, 2 * nVariables, 4 * nVariables, nVariables ^ 2,
-                                 2 * nVariables ^ 2};
-    vector<string> cutoff_depths_names = {"n/2", "n", "2n", "4n", "n^2", "2n^2"};
 
-    Cutoff* geo = Search::Cutoff::geometric(cutoff_depths[cutoff_depth], 2);
-    Cutoff* lin = Search::Cutoff::linear(cutoff_depths[cutoff_depth]);
+    Cutoff* geo = Search::Cutoff::geometric(nVariables^2, 2);
+    Cutoff* lin = Search::Cutoff::linear(nVariables/2);
     Cutoff* lin_geo = Search::Cutoff::merge(lin, geo);
-    vector<Cutoff*> cutoffs = {geo, lin, lin_geo};
-    vector<string> cutoffs_names = {"geometric", "linear", "linear-geometric"};
 
     /// no good depth
-    vector<int> nogoods_depths = {nVariables, 2*nVariables, 4*nVariables, nVariables^2};
-    vector<string> nogoods_depths_names = {"n", "2n", "4n", "n^2"};
 
 /***********************************************************************************************************************
  *                                                                                                                     *
@@ -206,14 +196,10 @@ int main(int argc, char* argv[]) {
     string csv_line;
     csv_line += testCasesNames[test_case_number] + " , " + tonality->get_name() +  " , " +
                 variable_selection_heuristics_names[variable_selection_heuristic] + " ," +
-                value_selection_heuristics_names[value_selection_heuristic] + " , " +
-                cutoff_depths_names[cutoff_depth] + " , " + cutoffs_names[cutoff_strategy] + " , " +
-                nogoods_depths_names[nogood_depth];
+                value_selection_heuristics_names[value_selection_heuristic];
 
-    auto pb = new FourVoiceTexture(size, tonality,testCases[test_case_number][0],qualities,
-                                   testCases[test_case_number][3],
-                                   variable_selection_heuristic,
-                                   value_selection_heuristic);
+    auto pb = new FourVoiceTexture(size, tonality, testCases[test_case_number][0], qualities,
+                                   testCases[test_case_number][3]);
     /// Search options
     /*
     opts.cutoff = Search::Cutoff::merge(
@@ -222,9 +208,9 @@ int main(int argc, char* argv[]) {
      */
     Search::Options opts;
     opts.threads = 1;
-    opts.stop = Search::Stop::time(180000); // stop after 120 seconds
-    opts.cutoff = cutoffs[cutoff_strategy];
-    opts.nogoods_limit = nogoods_depths[nogood_depth];
+    opts.stop = Search::Stop::time(450000); // stop after 120 seconds
+    opts.cutoff = lin_geo;
+    opts.nogoods_limit = 4*nVariables;
 
     //BAB<FourVoiceTexture> solver(pb, opts);
     /// Restart based solver

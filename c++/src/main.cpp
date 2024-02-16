@@ -24,7 +24,7 @@ int main(int argc, char* argv[]) {
     if(argc != 3)
         return 1;
 
-    Tonality* tonality = new MajorTonality(C);
+    Tonality* tonality = new MinorTonality(C_SHARP);
     write_to_log_file(time().c_str(), LOG_FILE);
 
     std::string search_type = argv[1];
@@ -34,15 +34,15 @@ int main(int argc, char* argv[]) {
 //    vector<int> chords = {FIRST_DEGREE};
 //    vector<int> chords_qualities = {MAJOR_CHORD};
 //    vector<int> states = {FUNDAMENTAL_STATE};
-    vector<int> chords = {FIRST_DEGREE, FIFTH_DEGREE, SIXTH_DEGREE, FIRST_DEGREE, FOURTH_DEGREE, SEVENTH_DEGREE,
-                           THIRD_DEGREE, SIXTH_DEGREE, SECOND_DEGREE, FIFTH_DEGREE, FIRST_DEGREE};
-    vector<int> chords_qualities = {MAJOR_CHORD, MAJOR_CHORD, MINOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, DIMINISHED_CHORD,
-                                           MINOR_CHORD, MINOR_CHORD, MINOR_CHORD, DOMINANT_SEVENTH_CHORD, MAJOR_CHORD};
-    vector<int> chords_qualities_minor5 = {MINOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MINOR_CHORD, MINOR_CHORD, DIMINISHED_CHORD,
-                                           MAJOR_CHORD, MAJOR_CHORD, DIMINISHED_CHORD, DOMINANT_SEVENTH_CHORD, MINOR_CHORD};
-    vector<int> states = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE,
-                           FIRST_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FIRST_INVERSION, FUNDAMENTAL_STATE,
-                           FUNDAMENTAL_STATE};
+    vector<int> chords = {FIRST_DEGREE, FIFTH_DEGREE, SIXTH_DEGREE, FIFTH_DEGREE, FOURTH_DEGREE, FIRST_DEGREE,
+                           SECOND_DEGREE, FIFTH_DEGREE, FIRST_DEGREE, FIFTH_DEGREE, SIXTH_DEGREE, FIFTH_DEGREE,
+                           FOURTH_DEGREE, FIFTH_DEGREE, FIRST_DEGREE};
+    vector<int> chords_qualities = {MINOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MINOR_CHORD, MINOR_CHORD,
+                                           DIMINISHED_CHORD, MAJOR_CHORD, MINOR_CHORD, MAJOR_CHORD, MAJOR_CHORD,
+                                           MAJOR_CHORD, MINOR_CHORD, DOMINANT_SEVENTH_CHORD, MINOR_CHORD};
+    vector<int> states = {FUNDAMENTAL_STATE, FIRST_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE,
+                           FIRST_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FIRST_INVERSION,
+                           FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
 
 //    vector<int> chords = {FIRST_DEGREE, FOURTH_DEGREE, SEVENTH_DEGREE, THIRD_DEGREE, SIXTH_DEGREE, SECOND_DEGREE,
 //                          FIFTH_DEGREE, FIRST_DEGREE};
@@ -55,14 +55,15 @@ int main(int argc, char* argv[]) {
     int size = chords.size();
 
     /// create a new problem
-    auto *pb = new FourVoiceTexture(size, tonality, chords, chords_qualities, states,
-                                    RIGHT_TO_LEFT, VAL_RND);
+    auto *pb = new FourVoiceTexture(size, tonality, chords, chords_qualities, states);
     /// Search options
     Search::Options opts;
     opts.threads = 1;
     opts.stop = Search::Stop::time(600000); // stop after 120 seconds
-    opts.cutoff = Search::Cutoff::luby(2*size);
-    opts.nogoods_limit = size * 3;
+    opts.cutoff = Search::Cutoff::merge(
+            Search::Cutoff::linear(2*size),
+            Search::Cutoff::geometric((4*size)^2, 2));
+    opts.nogoods_limit = size * 4 * 4;
 
 
     //BAB<FourVoiceTexture> solver(pb, opts);

@@ -12,7 +12,7 @@
  ***********************************************************************************************************************/
 
 /**
- * Set the notes of the FullChordsVoicing array to the notes of the given chord
+ * Set the notes of the fullChordsVoicing array to the notes of the given chord
  * @param home the instance of the problem
  * @param tonality the tonality of the piece
  * @param degree the degree of the chord

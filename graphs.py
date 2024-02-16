@@ -1,18 +1,19 @@
 import matplotlib.pyplot as plt
 
-filename = "out/search-stats-2024-02-04_20-27-35.csv"
+filename = "out/search-stats-linear-ndemi-geo-n^2.csv"
 
 data = []
 #read file
 with open(filename, 'r') as csvfile:
     for line in csvfile.readlines():
         #for each line, separate each element and return a list of lists
-        line_data = [elem.strip() for elem in line.split(',')]
+        line_data = [elem.strip() for elem in line.split(';')]
         #print(line_data,'\n')
         data.append(line_data)
 
 #remove first line with titles
 test_cases = data[1:]
+
 #isolate the data we want to plot
 chord_progressions = []
 tonality = []
@@ -36,9 +37,9 @@ for case in test_cases:
 
     # start at 30 to get each successive found solution
     temp = case[30:]
-
+    print(temp,'\n')
     i = 0
-    while i + 8 < len(temp):
+    while i + 8 < len(temp) and temp[i] != '':
         #print(temp[i:i+6])
         curr_t.append(float(temp[i]))
         curr_inc.append(int(temp[i+1]))
@@ -75,9 +76,9 @@ for i in range(len(costs)):
         #plot the cost graph for the test case with the appropriate label
         plt.plot(times[j], costs[i][j], label = f'{chord_progressions[j]} - {tonality[j]}')
 
-    plt.xlabel('Time', fontsize='x-large')
-    plt.ylabel(costs_labels[i], fontsize='x-large')
-    plt.title(f'Evolution of the {costs_labels[i]} over time', fontsize='x-large')
+    plt.xlabel('Time (s)', fontsize=30)
+    plt.ylabel(costs_labels[i], fontsize=30)
+    plt.title(f'Evolution of the {costs_labels[i]} over time', fontsize=30)
 
     #plt.legend()
     plt.show()

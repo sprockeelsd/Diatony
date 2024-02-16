@@ -21,8 +21,7 @@ currentDate=$(date +%Y-%m-%d_%H-%M-%S);
 outFileOpt="../out/search-stats-${currentDate}.csv"  # filename of the results (with the date at the end of the file)
 rm -f $outFileOpt
 echo "Lauching experiments in parallel"
-echo "Chord progression , Tonality, Variable selection strategy, Value selection strategy, Cutoff depth, Cutoff Generator, Nogoods depth,
-      Optimal solution found, Time to prove optimality, , \
+echo "Chord progression , Tonality, Variable selection strategy, Value selection strategy, Optimal solution found, Time to prove optimality, , \
       Best solution Statistics, Nodes traversed, Failed nodes explored, Restarts performed, Propagators executed, No \
       goods generated, Maximal depth of explored tree, number of incomplete chords, number of 4 notes diminished chords,\
       number of chords with less than 4 notes, number of fundamental chords without doubled bass, cost of melodic intervals, \
