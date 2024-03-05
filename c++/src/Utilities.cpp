@@ -123,11 +123,15 @@ string statistics_to_csv_string(Search::Statistics stats){
 /**
  * Returns the value of a variable as a string
  * @param var an integer variable
+ * @param absolute a boolean indicating if the value should be returned as an absolute value (default is false)
  * @return a string representing the value of the variable
  */
-string intVar_to_string(const IntVar& var){
-    if (var.assigned())
+string intVar_to_string(const IntVar &var, bool absolute) {
+    if (var.assigned()){
+        if(absolute)
+            return to_string(abs(var.val()));
         return to_string(var.val());
+    }
     return "<not assigned>";
 }
 
@@ -157,7 +161,7 @@ string intVarArgs_to_string(IntVarArgs args){
     int s = args.size();
     string res;
     for(int i = 0; i < s; i++){
-        res += intVar_to_string(args[i]);
+        res += intVar_to_string(args[i], 0);
         if(i != s - 1)
             res += ", ";
     }

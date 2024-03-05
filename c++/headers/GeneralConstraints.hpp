@@ -24,33 +24,31 @@ using namespace std;
 
 /**
  * Sets the domains of the different voices to their range
- *      bass: [40, 60] E2 -> C3
- *      tenor: [48, 69] C2 -> A3
- *      alto: [55, 75] G2 -> D3
- *      soprano: [60, 84] C3 -> A4
  * @param home the instance of the problem
- * @param n the number of chords
  * @param nVoices the number of voices
- * @param FullChordsVoicing the array containing all the chords in the form
- *          [bass0, alto0, tenor0, soprano0, bass1, alto1, tenor1, soprano1, ...]
+ * @param n the number of chords
+ * @param lowerBounds the lower bounds of the voices
+ * @param upperBounds the upper bounds of the voices
+ * @param fullChordsVoicing the array containing all the chords in the form [bass0, alto0, tenor0, soprano0, bass1, ...]
  */
-void restrain_voices_domains(const Home &home, int n, int nVoices, IntVarArray FullChordsVoicing);
+void restrain_voices_domains(const Home &home, int nVoices, int n, vector<int> lowerBounds, vector<int> upperBounds,
+                        IntVarArray fullChordsVoicing);
 
 /**
  * Link the melodic intervals arrays to the fullChordsVoicing array
  * @param home The instance of the problem
- * @param size the number of chords
  * @param nVoices the number of voices
- * @param FullChordsVoicing the array containing all the chords in the form
- *          [bass0, alto0, tenor0, soprano0, bass1, alto1, tenor1, soprano1, ...]
+ * @param size the number of chords
+ * @param fullChordsVoicing the array containing all the chords in the form [bass0, alto0, tenor0, soprano0, bass1, ...]
  * @param bassMelodicIntervals the melodic intervals of the bass
  * @param tenorMelodicIntervals the melodic intervals of the tenor
  * @param altoMelodicIntervals the melodic intervals of the alto
  * @param sopranoMelodicIntervals the melodic intervals of the soprano
  */
-void link_melodic_arrays(const Home &home, int size, int nVoices, IntVarArray FullChordsVoicing,
-                         IntVarArray bassMelodicIntervals, IntVarArray altoMelodicIntervals,
-                         IntVarArray tenorMelodicIntervals, IntVarArray sopranoMelodicIntervals);
+void link_melodic_arrays(const Home &home, int nVoices, int size,
+                         IntVarArray fullChordsVoicing, IntVarArray bassMelodicIntervals,
+                         IntVarArray altoMelodicIntervals, IntVarArray tenorMelodicIntervals,
+                         IntVarArray sopranoMelodicIntervals);
 
 /**
  * Link the absolute melodic intervals arrays to the corresponding melodic interval arrays
@@ -59,23 +57,22 @@ void link_melodic_arrays(const Home &home, int size, int nVoices, IntVarArray Fu
  * @param tenorMelodicIntervals the melodic intervals of the tenor
  * @param altoMelodicIntervals the melodic intervals of the alto
  * @param sopranoMelodicIntervals the melodic intervals of the soprano
- * @param squaredBassMelodicIntervals the absolute melodic intervals of the bass
- * @param squaredTenorMelodicIntervals the absolute melodic intervals of the tenor
- * @param squaredAltoMelodicIntervals the absolute melodic intervals of the alto
- * @param squaredSopranoMelodicIntervals the absolute melodic intervals of the soprano
+ * @param squaredBassMelodicIntervals the squared melodic intervals of the bass
+ * @param squaredTenorMelodicIntervals the squared melodic intervals of the tenor
+ * @param squaredAltoMelodicIntervals the squared melodic intervals of the alto
+ * @param squaredSopranoMelodicIntervals the squared melodic intervals of the soprano
  */
-void link_squared_melodic_arrays(const Home &home, IntVarArray bassMelodicIntervals, IntVarArray tenorMelodicIntervals,
-                                 IntVarArray altoMelodicIntervals, IntVarArray sopranoMelodicIntervals,
-                                 IntVarArray squaredBassMelodicIntervals, IntVarArray squaredTenorMelodicIntervals,
-                                 IntVarArray squaredAltoMelodicIntervals,
-                                 IntVarArray squaredSopranoMelodicIntervals);
+void link_squared_melodic_arrays(const Home &home,  IntVarArray bassMelodicIntervals,        IntVarArray tenorMelodicIntervals,
+                                                    IntVarArray altoMelodicIntervals,        IntVarArray sopranoMelodicIntervals,
+                                                    IntVarArray squaredBassMelodicIntervals, IntVarArray squaredTenorMelodicIntervals,
+                                                    IntVarArray squaredAltoMelodicIntervals, IntVarArray squaredSopranoMelodicIntervals);
 
 /**
  * Link the harmonic intervals arrays to the fullChordsVoicing array for each voice
  * @param home the instance of the problem
- * @param size the number of chords
  * @param nVoices the number of voices in the chords
- * @param FullChordsVoicing the array containing all the chords in the form [bass0, alto0, tenor0, soprano0, bass1, alto1, tenor1, soprano1, ...]
+ * @param size the number of chords
+ * @param fullChordsVoicing the array containing all the chords in the form [bass0, alto0, tenor0, soprano0, bass1, ...]
  * @param bassTenorHarmonicIntervals the harmonic intervals between bass and tenor
  * @param bassAltoHarmonicIntervals the harmonic intervals between bass and alto
  * @param bassSopranoHarmonicIntervals the harmonic intervals between bass and soprano
@@ -83,8 +80,8 @@ void link_squared_melodic_arrays(const Home &home, IntVarArray bassMelodicInterv
  * @param tenorSopranoHarmonicIntervals the harmonic intervals between tenor and soprano
  * @param altoSopranoHarmonicIntervals the harmonic intervals between alto and soprano
  */
-void link_harmonic_arrays(const Home &home, int size, int nVoices, IntVarArray FullChordsVoicing,
-                          IntVarArray bassTenorHarmonicIntervals, IntVarArray bassAltoHarmonicIntervals,
-                          IntVarArray bassSopranoHarmonicIntervals, IntVarArray tenorAltoHarmonicIntervals,
+void link_harmonic_arrays(const Home &home, int nVoices, int size, IntVarArray fullChordsVoicing,
+                          IntVarArray bassTenorHarmonicIntervals,    IntVarArray bassAltoHarmonicIntervals,
+                          IntVarArray bassSopranoHarmonicIntervals,  IntVarArray tenorAltoHarmonicIntervals,
                           IntVarArray tenorSopranoHarmonicIntervals, IntVarArray altoSopranoHarmonicIntervals);
 #endif

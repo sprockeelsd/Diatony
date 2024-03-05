@@ -1,7 +1,0 @@
-- Check if using channeling constraints is more efficient for linking variable arrays
-- Incorporate complete/incomplete chords
-- Refactor all functions so that fields of the tonality object are not passed as an argument together with the tonality object
-- Also pass all tonality objects as pointer so the whole thing does not have to be copied
-- Find a way to handle diminished chords as 3 voices instead of 4 so they don't influence the other voices, but idk how to do that for now -> Karim
-- Ask Karim about the rule for doubling the third in first inversion chords (see Duha) est-ce qu'il faut doubler la tierce quand c'est une note tonale ou juste pour le seconde degré
-ou juste quand on va à l'accord de dominante?

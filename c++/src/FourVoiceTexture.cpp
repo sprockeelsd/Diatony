@@ -23,70 +23,67 @@
  * @return an instance of FourVoiceTexture initialized with the given parameters, constraints and branching strategies
  * posted.
  */
-FourVoiceTexture::
-FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, vector<int> chordQuals, vector<int> chordStas) {
+FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, vector<int> chordQuals, vector<int> chordStas) {
     /// Parameters
-    size                        = s;
-    tonality                    = t;
-    chordDegrees                = chordDegs;
-    chordQualities              = chordQuals;
-    chordStates                 = chordStas;
-    nOfNotesInChord             = IntArgs(size);
-
+    size                                            = s;
+    tonality                                        = t;
+    chordDegrees                                    = chordDegs;
+    chordQualities                                  = chordQuals;
+    chordStates                                     = chordStas;
+    nOfNotesInChord                                 = IntArgs(size);
     /// keep track of the number of notes that should be in each chord ideally
     for(int i = 0; i < size; i++)
         nOfNotesInChord[i] = chordQualitiesIntervals[chordQualities[i]].size();
 
     /// solution array
-    fullChordsVoicing = IntVarArray(*this, nOfVoices * size, 0, 127); // tonality->get_tonality_notes()
+    fullChordsVoicing                               = IntVarArray(*this, nOfVoices * size, 0, 127);
 
     /// variable arrays for melodic intervals for each voice
-    bassMelodicIntervals        = IntVarArray(*this, size - 1, -PERFECT_OCTAVE, PERFECT_OCTAVE);
-    tenorMelodicIntervals       = IntVarArray(*this, size - 1, -PERFECT_OCTAVE, PERFECT_OCTAVE);
-    altoMelodicIntervals        = IntVarArray(*this, size - 1, -PERFECT_OCTAVE, PERFECT_OCTAVE);
-    sopranoMelodicIntervals     = IntVarArray(*this, size - 1, -PERFECT_OCTAVE, PERFECT_OCTAVE);
+    bassMelodicIntervals                            = IntVarArray(*this, size - 1, -PERFECT_OCTAVE, PERFECT_OCTAVE);
+    tenorMelodicIntervals                           = IntVarArray(*this, size - 1, -PERFECT_OCTAVE, PERFECT_OCTAVE);
+    altoMelodicIntervals                            = IntVarArray(*this, size - 1, -PERFECT_OCTAVE, PERFECT_OCTAVE);
+    sopranoMelodicIntervals                         = IntVarArray(*this, size - 1, -PERFECT_OCTAVE, PERFECT_OCTAVE);
 
-    allMelodicIntervals         = IntVarArray(*this, nOfVoices* (size - 1), -PERFECT_OCTAVE, PERFECT_OCTAVE);
-    allSquaredMelodicIntervals  = IntVarArray(*this, nOfVoices * (size - 1), 0, PERFECT_OCTAVE * PERFECT_OCTAVE);
+    allMelodicIntervals                             = IntVarArray(*this, nOfVoices* (size - 1), -PERFECT_OCTAVE, PERFECT_OCTAVE);
+    allSquaredMelodicIntervals                      = IntVarArray(*this, nOfVoices * (size - 1), 0, PERFECT_OCTAVE * PERFECT_OCTAVE);
 
     /// variable arrays for absolute melodic intervals for each voice
-    squaredBassMelodicIntervals    = IntVarArray(*this, size - 1, 0, PERFECT_OCTAVE * PERFECT_OCTAVE);
-    squaredTenorMelodicIntervals   = IntVarArray(*this, size - 1, 0, PERFECT_OCTAVE * PERFECT_OCTAVE);
-    squaredAltoMelodicIntervals    = IntVarArray(*this, size - 1, 0, PERFECT_OCTAVE * PERFECT_OCTAVE);
-    squaredSopranoMelodicIntervals = IntVarArray(*this, size - 1, 0, PERFECT_OCTAVE * PERFECT_OCTAVE);
+    squaredBassMelodicIntervals                     = IntVarArray(*this, size - 1, 0, PERFECT_OCTAVE * PERFECT_OCTAVE);
+    squaredTenorMelodicIntervals                    = IntVarArray(*this, size - 1, 0, PERFECT_OCTAVE * PERFECT_OCTAVE);
+    squaredAltoMelodicIntervals                     = IntVarArray(*this, size - 1, 0, PERFECT_OCTAVE * PERFECT_OCTAVE);
+    squaredSopranoMelodicIntervals                  = IntVarArray(*this, size - 1, 0, PERFECT_OCTAVE * PERFECT_OCTAVE);
 
     /// variable arrays for harmonic intervals between adjacent voices (only positive because there is no direction)
-    bassTenorHarmonicIntervals      = IntVarArray(*this, size, 0, PERFECT_OCTAVE + PERFECT_FIFTH);
-    bassAltoHarmonicIntervals       = IntVarArray(*this, size, 0, 2 * PERFECT_OCTAVE + PERFECT_FIFTH);
-    bassSopranoHarmonicIntervals    = IntVarArray(*this, size, 0, 3 * PERFECT_OCTAVE + PERFECT_FIFTH);
-    tenorAltoHarmonicIntervals      = IntVarArray(*this, size, 0, PERFECT_OCTAVE);
-    tenorSopranoHarmonicIntervals   = IntVarArray(*this, size, 0, 2 * PERFECT_OCTAVE);
-    altoSopranoHarmonicIntervals    = IntVarArray(*this, size, 0, PERFECT_OCTAVE);
+    bassTenorHarmonicIntervals                      = IntVarArray(*this, size, 0, PERFECT_OCTAVE + PERFECT_FIFTH);
+    bassAltoHarmonicIntervals                       = IntVarArray(*this, size, 0, 2 * PERFECT_OCTAVE + PERFECT_FIFTH);
+    bassSopranoHarmonicIntervals                    = IntVarArray(*this, size, 0, 3 * PERFECT_OCTAVE + PERFECT_FIFTH);
+    tenorAltoHarmonicIntervals                      = IntVarArray(*this, size, 0, PERFECT_OCTAVE);
+    tenorSopranoHarmonicIntervals                   = IntVarArray(*this, size, 0, 2 * PERFECT_OCTAVE);
+    altoSopranoHarmonicIntervals                    = IntVarArray(*this, size, 0, PERFECT_OCTAVE);
 
     /// cost variables auxiliary arrays
-    nDifferentValuesInDiminishedChord   = IntVarArray(*this, size, 0, nOfVoices);
-    nDifferentValuesAllChords           = IntVarArray(*this, size, 0, nOfVoices);
-    nOccurrencesBassInFundamentalState  = IntVarArray(*this, size, 0, nOfVoices);
-    nOFDifferentNotesInChords           = IntVarArray(*this, size, 0, nOfVoices);
-    commonNotesInSameVoice              = IntVarArray(*this, nOfVoices, 0, size - 1);
-    negativeCommonNotesInSameVoice      = IntVarArray(*this, nOfVoices, -(size - 1), 0);
+    nDifferentValuesInDiminishedChord               = IntVarArray(*this, size, 0, nOfVoices);
+    nDifferentValuesAllChords                       = IntVarArray(*this, size, 0, nOfVoices);
+    nOccurrencesBassInFundamentalState              = IntVarArray(*this, size, 0, nOfVoices);
+    nOFDifferentNotesInChords                       = IntVarArray(*this, size, 0, nOfVoices);
+    commonNotesInSameVoice                          = IntVarArray(*this, nOfVoices, 0, size - 1);
 
-    nOfUnissons = IntVar(*this, 0, nOfVoices * (size - 1));
-    nOfSeconds  = IntVar(*this, 0, nOfVoices * (size - 1));
-    nOfThirds   = IntVar(*this, 0, nOfVoices * (size - 1));
-    nOfFourths  = IntVar(*this, 0, nOfVoices * (size - 1));
-    nOfFifths   = IntVar(*this, 0, nOfVoices * (size - 1));
-    nOfSixths   = IntVar(*this, 0, nOfVoices * (size - 1));
-    nOfSevenths = IntVar(*this, 0, nOfVoices * (size - 1));
-    nOfOctaves  = IntVar(*this, 0, nOfVoices * (size - 1));
+    nOfUnissons                                     = IntVar(*this, 0, nOfVoices * (size - 1));
+    nOfSeconds                                      = IntVar(*this, 0, nOfVoices * (size - 1));
+    nOfThirds                                       = IntVar(*this, 0, nOfVoices * (size - 1));
+    nOfFourths                                      = IntVar(*this, 0, nOfVoices * (size - 1));
+    nOfFifths                                       = IntVar(*this, 0, nOfVoices * (size - 1));
+    nOfSixths                                       = IntVar(*this, 0, nOfVoices * (size - 1));
+    nOfSevenths                                     = IntVar(*this, 0, nOfVoices * (size - 1));
+    nOfOctaves                                      = IntVar(*this, 0, nOfVoices * (size - 1));
 
     /// cost variables
-    nOfFundStateDiminishedChordsWith4notes               = IntVar(*this, 0, size);
-    nOfChordsWithLessThan4Values                 = IntVar(*this, 0, size);
-    nOfFundamentalStateChordsWithoutDoubledBass = IntVar(*this, 0, size);
-    nOfIncompleteChords                         = IntVar(*this, 0, size);
-    nOfCommonNotesInSameVoice                   = IntVar(*this, - nOfVoices * (size - 1), 0);
-    costOfMelodicIntervals                      = IntVar(*this, 0, nOfVoices*(size-1)* MAX_MELODIC_COST);
+    nOfFundStateDiminishedChordsWith4notes          = IntVar(*this, 0, size);
+    nOfChordsWithLessThan4Values                    = IntVar(*this, 0, size);
+    nOfFundamentalStateChordsWithoutDoubledBass     = IntVar(*this, 0, size);
+    nOfIncompleteChords                             = IntVar(*this, 0, size);
+    nOfCommonNotesInSameVoice                       = IntVar(*this, - nOfVoices * (size - 1), 0);
+    costOfMelodicIntervals                          = IntVar(*this, 0, nOfVoices*(size-1)* MAX_MELODIC_COST);
 
     costVector = {nOfIncompleteChords, nOfFundStateDiminishedChordsWith4notes, nOfChordsWithLessThan4Values,
                   nOfFundamentalStateChordsWithoutDoubledBass, costOfMelodicIntervals, nOfCommonNotesInSameVoice};
@@ -99,31 +96,29 @@ FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, vector<int> chordQua
     |                                                                                                                  |
     -------------------------------------------------------------------------------------------------------------------*/
 
-    link_melodic_arrays(*this, size, nOfVoices, fullChordsVoicing, bassMelodicIntervals,
+    link_melodic_arrays(*this, nOfVoices, size, fullChordsVoicing, bassMelodicIntervals,
                         altoMelodicIntervals, tenorMelodicIntervals, sopranoMelodicIntervals);
 
-    /// global arrays for branching
+    /// global arrays
     for(int i = 0; i < size-1; i++){
         rel(*this, expr(*this, allMelodicIntervals[nOfVoices * i + BASS]    == bassMelodicIntervals[i]));
         rel(*this, expr(*this, allMelodicIntervals[nOfVoices * i + TENOR]   == tenorMelodicIntervals[i]));
         rel(*this, expr(*this, allMelodicIntervals[nOfVoices * i + ALTO]    == altoMelodicIntervals[i]));
         rel(*this, expr(*this, allMelodicIntervals[nOfVoices * i + SOPRANO] == sopranoMelodicIntervals[i]));
 
-        rel(*this, expr(*this, allSquaredMelodicIntervals[nOfVoices * i + BASS] == squaredBassMelodicIntervals[i]));
-        rel(*this, expr(*this, allSquaredMelodicIntervals[nOfVoices * i + TENOR] == squaredTenorMelodicIntervals[i]));
-        rel(*this, expr(*this, allSquaredMelodicIntervals[nOfVoices * i + ALTO] == squaredAltoMelodicIntervals[i]));
-        rel(*this, expr(*this, allSquaredMelodicIntervals[nOfVoices * i + SOPRANO] == squaredSopranoMelodicIntervals[i]));
+        rel(*this, expr(*this, allSquaredMelodicIntervals[nOfVoices * i + BASS]     == squaredBassMelodicIntervals[i]));
+        rel(*this, expr(*this, allSquaredMelodicIntervals[nOfVoices * i + TENOR]    == squaredTenorMelodicIntervals[i]));
+        rel(*this, expr(*this, allSquaredMelodicIntervals[nOfVoices * i + ALTO]     == squaredAltoMelodicIntervals[i]));
+        rel(*this, expr(*this, allSquaredMelodicIntervals[nOfVoices * i + SOPRANO]  == squaredSopranoMelodicIntervals[i]));
     }
 
-    link_squared_melodic_arrays(*this, bassMelodicIntervals, tenorMelodicIntervals,
-                                altoMelodicIntervals, sopranoMelodicIntervals, squaredBassMelodicIntervals,
-                                squaredTenorMelodicIntervals, squaredAltoMelodicIntervals,
-                                squaredSopranoMelodicIntervals);
+    link_squared_melodic_arrays(*this,
+                                bassMelodicIntervals, tenorMelodicIntervals, altoMelodicIntervals, sopranoMelodicIntervals,
+                                squaredBassMelodicIntervals, squaredTenorMelodicIntervals, squaredAltoMelodicIntervals, squaredSopranoMelodicIntervals);
 
-    link_harmonic_arrays(*this, size, nOfVoices, fullChordsVoicing, bassTenorHarmonicIntervals,
-                         bassAltoHarmonicIntervals, bassSopranoHarmonicIntervals, tenorAltoHarmonicIntervals,
-                         tenorSopranoHarmonicIntervals, altoSopranoHarmonicIntervals);
-
+    link_harmonic_arrays(*this, nOfVoices, size, fullChordsVoicing,
+                         bassTenorHarmonicIntervals, bassAltoHarmonicIntervals, bassSopranoHarmonicIntervals,
+                         tenorAltoHarmonicIntervals, tenorSopranoHarmonicIntervals, altoSopranoHarmonicIntervals);
 
     /**-----------------------------------------------------------------------------------------------------------------
     |                                                                                                                  |
@@ -131,33 +126,32 @@ FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, vector<int> chordQua
     |                                                                                                                  |
     -------------------------------------------------------------------------------------------------------------------*/
 
-    // @todo add a cost for doubled notes that are not tonal notes
+    // @todo add a cost for doubled notes that are not tonal notes -> if a value is not in the tonal notes (1-2-4-5), then its occurence cannot be greater than 1 for each chord
 
     /// number of diminished chords in fundamental state with more than 3 notes (cost to minimize)
-    compute_diminished_chords_cost(*this, size, nOfVoices, tonality, chordDegrees,
-                                   chordStates, fullChordsVoicing,
-                                   nDifferentValuesInDiminishedChord,
+    compute_diminished_chords_cost(*this, nOfVoices, size,
+                                   chordStates, chordQualities, fullChordsVoicing, nDifferentValuesInDiminishedChord,
                                    nOfFundStateDiminishedChordsWith4notes);
 
     /// number of chords with less than 4 note values (cost to minimize)
-    compute_n_of_notes_in_chord_cost(*this, size, nOfVoices, fullChordsVoicing,
+    compute_n_of_notes_in_chord_cost(*this, nOfVoices, size, fullChordsVoicing,
                                      nDifferentValuesAllChords, nOfChordsWithLessThan4Values);
 
     /// number of fundamental state chords without doubled bass (cost to minimize)
-    compute_fundamental_state_doubling_cost(*this, size, nOfVoices, tonality,
+    compute_fundamental_state_doubling_cost(*this, nOfVoices, size, tonality,
                                             chordDegrees, chordStates, fullChordsVoicing,
                                             nOccurrencesBassInFundamentalState,
                                             nOfFundamentalStateChordsWithoutDoubledBass);
 
     /// number of chords that don't have all their possible note values (cost to minimize)
-    compute_cost_for_incomplete_chords(*this, size, nOfVoices, nOfNotesInChord,
+    compute_cost_for_incomplete_chords(*this, nOfVoices, size, nOfNotesInChord,
                                        fullChordsVoicing, nOFDifferentNotesInChords, nOfIncompleteChords);
 
     /// count the number of common notes in the same voice between consecutive chords (cost to MAXIMIZE)
     /// /!\ The variable nOfCommonNotesInSameVoice has a NEGATIVE value so the minimization will maximize its absolute value
     compute_cost_for_common_notes_not_in_same_voice(*this, bassMelodicIntervals, tenorMelodicIntervals,
                                                     altoMelodicIntervals, sopranoMelodicIntervals, nOfUnissons,
-                                                    commonNotesInSameVoice, negativeCommonNotesInSameVoice,
+                                                    commonNotesInSameVoice,
                                                     nOfCommonNotesInSameVoice);
 
     /// weighted sum of melodic intervals (cost to minimize)
@@ -172,12 +166,16 @@ FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, vector<int> chordQua
     -------------------------------------------------------------------------------------------------------------------*/
 
     /// restrain the domain of the voices to their range + state that bass <= tenor <= alto <= soprano
-    restrain_voices_domains(*this, size, nOfVoices, fullChordsVoicing);
+    restrain_voices_domains(*this, nOfVoices, size,
+                            {BASS_MIN, TENOR_MIN, ALTO_MIN, SOPRANO_MIN},
+                            {BASS_MAX, TENOR_MAX, ALTO_MAX, SOPRANO_MAX},
+                            fullChordsVoicing);
 
     for(int i = 0; i < size; i++) {
         IntVarArgs currentChord(fullChordsVoicing.slice(nOfVoices * i, 1, nOfVoices));
 
         /// set the chord's domain to the notes of the degree chordDegrees[i]'s chord
+        //@todo changer
         set_to_chord(*this, tonality, chordDegrees[i], chordQualities[i], currentChord);
 
         /// set the bass based on the chord's state
@@ -353,7 +351,6 @@ FourVoiceTexture::FourVoiceTexture(FourVoiceTexture& s): IntLexMinimizeSpace(s){
     nOccurrencesBassInFundamentalState.update(*this, s.nOccurrencesBassInFundamentalState);
     nOFDifferentNotesInChords.update(*this, s.nOFDifferentNotesInChords);
     commonNotesInSameVoice.update(*this, s.commonNotesInSameVoice);
-    negativeCommonNotesInSameVoice.update(*this, s.negativeCommonNotesInSameVoice);
 
     nOfUnissons.update( *this, s.nOfUnissons);
     nOfSeconds.update(  *this, s.nOfSeconds);
@@ -458,7 +455,7 @@ string FourVoiceTexture::to_string(){
     message += "AllMelodicIntervals = \t\t" + intVarArray_to_string(allMelodicIntervals) + "\n\n";
 
     message += "squaredBassMelodicIntervals = \t\t" + intVarArray_to_string(squaredBassMelodicIntervals) + "\n";
-    message += "squaredTenorMelodicIntervals = \t" + intVarArray_to_string(squaredTenorMelodicIntervals) + "\n";
+    message += "squaredTenorMelodicIntervals = \t\t" + intVarArray_to_string(squaredTenorMelodicIntervals) + "\n";
     message += "squaredAltoMelodicIntervals = \t\t" + intVarArray_to_string(squaredAltoMelodicIntervals) + "\n";
     message += "squaredSopranoMelodicIntervals = \t" + intVarArray_to_string(squaredSopranoMelodicIntervals) + "\n\n";
     message += "allSquaredMelodicIntervals = \t\t" + intVarArray_to_string(allSquaredMelodicIntervals) + "\n\n";
@@ -475,7 +472,6 @@ string FourVoiceTexture::to_string(){
     message += "nDifferentValuesInAllChords = \t\t" + intVarArray_to_string(nDifferentValuesAllChords) + "\n";
     message += "nOccurrencesBassInFundamentalState = \t" + intVarArray_to_string(nOccurrencesBassInFundamentalState) + "\n";
     message += "commonNotesInSameVoice = \t\t" + intVarArray_to_string(commonNotesInSameVoice) + "\n";
-    message += "negativeCommonNotesInSameVoice = \t" + intVarArray_to_string(negativeCommonNotesInSameVoice) + "\n";
     message += "nOFDifferentNotesInChords = \t\t" + intVarArray_to_string(nOFDifferentNotesInChords) + "\n\n";
 
     message += "nOfUnissons = \t\t" + intVar_to_string(nOfUnissons) + "\n";
@@ -491,10 +487,9 @@ string FourVoiceTexture::to_string(){
 
     message += "nOfFundStateDiminishedChordsWith4notes = " + intVar_to_string(nOfFundStateDiminishedChordsWith4notes) + "\n";
     message += "nOfChordsWithLessThan4Values = " + intVar_to_string(nOfChordsWithLessThan4Values) + "\n";
-    message += "nOfFundamentalStateChordsWithoutDoubledBass = " +
-            intVar_to_string(nOfFundamentalStateChordsWithoutDoubledBass) + "\n";
+    message += "nOfFundamentalStateChordsWithoutDoubledBass = " + intVar_to_string(nOfFundamentalStateChordsWithoutDoubledBass) + "\n";
     message += "nOfIncompleteChords = " + intVar_to_string(nOfIncompleteChords) + "\n";
-    message += "nOfCommonNotesInSameVoice = " + intVar_to_string(nOfCommonNotesInSameVoice) + "\n";
+    message += "nOfCommonNotesInSameVoice = " + intVar_to_string(nOfCommonNotesInSameVoice,true) + "\n";
     message += "nOfCommonNotesTenor = " + intVar_to_string(commonNotesInSameVoice[TENOR]) + "\n";
     message += "nOfCommonNotesAlto = " + intVar_to_string(commonNotesInSameVoice[ALTO]) + "\n";
     message += "nOfCommonNotesSoprano = " + intVar_to_string(commonNotesInSameVoice[SOPRANO]) + "\n";

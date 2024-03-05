@@ -84,6 +84,16 @@ const vector<IntValBranch> value_selection_heuristics = {INT_VAL_MIN(), INT_VAL_
 
 const vector<string> value_selection_heuristics_names = {"Value min", "Value max", "Median value", "Value random"};
 
+/** Voice ranges */
+const int BASS_MIN = 40;
+const int BASS_MAX = 60;
+const int TENOR_MIN = 48;
+const int TENOR_MAX = 69;
+const int ALTO_MIN = 55;
+const int ALTO_MAX = 75;
+const int SOPRANO_MIN = 60;
+const int SOPRANO_MAX = 84;
+
 /** Melodic costs */
 const int UNISON_COST = 0;
 const int SECOND_COST = 1;
@@ -302,11 +312,12 @@ string statistics_to_string(Search::Statistics stats);
 string statistics_to_csv_string(Search::Statistics stats);
 
 /**
- * Returns the value of a variable as a string. If the variable is unassigned, returns "<unassigned>"
+ * Returns the value of a variable as a string
  * @param var an integer variable
+ * @param absolute a boolean indicating if the value should be returned as an absolute value (default is false)
  * @return a string representing the value of the variable
  */
-string intVar_to_string(const IntVar& var);
+string intVar_to_string(const IntVar &var, bool absolute = false);
 
 /**
  * Returns the values of an array of variables as a string. Calls the intVar_to_string function
