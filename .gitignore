@@ -28,6 +28,7 @@ Main
 ../~$AvancementImplementationRegles.xlsx
 
 c++/cmake-build-debug
+.idea
 
 
 c++/gecode.framework
