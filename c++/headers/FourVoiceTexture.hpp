@@ -85,7 +85,6 @@ protected:
     IntVarArray                 nOccurrencesBassInFundamentalState;
     IntVarArray                 nOFDifferentNotesInChords;
     IntVarArray                 commonNotesInSameVoice;
-    IntVarArray                 negativeCommonNotesInSameVoice;             // negative so we can maximize it by minimizing
 
     /// Variables for each type of interval
     IntVar                      nOfUnissons;                                // number of intervals that are a unisson
