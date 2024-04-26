@@ -11,7 +11,7 @@
 //
 
 
-#include "../headers/MidiEventList.h"
+#include "../headers/midifile/MidiEventList.h"
 
 #include <vector>
 #include <algorithm>

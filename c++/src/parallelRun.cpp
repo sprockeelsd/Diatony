@@ -4,7 +4,7 @@
 #include "../headers/MajorTonality.hpp"
 #include "../headers/MinorTonality.hpp"
 #include "../headers/Solver.hpp"
-#include "../headers/MidiFile.h"
+#include "midifile/MidiFile.h"
 #include "../headers/MidiFileGeneration.hpp"
 
 using namespace Gecode;

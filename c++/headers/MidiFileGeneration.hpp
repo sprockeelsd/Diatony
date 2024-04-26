@@ -7,7 +7,7 @@
 #include "MajorTonality.hpp"
 #include "MinorTonality.hpp"
 #include "Solver.hpp"
-#include "MidiFile.h"
+#include "midifile/MidiFile.h"
 
 #include <gecode/gist.hh>
 

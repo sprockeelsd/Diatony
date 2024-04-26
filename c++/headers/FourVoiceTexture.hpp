@@ -1,3 +1,8 @@
+//
+// Programmer:    Damien Sprockeels <damien.sprockeels@uclouvain.be>
+// Creation Date: Jan 20 2023
+// Description:   A class that creates a constraint representation of a four voice harmonic problem of tonal music.
+//
 #ifndef space_wrapper_hpp
 #define space_wrapper_hpp
 
