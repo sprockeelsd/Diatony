@@ -11,7 +11,7 @@
 //                for the MidiFile class.
 //
 
-#include "../headers/midifile/MidiEvent.h"
+#include "../../headers/midifile/MidiEvent.h"
 
 #include <stdlib.h>
 

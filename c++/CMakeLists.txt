@@ -21,12 +21,12 @@ set(MY_HEADERS headers/problem_wrapper.hpp headers/FourVoiceTexture.hpp src/Four
         headers/Solver.hpp
         src/Preferences.cpp
         headers/Preferences.hpp
-        src/MidiFile.cpp
-        src/Binasc.cpp
-        src/MidiEvent.cpp
-        src/MidiEventList.cpp
-        src/MidiMessage.cpp
-        src/Options.cpp
+        src/midifile/MidiFile.cpp
+        src/midifile/Binasc.cpp
+        src/midifile/MidiEvent.cpp
+        src/midifile/MidiEventList.cpp
+        src/midifile/MidiMessage.cpp
+        src/midifile/Options.cpp
         src/MidiFileGeneration.cpp
         headers/MidiFileGeneration.hpp
         src/BranchingTests.cpp
@@ -38,10 +38,10 @@ add_library(damien ${MY_HEADERS} src/problem_wrapper.cpp src/main.cpp src/Tonali
         headers/Solver.hpp
         src/Preferences.cpp
         headers/Preferences.hpp
-        src/MidiFile.cpp
-        src/Binasc.cpp
-        src/MidiEvent.cpp
-        src/Options.cpp
+        src/midifile/MidiFile.cpp
+        src/midifile/Binasc.cpp
+        src/midifile/MidiEvent.cpp
+        src/midifile/Options.cpp
         src/BranchingTests.cpp
         src/HeuristicsTestingSetup.cpp
 )
