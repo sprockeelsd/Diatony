@@ -52,37 +52,6 @@ void compute_n_of_notes_in_chord_cost(const Home &home, int nVoices, int size, I
 }
 
 /**
- * Computes the cost for the number of times the fundamental is not doubled in fundamental state chords.
- * @param home the instance of the problem
- * @param size the size of the chord
- * @param nVoices the number of voices
- * @param tonality the tonality of the piece
- * @param chordDegrees the array containing the degree of each chord
- * @param chordStates the array containing the state of each chord
- * @param fullChordsVoicing the array containing all the chords in the form [bass, alto, tenor, soprano]
- * @param nOccurrencesFund the array containing the number of times the fundamental is present in each chord
- * @param costVar the variable that will contain the cost
- */
-void compute_fundamental_state_doubling_cost(const Home &home, int nVoices, int size, Tonality *tonality,
-                                             vector<int> chordDegrees, vector<int> chordStates,
-                                             IntVarArray fullChordsVoicing, IntVarArray nOccurrencesFund,
-                                             const IntVar &costVar) {
-    for(int i = 0; i < size; ++i){
-        if(chordStates[i] == FUNDAMENTAL_STATE){
-            IntVarArgs currentChord(fullChordsVoicing.slice(nVoices * i, 1, nVoices));
-            /// nOccurencesFund[i] = nb of times the fundamental is present in the chord
-            count(home, currentChord, tonality->get_scale_degree(chordDegrees[i]), IRT_EQ,
-                  nOccurrencesFund[i]);
-        }
-        else{ /// if not fundamental state, then we ignore it so it's 0
-            rel(home, nOccurrencesFund[i], IRT_EQ, 0);
-        }
-    }
-    /// costVar = nb of chords that only have their fundamental once (it is not doubled)
-    count(home, nOccurrencesFund, 1, IRT_EQ, costVar);
-}
-
-/**
  * This function counts the number of incomplete chords
  * @param home the instance of the problem
  * @param nVoices the number of voices in the chords
@@ -154,10 +123,7 @@ void compute_cost_for_common_notes_not_in_same_voice(const Home &home, const Int
  */
 void
 compute_cost_for_melodic_intervals(const Home &home, const IntVarArray &allMelodicIntervals, const IntVar &nOfUnissons,
-                                   const IntVar &nOfSeconds, const IntVar &nOfThirds, const IntVar &nOfFourths,
-                                   const IntVar &nOfFifths, const IntVar &nOfSixths, const IntVar &nOfSevenths,
-                                   const IntVar &nOfOctaves, const IntVar &costOfMelodicIntervals,
-                                   IntVarArray costAllMelodicIntervals) {
+                                   const IntVar &costOfMelodicIntervals, IntVarArray costAllMelodicIntervals) {
 
     ///                    -octave,     - major seventh,    - minor seventh,    - major sixth,  - minor sixth,
     IntArgs weights({   OCTAVE_COST, SEVENTH_COST,       SEVENTH_COST,       SIXTH_COST,     SIXTH_COST,
@@ -178,28 +144,7 @@ compute_cost_for_melodic_intervals(const Home &home, const IntVarArray &allMelod
     /// the sum of the costs = total cost
     linear(home, costAllMelodicIntervals, IRT_EQ, costOfMelodicIntervals);
 
-    /// count the number of occurences of each interval
+    /// count the number of occurences of each interval, useful for the preference of common notes in same voice
     count(home, allMelodicIntervals, UNISSON,
           IRT_EQ, nOfUnissons);
-//    count(home, allMelodicIntervals, IntSet({-MAJOR_SECOND, -MINOR_SECOND, MINOR_SECOND, MAJOR_SECOND}),
-//          IRT_EQ, nOfSeconds);
-//    count(home, allMelodicIntervals, IntSet({-MAJOR_THIRD, -MINOR_THIRD, MINOR_THIRD, MAJOR_THIRD}),
-//          IRT_EQ, nOfThirds);
-//    count(home, allMelodicIntervals, IntSet({-PERFECT_FOURTH, PERFECT_FOURTH}),
-//          IRT_EQ, nOfFourths);
-//    count(home, allMelodicIntervals, IntSet({-PERFECT_FIFTH, -TRITONE, TRITONE, PERFECT_FIFTH}),
-//          IRT_EQ, nOfFifths); /// tritones are counted as fifth to only be counted once
-//    count(home, allMelodicIntervals, IntSet({-MAJOR_SIXTH, -MINOR_SIXTH, MINOR_SIXTH, MAJOR_SIXTH}),
-//          IRT_EQ, nOfSixths);
-//    count(home, allMelodicIntervals, IntSet({-MAJOR_SEVENTH, -MINOR_SEVENTH, MINOR_SEVENTH, MAJOR_SEVENTH}),
-//          IRT_EQ, nOfSevenths);
-//    count(home, allMelodicIntervals, IntSet({-PERFECT_OCTAVE, PERFECT_OCTAVE}),
-//          IRT_EQ, nOfOctaves);
-//
-//    /// weighted sum of the number of occurences of each interval
-//    linear(home,
-//           {UNISON_COST, SECOND_COST, THIRD_COST, FOURTH_COST, FIFTH_COST, SIXTH_COST, SEVENTH_COST, OCTAVE_COST},
-//           IntVarArgs() << nOfUnissons << nOfSeconds << nOfThirds << nOfFourths << nOfFifths << nOfSixths << nOfSevenths << nOfOctaves,
-//           IRT_EQ,
-//           costOfMelodicIntervals);
 }

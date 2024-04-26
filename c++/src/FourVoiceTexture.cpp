@@ -64,31 +64,22 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     /// cost variables auxiliary arrays
     nDifferentValuesInDiminishedChord               = IntVarArray(*this, size, 0, nOfVoices);
     nDifferentValuesAllChords                       = IntVarArray(*this, size, 0, nOfVoices);
-    nOccurrencesBassInFundamentalState              = IntVarArray(*this, size, 0, nOfVoices);
     nOFDifferentNotesInChords                       = IntVarArray(*this, size, 0, nOfVoices);
     commonNotesInSameVoice                          = IntVarArray(*this, nOfVoices, 0, size - 1);
     costsAllMelodicIntervals                        = IntVarArray(*this, nOfVoices * (size - 1), UNISON_COST, MAX_MELODIC_COST);
 
     nOfUnissons                                     = IntVar(*this, 0, nOfVoices * (size - 1));
-    nOfSeconds                                      = IntVar(*this, 0, nOfVoices * (size - 1));
-    nOfThirds                                       = IntVar(*this, 0, nOfVoices * (size - 1));
-    nOfFourths                                      = IntVar(*this, 0, nOfVoices * (size - 1));
-    nOfFifths                                       = IntVar(*this, 0, nOfVoices * (size - 1));
-    nOfSixths                                       = IntVar(*this, 0, nOfVoices * (size - 1));
-    nOfSevenths                                     = IntVar(*this, 0, nOfVoices * (size - 1));
-    nOfOctaves                                      = IntVar(*this, 0, nOfVoices * (size - 1));
 
     /// cost variables
     nOfFundStateDiminishedChordsWith4notes          = IntVar(*this, 0, size);
     nOfChordsWithLessThan4Values                    = IntVar(*this, 0, size);
-    nOfFundamentalStateChordsWithoutDoubledBass     = IntVar(*this, 0, size);
     nOfIncompleteChords                             = IntVar(*this, 0, size);
     nOfCommonNotesInSameVoice                       = IntVar(*this, - nOfVoices * (size - 1), 0);
     costOfMelodicIntervals                          = IntVar(*this, 0, nOfVoices*(size-1)* MAX_MELODIC_COST);
 
     //@todo remove the fundamental state chord pref + forcer la note du troisième accord avant la fin à fa 
     costVector = {nOfIncompleteChords, nOfFundStateDiminishedChordsWith4notes, nOfChordsWithLessThan4Values,
-                  nOfFundamentalStateChordsWithoutDoubledBass, costOfMelodicIntervals, nOfCommonNotesInSameVoice};
+                  costOfMelodicIntervals, nOfCommonNotesInSameVoice};
 
     /// Test constraints
 
@@ -139,12 +130,6 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     compute_n_of_notes_in_chord_cost(*this, nOfVoices, size, fullChordsVoicing,
                                      nDifferentValuesAllChords, nOfChordsWithLessThan4Values);
 
-    /// number of fundamental state chords without doubled bass (cost to minimize)
-    compute_fundamental_state_doubling_cost(*this, nOfVoices, size, tonality,
-                                            chordDegrees, chordStates, fullChordsVoicing,
-                                            nOccurrencesBassInFundamentalState,
-                                            nOfFundamentalStateChordsWithoutDoubledBass);
-
     /// number of chords that don't have all their possible note values (cost to minimize)
     compute_cost_for_incomplete_chords(*this, nOfVoices, size, nOfNotesInChord,
                                        fullChordsVoicing, nOFDifferentNotesInChords, nOfIncompleteChords);
@@ -157,8 +142,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
                                                     nOfCommonNotesInSameVoice);
 
     /// weighted sum of melodic intervals (cost to minimize)
-    compute_cost_for_melodic_intervals(*this, allMelodicIntervals, nOfUnissons, nOfSeconds,
-                                       nOfThirds, nOfFourths, nOfFifths, nOfSixths, nOfSevenths, nOfOctaves,
+    compute_cost_for_melodic_intervals(*this, allMelodicIntervals, nOfUnissons,
                                        costOfMelodicIntervals, costsAllMelodicIntervals);
 
     /**-----------------------------------------------------------------------------------------------------------------
@@ -351,29 +335,20 @@ FourVoiceTexture::FourVoiceTexture(FourVoiceTexture& s): IntLexMinimizeSpace(s){
 
     nDifferentValuesInDiminishedChord.update(*this, s.nDifferentValuesInDiminishedChord);
     nDifferentValuesAllChords.update(*this, s.nDifferentValuesAllChords);
-    nOccurrencesBassInFundamentalState.update(*this, s.nOccurrencesBassInFundamentalState);
     nOFDifferentNotesInChords.update(*this, s.nOFDifferentNotesInChords);
     commonNotesInSameVoice.update(*this, s.commonNotesInSameVoice);
     costsAllMelodicIntervals.update(*this, s.costsAllMelodicIntervals);
 
     nOfUnissons.update( *this, s.nOfUnissons);
-    nOfSeconds.update(  *this, s.nOfSeconds);
-    nOfThirds.update(   *this, s.nOfThirds);
-    nOfFourths.update(  *this, s.nOfFourths);
-    nOfFifths.update(   *this, s.nOfFifths);
-    nOfSixths.update(   *this, s.nOfSixths);
-    nOfSevenths.update( *this, s.nOfSevenths);
-    nOfOctaves.update(  *this, s.nOfOctaves);
 
     nOfFundStateDiminishedChordsWith4notes.update(*this, s.nOfFundStateDiminishedChordsWith4notes);
     nOfChordsWithLessThan4Values.update(*this, s.nOfChordsWithLessThan4Values);
-    nOfFundamentalStateChordsWithoutDoubledBass.update(*this, s.nOfFundamentalStateChordsWithoutDoubledBass);
     nOfIncompleteChords.update(*this, s.nOfIncompleteChords);
     nOfCommonNotesInSameVoice.update(*this, s.nOfCommonNotesInSameVoice);
     costOfMelodicIntervals.update(*this, s.costOfMelodicIntervals);
 
     costVector = {nOfIncompleteChords, nOfFundStateDiminishedChordsWith4notes, nOfChordsWithLessThan4Values,
-                  nOfFundamentalStateChordsWithoutDoubledBass, costOfMelodicIntervals, nOfCommonNotesInSameVoice};
+                  costOfMelodicIntervals, nOfCommonNotesInSameVoice};
 }
 
 /**
@@ -474,25 +449,16 @@ string FourVoiceTexture::to_string(){
 
     message += "nDifferentValuesInDiminishedChord = \t" + intVarArray_to_string(nDifferentValuesInDiminishedChord) + "\n";
     message += "nDifferentValuesInAllChords = \t\t" + intVarArray_to_string(nDifferentValuesAllChords) + "\n";
-    message += "nOccurrencesBassInFundamentalState = \t" + intVarArray_to_string(nOccurrencesBassInFundamentalState) + "\n";
     message += "commonNotesInSameVoice = \t\t" + intVarArray_to_string(commonNotesInSameVoice) + "\n";
     message += "nOFDifferentNotesInChords = \t\t" + intVarArray_to_string(nOFDifferentNotesInChords) + "\n";
     message += "costsAllMelodicIntervals = \t\t" + intVarArray_to_string(costsAllMelodicIntervals) + "\n\n";
 
-    message += "nOfUnissons = \t\t" + intVar_to_string(nOfUnissons) + "\n";
-    message += "nOfSeconds = \t\t" + intVar_to_string(nOfSeconds) + "\n";
-    message += "nOfThirds = \t\t" + intVar_to_string(nOfThirds) + "\n";
-    message += "nOfFourths = \t\t" + intVar_to_string(nOfFourths) + "\n";
-    message += "nOfFifths = \t\t" + intVar_to_string(nOfFifths) + "\n";
-    message += "nOfSixths = \t\t" + intVar_to_string(nOfSixths) + "\n";
-    message += "nOfSevenths = \t\t" + intVar_to_string(nOfSevenths) + "\n";
-    message += "nOfOctaves = \t\t" + intVar_to_string(nOfOctaves) + "\n\n";
+    message += "nOfUnissons = \t\t" + intVar_to_string(nOfUnissons) + "\n\n";
 
     message += "------------------------------------cost variables----------------------------------------\n";
 
     message += "nOfFundStateDiminishedChordsWith4notes = " + intVar_to_string(nOfFundStateDiminishedChordsWith4notes) + "\n";
     message += "nOfChordsWithLessThan4Values = " + intVar_to_string(nOfChordsWithLessThan4Values) + "\n";
-    message += "nOfFundamentalStateChordsWithoutDoubledBass = " + intVar_to_string(nOfFundamentalStateChordsWithoutDoubledBass) + "\n";
     message += "nOfIncompleteChords = " + intVar_to_string(nOfIncompleteChords) + "\n";
     message += "nOfCommonNotesInSameVoice = " + intVar_to_string(nOfCommonNotesInSameVoice,true) + "\n";
     message += "nOfCommonNotesTenor = " + intVar_to_string(commonNotesInSameVoice[TENOR]) + "\n";

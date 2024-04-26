@@ -82,25 +82,16 @@ protected:
     /// cost variables auxiliary arrays
     IntVarArray                 nDifferentValuesInDiminishedChord;
     IntVarArray                 nDifferentValuesAllChords;
-    IntVarArray                 nOccurrencesBassInFundamentalState;
     IntVarArray                 nOFDifferentNotesInChords;
     IntVarArray                 commonNotesInSameVoice;
     IntVarArray                 costsAllMelodicIntervals;
 
     /// Variables for each type of interval
     IntVar                      nOfUnissons;                                // number of intervals that are a unisson
-    IntVar                      nOfSeconds;                                 // number of intervals that are a second
-    IntVar                      nOfThirds;                                  // number of intervals that are a third
-    IntVar                      nOfFourths;                                 // number of intervals that are a fourth
-    IntVar                      nOfFifths;                                  // number of intervals that are a fifth (tritone included)
-    IntVar                      nOfSixths;                                  // number of intervals that are a sixth
-    IntVar                      nOfSevenths;                                // number of intervals that are a seventh
-    IntVar                      nOfOctaves;                                 // number of intervals that are an octave
 
     /// cost variables
     IntVar                      nOfFundStateDiminishedChordsWith4notes;
     IntVar                      nOfChordsWithLessThan4Values;
-    IntVar                      nOfFundamentalStateChordsWithoutDoubledBass;
     IntVar                      nOfIncompleteChords;
     IntVar                      nOfCommonNotesInSameVoice;                  /// /!\ this cost needs to be maximized, so its value is negative
     IntVar                      costOfMelodicIntervals;

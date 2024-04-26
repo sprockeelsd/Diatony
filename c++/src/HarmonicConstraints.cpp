@@ -100,10 +100,10 @@ void chord_note_occurrence_fundamental_state(Home home, int nVoices, int degree,
         rel(home, isIncomplete, BOT_EQV, expr(home, nOfBassNotes == 3), true);
     }
     else{
-        /// each note is present at least once, doubling is determined by the costs
-        count(home, currentChord, tonality->get_scale_degree(degree), IRT_GQ,1);
-        count(home, currentChord, tonality->get_scale_degree((degree + THIRD_DEGREE) % 7), IRT_GQ,1);
-        count(home, currentChord, tonality->get_scale_degree((degree + FIFTH_DEGREE) % 7), IRT_GQ, 1);
+        /// each note is present at least once, the bass is doubled
+        count(home, currentChord, tonality->get_scale_degree(degree), IRT_EQ,2);
+        count(home, currentChord, tonality->get_scale_degree((degree + THIRD_DEGREE) % 7), IRT_EQ,1);
+        count(home, currentChord, tonality->get_scale_degree((degree + FIFTH_DEGREE) % 7), IRT_EQ, 1);
     }
 }
 
