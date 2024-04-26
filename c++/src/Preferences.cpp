@@ -156,29 +156,50 @@ void
 compute_cost_for_melodic_intervals(const Home &home, const IntVarArray &allMelodicIntervals, const IntVar &nOfUnissons,
                                    const IntVar &nOfSeconds, const IntVar &nOfThirds, const IntVar &nOfFourths,
                                    const IntVar &nOfFifths, const IntVar &nOfSixths, const IntVar &nOfSevenths,
-                                   const IntVar &nOfOctaves, const IntVar &costOfMelodicIntervals) {
+                                   const IntVar &nOfOctaves, const IntVar &costOfMelodicIntervals,
+                                   IntVarArray costAllMelodicIntervals) {
+
+    ///                    -octave,     - major seventh,    - minor seventh,    - major sixth,  - minor sixth,
+    IntArgs weights({   OCTAVE_COST, SEVENTH_COST,       SEVENTH_COST,       SIXTH_COST,     SIXTH_COST,
+    ///                     -perfect fifth,     - tritone,      -perfect fourth,    - major third,  - minor third,
+                            FIFTH_COST,         TRITONE_COST,   FOURTH_COST,        THIRD_COST,     THIRD_COST,
+    ///                     - major second,     - minor second,     unison,
+                            SECOND_COST,        SECOND_COST,        UNISON_COST,
+    ///                     minor second,   major second,   minor third,    major third,    perfect fourth,
+                            SECOND_COST,    SECOND_COST,    THIRD_COST,     THIRD_COST,     FOURTH_COST,
+    ///                     tritone,        perfect fifth,  minor sixth,    major sixth,    minor seventh,
+                            TRITONE_COST,   FIFTH_COST,     SIXTH_COST,     SIXTH_COST,     SEVENTH_COST,
+    ///                     major seventh,  octave
+                            SEVENTH_COST,   OCTAVE_COST});
+
+    for(int i = 0; i < allMelodicIntervals.size(); i++){
+        element(home, weights, expr(home, allMelodicIntervals[i] + PERFECT_OCTAVE), costAllMelodicIntervals[i]); // so indexes are [0,24] instead of [-12,12]
+    }
+    /// the sum of the costs = total cost
+    linear(home, costAllMelodicIntervals, IRT_EQ, costOfMelodicIntervals);
+
     /// count the number of occurences of each interval
     count(home, allMelodicIntervals, UNISSON,
           IRT_EQ, nOfUnissons);
-    count(home, allMelodicIntervals, IntSet({-MAJOR_SECOND, -MINOR_SECOND, MINOR_SECOND, MAJOR_SECOND}),
-          IRT_EQ, nOfSeconds);
-    count(home, allMelodicIntervals, IntSet({-MAJOR_THIRD, -MINOR_THIRD, MINOR_THIRD, MAJOR_THIRD}),
-          IRT_EQ, nOfThirds);
-    count(home, allMelodicIntervals, IntSet({-PERFECT_FOURTH, PERFECT_FOURTH}),
-          IRT_EQ, nOfFourths);
-    count(home, allMelodicIntervals, IntSet({-PERFECT_FIFTH, -TRITONE, TRITONE, PERFECT_FIFTH}),
-          IRT_EQ, nOfFifths); /// tritones are counted as fifth to only be counted once
-    count(home, allMelodicIntervals, IntSet({-MAJOR_SIXTH, -MINOR_SIXTH, MINOR_SIXTH, MAJOR_SIXTH}),
-          IRT_EQ, nOfSixths);
-    count(home, allMelodicIntervals, IntSet({-MAJOR_SEVENTH, -MINOR_SEVENTH, MINOR_SEVENTH, MAJOR_SEVENTH}),
-          IRT_EQ, nOfSevenths);
-    count(home, allMelodicIntervals, IntSet({-PERFECT_OCTAVE, PERFECT_OCTAVE}),
-          IRT_EQ, nOfOctaves);
-
-    /// weighted sum of the number of occurences of each interval
-    linear(home,
-           {UNISON_COST, SECOND_COST, THIRD_COST, FOURTH_COST, FIFTH_COST, SIXTH_COST, SEVENTH_COST, OCTAVE_COST},
-           IntVarArgs() << nOfUnissons << nOfSeconds << nOfThirds << nOfFourths << nOfFifths << nOfSixths << nOfSevenths << nOfOctaves,
-           IRT_EQ,
-           costOfMelodicIntervals);
+//    count(home, allMelodicIntervals, IntSet({-MAJOR_SECOND, -MINOR_SECOND, MINOR_SECOND, MAJOR_SECOND}),
+//          IRT_EQ, nOfSeconds);
+//    count(home, allMelodicIntervals, IntSet({-MAJOR_THIRD, -MINOR_THIRD, MINOR_THIRD, MAJOR_THIRD}),
+//          IRT_EQ, nOfThirds);
+//    count(home, allMelodicIntervals, IntSet({-PERFECT_FOURTH, PERFECT_FOURTH}),
+//          IRT_EQ, nOfFourths);
+//    count(home, allMelodicIntervals, IntSet({-PERFECT_FIFTH, -TRITONE, TRITONE, PERFECT_FIFTH}),
+//          IRT_EQ, nOfFifths); /// tritones are counted as fifth to only be counted once
+//    count(home, allMelodicIntervals, IntSet({-MAJOR_SIXTH, -MINOR_SIXTH, MINOR_SIXTH, MAJOR_SIXTH}),
+//          IRT_EQ, nOfSixths);
+//    count(home, allMelodicIntervals, IntSet({-MAJOR_SEVENTH, -MINOR_SEVENTH, MINOR_SEVENTH, MAJOR_SEVENTH}),
+//          IRT_EQ, nOfSevenths);
+//    count(home, allMelodicIntervals, IntSet({-PERFECT_OCTAVE, PERFECT_OCTAVE}),
+//          IRT_EQ, nOfOctaves);
+//
+//    /// weighted sum of the number of occurences of each interval
+//    linear(home,
+//           {UNISON_COST, SECOND_COST, THIRD_COST, FOURTH_COST, FIFTH_COST, SIXTH_COST, SEVENTH_COST, OCTAVE_COST},
+//           IntVarArgs() << nOfUnissons << nOfSeconds << nOfThirds << nOfFourths << nOfFifths << nOfSixths << nOfSevenths << nOfOctaves,
+//           IRT_EQ,
+//           costOfMelodicIntervals);
 }

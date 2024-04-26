@@ -85,6 +85,7 @@ protected:
     IntVarArray                 nOccurrencesBassInFundamentalState;
     IntVarArray                 nOFDifferentNotesInChords;
     IntVarArray                 commonNotesInSameVoice;
+    IntVarArray                 costsAllMelodicIntervals;
 
     /// Variables for each type of interval
     IntVar                      nOfUnissons;                                // number of intervals that are a unisson

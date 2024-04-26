@@ -80,7 +80,7 @@ heuristics_setup:
 #Allows the executable generated to find Gecode. To execute only once
 #With the Sonoma version of MacOS, gecode cannot be found. Creating a symbolic link solves the problem
 find_gecode_mac_os:
-	ln -s /Library/Framework/gecode.framework gecode.framework
+	ln -s /Library/Frameworks/gecode.framework gecode.framework
 
 #remove temporary files and dynamic library files
 clean:

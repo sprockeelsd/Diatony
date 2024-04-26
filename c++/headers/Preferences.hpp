@@ -117,6 +117,7 @@ void
 compute_cost_for_melodic_intervals(const Home &home, const IntVarArray &allMelodicIntervals, const IntVar &nOfUnissons,
                                    const IntVar &nOfSeconds, const IntVar &nOfThirds, const IntVar &nOfFourths,
                                    const IntVar &nOfFifths, const IntVar &nOfSixths, const IntVar &nOfSevenths,
-                                   const IntVar &nOfOctaves, const IntVar &costOfMelodicIntervals);
+                                   const IntVar &nOfOctaves, const IntVar &costOfMelodicIntervals,
+                                   IntVarArray costAllMelodicIntervals);
 
 #endif //MYPROJECT_PREFERENCES_HPP

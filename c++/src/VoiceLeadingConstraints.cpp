@@ -157,11 +157,12 @@ void contrary_motion_to_bass(const Home& home, int currentPosition, const IntVar
 void interrupted_cadence(const Home &home, int nVoices, int currentPosition, Tonality *tonality,
                          IntVarArray fullChordsVoicing, const IntVarArray &tenorMelodicInterval,
                          const IntVarArray &altoMelodicInterval, const IntVarArray &sopranoMelodicInterval) {
+    //@todo move this part in the harmonic constraints file
     /// double the third of the chord in the sixth degree chord (the second one)
     IntVarArgs sixthDegreeChord(fullChordsVoicing.slice(nVoices * (currentPosition + 1), 1, nVoices));
     count(home, sixthDegreeChord, tonality->get_scale_degree((SIXTH_DEGREE + THIRD_DEGREE) % 7), IRT_EQ,2);
 
-    // @todo make it cleaner with loops
+    // @todo make it cleaner with loops (this stays here)
     /// if the mode is major, then this rule only applies to the soprano voice. Otherwise, it applies for all voices
     /// soprano note is the seventh of the scale -> that voice must raise to the tonic by a minor second
 
@@ -250,7 +251,7 @@ void fifth_degree_appogiatura(const Home& home, int nVoices, int currentPosition
             BOT_IMP, expr(home, melodicIntervals[voice][currentPosition] >= -MAJOR_SECOND), true);
     }
     if (currentPosition > 0){ /// if it is not the first chord in the progression
-        /// the voice containing the tonic must go in opposite or oblique motion to the bass
+        /// the voice containing the tonic must go in opposite or oblique motion to the bass (the tonic must be approached by direct or oblique motion)
         BoolVar bassRises = expr(home, bassMelodicInterval[currentPosition-1] >= 0);
         for(int voice = TENOR; voice <= SOPRANO; voice++){
             /// if the voice is playing the tonic and the bass rises, this voice must go down or stay the same
