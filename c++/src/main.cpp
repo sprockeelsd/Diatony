@@ -1,11 +1,13 @@
+#include "../headers/aux/Utilities.hpp"
+#include "../headers/aux/Tonality.hpp"
+#include "../headers/aux/MajorTonality.hpp"
+#include "../headers/aux/MinorTonality.hpp"
+#include "../headers/aux/MidiFileGeneration.hpp"
+
 #include "../headers/FourVoiceTexture.hpp"
-#include "../headers/Utilities.hpp"
-#include "../headers/Tonality.hpp"
-#include "../headers/MajorTonality.hpp"
-#include "../headers/MinorTonality.hpp"
 #include "../headers/Solver.hpp"
 #include "../headers/midifile/MidiFile.h"
-#include "../headers/MidiFileGeneration.hpp"
+
 
 #include <gecode/gist.hh>
 

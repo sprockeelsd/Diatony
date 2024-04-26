@@ -2,6 +2,7 @@ all: clean compile midifile
 
 SRC_DIR = src
 MIDI_DIR = midifile
+AUX_DIR = aux
 
 ALL_SOLS = 		all
 BEST_SOL = 		best
@@ -9,10 +10,10 @@ BUILD_MIDI = 	true
 NO_MIDI = 		false
 
 #define auxiliary files
-PROBLEM_FILES = $(SRC_DIR)/Utilities.cpp $(SRC_DIR)/Tonality.cpp $(SRC_DIR)/MajorTonality.cpp \
-				$(SRC_DIR)/MinorTonality.cpp $(SRC_DIR)/VoiceLeadingConstraints.cpp	$(SRC_DIR)/HarmonicConstraints.cpp \
+PROBLEM_FILES = $(SRC_DIR)/$(AUX_DIR)/Utilities.cpp $(SRC_DIR)/$(AUX_DIR)/Tonality.cpp $(SRC_DIR)/$(AUX_DIR)/MajorTonality.cpp \
+				$(SRC_DIR)/$(AUX_DIR)/MinorTonality.cpp $(SRC_DIR)/VoiceLeadingConstraints.cpp	$(SRC_DIR)/HarmonicConstraints.cpp \
 				$(SRC_DIR)/GeneralConstraints.cpp $(SRC_DIR)/Preferences.cpp $(SRC_DIR)/FourVoiceTexture.cpp \
-				$(SRC_DIR)/Solver.cpp $(SRC_DIR)/MidiFileGeneration.cpp
+				$(SRC_DIR)/Solver.cpp $(SRC_DIR)/$(AUX_DIR)/MidiFileGeneration.cpp
 
 MIDI_FILES = $(SRC_DIR)/$(MIDI_DIR)/Options.cpp $(SRC_DIR)/$(MIDI_DIR)/MidiMessage.cpp $(SRC_DIR)/$(MIDI_DIR)/MidiEvent.cpp \
 			$(SRC_DIR)/$(MIDI_DIR)/MidiEventList.cpp $(SRC_DIR)/$(MIDI_DIR)/Binasc.cpp $(SRC_DIR)/$(MIDI_DIR)/MidiFile.cpp

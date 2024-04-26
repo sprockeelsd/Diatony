@@ -1,8 +1,8 @@
 #ifndef VOICELEADINGCONSTRAINTS_HPP
 #define VOICELEADINGCONSTRAINTS_HPP
 
-#include "Tonality.hpp"
-#include "Utilities.hpp"
+#include "aux/Tonality.hpp"
+#include "aux/Utilities.hpp"
 
 #include <iostream>
 #include <vector>

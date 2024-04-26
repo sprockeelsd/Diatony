@@ -20,9 +20,9 @@
 #include "gecode/minimodel.hh"
 #include "gecode/set.hh"
 
-#include "Utilities.hpp"
-#include "Tonality.hpp"
-#include "MajorTonality.hpp"
+#include "aux/Utilities.hpp"
+#include "aux/Tonality.hpp"
+#include "aux/MajorTonality.hpp"
 #include "GeneralConstraints.hpp"
 #include "HarmonicConstraints.hpp"
 #include "VoiceLeadingConstraints.hpp"

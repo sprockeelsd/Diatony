@@ -1,7 +1,7 @@
 #ifndef MYPROJECT_PREFERENCES_HPP
 #define MYPROJECT_PREFERENCES_HPP
 
-#include "Tonality.hpp"
+#include "aux/Tonality.hpp"
 
 /**
  * Computes the cost for diminished intervals, that is the number of diminished chords that don't respect the preference,

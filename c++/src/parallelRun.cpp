@@ -1,11 +1,11 @@
 #include "../headers/FourVoiceTexture.hpp"
-#include "../headers/Utilities.hpp"
-#include "../headers/Tonality.hpp"
-#include "../headers/MajorTonality.hpp"
-#include "../headers/MinorTonality.hpp"
+#include "aux/Utilities.hpp"
+#include "aux/Tonality.hpp"
+#include "aux/MajorTonality.hpp"
+#include "aux/MinorTonality.hpp"
 #include "../headers/Solver.hpp"
 #include "midifile/MidiFile.h"
-#include "../headers/MidiFileGeneration.hpp"
+#include "aux/MidiFileGeneration.hpp"
 
 using namespace Gecode;
 using namespace std;

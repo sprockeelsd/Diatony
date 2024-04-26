@@ -1,13 +1,14 @@
 #ifndef MYPROJECT_MIDIFILEGENERATION_HPP
 #define MYPROJECT_MIDIFILEGENERATION_HPP
 
-#include "FourVoiceTexture.hpp"
 #include "Utilities.hpp"
 #include "Tonality.hpp"
 #include "MajorTonality.hpp"
 #include "MinorTonality.hpp"
-#include "Solver.hpp"
-#include "midifile/MidiFile.h"
+
+#include "../FourVoiceTexture.hpp"
+
+#include "../midifile/MidiFile.h"
 
 #include <gecode/gist.hh>
 

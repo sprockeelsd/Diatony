@@ -2,10 +2,10 @@
 #define MYPROJECT_SOLVER_HPP
 
 #include "FourVoiceTexture.hpp"
-#include "Utilities.hpp"
-#include "Tonality.hpp"
-#include "MajorTonality.hpp"
-#include "MinorTonality.hpp"
+#include "aux/Utilities.hpp"
+#include "aux/Tonality.hpp"
+#include "aux/MajorTonality.hpp"
+#include "aux/MinorTonality.hpp"
 
 using namespace Gecode;
 using namespace std;

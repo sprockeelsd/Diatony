@@ -1,4 +1,4 @@
-#include "../headers/MidiFileGeneration.hpp"
+#include "../../headers/aux/MidiFileGeneration.hpp"
 
 /**
  * Writes a solution to a MIDI file

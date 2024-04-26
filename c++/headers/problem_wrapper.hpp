@@ -3,10 +3,10 @@
 
 #include <stdlib.h>
 
-#include "Utilities.hpp"
-#include "Tonality.hpp"
-#include "MajorTonality.hpp"
-#include "MinorTonality.hpp"
+#include "aux/Utilities.hpp"
+#include "aux/Tonality.hpp"
+#include "aux/MajorTonality.hpp"
+#include "aux/MinorTonality.hpp"
 #include "FourVoiceTexture.hpp"
 #include "Solver.hpp"
 
