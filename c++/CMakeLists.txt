@@ -45,9 +45,9 @@ set(MY_HEADERS
         src/midifile/Options.cpp
         src/MidiFileGeneration.cpp
         headers/MidiFileGeneration.hpp
-        src/BranchingTests.cpp
-        src/HeuristicsTestingSetup.cpp
-        src/parallelRun.cpp
+        ../efficiency_measurment/BranchingTests.cpp
+        ../efficiency_measurment/HeuristicsTestingSetup.cpp
+        ../efficiency_measurment/parallelRun.cpp
 )
 add_library(damien ${MY_HEADERS} src/main.cpp src/Tonality.cpp headers/Tonality.hpp src/Utilities.cpp headers/Utilities.hpp src/MajorTonality.cpp headers/MajorTonality.hpp src/diatony/GeneralConstraints.cpp headers/diatony/GeneralConstraints.hpp src/MinorTonality.cpp headers/MinorTonality.hpp src/diatony/HarmonicConstraints.cpp headers/diatony/HarmonicConstraints.hpp src/diatony/VoiceLeadingConstraints.cpp headers/diatony/VoiceLeadingConstraints.hpp
         src/Solver.cpp
@@ -58,7 +58,7 @@ add_library(damien ${MY_HEADERS} src/main.cpp src/Tonality.cpp headers/Tonality.
         src/midifile/Binasc.cpp
         src/midifile/MidiEvent.cpp
         src/midifile/Options.cpp
-        src/BranchingTests.cpp
-        src/HeuristicsTestingSetup.cpp
+        ../efficiency_measurment/BranchingTests.cpp
+        ../efficiency_measurment/HeuristicsTestingSetup.cpp
 )
 target_link_libraries(damien ${GECODE_LIBRARY})
