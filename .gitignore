@@ -10,6 +10,7 @@
 
 #additionals
 .idea
+c++/.idea
 .DS_Store
 
 c++/cmake-build-debug
