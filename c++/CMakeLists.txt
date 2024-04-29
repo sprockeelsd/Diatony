@@ -16,32 +16,49 @@ include_directories(/Library/Frameworks/Gecode.framework/Headers)
 include_directories(${GECODE_INCLUDE_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/headers)
 # Create the dynamic library and link to the Gecode library
-set(MY_HEADERS headers/problem_wrapper.hpp headers/FourVoiceTexture.hpp src/FourVoiceTexture.cpp src/main.cpp src/Tonality.cpp headers/Tonality.hpp src/Utilities.cpp headers/Utilities.hpp src/MajorTonality.cpp headers/MajorTonality.hpp src/testTonality.cpp src/GeneralConstraints.cpp headers/GeneralConstraints.hpp src/MinorTonality.cpp headers/MinorTonality.hpp src/HarmonicConstraints.cpp headers/HarmonicConstraints.hpp src/VoiceLeadingConstraints.cpp headers/VoiceLeadingConstraints.hpp
+set(MY_HEADERS
+        headers/diatony/FourVoiceTexture.hpp
+        src/diatony/FourVoiceTexture.cpp
+        src/main.cpp src/Tonality.cpp
+        headers/Tonality.hpp
+        src/Utilities.cpp
+        headers/Utilities.hpp
+        src/MajorTonality.cpp
+        headers/MajorTonality.hpp
+        src/testTonality.cpp
+        src/diatony/GeneralConstraints.cpp
+        headers/diatony/GeneralConstraints.hpp
+        src/MinorTonality.cpp
+        headers/MinorTonality.hpp
+        src/diatony/HarmonicConstraints.cpp
+        headers/diatony/HarmonicConstraints.hpp
+        src/diatony/VoiceLeadingConstraints.cpp
+        headers/diatony/VoiceLeadingConstraints.hpp
         src/Solver.cpp
         headers/Solver.hpp
-        src/Preferences.cpp
-        headers/Preferences.hpp
-        src/MidiFile.cpp
-        src/Binasc.cpp
-        src/MidiEvent.cpp
-        src/MidiEventList.cpp
-        src/MidiMessage.cpp
-        src/Options.cpp
+        src/diatony/Preferences.cpp
+        headers/diatony/Preferences.hpp
+        src/midifile/MidiFile.cpp
+        src/midifile/Binasc.cpp
+        src/midifile/MidiEvent.cpp
+        src/midifile/MidiEventList.cpp
+        src/midifile/MidiMessage.cpp
+        src/midifile/Options.cpp
         src/MidiFileGeneration.cpp
         headers/MidiFileGeneration.hpp
         src/BranchingTests.cpp
         src/HeuristicsTestingSetup.cpp
         src/parallelRun.cpp
 )
-add_library(damien ${MY_HEADERS} src/problem_wrapper.cpp src/main.cpp src/Tonality.cpp headers/Tonality.hpp src/Utilities.cpp headers/Utilities.hpp src/MajorTonality.cpp headers/MajorTonality.hpp src/testTonality.cpp src/GeneralConstraints.cpp headers/GeneralConstraints.hpp src/MinorTonality.cpp headers/MinorTonality.hpp src/HarmonicConstraints.cpp headers/HarmonicConstraints.hpp src/VoiceLeadingConstraints.cpp headers/VoiceLeadingConstraints.hpp
+add_library(damien ${MY_HEADERS} src/main.cpp src/Tonality.cpp headers/Tonality.hpp src/Utilities.cpp headers/Utilities.hpp src/MajorTonality.cpp headers/MajorTonality.hpp src/testTonality.cpp src/diatony/GeneralConstraints.cpp headers/diatony/GeneralConstraints.hpp src/MinorTonality.cpp headers/MinorTonality.hpp src/diatony/HarmonicConstraints.cpp headers/diatony/HarmonicConstraints.hpp src/diatony/VoiceLeadingConstraints.cpp headers/diatony/VoiceLeadingConstraints.hpp
         src/Solver.cpp
         headers/Solver.hpp
-        src/Preferences.cpp
-        headers/Preferences.hpp
-        src/MidiFile.cpp
-        src/Binasc.cpp
-        src/MidiEvent.cpp
-        src/Options.cpp
+        src/diatony/Preferences.cpp
+        headers/diatony/Preferences.hpp
+        src/midifile/MidiFile.cpp
+        src/midifile/Binasc.cpp
+        src/midifile/MidiEvent.cpp
+        src/midifile/Options.cpp
         src/BranchingTests.cpp
         src/HeuristicsTestingSetup.cpp
 )
