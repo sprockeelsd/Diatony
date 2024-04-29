@@ -9,8 +9,6 @@
 /out/*
 
 #additionals
-*.idea
-.idea
 .DS_Store
 
 c++/cmake-build-debug
