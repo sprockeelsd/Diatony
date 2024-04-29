@@ -1,15 +1,13 @@
+// Author: Damien Sprockeels <damien.sprockeels@uclouvain.be>
+// Creation Date: Jan 20 2023
+// Description: A main function that solves diatonic harmonic problems of tonal music
+//
+
 #include "../headers/aux/Utilities.hpp"
 #include "../headers/aux/Tonality.hpp"
 #include "../headers/aux/MajorTonality.hpp"
 #include "../headers/aux/MinorTonality.hpp"
 #include "../headers/aux/MidiFileGeneration.hpp"
-
-#include "../headers/diatony/FourVoiceTexture.hpp"
-#include "../headers/Solver.hpp"
-#include "../headers/midifile/MidiFile.h"
-
-
-#include <gecode/gist.hh>
 
 using namespace Gecode;
 using namespace std;
