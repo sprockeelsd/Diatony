@@ -1,7 +1,7 @@
 #ifndef MYPROJECT_SOLVER_HPP
 #define MYPROJECT_SOLVER_HPP
 
-#include "FourVoiceTexture.hpp"
+#include "diatony/FourVoiceTexture.hpp"
 #include "aux/Utilities.hpp"
 #include "aux/Tonality.hpp"
 #include "aux/MajorTonality.hpp"

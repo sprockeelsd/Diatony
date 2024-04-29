@@ -1,4 +1,4 @@
-#include "../headers/GeneralConstraints.hpp"
+#include "../../headers/diatony/GeneralConstraints.hpp"
 
 /***********************************************************************************************************************
  *                                                                                                                     *

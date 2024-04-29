@@ -1,4 +1,4 @@
-#include "../headers/Preferences.hpp"
+#include "../../headers/diatony/Preferences.hpp"
 
 /**
  * Computes the cost for diminished intervals, that is the number of diminished chords that don't respect the preference,

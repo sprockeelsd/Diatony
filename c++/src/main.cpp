@@ -4,7 +4,7 @@
 #include "../headers/aux/MinorTonality.hpp"
 #include "../headers/aux/MidiFileGeneration.hpp"
 
-#include "../headers/FourVoiceTexture.hpp"
+#include "../headers/diatony/FourVoiceTexture.hpp"
 #include "../headers/Solver.hpp"
 #include "../headers/midifile/MidiFile.h"
 

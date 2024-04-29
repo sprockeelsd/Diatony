@@ -1,8 +1,8 @@
 #ifndef GENERALCONSTRAINTS
 #define GENERALCONSTRAINTS
 
-#include "aux/Tonality.hpp"
-#include "aux/Utilities.hpp"
+#include "../aux/Tonality.hpp"
+#include "../aux/Utilities.hpp"
 
 #include <iostream>
 #include <vector>

@@ -6,7 +6,7 @@
 #include "MajorTonality.hpp"
 #include "MinorTonality.hpp"
 
-#include "../FourVoiceTexture.hpp"
+#include "../diatony/FourVoiceTexture.hpp"
 
 #include "../midifile/MidiFile.h"
 

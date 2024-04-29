@@ -1,4 +1,4 @@
-#include "../headers/FourVoiceTexture.hpp"
+#include "diatony/FourVoiceTexture.hpp"
 #include "aux/Utilities.hpp"
 #include "aux/Tonality.hpp"
 #include "aux/MajorTonality.hpp"

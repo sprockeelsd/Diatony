@@ -1,4 +1,4 @@
-#include "../headers/HarmonicConstraints.hpp"
+#include "../../headers/diatony/HarmonicConstraints.hpp"
 
 /***********************************************************************************************************************
  *                                                                                                                     *

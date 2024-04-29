@@ -7,7 +7,7 @@
 #include "aux/Tonality.hpp"
 #include "aux/MajorTonality.hpp"
 #include "aux/MinorTonality.hpp"
-#include "FourVoiceTexture.hpp"
+#include "diatony/FourVoiceTexture.hpp"
 #include "Solver.hpp"
 
 #ifdef __cplusplus
