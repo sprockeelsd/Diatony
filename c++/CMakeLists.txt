@@ -25,7 +25,6 @@ set(MY_HEADERS
         headers/Utilities.hpp
         src/MajorTonality.cpp
         headers/MajorTonality.hpp
-        src/testTonality.cpp
         src/diatony/GeneralConstraints.cpp
         headers/diatony/GeneralConstraints.hpp
         src/MinorTonality.cpp
@@ -50,7 +49,7 @@ set(MY_HEADERS
         src/HeuristicsTestingSetup.cpp
         src/parallelRun.cpp
 )
-add_library(damien ${MY_HEADERS} src/main.cpp src/Tonality.cpp headers/Tonality.hpp src/Utilities.cpp headers/Utilities.hpp src/MajorTonality.cpp headers/MajorTonality.hpp src/testTonality.cpp src/diatony/GeneralConstraints.cpp headers/diatony/GeneralConstraints.hpp src/MinorTonality.cpp headers/MinorTonality.hpp src/diatony/HarmonicConstraints.cpp headers/diatony/HarmonicConstraints.hpp src/diatony/VoiceLeadingConstraints.cpp headers/diatony/VoiceLeadingConstraints.hpp
+add_library(damien ${MY_HEADERS} src/main.cpp src/Tonality.cpp headers/Tonality.hpp src/Utilities.cpp headers/Utilities.hpp src/MajorTonality.cpp headers/MajorTonality.hpp src/diatony/GeneralConstraints.cpp headers/diatony/GeneralConstraints.hpp src/MinorTonality.cpp headers/MinorTonality.hpp src/diatony/HarmonicConstraints.cpp headers/diatony/HarmonicConstraints.hpp src/diatony/VoiceLeadingConstraints.cpp headers/diatony/VoiceLeadingConstraints.hpp
         src/Solver.cpp
         headers/Solver.hpp
         src/diatony/Preferences.cpp
