@@ -40,27 +40,6 @@ LOG_FILE = ../out/log.txt
 LIBRARIES = -lgecodedriver -lgecodeflatzinc -lgecodefloat -lgecodeint -lgecodekernel -lgecodeminimodel \
 			-lgecodesearch -lgecodeset -lgecodesupport
 
-#compile all files and generate executable
-compile:
-	g++ -std=c++11 -F/Library/Frameworks -framework gecode -o ../out/Main $(PROBLEM_FILES) $(MIDI_FILES) src/Main.cpp
-
-#generate the midifile for the best solution
-midifile: clean compile
-	clear
-	./../out/Main $(BEST_SOL) $(BUILD_MIDI)
-#generate the midifile for all solutions
-all_midifile: compile
-	clear
-	./../out/Main $(ALL_SOLS) $(BUILD_MIDI)
-#print the best solution to the console
-best_sol: compile
-	clear
-	./../out/Main $(BEST_SOL) $(NO_MIDI)
-#print all solutions to the console
-all_sols: compile
-	clear
-	./../out/Main $(ALL_SOLS) $(NO_MIDI)
-
 #Creates a dynamic link to the Gecode framework (for Mac OS)
 #With the Sonoma version of MacOS, the Gecode framework cannot be found. Creating a symbolic link solves the problem.
 find_gecode_mac_os:
@@ -70,3 +49,25 @@ find_gecode_mac_os:
 clean:
 	rm -f  ../out/log.txt ../out/statistics.txt ../out/*.o ../out/*.so ../out/*.dylib ../out/Main ../out/branch testTonality  \
 	../out/MidiFiles/*.mid
+
+
+
+#compile all files
+compile:
+	g++ -std=c++11 -F/Library/Frameworks -framework gecode -o ../out/Main $(PROBLEM_FILES) $(MIDI_FILES) $(PROJ_DIR)/src/Main.cpp
+
+test_branching: clean
+	g++ -std=c++11 -F/Library/Frameworks -framework gecode -o ../out/branch $(PROBLEM_FILES) $(MIDI_FILES) src/BranchingTests.cpp
+	clear
+	./../out/branch
+
+parallel_run: clean
+	g++ -std=c++11 -F/Library/Frameworks -framework gecode -o ../out/parallelRun $(PROBLEM_FILES) $(MIDI_FILES) src/parallelRun.cpp
+	clear
+	#./../out/parallelRun 0 0 0 0 0
+
+heuristics_setup:
+	g++ -std=c++11 -F/Library/Frameworks -framework gecode -o heuristics src/Utilities.cpp src/HeuristicsTestingSetup.cpp
+	./heuristics
+	rm -f heuristics
+

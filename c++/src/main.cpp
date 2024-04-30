@@ -25,7 +25,6 @@ int main(int argc, char* argv[]) {
         return 1;
 
     Tonality* tonality = new MinorTonality(C_SHARP);
-    write_to_log_file(time().c_str(), LOG_FILE);
 
     std::string search_type = argv[1];
     std::string build_midi = argv[2];
