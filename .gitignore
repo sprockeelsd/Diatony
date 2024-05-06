@@ -8,7 +8,7 @@
 *.app
 /out/*
 efficiency_measurment/heuristics
-efficiency_measurment/parallelRun
+efficiency_measurment/out/parallelRun
 
 #additionals
 .idea
