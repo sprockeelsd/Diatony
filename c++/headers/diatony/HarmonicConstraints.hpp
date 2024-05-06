@@ -62,9 +62,10 @@ void set_bass(const Home& home, Tonality *tonality, int degree, int state, IntVa
  * @param nDifferentValuesInDiminishedChord the number of different values in the diminished chord
  * @param currentChord the array containing a chord in the form [bass, alto, tenor, soprano]
  */
-void chord_note_occurrence_fundamental_state(Home home, int nVoices, int degree, int quality, Tonality *tonality,
-                                             const IntVarArgs &currentChord,
-                                             const IntVar &nDifferentValuesInDiminishedChord, const IntVar& nOfNotesInChord);
+void chord_note_occurrence_fundamental_state(Home home, int nVoices, int pos, vector<int> degree, vector<int> quality,
+                                             Tonality *tonality, const IntVarArgs &currentChord,
+                                             const IntVar &nDifferentValuesInDiminishedChord,
+                                             const IntVar &nOfNotesInChord);
 
 /***********************************************************************************************************************
  *                                                                                                                     *
