@@ -15,6 +15,10 @@ efficiency_measurment/out/parallelRun
 c++/.idea
 .DS_Store
 
+#other files
+efficiency_measurment/TestCases.txt
+efficiency_measurment/out/*
+
 c++/cmake-build-debug
 
 
