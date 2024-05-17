@@ -1,3 +1,7 @@
+// Author: Damien Sprockeels <damien.sprockeels@uclouvain.be>
+// Creation Date: Jan 20 2023
+// Description: A class representing a tonality
+//
 #ifndef TONALITY
 #define TONALITY
 

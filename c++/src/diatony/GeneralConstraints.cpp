@@ -1,3 +1,7 @@
+// Programmer:    Damien Sprockeels <damien.sprockeels@uclouvain.be>
+// Creation Date: Jan 20 2023
+// Description:   A file that contains all the general constraints for the diatonic harmonic problem
+//
 #include "../../headers/diatony/GeneralConstraints.hpp"
 
 /***********************************************************************************************************************

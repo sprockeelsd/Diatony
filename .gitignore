@@ -7,11 +7,17 @@
 *.out
 *.app
 /out/*
+efficiency_measurment/heuristics
+efficiency_measurment/out/parallelRun
 
 #additionals
 .idea
 c++/.idea
 .DS_Store
+
+#other files
+efficiency_measurment/TestCases.txt
+efficiency_measurment/out/*
 
 c++/cmake-build-debug
 
@@ -19,3 +25,4 @@ c++/cmake-build-debug
 c++/gecode.framework
 
 *.mid
+efficiency_measurment/TestCases.txt
