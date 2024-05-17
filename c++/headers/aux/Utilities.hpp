@@ -1,3 +1,7 @@
+// Author: Damien Sprockeels <damien.sprockeels@uclouvain.be>
+// Creation Date: Jan 20 2023
+// Description: A file containing useful functions and constants for the symbolic musical problems
+//
 #ifndef UTILITIES
 #define UTILITIES
 

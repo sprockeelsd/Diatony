@@ -1,3 +1,7 @@
+// Programmer:    Damien Sprockeels <damien.sprockeels@uclouvain.be>
+// Creation Date: Jan 20 2023
+// Description:   A class that creates a constraint representation of a four voice harmonic problem of tonal music.
+//
 #include "../../headers/diatony/FourVoiceTexture.hpp"
 
 /***********************************************************************************************************************
@@ -180,8 +184,8 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
         /// post the constraints depending on the chord's state
         if(chordStas[i] == FUNDAMENTAL_STATE){
             /// each note should be present at least once, doubling is determined with costs
-            chord_note_occurrence_fundamental_state(*this, nOfVoices, chordDegrees[i],
-                                                    chordQualities[i], tonality, currentChord,
+            chord_note_occurrence_fundamental_state(*this, nOfVoices, i, chordDegrees,
+                                                    chordQualities, tonality, currentChord,
                                                     nDifferentValuesInDiminishedChord[i],
                                                     nOFDifferentNotesInChords[i % nOfVoices]);
         }

@@ -1,3 +1,7 @@
+// Programmer:    Damien Sprockeels <damien.sprockeels@uclouvain.be>
+// Creation Date: Jan 20 2023
+// Description:   A file that contains all the preferences for the diatonic harmonic problem
+//
 #ifndef MYPROJECT_PREFERENCES_HPP
 #define MYPROJECT_PREFERENCES_HPP
 

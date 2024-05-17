@@ -1,3 +1,7 @@
+// Author: Damien Sprockeels <damien.sprockeels@uclouvain.be>
+// Creation Date: Jan 20 2023
+// Description: A class representing a major tonality. Inherits from the Tonality class
+//
 #ifndef MAJORTONALITY
 #define MAJORTONALITY
 
