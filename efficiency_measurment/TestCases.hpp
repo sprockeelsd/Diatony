@@ -9,14 +9,14 @@
  *                                                     Tonalities                                                      *
  *                                                                                                                     *
  ***********************************************************************************************************************/
-// vector<int> tonics = {C, C, A_FLAT, B_FLAT, E, C_SHARP};
-// vector<int> modes = {MAJOR_MODE, MINOR_MODE, MAJOR_MODE, MINOR_MODE, MAJOR_MODE, MINOR_MODE}; //
-vector<int> tonics = {F_SHARP, D_FLAT, A_FLAT, E_FLAT, B_FLAT, F, C, G, D, A, E, B,
-                      B_FLAT, F, C, G, D, A, E, B, F_SHARP, C_SHARP, G_SHARP, D_SHARP};
-vector<int> modes = {MAJOR_MODE, MAJOR_MODE, MAJOR_MODE, MAJOR_MODE, MAJOR_MODE, MAJOR_MODE, MAJOR_MODE, MAJOR_MODE,
-                     MAJOR_MODE, MAJOR_MODE, MAJOR_MODE, MAJOR_MODE,
-                     MINOR_MODE, MINOR_MODE, MINOR_MODE, MINOR_MODE, MINOR_MODE, MINOR_MODE, MINOR_MODE, MINOR_MODE, 
-                     MINOR_MODE, MINOR_MODE, MINOR_MODE, MINOR_MODE};
+vector<int> tonics = {C, C, A_FLAT, B_FLAT, E, C_SHARP};
+vector<int> modes = {MAJOR_MODE, MINOR_MODE, MAJOR_MODE, MINOR_MODE, MAJOR_MODE, MINOR_MODE}; //
+// vector<int> tonics = {F_SHARP, D_FLAT, A_FLAT, E_FLAT, B_FLAT, F, C, G, D, A, E, B,
+//                       B_FLAT, F, C, G, D, A, E, B, F_SHARP, C_SHARP, G_SHARP, D_SHARP};
+// vector<int> modes = {MAJOR_MODE, MAJOR_MODE, MAJOR_MODE, MAJOR_MODE, MAJOR_MODE, MAJOR_MODE, MAJOR_MODE, MAJOR_MODE,
+//                      MAJOR_MODE, MAJOR_MODE, MAJOR_MODE, MAJOR_MODE,
+//                      MINOR_MODE, MINOR_MODE, MINOR_MODE, MINOR_MODE, MINOR_MODE, MINOR_MODE, MINOR_MODE, MINOR_MODE, 
+//                      MINOR_MODE, MINOR_MODE, MINOR_MODE, MINOR_MODE};
 
 /***********************************************************************************************************************
  *                                                                                                                     *
@@ -27,6 +27,7 @@ vector<int> modes = {MAJOR_MODE, MAJOR_MODE, MAJOR_MODE, MAJOR_MODE, MAJOR_MODE,
 vector<int> var_sel = {RIGHT_TO_LEFT}; //DEGREE_MAX, DOM_SIZE_MIN, LEFT_TO_RIGHT,
 vector<int> val_sel = {VAL_RND};
 
+vector<int> search_strategies = {0,1};
 
 /***********************************************************************************************************************
  *                                                                                                                     *
@@ -114,6 +115,20 @@ vector<int> states6 = {FUNDAMENTAL_STATE, FIRST_INVERSION, FUNDAMENTAL_STATE, SE
                         SECOND_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
 vector<vector<int>> testCase6 = {chords6, chords_qualities_major6, chords_qualities_minor6, states6};
 
+string testCase7Name = "I5-V64-I5-V+4-I5-IV5-V5-IV5-V5-IV5-V5-I5-Vda-V7+-I5";
+vector<int> chords7 = {FIRST_DEGREE, FIFTH_DEGREE, FIRST_DEGREE, FIFTH_DEGREE, FIRST_DEGREE, FOURTH_DEGREE, FIFTH_DEGREE, 
+                        FOURTH_DEGREE, FIFTH_DEGREE, FOURTH_DEGREE, FIFTH_DEGREE, FIRST_DEGREE, FIRST_DEGREE, FIFTH_DEGREE, 
+                        FIRST_DEGREE};
+vector<int> chords_qualities_major7 = {MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, DOMINANT_SEVENTH_CHORD, MAJOR_CHORD, MAJOR_CHORD, 
+                        MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, 
+                        DOMINANT_SEVENTH_CHORD, MAJOR_CHORD};
+vector<int> chords_qualities_minor7 = {MINOR_CHORD, MAJOR_CHORD, MINOR_CHORD, DOMINANT_SEVENTH_CHORD, MINOR_CHORD, MINOR_CHORD,
+                        MAJOR_CHORD, MINOR_CHORD, MAJOR_CHORD, MINOR_CHORD, MAJOR_CHORD, MINOR_CHORD, MINOR_CHORD, 
+                        DOMINANT_SEVENTH_CHORD, MINOR_CHORD};
+vector<int> states7 = {FUNDAMENTAL_STATE, SECOND_INVERSION, FUNDAMENTAL_STATE, THIRD_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE,
+                        FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, 
+                        FUNDAMENTAL_STATE, SECOND_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
+vector<vector<int>> testCase7 = {chords7, chords_qualities_major7, chords_qualities_minor7, states7};
 
 
 vector<vector<vector<int>>> testCases = {testCase1, testCase2, testCase3, testCase4, testCase5, testCase6};

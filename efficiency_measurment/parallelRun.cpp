@@ -22,24 +22,6 @@ using namespace smf;
     It will write in a CSV file the statistics
  */
 int main(int argc, char* argv[]) {
-    //if(argc != 9) return 1; /// If the number of arguments is not right, return error code
-//    for (int i = 0; i < argc; ++i) {
-//        std::cout << "argv[" << i << "]: " << argv[i] << std::endl;
-//    }
-
-//    //@todo parse the string into the 5 numbers temporarily
-//    // Create a string stream to parse the numbers
-//    std::istringstream iss(argv[1]);
-//    // Variables to store each number
-//    int num1, num2, num3, num4, num5;
-//    // Use the string stream to extract each number
-//    iss >> num1 >> num2 >> num3 >> num4 >> num5;
-
-//    int test_case_number = num1;
-//    int tonic = num2;
-//    int mode = num3;
-//    int variable_selection_heuristic = num4;
-//    int value_selection_heuristic = num5;
 
     int test_case_number = stoi(argv[1]);
     int tonic = stoi(argv[2]);
@@ -49,6 +31,14 @@ int main(int argc, char* argv[]) {
 
     // Generate tonalities
     vector<Tonality*> tonalities;
+    // for(int i = 0; i < tonics.size(); i++){
+    //     if(modes[i] == MAJOR_MODE)
+    //         tonalities.push_back(new MajorTonality(tonics[i]));
+    //     else
+    //         tonalities.push_back(new MinorTonality(tonics[i]));
+    // }
+    vector<int> tonics = {C, C, A_FLAT, B_FLAT, E, C_SHARP};
+    vector<int> modes = {MAJOR_MODE, MINOR_MODE, MAJOR_MODE, MINOR_MODE, MAJOR_MODE, MINOR_MODE}; //
     for(int i = 0; i < tonics.size(); i++){
         if(modes[i] == MAJOR_MODE)
             tonalities.push_back(new MajorTonality(tonics[i]));
@@ -100,6 +90,7 @@ int main(int argc, char* argv[]) {
 
     /// Restart based solver
     RBS<FourVoiceTexture, BAB> solver(pb, opts);
+    //BAB<FourVoiceTexture> solver(pb, opts);
     delete pb;
 
     Search::Statistics bestSolStats = solver.statistics();

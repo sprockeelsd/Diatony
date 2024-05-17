@@ -1,3 +1,7 @@
+// Programmer:    Damien Sprockeels <damien.sprockeels@uclouvain.be>
+// Creation Date: Jan 20 2023
+// Description:   A class that creates a constraint representation of a four voice harmonic problem of tonal music.
+//
 #include "../../headers/diatony/FourVoiceTexture.hpp"
 
 /***********************************************************************************************************************

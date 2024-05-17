@@ -7,6 +7,13 @@ if len(sys.argv) != 2:
 
 filename = sys.argv[1]
 
+test_cases_strings = ["I5-V5-I5-V65-I6-II6-V64-V7+-I5",
+                      "I5-IV5-VII6-I6-III5-VI5-II6-V7+-I5",
+                      "I5-V6-VI5-V5-IV5-I6-II5-V5-I5-V6-VI5-V5-IV5-V7+-I5",
+                      "I5-V5-VI5-I5-III5-VI5-II5-I5-V5",
+                      "I5-V5-VI5-I5-VI5-VII6-III5-VI5-II6-V7+-I5",
+                      "I5-II6-IV5-V+6-I6-III5-VI5-V65/-I5-IV5-I64-V7+-I5"]
+
 data = []
 #read file
 with open(filename, 'r') as csvfile:
@@ -22,6 +29,7 @@ test_cases = data[1:]
 #isolate the data we want to plot
 chord_progressions = []
 tonality = []
+opt_sol_time = []
 times = []
 n4_note_dim_chords = []
 n_3_note_chords = []
@@ -42,6 +50,7 @@ for case in test_cases:
     chord_progressions.append(case[0])
     tonality.append(case[1])
     optimal_sol_time = float(case[3])
+    opt_sol_time.append(optimal_sol_time)
     opt_sol_inc = int(case[13])
     opt_sol_dim = int(case[14])
     opt_sol_3 = int(case[15])
@@ -86,7 +95,7 @@ costs = [n_incomplete_chords, n4_note_dim_chords, n_3_note_chords, melodic_inter
 costs_labels = ['Number of incomplete chords', 'Number of 4-note diminished chords', 'Number of 3-note chords', 
                 'Melodic intervals cost', 'Number of common notes in the same voice']
 
-# for each cost
+# Plot cost evolution over time for each cost
 for i in range(len(costs)):
     # for each test case
     for j in range(len(chord_progressions)):
@@ -100,3 +109,12 @@ for i in range(len(costs)):
 
     #plt.legend()
     plt.show()
+
+# plot time required by instance to be solved (tonality and chord progression)
+test_cases_literals = [str(test_cases_strings.index(cs)) + " " + t for cs, t in zip(chord_progressions, tonality)]
+plt.bar(test_cases_literals, opt_sol_time)
+plt.xlabel('Instance name', fontsize = 15)
+plt.xticks(rotation = 90)
+plt.ylabel('Time taken to find optimal solution', fontsize = 15)
+plt.title('Time taken to find optimal solution for each instance')
+plt.show()

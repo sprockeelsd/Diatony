@@ -1,3 +1,7 @@
+// Author: Damien Sprockeels <damien.sprockeels@uclouvain.be>
+// Creation Date: Jan 20 2023
+// Description: A class allowing to write MIDI files
+//
 #include "../../headers/aux/MidiFileGeneration.hpp"
 
 /**
