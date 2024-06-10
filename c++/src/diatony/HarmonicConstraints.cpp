@@ -25,7 +25,9 @@
  * @param currentChord the array containing a chord in the form [bass, alto, tenor, soprano]
  */
 void set_to_chord(const Home& home, Tonality* tonality, int degree, int quality, const IntVarArgs& currentChord){
-    IntSet set(get_all_notes_from_chord(tonality->get_degree_note(degree), chordQualitiesIntervals[quality]));
+
+    IntSet set(get_all_notes_from_chord(tonality->get_degree_note(degree),
+                                        chordQualitiesIntervals.at(quality)));
     dom(home, currentChord, set);
 }
 
@@ -34,13 +36,19 @@ void set_to_chord(const Home& home, Tonality* tonality, int degree, int quality,
  * @param home the instance of the problem
  * @param tonality the tonality of the piece
  * @param degree the degree of the chord
+ * @param quality the quality of the chord
  * @param state the state of the chord
  * @param currentChord the array containing a chord in the form [bass, alto, tenor, soprano]
  */
-void set_bass(const Home& home, Tonality *tonality, int degree, int state, IntVarArgs currentChord){
-    /// (degree + 2) * state gives the bas note of the chord since the state is 0 for fundamental, 1 for first inversion
-    /// and 2 for second inversion
-    dom(home, currentChord[0], tonality->get_scale_degree((degree + 2 * state) % 7));
+void set_bass(const Home &home, Tonality *tonality, int degree, int quality, int state, IntVarArgs currentChord) {
+    auto intervals = chordQualitiesIntervals.at(quality); // the intervals between consecutive notes in the chord
+    int diff = 0; // the difference between the bass and the fundamental in semitones
+    int s = 0; // variable to iterate over states
+    while (s < state){
+        diff += intervals[s];
+        s++;
+    }
+    dom(home, currentChord[0], IntSet(get_all_given_note((tonality->get_degree_note(degree) + diff) % PERFECT_OCTAVE)));
 }
 
 /***********************************************************************************************************************

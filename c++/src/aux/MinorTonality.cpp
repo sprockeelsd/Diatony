@@ -9,34 +9,27 @@
  */
 MinorTonality::MinorTonality(int t) : Tonality(t, MINOR_MODE, HARMONIC_MINOR_SCALE){ // calls super() constructor
     // set the chord qualities for major tonalities
-    chord_qualities[0] = MINOR_CHORD_INTERVALS;
-    chord_qualities[1] = DIMINISHED_CHORD_INTERVALS;
-    chord_qualities[2] = MAJOR_CHORD_INTERVALS;
-    chord_qualities[3] = MINOR_CHORD_INTERVALS;
-    chord_qualities[4] = MAJOR_CHORD_INTERVALS;
-    chord_qualities[5] = MAJOR_CHORD_INTERVALS;
-    chord_qualities[6] = DIMINISHED_CHORD_INTERVALS;
+    chord_qualities[FIRST_DEGREE]   = MINOR_CHORD;
+    chord_qualities[SECOND_DEGREE]  = DIMINISHED_CHORD;
+    chord_qualities[THIRD_DEGREE]   = MAJOR_CHORD;
+    chord_qualities[FOURTH_DEGREE]  = MINOR_CHORD;
+    chord_qualities[FIFTH_DEGREE]   = MAJOR_CHORD;
+    chord_qualities[SIXTH_DEGREE]   = MAJOR_CHORD;
+    chord_qualities[SEVENTH_DEGREE] = DIMINISHED_CHORD;
 
     for (int i = 0; i < chord_qualities.size(); i++){
-        IntSet set(get_all_notes_from_chord(degrees_notes[i], chord_qualities[i]));
-        scale_degrees_chords[i] = set;
+//        IntSet set(get_all_notes_from_chord(degrees_notes[i], chord_qualities[i]));
+//        scale_degrees_chords[i] = set;
     }
 }
 
 /**
  * Get the chord quality for each degree
- * @return a map of [degree, chord_quality] for each degree of the scale (0 to 6)
+ * @param degree a degree of the scale [0,6]
+ * @return the default chord quality for the given degree
  */
-map<int, vector<int>> MinorTonality::get_chord_qualities(){
-    return chord_qualities;
-}
-
-/**
- * Get the chord notes for each degree
- * @return a map of [degree, chord] for each degree of the scale (0 to 6)
- */
-map<int, IntSet> MinorTonality::get_scale_degrees_chords(){
-    return scale_degrees_chords;
+int MinorTonality::get_chord_quality(int degree){
+    return chord_qualities[degree];
 }
 
 /**

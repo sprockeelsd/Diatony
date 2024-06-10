@@ -43,8 +43,7 @@ vector<int> get_all_notes_from_scale(int root, vector<int> scale)
  * @param quality the set of tones and semitones that define the chord
  * @return vector<int> all the possible notes from that chord
  */
-vector<int> get_all_notes_from_chord(int root, vector<int> quality)
-{
+vector<int> get_all_notes_from_chord(int root, vector<int> quality){
     return get_all_notes_from_interval_loop(root, quality);
 }
 

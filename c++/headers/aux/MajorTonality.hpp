@@ -31,15 +31,10 @@ public:
 
     /**
      * Get the chord quality for each degree
-     * @return a map of [degree, chord_quality] for each degree of the scale (1 to 7)
+     * @param degree a degree of the scale [0,6]
+     * @return the default chord quality for the given degree
      */
-    map<int, vector<int>> get_chord_qualities();
-
-    /**
-     * Get the chord notes for each degree
-     * @return a map of [degree, chord] for each degree of the scale (1 to 7)
-     */
-    map<int, IntSet> get_scale_degrees_chords();
+    int get_chord_quality(int degree);
 
     /**
      * Get the chord notes for a given degree

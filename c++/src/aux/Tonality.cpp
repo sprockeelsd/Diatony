@@ -20,38 +20,20 @@ Tonality::Tonality(int t, int m, vector<int> s) {
     tonic = t % PERFECT_OCTAVE;    // bring it back to [0,11]
     mode = m;
     scale = s;
+    name = noteNames[tonic] + " " + modeNames[mode];
+    /// The rest of the attributes are set by the child classes
 
-    /// Set the list of degrees on which chords are built, based on the tonic and the scale
-    int curr = tonic;
-    for(int i = 0; i < scale.size(); ++i){
-        degrees_notes[i] = curr % PERFECT_OCTAVE;
-        curr += scale[i];
-    }
-
-    /// Create the dictionary of degrees and all possible values of that (those) note(s)
-    for (int i = 0; i < degrees_notes.size(); ++i) {
-        vector<int> notes = get_all_given_note(degrees_notes[i]);          //vector to store all notes for a given degree
-        if(i == SEVENTH_DEGREE && mode == MINOR_MODE){ // @todo move this to minor tonality somehow
-            // @todo maybe add sharp sixth as well? for now not necessary
-            vector<int> additional_notes = get_all_given_note(degrees_notes[i] - 1); // to also get the flat seventh because it is used in third degree chord
-            notes.insert(notes.end(), additional_notes.begin(), additional_notes.end()); // merge the 2 vectors together
-        }
-        IntSet set((const vector<int>) notes); // cast into IntSet
-        scale_degrees[i] = set;
-    }
-
-    /// Set tonal notes and modal notes
-    tonal_notes = {degrees_notes[FIRST_DEGREE], degrees_notes[FOURTH_DEGREE], degrees_notes[FIFTH_DEGREE]}; // 1, 4 and 5 degrees
-    modal_notes = {degrees_notes[THIRD_DEGREE], degrees_notes[SIXTH_DEGREE], degrees_notes[SEVENTH_DEGREE]}; // 3, 6 and 7 degrees
-    if (mode == MINOR_MODE)
-        modal_notes.insert(degrees_notes[SEVENTH_DEGREE] - 1); // add the minor seventh if minor mode
-
-
-    /// chord qualities and scale degrees chords are set in the child classes
+    degrees_notes[FIRST_DEGREE]   = t;
+    degrees_notes[SECOND_DEGREE]  = (t += scale[FIRST_DEGREE]) % PERFECT_OCTAVE;
+    degrees_notes[THIRD_DEGREE]   = (t += scale[SECOND_DEGREE]) % PERFECT_OCTAVE;
+    degrees_notes[FOURTH_DEGREE]  = (t += scale[THIRD_DEGREE]) % PERFECT_OCTAVE;
+    degrees_notes[FIFTH_DEGREE]   = (t += scale[FOURTH_DEGREE]) % PERFECT_OCTAVE;
+    degrees_notes[SIXTH_DEGREE]   = (t += scale[FIFTH_DEGREE]) % PERFECT_OCTAVE;
+    degrees_notes[SEVENTH_DEGREE] = (t += scale[SIXTH_DEGREE]) % PERFECT_OCTAVE;
 }
 
 string Tonality::get_name() const {
-    return noteNames[tonic] + " " + modeNames[mode];
+    return name;
 }
 
 /**
@@ -76,14 +58,6 @@ int Tonality::get_mode() const{
  */
 vector<int> Tonality::get_scale() {
     return scale;
-}
-
-/**
- * Get the notes corresponding to the degrees of the scale on which chords are built
- * @return a map containing the notes for each of the scale degrees
- */
-map<int,int> Tonality::get_degrees_notes() {
-    return degrees_notes;
 }
 
 /**
@@ -126,4 +100,26 @@ set<int> Tonality::get_tonal_notes() {
  */
 set<int> Tonality::get_modal_notes() {
     return modal_notes;
+}
+
+/**
+ * @return a string representing a tonality
+ */
+string Tonality::to_string(){
+    string t;
+    t += "Name: " + name + "\n";
+    t += "Tonic: " + std::to_string(tonic) + "(" + noteNames[tonic] + ")\n";
+    t += "Mode: " + std::to_string(mode) + "(" + modeNames[mode] + ")\n";
+    t += "Scale: " + int_vector_to_string(scale) + "\n";
+
+    t+= "Default chord qualities: ";
+    for(int i = FIRST_DEGREE; i <= SEVENTH_DEGREE; i++)
+        t += std::to_string(chord_qualities[i]) + "(" + chordQualityNames[chord_qualities[i]] + ") ";
+    t += "\n";
+
+    t+= "Degree notes: ";
+    for(int i = FIRST_DEGREE; i <= SEVENTH_DEGREE; i++)
+        t += std::to_string(degrees_notes[i]) + "(" + noteNames[degrees_notes[i]] + ") ";
+    t += "\n";
+    return t;
 }

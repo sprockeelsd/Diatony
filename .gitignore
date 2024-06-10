@@ -14,6 +14,7 @@ efficiency_measurment/out/parallelRun
 .idea
 c++/.idea
 .DS_Store
+.vscode
 
 #other files
 efficiency_measurment/TestCases.txt
