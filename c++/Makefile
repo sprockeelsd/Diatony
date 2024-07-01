@@ -40,10 +40,15 @@ LOG_FILE = ../out/log.txt
 LIBRARIES = -lgecodedriver -lgecodeflatzinc -lgecodefloat -lgecodeint -lgecodekernel -lgecodeminimodel \
 			-lgecodesearch -lgecodeset -lgecodesupport
 
+dylib:
+	g++ $(PROBLEM_FILES) $(MIDI_FILES) -std=c++11 -dynamiclib -fPIC -F/Library/Frameworks -framework gecode -o ../out/diatony.dylib
+	install_name_tool -change gecode.framework/Versions/49/gecode /Library/Frameworks/gecode.framework/Versions/49/gecode ../out/diatony.dylib
+
 #compile all files and generate executable
 compile:
 	g++ -std=c++11 -F/Library/Frameworks -framework gecode -o ../out/Main $(PROBLEM_FILES) $(MIDI_FILES) src/Main.cpp
 	install_name_tool -change gecode.framework/Versions/49/gecode /Library/Frameworks/gecode.framework/Versions/49/gecode ../out/Main
+
 #generate the midifile for the best solution
 midifile: clean compile
 	clear
@@ -69,4 +74,4 @@ find_gecode_mac_os:
 #remove temporary files and dynamic library files
 clean:
 	rm -f  ../out/log.txt ../out/statistics.txt ../out/*.o ../out/*.so ../out/*.dylib ../out/Main ../out/branch testTonality  \
-	../out/MidiFiles/*.mid
+	../out/MidiFiles/*.mid ../out/diatony.dylib

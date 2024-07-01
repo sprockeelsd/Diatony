@@ -156,8 +156,8 @@ enum degrees{
     SEVENTH_DEGREE      //6
 };
 
-const vector<std::string> degreeNames = {"First degree", "Second degree", "Third degree", "Fourth degree",
-                                         "Fifth degree", "Sixth degree", "Seventh degree"};
+const vector<std::string> degreeNames = {"I", "II", "III", "IV",
+                                         "V", "V", "VII"};
 
 /** Intervals */
 // "classic" intervals
@@ -232,6 +232,14 @@ enum chordStates{
 
 const vector<std::string> stateNames = {"Fundamental state", "First inversion", "Second inversion", "Third inversion"};
 
+enum chordNotes{
+    ROOT,       //0
+    THIRD,      //1
+    FIFTH,      //2
+    SEVENTH,    //3
+    NINETH      //4
+};
+
 /** Modes */
 enum Mode {
     IONIAN,     //0 , major mode
@@ -296,6 +304,14 @@ vector<int> get_all_notes_from_chord(int root, vector<int> quality);
  * @return vector<int> a vector containing all the given notes
  */
 vector<int> get_all_given_note(int note);
+
+/**
+ * Get the interval in semitones between the root and
+ * @param quality the quality of the chord
+ * @param chordNote the rank of the note in the chord (fundamental, third, fifth, etc.)
+ * @return the interval in semitones between the root and the note
+ */
+int get_interval_from_root(int quality, int chordNote);
 
 /**
  * Transforms an int* into a vector<int>

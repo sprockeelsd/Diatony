@@ -161,38 +161,43 @@ void contrary_motion_to_bass(const Home& home, int currentPosition, const IntVar
 void interrupted_cadence(const Home &home, int nVoices, int currentPosition, Tonality *tonality,
                          IntVarArray fullChordsVoicing, const IntVarArray &tenorMelodicInterval,
                          const IntVarArray &altoMelodicInterval, const IntVarArray &sopranoMelodicInterval) {
-    //@todo move this part in the harmonic constraints file
-    /// double the third of the chord in the sixth degree chord (the second one)
-    IntVarArgs sixthDegreeChord(fullChordsVoicing.slice(nVoices * (currentPosition + 1), 1, nVoices));
-    count(home, sixthDegreeChord, tonality->get_scale_degree((SIXTH_DEGREE + THIRD_DEGREE) % 7), IRT_EQ,2);
-
-    // @todo make it cleaner with loops (this stays here)
+    // @todo make it cleaner with loops
     /// if the mode is major, then this rule only applies to the soprano voice. Otherwise, it applies for all voices
     /// soprano note is the seventh of the scale -> that voice must raise to the tonic by a minor second
+    auto leadingTone = tonality->get_tonic() + MAJOR_SEVENTH % PERFECT_OCTAVE;
 
     /// If the leading tone is in the soprano, it must rise to the tonic regardless of the mode
-    rel(home, expr(home, fullChordsVoicing[currentPosition +  SOPRANO] % PERFECT_OCTAVE ==
-            tonality->get_degree_note(SEVENTH_DEGREE)),BOT_IMP,
-        expr(home, sopranoMelodicInterval[currentPosition] ==1 ), true);
-    /// other voices must go down
-    rel(home, expr(home, fullChordsVoicing[currentPosition +  SOPRANO] % PERFECT_OCTAVE ==
-            tonality->get_degree_note(SEVENTH_DEGREE)),BOT_IMP,
-        expr(home, tenorMelodicInterval[currentPosition] < 0), true);
-    rel(home, expr(home, fullChordsVoicing[currentPosition +  SOPRANO] % PERFECT_OCTAVE ==
-            tonality->get_degree_note(SEVENTH_DEGREE)),BOT_IMP,
-        expr(home, altoMelodicInterval[currentPosition] < 0), true);
+    rel(home,
+        expr(home, fullChordsVoicing[currentPosition +  SOPRANO] % PERFECT_OCTAVE == leadingTone),
+        BOT_IMP,
+        expr(home, sopranoMelodicInterval[currentPosition] ==1),
+true);
+    /// If the leading tone is in the soprano, other voices must go down (except for the bass which goes up by default)
+    rel(home,
+        expr(home,fullChordsVoicing[currentPosition +  SOPRANO] % PERFECT_OCTAVE == leadingTone),
+         BOT_IMP,
+         expr(home, tenorMelodicInterval[currentPosition] < 0),
+ true);
+    rel(home,
+        expr(home, fullChordsVoicing[currentPosition +  SOPRANO] % PERFECT_OCTAVE == leadingTone),
+        BOT_IMP,
+        expr(home, altoMelodicInterval[currentPosition] < 0),
+true);
 
-    /// If the mode is minor, then the leading tone always has to rise to the tonic
+    /// If the mode is minor, then the leading tone always has to rise to the tonic -> same as for soprano but for other voices too
     if(tonality->get_mode() == MINOR_MODE){
-        // tenor note is the seventh of the scale
-        // -> that voice must raise to the tonic by a minor second
-        rel(home, expr(home, fullChordsVoicing[currentPosition +  TENOR] % PERFECT_OCTAVE ==
-                tonality->get_degree_note(SEVENTH_DEGREE)),BOT_IMP,
-            expr(home, tenorMelodicInterval[currentPosition] ==1 ), true);
-        //other voices must go down
-        rel(home, expr(home, fullChordsVoicing[currentPosition +  TENOR] % PERFECT_OCTAVE ==
-                tonality->get_degree_note(SEVENTH_DEGREE)),BOT_IMP,
-            expr(home, altoMelodicInterval[currentPosition] < 0), true);
+        /// tenor note is the leading tone -> that voice must raise to the tonic by a minor second
+        rel(home,
+            expr(home, fullChordsVoicing[currentPosition +  TENOR] % PERFECT_OCTAVE == leadingTone),
+            BOT_IMP,
+            expr(home, tenorMelodicInterval[currentPosition] ==1 ),
+    true);
+        /// other voices must go down
+        rel(home,
+            expr(home, fullChordsVoicing[currentPosition +  TENOR] % PERFECT_OCTAVE == leadingTone),
+            BOT_IMP,
+            expr(home, altoMelodicInterval[currentPosition] < 0),
+    true);
         rel(home, expr(home, fullChordsVoicing[currentPosition +  TENOR] % PERFECT_OCTAVE ==
                 tonality->get_degree_note(SEVENTH_DEGREE)),BOT_IMP,
             expr(home, sopranoMelodicInterval[currentPosition] < 0), true);
@@ -290,33 +295,41 @@ void tritone_resolution(const Home &home, int nVoices, int currentPosition, Tona
                         const IntVarArray &tenorMelodicIntervals, const IntVarArray &altoMelodicIntervals,
                         const IntVarArray &sopranoMelodicIntervals, IntVarArray fullChordsVoicing) {
 
-    IntVarArgs currentChord(fullChordsVoicing.slice(nVoices * currentPosition, 1, nVoices));
+    IntVarArgs currentChord (fullChordsVoicing.slice(nVoices * currentPosition, 1, nVoices));
+    vector<IntVarArray> melodicIntervals({bassMelodicIntervals, tenorMelodicIntervals, altoMelodicIntervals, sopranoMelodicIntervals});
 
-    vector<IntVarArray> melodicIntervals(
-            {bassMelodicIntervals, tenorMelodicIntervals, altoMelodicIntervals, sopranoMelodicIntervals});
     for(int voice = BASS; voice <= SOPRANO; voice++){
         /// special case
         /// if the chords are VII (1st inversion) -> I (1st inversion) or V(+6)->I(6)
-        if (chordDegs[currentPosition] == SEVENTH_DEGREE && chordStas[currentPosition] == FIRST_INVERSION &&
-            chordDegs[currentPosition+1] == FIRST_DEGREE && chordStas[currentPosition+1] == FIRST_INVERSION ||
-            chordDegs[currentPosition] == FIFTH_DEGREE && chordQuals[currentPosition] == DOMINANT_SEVENTH_CHORD &&
-            chordStas[currentPosition] == SECOND_INVERSION && chordDegs[currentPosition+1] == FIRST_DEGREE &&
-            chordStas[currentPosition+1] == FIRST_INVERSION){
+        if ((chordDegs[currentPosition]     == SEVENTH_DEGREE   && chordStas[currentPosition]   == FIRST_INVERSION &&
+            chordDegs[currentPosition+1]    == FIRST_DEGREE     && chordStas[currentPosition+1] == FIRST_INVERSION) ||
+            (chordDegs[currentPosition]     == FIFTH_DEGREE     && chordQuals[currentPosition]  == DOMINANT_SEVENTH_CHORD &&
+            chordStas[currentPosition]      == SECOND_INVERSION
+            && chordDegs[currentPosition+1] == FIRST_DEGREE     && chordStas[currentPosition+1]    == FIRST_INVERSION)){
             /// the fourth of the scale must go up by a step
-            rel(home, expr(home, currentChord[voice] % PERFECT_OCTAVE == (tonality->get_tonic() + PERFECT_FOURTH) %
-            PERFECT_OCTAVE), BOT_IMP, expr(home, expr(home, melodicIntervals[voice][currentPosition] > 0) &&
-            expr(home, melodicIntervals[voice][currentPosition] <= 2)), true);
+            rel(home,
+                /// the note in this voice is the fourth of the scale
+                expr(home,currentChord[voice] % PERFECT_OCTAVE == (tonality->get_tonic() + PERFECT_FOURTH) % PERFECT_OCTAVE),
+                BOT_IMP,
+                /// it must go up by step
+                expr(home, expr(home, melodicIntervals[voice][currentPosition] > 0) && expr(home, melodicIntervals[voice][currentPosition] <= 2)),
+        true);
         }
         else{ /// the fourth of the scale must go down by a step
-            rel(home,expr(home, currentChord[voice] % PERFECT_OCTAVE == (tonality->get_tonic() + PERFECT_FOURTH) %
-                PERFECT_OCTAVE),BOT_IMP,expr(home, expr(home, melodicIntervals[voice][currentPosition] < 0)
-                && expr(home, melodicIntervals[voice][currentPosition] >= -2)), true);
+            rel(home,
+                /// the note is the fourth of the scale
+                expr(home, currentChord[voice] % PERFECT_OCTAVE == (tonality->get_tonic() + PERFECT_FOURTH) % PERFECT_OCTAVE),
+                BOT_IMP,
+                /// it must go down by step
+                expr(home, expr(home, melodicIntervals[voice][currentPosition] < 0) && expr(home, melodicIntervals[voice][currentPosition] >= -2)),
+        true);
         }
-        /// if the note is the major seventh of the scale, it must go up to the tonic by step
-        rel(home, expr(home, currentChord[voice] % PERFECT_OCTAVE == (tonality->get_tonic() + MAJOR_SEVENTH) %
-            PERFECT_OCTAVE),
-            BOT_IMP, expr(home, melodicIntervals[voice][currentPosition] == 1), true);
-            /// must move up by a semitone to (the tonic)
+        /// if the note is the leading tone of the scale, it must go up to the tonic by step
+        rel(home,
+            expr(home, currentChord[voice] % PERFECT_OCTAVE == (tonality->get_tonic() + MAJOR_SEVENTH) % PERFECT_OCTAVE),
+            BOT_IMP,
+            expr(home, melodicIntervals[voice][currentPosition] == 1),
+    true);
     }
 }
 

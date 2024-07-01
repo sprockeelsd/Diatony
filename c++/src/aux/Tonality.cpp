@@ -23,6 +23,8 @@ Tonality::Tonality(int t, int m, vector<int> s) {
     name = noteNames[tonic] + " " + modeNames[mode];
     /// The rest of the attributes are set by the child classes
 
+    tonal_notes = {degrees_notes[FIRST_DEGREE], degrees_notes[FOURTH_DEGREE], degrees_notes[FIFTH_DEGREE]};
+
     degrees_notes[FIRST_DEGREE]   = t;
     degrees_notes[SECOND_DEGREE]  = (t += scale[FIRST_DEGREE]) % PERFECT_OCTAVE;
     degrees_notes[THIRD_DEGREE]   = (t += scale[SECOND_DEGREE]) % PERFECT_OCTAVE;

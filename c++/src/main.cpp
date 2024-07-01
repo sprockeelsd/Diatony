@@ -24,18 +24,23 @@ int main(int argc, char* argv[]) {
     if(argc != 3)
         return 1;
 
-    Tonality* tonality = new MajorTonality(C);
+    Tonality* tonality = new MinorTonality(G);
+    std::cout << "tonality: " << tonality->to_string() << std::endl;
 
     std::string search_type = argv[1];
     std::string build_midi = argv[2];
 
     /// vectors representing the chords and the states
-    vector<int> chords = {FIRST_DEGREE, FIFTH_DEGREE, SIXTH_DEGREE, FIRST_DEGREE, THIRD_DEGREE, SIXTH_DEGREE, SECOND_DEGREE, FIRST_DEGREE, FIFTH_DEGREE};
-    vector<int> chords_qualities = {MAJOR_CHORD, MAJOR_CHORD, MINOR_CHORD, MAJOR_CHORD, MINOR_CHORD, MINOR_CHORD, MINOR_CHORD, MAJOR_CHORD, MAJOR_CHORD};
-//    vector<int> chords_qualities_minor4 = {MINOR_CHORD, MAJOR_CHORD, MAJOR_CHORD, MINOR_CHORD, MAJOR_CHORD, MAJOR_CHORD,
-//                                           DIMINISHED_CHORD, MINOR_CHORD, MINOR_CHORD};
-    vector<int> states = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
-
+    vector<int> chords = {FIRST_DEGREE, SECOND_DEGREE, FIFTH_DEGREE, FIRST_DEGREE, FOURTH_DEGREE, FIRST_DEGREE, FIFTH_DEGREE, FIRST_DEGREE};
+    //@todo faire une fonction qui remplit automatiquement les qualités par défaut
+    vector<int> chords_qualities;
+    for(int i = 0; i < chords.size(); i++){
+        chords_qualities.push_back(tonality->get_chord_quality(chords[i]));
+    }
+    chords_qualities[2] = DOMINANT_SEVENTH_CHORD;
+    chords_qualities[6] = DOMINANT_SEVENTH_CHORD;
+    vector<int> states = {FUNDAMENTAL_STATE, FIRST_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FIRST_INVERSION,
+                           SECOND_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
 
     int size = chords.size();
 
@@ -51,15 +56,17 @@ int main(int argc, char* argv[]) {
     opts.nogoods_limit = size * 4 * 4;
 
 
-    //BAB<FourVoiceTexture> solver(pb, opts);
+    //DFS<FourVoiceTexture> solver(pb, opts);
     /// Restart based solver
     RBS<FourVoiceTexture, BAB> solver(pb, opts);
     delete pb;
 
     FourVoiceTexture* currentBestSol = nullptr;
+    int n_sols = 0;
     auto start = std::chrono::high_resolution_clock::now();     /// start time
     while(FourVoiceTexture* next_sol = solver.next()){
-        std::cout << "temporary solution found" << std::endl;
+        n_sols++;
+        std::cout << "temporary solution found (" << n_sols  << ")" << std::endl;
         currentBestSol = (FourVoiceTexture*) next_sol->copy();
         std::cout << currentBestSol->to_string() << std::endl;
         std::cout << statistics_to_string(solver.statistics()) << std::endl;
@@ -81,12 +88,11 @@ int main(int argc, char* argv[]) {
         std::cout << currentBestSol->to_string() << std::endl;
         std::cout << statistics_to_string(solver.statistics()) << std::endl;
     }
-    std::cout << "time taken: " << duration.count() << " seconds" << std::endl;
+    std::cout << "time taken: " << duration.count() << " seconds and " << n_sols << " solutions found.\n" << std::endl;
 
     if(build_midi == "true" && currentBestSol != nullptr){
         writeSolToMIDIFile(size, "output", currentBestSol);
         cout << "MIDI file created" << endl;
     }
-
     return 0;
 }

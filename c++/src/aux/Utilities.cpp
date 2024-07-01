@@ -59,9 +59,26 @@ vector<int> get_all_given_note(int note)
     while (current < 127)
     {
         notes.push_back(current);
-        current += 12;
+        current += PERFECT_OCTAVE;
     }
     return notes;
+}
+
+/**
+ * Get the interval in semitones between the root and
+ * @param quality the quality of the chord
+ * @param chordNote the rank of the note in the chord (fundamental, third, fifth, etc.)
+ * @return the interval in semitones between the root and the note
+ */
+int get_interval_from_root(int quality, int chordNote){
+    auto intervals = chordQualitiesIntervals.at(quality); // the intervals between consecutive notes in the chord
+    int diff = 0; // the difference between the bass and the fundamental in semitones
+    int s = 0; // variable to iterate over notes
+    while (s < chordNote){
+        diff += intervals[s];
+        s++;
+    }
+    return diff;
 }
 
 /**
