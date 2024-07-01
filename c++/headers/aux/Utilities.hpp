@@ -26,8 +26,6 @@ using namespace Gecode;
 
 /** Files */
 const string LOG_FILE = "log.txt";
-const string STATISTICS_FILE = "statistics.txt";
-const string STATISTICS_CSV = "statistics";
 
 /** Types of search engines */
 enum solver_types{
@@ -87,6 +85,7 @@ auto branchCommit = [](Space& home, unsigned int a, IntVar x, int i, int n){
 const vector<IntValBranch> value_selection_heuristics = {INT_VAL_MIN(), INT_VAL_MAX(), INT_VAL_MED(), INT_VAL_RND(1U)};
 
 const vector<string> value_selection_heuristics_names = {"Value min", "Value max", "Median value", "Value random"};
+
 
 /** Voice ranges */
 const int BASS_MIN = 40;
@@ -157,8 +156,8 @@ enum degrees{
     SEVENTH_DEGREE      //6
 };
 
-const vector<std::string> degreeNames = {"First degree", "Second degree", "Third degree", "Fourth degree", "Fifth degree",
-                                         "Sixth degree", "Seventh degree"};
+const vector<std::string> degreeNames = {"I", "II", "III", "IV",
+                                         "V", "V", "VII"};
 
 /** Intervals */
 // "classic" intervals
@@ -191,25 +190,37 @@ enum chordTypes{
     AUGMENTED_CHORD,            //3
     DOMINANT_SEVENTH_CHORD,     //4
     MAJOR_SEVENTH_CHORD,        //5
-    MINOR_SEVENTH_CHORD         //6
+    MINOR_SEVENTH_CHORD,        //6
+    DIMINISHED_SEVENTH_CHORD,   //7
+    MINOR_MAJOR_SEVENTH_CHORD,  //8
 };
 
-/// Types of chords represented by the intervals between their notes in root position up to an octave
-const vector<int> MAJOR_CHORD_INTERVALS = {MAJOR_THIRD, MINOR_THIRD, PERFECT_FOURTH};
-const vector<int> MINOR_CHORD_INTERVALS = {MINOR_THIRD, MAJOR_THIRD, PERFECT_FOURTH};
-const vector<int> DIMINISHED_CHORD_INTERVALS = {MINOR_THIRD, MINOR_THIRD, TRITONE};
-const vector<int> AUGMENTED_CHORD_INTERVALS = {MAJOR_THIRD, MAJOR_THIRD, MAJOR_THIRD};
-const vector<int> DOMINANT_SEVENTH_CHORD_INTERVALS = {MAJOR_THIRD, MINOR_THIRD, MINOR_THIRD, MAJOR_SECOND};
-const vector<int> MAJOR_SEVENTH_CHORD_INTERVALS = {MAJOR_THIRD, MINOR_THIRD, MAJOR_THIRD, MINOR_SECOND};
-const vector<int> MINOR_SEVENTH_CHORD_INTERVALS = {MINOR_THIRD, MAJOR_THIRD, MINOR_THIRD, MAJOR_SECOND};
-
-const vector<vector<int>> chordQualitiesIntervals = {MAJOR_CHORD_INTERVALS, MINOR_CHORD_INTERVALS,
-                                                     DIMINISHED_CHORD_INTERVALS,AUGMENTED_CHORD_INTERVALS,
-                                                     DOMINANT_SEVENTH_CHORD_INTERVALS, MAJOR_SEVENTH_CHORD_INTERVALS,
-                                                     MINOR_SEVENTH_CHORD_INTERVALS};
-
 const vector<std::string> chordQualityNames = {"Major", "Minor", "Diminished", "Augmented", "Dominant seventh",
-                                               "Major seventh", "Minor seventh"};
+                                               "Major seventh", "Minor seventh", "Diminished seventh",
+                                               "Minor major seventh"};
+
+/// Types of chords represented by the intervals between their notes in root position up to an octave
+const vector<int> MAJOR_CHORD_INTERVALS =               {MAJOR_THIRD, MINOR_THIRD, PERFECT_FOURTH};
+const vector<int> MINOR_CHORD_INTERVALS =               {MINOR_THIRD, MAJOR_THIRD, PERFECT_FOURTH};
+const vector<int> DIMINISHED_CHORD_INTERVALS =          {MINOR_THIRD, MINOR_THIRD, TRITONE};
+const vector<int> AUGMENTED_CHORD_INTERVALS =           {MAJOR_THIRD, MAJOR_THIRD, MAJOR_THIRD};
+const vector<int> DOMINANT_SEVENTH_CHORD_INTERVALS =    {MAJOR_THIRD, MINOR_THIRD, MINOR_THIRD, MAJOR_SECOND};
+const vector<int> MAJOR_SEVENTH_CHORD_INTERVALS =       {MAJOR_THIRD, MINOR_THIRD, MAJOR_THIRD, MINOR_SECOND};
+const vector<int> MINOR_SEVENTH_CHORD_INTERVALS =       {MINOR_THIRD, MAJOR_THIRD, MINOR_THIRD, MAJOR_SECOND};
+const vector<int> DIMINISHED_SEVENTH_CHORD_INTERVALS =  {MINOR_THIRD, MINOR_THIRD, MINOR_THIRD, MINOR_THIRD};
+const vector<int> MINOR_MAJOR_SEVENTH_CHORD_INTERVALS = {MINOR_THIRD, MAJOR_THIRD, MAJOR_THIRD, MAJOR_SECOND};
+
+const map<int, vector<int>> chordQualitiesIntervals = {
+        {MAJOR_CHORD,               MAJOR_CHORD_INTERVALS},
+        {MINOR_CHORD,               MINOR_CHORD_INTERVALS},
+        {DIMINISHED_CHORD,          DIMINISHED_CHORD_INTERVALS},
+        {AUGMENTED_CHORD,           AUGMENTED_CHORD_INTERVALS},
+        {DOMINANT_SEVENTH_CHORD,    DOMINANT_SEVENTH_CHORD_INTERVALS},
+        {MAJOR_SEVENTH_CHORD,       MAJOR_SEVENTH_CHORD_INTERVALS},
+        {MINOR_SEVENTH_CHORD,       MINOR_SEVENTH_CHORD_INTERVALS},
+        {DIMINISHED_SEVENTH_CHORD,  DIMINISHED_SEVENTH_CHORD_INTERVALS},
+        {MINOR_MAJOR_SEVENTH_CHORD, MINOR_MAJOR_SEVENTH_CHORD_INTERVALS}
+};
 
 // Chord states
 enum chordStates{
@@ -220,6 +231,14 @@ enum chordStates{
 };
 
 const vector<std::string> stateNames = {"Fundamental state", "First inversion", "Second inversion", "Third inversion"};
+
+enum chordNotes{
+    ROOT,       //0
+    THIRD,      //1
+    FIFTH,      //2
+    SEVENTH,    //3
+    NINETH      //4
+};
 
 /** Modes */
 enum Mode {
@@ -285,6 +304,14 @@ vector<int> get_all_notes_from_chord(int root, vector<int> quality);
  * @return vector<int> a vector containing all the given notes
  */
 vector<int> get_all_given_note(int note);
+
+/**
+ * Get the interval in semitones between the root and
+ * @param quality the quality of the chord
+ * @param chordNote the rank of the note in the chord (fundamental, third, fifth, etc.)
+ * @return the interval in semitones between the root and the note
+ */
+int get_interval_from_root(int quality, int chordNote);
 
 /**
  * Transforms an int* into a vector<int>

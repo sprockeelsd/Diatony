@@ -45,7 +45,7 @@ void set_to_chord(const Home& home, Tonality* tonality, int degree, int quality,
  * @param state the state of the chord
  * @param currentChord the array containing a chord in the form [bass, alto, tenor, soprano]
  */
-void set_bass(const Home& home, Tonality *tonality, int degree, int state, IntVarArgs currentChord);
+void set_bass(const Home &home, Tonality *tonality, int degree, int quality, int state, IntVarArgs currentChord);
 
 /***********************************************************************************************************************
  *                                                                                                                     *

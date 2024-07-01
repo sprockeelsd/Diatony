@@ -28,8 +28,9 @@ protected:
     int tonic;                              // tonic of the tonality
     int mode;                               // mode of the tonality
     vector<int> scale;                      // scale of the tonality
+
+    map<int, int> chord_qualities;          // map of [degree, chord_quality] for each degree of the scale (0 to 6) (set by child classes)
     map<int, int> degrees_notes;            // notes corresponding to the degrees of the scale on which the chords are based
-    map<int, vector<int>> chord_qualities;  // map of [degree, chord_quality] for each degree of the scale (0 to 6) (set by child classes)
 
     map<int, IntSet> scale_degrees;         // map of [degree, all_notes] for each degree of the scale (0 to 6). May contain multiple notes per degree depending on the mode
     set<int> tonal_notes;                   // notes that don't change in major or minor mode (1,4,5 degrees)
@@ -40,7 +41,7 @@ protected:
 public:
     /**
      * Constructor
-     * Creates a tonality object based on the tonality (tonic and mode)
+     * Creates a tonality object based on the tonality (tonic, mode and scale)
      * @param t the tonic of the tonality
      * @param m the mode of the tonality
      * @param s the scale of the tonality
@@ -109,19 +110,19 @@ public:
      */
     set<int> get_modal_notes();
 
+    /**
+     * @return a string representing a tonality
+     */
+    string to_string();
+
     /** ABSTRACT METHODS */
 
     /**
      * Get the chord quality for each degree
-     * @return a map of [degree, chord_quality] for each degree of the scale (0 to 6)
+     * @param degree a degree of the scale [0,6]
+     * @return the default chord quality for the given degree
      */
-    virtual map<int, vector<int>> get_chord_qualities() = 0;
-
-    /**
-     * Get the chord notes for each degree
-     * @return a map of [degree, chord] for each degree of the scale (0 to 6)
-     */
-    virtual map<int, IntSet> get_scale_degrees_chords() = 0;
+    virtual int get_chord_quality(int degree) = 0;
 
     /**
      * Get the chord notes for a given degree

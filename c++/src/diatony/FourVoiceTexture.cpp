@@ -35,9 +35,9 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     chordQualities                                  = chordQuals;
     chordStates                                     = chordStas;
     nOfNotesInChord                                 = IntArgs(size);
-    /// keep track of the number of notes that should be in each chord ideally
+    /// keep track of the number of notes that should be in each chord if it is complete
     for(int i = 0; i < size; i++)
-        nOfNotesInChord[i] = chordQualitiesIntervals[chordQualities[i]].size();
+        nOfNotesInChord[i] = chordQualitiesIntervals.at(chordQualities[i]).size();
 
     /// solution array
     fullChordsVoicing                               = IntVarArray(*this, nOfVoices * size, 0, 127);
@@ -81,7 +81,6 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     nOfCommonNotesInSameVoice                       = IntVar(*this, - nOfVoices * (size - 1), 0);
     costOfMelodicIntervals                          = IntVar(*this, 0, nOfVoices*(size-1)* MAX_MELODIC_COST);
 
-    //@todo remove the fundamental state chord pref + forcer la note du troisième accord avant la fin à fa 
     costVector = {nOfIncompleteChords, nOfFundStateDiminishedChordsWith4notes, nOfChordsWithLessThan4Values,
                   costOfMelodicIntervals, nOfCommonNotesInSameVoice};
 
@@ -111,7 +110,8 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
 
     link_squared_melodic_arrays(*this,
                                 bassMelodicIntervals, tenorMelodicIntervals, altoMelodicIntervals, sopranoMelodicIntervals,
-                                squaredBassMelodicIntervals, squaredTenorMelodicIntervals, squaredAltoMelodicIntervals, squaredSopranoMelodicIntervals);
+                                squaredBassMelodicIntervals, squaredTenorMelodicIntervals, squaredAltoMelodicIntervals,
+                                squaredSopranoMelodicIntervals);
 
     link_harmonic_arrays(*this, nOfVoices, size, fullChordsVoicing,
                          bassTenorHarmonicIntervals, bassAltoHarmonicIntervals, bassSopranoHarmonicIntervals,
@@ -164,12 +164,11 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     for(int i = 0; i < size; i++) {
         IntVarArgs currentChord(fullChordsVoicing.slice(nOfVoices * i, 1, nOfVoices));
 
-        /// set the chord's domain to the notes of the degree chordDegrees[i]'s chord
-        //@todo changer
+        /// set the chord's domain to the notes of the degree chordDegrees[i]'s chord with the right quality
         set_to_chord(*this, tonality, chordDegrees[i], chordQualities[i], currentChord);
 
         /// set the bass based on the chord's state
-        set_bass(*this, tonality, chordDegrees[i], chordStates[i], currentChord);
+        set_bass(*this, tonality, chordDegrees[i], chordQualities[i], chordStates[i], currentChord);
     }
 
     /**-----------------------------------------------------------------------------------------------------------------
@@ -216,7 +215,8 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
         /// parallel unissons, fifths and octaves are forbidden unless we have the same chord twice in a row
         if(chordDegrees[i] != chordDegrees[i + 1]){
             /// @todo maybe do it also <--- so that it can propagate in both directions, if the harmonic interval is a perfect fifth or octave the previous and next chords can't
-            forbid_parallel_intervals(*this, size, nOfVoices, {PERFECT_FIFTH, PERFECT_OCTAVE},
+            //todo maybe rewrite this
+            forbid_parallel_intervals(*this, size, nOfVoices, {PERFECT_FIFTH, PERFECT_OCTAVE, UNISSON},
                                       fullChordsVoicing, bassTenorHarmonicIntervals, bassAltoHarmonicIntervals,
                                       bassSopranoHarmonicIntervals, tenorAltoHarmonicIntervals,
                                       tenorSopranoHarmonicIntervals, altoSopranoHarmonicIntervals);
@@ -234,8 +234,8 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
         /// Exceptions to the general voice leading rules
 
         /// special rule for interrupted cadence
-        if (chordDegs[i] == FIFTH_DEGREE && chordStas[i] == FUNDAMENTAL_STATE &&
-        chordDegs[i + 1] == SIXTH_DEGREE && chordStas[i + 1] == FUNDAMENTAL_STATE) {
+        if (chordDegrees[i] == FIFTH_DEGREE && chordStates[i] == FUNDAMENTAL_STATE &&
+        chordDegrees[i + 1] == SIXTH_DEGREE && chordStates[i + 1] == FUNDAMENTAL_STATE) {
             interrupted_cadence(*this, nOfVoices, i, tonality,
                                 fullChordsVoicing, tenorMelodicIntervals,
                                 altoMelodicIntervals, sopranoMelodicIntervals);
@@ -243,7 +243,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
         /// if we have an appogiatura for the V degree chord, the voice with the fundamental must move in contrary
         /// motion to the bass
         else if(chordDegs[i] == FIRST_DEGREE && chordStates[i] == SECOND_INVERSION &&
-                chordDegs[i+1] == FIFTH_DEGREE){
+                chordDegs[i+1] == FIFTH_DEGREE && (chordQualities[i] == MAJOR_CHORD || chordQualities[i] == DOMINANT_SEVENTH_CHORD)){
             fifth_degree_appogiatura(*this, nOfVoices, i, tonality, fullChordsVoicing,
                                      bassMelodicIntervals, tenorMelodicIntervals,
                                      altoMelodicIntervals, sopranoMelodicIntervals);

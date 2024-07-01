@@ -25,7 +25,10 @@
  * @param currentChord the array containing a chord in the form [bass, alto, tenor, soprano]
  */
 void set_to_chord(const Home& home, Tonality* tonality, int degree, int quality, const IntVarArgs& currentChord){
-    IntSet set(get_all_notes_from_chord(tonality->get_degree_note(degree), chordQualitiesIntervals[quality]));
+
+    IntSet set(get_all_notes_from_chord(tonality->get_degree_note(degree),
+                                        chordQualitiesIntervals.at(quality)));
+    //std::cout << "set: " << set << std::endl;
     dom(home, currentChord, set);
 }
 
@@ -34,13 +37,13 @@ void set_to_chord(const Home& home, Tonality* tonality, int degree, int quality,
  * @param home the instance of the problem
  * @param tonality the tonality of the piece
  * @param degree the degree of the chord
+ * @param quality the quality of the chord
  * @param state the state of the chord
  * @param currentChord the array containing a chord in the form [bass, alto, tenor, soprano]
  */
-void set_bass(const Home& home, Tonality *tonality, int degree, int state, IntVarArgs currentChord){
-    /// (degree + 2) * state gives the bas note of the chord since the state is 0 for fundamental, 1 for first inversion
-    /// and 2 for second inversion
-    dom(home, currentChord[0], tonality->get_scale_degree((degree + 2 * state) % 7));
+void set_bass(const Home &home, Tonality *tonality, int degree, int quality, int state, IntVarArgs currentChord) {
+    auto diff = get_interval_from_root(quality, state);
+    dom(home, currentChord[0], IntSet(get_all_given_note((tonality->get_degree_note(degree) + diff) % PERFECT_OCTAVE)));
 }
 
 /***********************************************************************************************************************
@@ -63,59 +66,64 @@ void chord_note_occurrence_fundamental_state(Home home, int nVoices, int pos, ve
                                              Tonality *tonality, const IntVarArgs &currentChord,
                                              const IntVar &nDifferentValuesInDiminishedChord,
                                              const IntVar &nOfNotesInChord) {
-    /// if the chord is a diminished seventh degree, the third must be doubled
+    auto root = tonality->get_degree_note(degree[pos]);
+    auto third = (root + get_interval_from_root(quality[pos],THIRD)) % PERFECT_OCTAVE;
+    auto fifth = (root + get_interval_from_root(quality[pos],FIFTH)) % PERFECT_OCTAVE;
+
+    /// if the chord is a diminished seventh degree
     if(degree[pos] == SEVENTH_DEGREE && quality[pos] == DIMINISHED_CHORD){
         /// If there are 4 different notes, then the third must be doubled. Otherwise any note can be doubled as
         /// there are only 3 values
         IntVar nOfThirds(home,0,nVoices);
-        count(home, currentChord, tonality->get_scale_degree((degree[pos] + THIRD_DEGREE) % 7), IRT_EQ,nOfThirds);
-        rel(home, expr(home, nDifferentValuesInDiminishedChord == nVoices), BOT_EQV,
+        count(home, currentChord, IntSet(get_all_given_note(third)), IRT_EQ, nOfThirds);
+        /// if there are 4 different notes, then the third must be doubled
+        rel(home, expr(home, nDifferentValuesInDiminishedChord == nVoices), BOT_IMP,
             expr(home, nOfThirds == 2), true);
         /// each note is present at least once, doubling is determined by the costs
-        count(home, currentChord, tonality->get_scale_degree(degree[pos]), IRT_GQ,1);
-        count(home, currentChord, tonality->get_scale_degree((degree[pos] + THIRD_DEGREE) % 7), IRT_GQ,1);
-        count(home, currentChord, tonality->get_scale_degree((degree[pos] + FIFTH_DEGREE) % 7), IRT_GQ,1);
+        count(home, currentChord, IntSet(get_all_given_note(root)), IRT_GQ,1);
+        count(home, currentChord, IntSet(get_all_given_note(third)), IRT_GQ,1);
+        count(home, currentChord, IntSet(get_all_given_note(fifth)), IRT_GQ,1);
     }
     /// special rule for sixth degree because in the case of an interrupted cadence, the third of the chord is doubled instead of the fundamental
     else
-    if(degree[pos] == SIXTH_DEGREE && pos > 0){
+    if(degree[pos] == SIXTH_DEGREE && pos > 0 && degree[pos-1] == FIFTH_DEGREE){
         /// double the third of the chord
-        count(home, currentChord, tonality->get_scale_degree(degree[pos]), IRT_EQ,1);
-        count(home, currentChord, tonality->get_scale_degree((degree[pos] + THIRD_DEGREE) % 7), IRT_EQ,2);
-        count(home, currentChord, tonality->get_scale_degree((degree[pos] + FIFTH_DEGREE) % 7), IRT_EQ, 1);
+        count(home, currentChord, IntSet(get_all_given_note(root)), IRT_EQ,1);
+        count(home, currentChord, IntSet(get_all_given_note(third)), IRT_EQ,2);
+        count(home, currentChord, IntSet(get_all_given_note(fifth)), IRT_EQ, 1);
     }
     else if(degree[pos] == FIFTH_DEGREE){
         /// If there is a perfect cadence, then one of the chords must be incomplete.
-        count(home, currentChord, tonality->get_scale_degree(degree[pos]), IRT_GQ,1);
-        count(home, currentChord, tonality->get_scale_degree((degree[pos] + THIRD_DEGREE) % 7), IRT_EQ,1);
-        count(home, currentChord, tonality->get_scale_degree((degree[pos] + FIFTH_DEGREE) % 7), IRT_LQ, 1);
+        count(home, currentChord, IntSet(get_all_given_note(root)), IRT_GQ,1);
+        count(home, currentChord, IntSet(get_all_given_note(third)), IRT_EQ,1);
+        count(home, currentChord, IntSet(get_all_given_note(fifth)), IRT_LQ, 1);
 
         if(quality[pos] >= DOMINANT_SEVENTH_CHORD){
-            count(home, currentChord, tonality->get_scale_degree((degree[pos] + SEVENTH_DEGREE) % 7), IRT_EQ, 1);
+            auto seventh = (root + get_interval_from_root(quality[pos],SEVENTH)) % PERFECT_OCTAVE;
+            /// the seventh must be present
+            count(home, currentChord, IntSet(get_all_given_note(seventh)), IRT_EQ, 1);
             /// if the chord is incomplete, double the bass
-            BoolVar isIncomplete(home, 0,1);
-            rel(home, expr(home, nOfNotesInChord < 4), BOT_EQV, isIncomplete, true);
+            BoolVar isIncomplete(expr(home, nOfNotesInChord < 4));
             IntVar nOfBassNotes(home,0,4);
-            count(home, currentChord, tonality->get_scale_degree(degree[pos]), IRT_EQ,nOfBassNotes);
+            count(home, currentChord, IntSet(get_all_given_note(root)), IRT_EQ,nOfBassNotes);
             rel(home, isIncomplete, BOT_EQV, expr(home, nOfBassNotes == 2), true);
         }
     }
     else if(degree[pos] == FIRST_DEGREE){
-        count(home, currentChord, tonality->get_scale_degree(degree[pos]), IRT_GQ,1);
-        count(home, currentChord, tonality->get_scale_degree((degree[pos] + THIRD_DEGREE) % 7), IRT_EQ,1);
-        count(home, currentChord, tonality->get_scale_degree((degree[pos] + FIFTH_DEGREE) % 7), IRT_LQ, 1);
+        count(home, currentChord, IntSet(get_all_given_note(root)), IRT_GQ,1);
+        count(home, currentChord, IntSet(get_all_given_note(third)), IRT_EQ,1);
+        count(home, currentChord, IntSet(get_all_given_note(fifth)), IRT_LQ, 1);
         /// if the chord is incomplete, then the bass must be tripled and the third should be there once.
         BoolVar isIncomplete(expr(home, nOfNotesInChord < 3));
-        rel(home, expr(home, nOfNotesInChord < 3), BOT_EQV, isIncomplete, true);
         IntVar nOfBassNotes(home,0,4);
-        count(home, currentChord, tonality->get_scale_degree(degree[pos]), IRT_EQ,nOfBassNotes);
+        count(home, currentChord, IntSet(get_all_given_note(root)), IRT_EQ,nOfBassNotes);
         rel(home, isIncomplete, BOT_EQV, expr(home, nOfBassNotes == 3), true);
     }
     else{
         /// each note is present at least once, the bass is doubled
-        count(home, currentChord, tonality->get_scale_degree(degree[pos]), IRT_EQ,2);
-        count(home, currentChord, tonality->get_scale_degree((degree[pos] + THIRD_DEGREE) % 7), IRT_EQ,1);
-        count(home, currentChord, tonality->get_scale_degree((degree[pos] + FIFTH_DEGREE) % 7), IRT_EQ, 1);
+        count(home, currentChord, IntSet(get_all_given_note(root)), IRT_EQ,2);
+        count(home, currentChord, IntSet(get_all_given_note(third)), IRT_EQ,1);
+        count(home, currentChord, IntSet(get_all_given_note(fifth)), IRT_EQ, 1);
     }
 }
 
@@ -142,15 +150,19 @@ void chord_note_occurrence_first_inversion(Home home, int size, int nVoices, int
                                            vector<int> degrees, vector<int> qualities,
                                            const IntVarArgs &currentChord, IntVarArray bassMelodicIntervals,
                                            IntVarArray sopranoMelodicIntervals){
+    auto root = tonality->get_degree_note(degrees[currentPos]);
+    auto third = (root + get_interval_from_root(qualities[currentPos],THIRD)) % PERFECT_OCTAVE;
+    auto fifth = (root + get_interval_from_root(qualities[currentPos],FIFTH)) % PERFECT_OCTAVE;
+
     /// if the third is a tonal note, then double it
     set<int> tonalNotes = tonality->get_tonal_notes();
-    if(tonalNotes.find(tonality->get_degree_note((degrees[currentPos] + THIRD_DEGREE) % 7)) !=
+    if(tonalNotes.find(third) !=
        tonalNotes.end()) { /// double the third and other notes should be present at least once
-        count(home, currentChord, tonality->get_scale_degree((degrees[currentPos] + THIRD_DEGREE) % 7), IRT_EQ, 2);
+        count(home, currentChord, IntSet(get_all_given_note(third)), IRT_EQ, 2);
     }
     else if(degrees[currentPos] == SEVENTH_DEGREE && qualities[currentPos] == DIMINISHED_CHORD) {
         /// double the third and other notes should be present at least once
-        count(home, currentChord, tonality->get_scale_degree((degrees[currentPos] + THIRD_DEGREE) % 7), IRT_EQ, 2);
+        count(home, currentChord, IntSet(get_all_given_note(third)), IRT_EQ, 2);
     }
     else{ /// default case: double the fundamental or the fifth of the chord unless the top and bottom voices move down and up respectively
         if(currentPos < size-1 && currentPos > 0){ /// this special case cannot happen on the first and last chord
@@ -164,34 +176,37 @@ void chord_note_occurrence_first_inversion(Home home, int size, int nVoices, int
             /// BoolVar to see if the bass rises overall
             BoolVar bassRisesOverall = expr(home, bassRises1 && bassRises2);
 
-            /// BoolVar to see if the soprano rises for the first motion
+            /// BoolVar to see if the soprano falls for the first motion
             BoolVar sopranoFalls1 = expr(home, expr(home, sopranoMelodicIntervals[currentPos-1] < 0) &&
                 expr(home, sopranoMelodicIntervals[currentPos-1] >= -2));
-            /// BoolVar to see if the soprano rises for the second motion
+            /// BoolVar to see if the soprano falls for the second motion
             BoolVar sopranoFalls2 = expr(home, expr(home, sopranoMelodicIntervals[currentPos] < 0) &&
                 expr(home, sopranoMelodicIntervals[currentPos] >= -2));
 
-            /// BoolVar to see if the soprano rises overall
+            /// BoolVar to see if the soprano falls overall
             BoolVar sopranoFallsOverall = expr(home, sopranoFalls1 && sopranoFalls2);
 
             /// BoolVar to see if the voices move step wise by contrary motion over the three chords
             BoolVar contraryMotion = expr(home, bassRisesOverall && sopranoFallsOverall);
 
             IntVar nOfBassNotes(home,0,nVoices);
-            count(home, currentChord, tonality->get_scale_degree(degrees[currentPos] + THIRD_DEGREE), IRT_EQ,nOfBassNotes);
+            count(home, currentChord, IntSet(get_all_given_note(third)), IRT_EQ,nOfBassNotes);
             rel(home, contraryMotion, BOT_EQV, expr(home, nOfBassNotes == 2), true);
             rel(home, expr(home, !contraryMotion), BOT_EQV, expr(home, nOfBassNotes == 1), true);
         }
         else{ /// the bass can't be doubled
-            count(home, currentChord, tonality->get_scale_degree((degrees[currentPos] + THIRD_DEGREE) % 7), IRT_EQ, 1);
+            count(home, currentChord, IntSet(get_all_given_note(root)), IRT_EQ, 1);
         }
     }
     /// each note always has to be present at least once
-    count(home, currentChord, tonality->get_scale_degree((degrees[currentPos] + FIRST_DEGREE) % 7), IRT_GQ, 1);
-    count(home, currentChord, tonality->get_scale_degree((degrees[currentPos] + THIRD_DEGREE) % 7), IRT_GQ, 1);
-    count(home, currentChord, tonality->get_scale_degree((degrees[currentPos] + FIFTH_DEGREE) % 7), IRT_GQ, 1);
-    if(qualities[currentPos] >= DOMINANT_SEVENTH_CHORD)
-        count(home, currentChord, tonality->get_scale_degree((degrees[currentPos] + SEVENTH_DEGREE) % 7), IRT_GQ, 1);
+    count(home, currentChord, IntSet(get_all_given_note(root)), IRT_GQ, 1);
+    count(home, currentChord, IntSet(get_all_given_note(third)), IRT_GQ, 1);
+    count(home, currentChord, IntSet(get_all_given_note(fifth)), IRT_GQ, 1);
+    if(qualities[currentPos] >= DOMINANT_SEVENTH_CHORD){
+        auto seventh = (root + get_interval_from_root(qualities[currentPos],SEVENTH)) % PERFECT_OCTAVE;
+        count(home, currentChord, IntSet(get_all_given_note(seventh)), IRT_GQ, 1);
+    }
+
 }
 
 /***********************************************************************************************************************
@@ -213,18 +228,23 @@ void chord_note_occurrence_first_inversion(Home home, int size, int nVoices, int
  */
 void chord_note_occurrence_second_inversion(const Home& home, int size, int nVoices, int currentPos, Tonality *tonality,
                                             vector<int> degrees, vector<int> qualities, const IntVarArgs &currentChord){
+    auto root = tonality->get_degree_note(degrees[currentPos]);
+    auto third = (root + get_interval_from_root(qualities[currentPos],THIRD)) % PERFECT_OCTAVE;
+    auto fifth = (root + get_interval_from_root(qualities[currentPos],FIFTH)) % PERFECT_OCTAVE;
+
     if(degrees[currentPos] == SEVENTH_DEGREE && qualities[currentPos] == DIMINISHED_CHORD) {
-        count(home, currentChord, tonality->get_scale_degree((degrees[currentPos] + FIRST_DEGREE) % 7), IRT_EQ, 1);
-        count(home, currentChord, tonality->get_scale_degree((degrees[currentPos] + THIRD_DEGREE) % 7), IRT_EQ, 2);
-        count(home, currentChord, tonality->get_scale_degree((degrees[currentPos] + FIFTH_DEGREE) % 7), IRT_EQ, 1);
+        count(home, currentChord, IntSet(get_all_given_note(root)), IRT_EQ, 1);
+        count(home, currentChord, IntSet(get_all_given_note(third)), IRT_EQ, 2);
+        count(home, currentChord, IntSet(get_all_given_note(fifth)), IRT_EQ, 1);
     }
     else{ /// default case: if the fourth or the sixth of the chord are in the chord before, they can be doubled if it is in the chord before at the same height
         /// the bass can always be doubled -> @todo
-        count(home, currentChord, tonality->get_scale_degree((degrees[currentPos] + FIFTH_DEGREE) % 7), IRT_GQ, 1);
-        /// @todo other voices
-        count(home, currentChord, tonality->get_scale_degree((degrees[currentPos] + FIRST_DEGREE) % 7), IRT_EQ, 1);
-        count(home, currentChord, tonality->get_scale_degree((degrees[currentPos] + THIRD_DEGREE) % 7), IRT_EQ, 1);
-        if(qualities[currentPos] >= DOMINANT_SEVENTH_CHORD)
-            count(home, currentChord, tonality->get_scale_degree((degrees[currentPos] + SEVENTH_DEGREE) % 7), IRT_EQ, 1);
+        count(home, currentChord, IntSet(get_all_given_note(root)), IRT_EQ, 1);
+        count(home, currentChord, IntSet(get_all_given_note(third)), IRT_EQ, 1);
+        count(home, currentChord, IntSet(get_all_given_note(fifth)), IRT_GQ, 1);
+        if(qualities[currentPos] >= DOMINANT_SEVENTH_CHORD){
+            auto seventh = (root + get_interval_from_root(qualities[currentPos],SEVENTH)) % PERFECT_OCTAVE;
+            count(home, currentChord, IntSet(get_all_given_note(seventh)), IRT_EQ, 1);
+        }
     }
 }
