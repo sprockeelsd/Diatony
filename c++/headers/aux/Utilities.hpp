@@ -5,15 +5,21 @@
 #ifndef UTILITIES
 #define UTILITIES
 
-#include <gecode/int.hh>
-#include <gecode/minimodel.hh>
-
-#include <iostream>
-#include <vector>
-#include <string>
 #include <map>
+#include <vector>
 #include <iostream>
 #include <fstream>
+#include <stdlib.h>
+#include <string>
+#include <ctime>
+#include <exception>
+#include <set>
+
+#include "gecode/kernel.hh"
+#include "gecode/int.hh"
+#include "gecode/search.hh"
+#include "gecode/minimodel.hh"
+#include "gecode/set.hh"
 
 using namespace std;
 using namespace Gecode;

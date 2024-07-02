@@ -8,15 +8,6 @@
 #include "../aux/Tonality.hpp"
 #include "../aux/Utilities.hpp"
 
-#include <iostream>
-#include <vector>
-#include <string>
-#include <cmath>
-#include <set>
-
-using namespace Gecode;
-using namespace std;
-
 /***********************************************************************************************************************
  *                                                                                                                     *
  * This file contains all the voice leading constraints, that is constraints on how voices move through successive     *

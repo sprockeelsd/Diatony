@@ -5,18 +5,7 @@
 #ifndef TONALITY
 #define TONALITY
 
-#include <gecode/int.hh>
-
 #include "Utilities.hpp"
-
-#include <iostream>
-#include <vector>
-#include <string>
-#include <map>
-#include <set>
-
-using namespace Gecode;
-using namespace std;
 
 /**
  * This class is an abstract class modeling a tonality

@@ -5,23 +5,10 @@
 #ifndef space_wrapper_hpp
 #define space_wrapper_hpp
 
-#include <vector>
-#include <iostream>
-#include <fstream>
-#include <stdlib.h>
-#include <string>
-#include <ctime>
-#include <exception>
-
-#include "gecode/kernel.hh"
-#include "gecode/int.hh"
-#include "gecode/search.hh"
-#include "gecode/minimodel.hh"
-#include "gecode/set.hh"
-
 #include "../aux/Utilities.hpp"
 #include "../aux/Tonality.hpp"
 #include "../aux/MajorTonality.hpp"
+#include "../aux/MinorTonality.hpp"
 #include "GeneralConstraints.hpp"
 #include "HarmonicConstraints.hpp"
 #include "VoiceLeadingConstraints.hpp"

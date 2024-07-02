@@ -8,14 +8,6 @@
 #include "../aux/Tonality.hpp"
 #include "../aux/Utilities.hpp"
 
-#include <iostream>
-#include <vector>
-#include <string>
-#include <cmath>
-
-using namespace Gecode;
-using namespace std;
-
 /***********************************************************************************************************************
  *                                                                                                                     *
  * This file contains all the general constraints. It currently contains:                                              *

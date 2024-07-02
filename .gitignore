@@ -6,6 +6,7 @@
 *.exe
 efficiency_measurment/heuristics
 efficiency_measurment/out/parallelRun
+out/Main
 
 #additionals
 .idea
