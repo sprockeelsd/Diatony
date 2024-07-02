@@ -4,9 +4,6 @@
 
 # Executables and log files
 *.exe
-*.out
-*.app
-/out/*
 efficiency_measurment/heuristics
 efficiency_measurment/out/parallelRun
 
