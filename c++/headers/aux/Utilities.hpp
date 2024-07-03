@@ -163,7 +163,7 @@ enum degrees{
 };
 
 const vector<std::string> degreeNames = {"I", "II", "III", "IV",
-                                         "V", "V", "VII"};
+                                         "V", "VI", "VII"};
 
 /** Intervals */
 // "classic" intervals
