@@ -13,6 +13,7 @@
 #include "HarmonicConstraints.hpp"
 #include "VoiceLeadingConstraints.hpp"
 #include "Preferences.hpp"
+#include "../aux/MidiFileGeneration.hpp"
 
 using namespace Gecode;
 using namespace Gecode::Search;
