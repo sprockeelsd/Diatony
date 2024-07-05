@@ -24,6 +24,7 @@ PROBLEM_FILES = $(SRC_DIR)/$(AUX_DIR)/Utilities.cpp \
 				$(SRC_DIR)/$(DIATONY_DIR)/GeneralConstraints.cpp \
 				$(SRC_DIR)/$(DIATONY_DIR)/Preferences.cpp \
 				$(SRC_DIR)/$(DIATONY_DIR)/FourVoiceTexture.cpp \
+				$(SRC_DIR)/$(DIATONY_DIR)/SolveDiatony.cpp \
 
 #MIDI handling files
 MIDI_FILES = $(SRC_DIR)/$(MIDI_DIR)/Options.cpp \
