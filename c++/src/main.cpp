@@ -48,7 +48,7 @@ int main(int argc, char* argv[]) {
     FourVoiceTexture* currentBestSol = solve_diatony_problem_optimal(size, tonality, chords, chords_qualities, states);
 
     if(build_midi == "true" && currentBestSol != nullptr){
-        writeSolToMIDIFile(size, "output", currentBestSol);
+        writeSolToMIDIFile(size, "../out/Midifiles/output", currentBestSol);
         cout << "MIDI file created" << endl;
     }
     return 0;

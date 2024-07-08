@@ -45,7 +45,7 @@ void writeSolToMIDIFile(int size, string fileName, const FourVoiceTexture *sol) 
         }
     }
     outputFile.sortTracks(); // make sure data is in correct order
-    outputFile.write("../out/MidiFiles/" + fileName + ".mid");
+    outputFile.write(fileName + ".mid");
 }
 
 /**
