@@ -14,8 +14,6 @@
 
 #include "../midifile/MidiFile.h"
 
-#include <gecode/gist.hh>
-
 using namespace Gecode;
 using namespace std;
 using namespace smf;
@@ -26,7 +24,7 @@ using namespace smf;
  * @param sol the solution to write
  * @return the time at which the solution ends
  */
-void writeSolToMIDIFile(int size, string fileName, const FourVoiceTexture *sol);
+void writeSolToMIDIFile(int size, string fileName, const FourVoiceTexture* sol);
 
 /**
  * Writes all the solutions to a MIDI file
@@ -35,6 +33,6 @@ void writeSolToMIDIFile(int size, string fileName, const FourVoiceTexture *sol);
  * @param sols the solutions to write
  * @param file the MIDI file to write to
  */
-void writeSolsToMIDIFile(int size, vector<const FourVoiceTexture *> sols);
+void writeSolsToMIDIFile(int size, vector<const FourVoiceTexture*> sols);
 
 #endif //MYPROJECT_MIDIFILEGENERATION_HPP
