@@ -292,6 +292,24 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
 }
 
 /**
+ * Constructor to find all optimal solutions based on the cost vector for one of them
+ * @param s the number of chords in the progression
+ * @param *t a pointer to a Tonality object
+ * @param chordDegs the degrees of the chord of the chord progression
+ * @param chordQuals the qualities of the chord of the chord progression
+ * @param chordStas the states of the chord of the chord progression (fundamental, 1st inversion,...)
+ * @param costs the cost vector for one of the best solutions, found by solving the optimization problem first
+ * @param offSet the offset to add to the melodic cost vector to find close to optimal solutions
+ */
+FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, vector<int> chordQuals,
+                                   vector<int> chordStas, vector<int> costs, int offSet) :
+                                   FourVoiceTexture(s, t, chordDegs, chordQuals, chordStas) {
+    for(int i = 0; i < costs.size(); i++){
+        rel(*this, costVector[i] == costs[i]);
+    }
+}
+
+/**
  * Cost function for lexicographical minimization. The order is as follows:
  * 1. Number of incomplete chords.
  * 2. Number of diminished chords in fundamental state with 4 notes.

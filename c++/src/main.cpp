@@ -44,12 +44,30 @@ int main(int argc, char* argv[]) {
                            SECOND_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
 
     int size = chords.size();
-    /// Solve the problem
-    FourVoiceTexture* currentBestSol = solve_diatony_problem_optimal(size, tonality, chords, chords_qualities, states);
 
-    if(build_midi == "true" && currentBestSol != nullptr){
-        writeSolToMIDIFile(size, "../out/Midifiles/output", currentBestSol);
-        cout << "MIDI file created" << endl;
+    /// Solve the problem
+    vector<FourVoiceTexture*> sols;
+    /// Find the best solution
+    FourVoiceTexture* bestSol = solve_diatony_problem_optimal(size, tonality, chords, chords_qualities, states);
+
+    if(search_type == "all"){ /// We want to generate all solutions that are close to optimal
+        auto best_sol_costs = bestSol->get_cost_vector();
+        vector<int> costs;
+        costs.reserve(best_sol_costs.size());
+        for(const auto& c : best_sol_costs){
+            costs.push_back(c.val());
+        }
+        sols = solve_diatony_problem(size, tonality, chords, chords_qualities, states);
+    }
+    else{
+        sols.push_back(bestSol);
+    }
+
+    if(build_midi == "true" && sols.size() > 0){
+        for(int i = 0; i < sols.size(); i++){
+            writeSolToMIDIFile(size, "../out/MidiFiles/sol" + to_string(i), sols[i]);
+        }
+        cout << "MIDI file(s) created" << endl;
     }
     return 0;
 }
