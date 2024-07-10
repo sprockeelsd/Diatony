@@ -10,7 +10,7 @@
  * Finds an optimal solution for a four voice texture problem and returns the list of all intermediate solutions found
  * during search
  * @param size the number of chords
- * @param tonality the tonaity of the piece
+ * @param tonality the tonality of the piece
  * @param chords the chord degrees of the progression
  * @param qualities the qualities of the chords
  * @param states the states of the chords
@@ -73,7 +73,7 @@ solve_diatony_problem(int size, Tonality *tonality, vector<int> chords, vector<i
 /**
  * Finds an optimal solution for a four voice texture problem.
  * @param size the number of chords
- * @param tonality the tonaity of the piece
+ * @param tonality the tonality of the piece
  * @param chords the chord degrees of the progression
  * @param qualities the qualities of the chords
  * @param states the states of the chords
@@ -92,7 +92,7 @@ FourVoiceTexture* solve_diatony_problem_optimal(int size, Tonality* tonality, ve
  * Finds all solutions close to the optimal solution, with a margin percentage of deviation from the cost vector. That
  * margin applies to all costs.
  * @param size the number of chords
- * @param tonality the tonaity of the piece
+ * @param tonality the tonality of the piece
  * @param chords the chord degrees of the progression
  * @param qualities the qualities of the chords
  * @param states the states of the chords
@@ -104,7 +104,8 @@ vector<FourVoiceTexture*> find_optimal_solutions_with_margin(int size, Tonality*
                                                              vector<int> qualities, vector<int> states, vector<int> costs,
                                                              double margin){
 
-    auto pb = new FourVoiceTexture(size, tonality, chords, qualities, states, costs, margin);
+    auto pb = new FourVoiceTexture(size, tonality, std::move(chords), std::move(qualities),
+                                   std::move(states), std::move(costs), margin);
 
     DFS<FourVoiceTexture> solver(pb);
     delete pb;

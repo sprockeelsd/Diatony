@@ -158,9 +158,9 @@ void contrary_motion_to_bass(const Home& home, int currentPosition, const IntVar
  * @param altoMelodicInterval the melodic intervals of the alto
  * @param sopranoMelodicInterval the melodic intervals of the soprano
  */
-void interrupted_cadence(const Home &home, int nVoices, int currentPosition, Tonality *tonality,
-                         IntVarArray fullChordsVoicing, const IntVarArray &tenorMelodicInterval,
-                         const IntVarArray &altoMelodicInterval, const IntVarArray &sopranoMelodicInterval) {
+void interrupted_cadence(const Home &home, int currentPosition, Tonality *tonality, IntVarArray fullChordsVoicing,
+                         const IntVarArray &tenorMelodicInterval, const IntVarArray &altoMelodicInterval,
+                         const IntVarArray &sopranoMelodicInterval) {
     // @todo make it cleaner with loops
     /// if the mode is major, then this rule only applies to the soprano voice. Otherwise, it applies for all voices
     /// soprano note is the seventh of the scale -> that voice must raise to the tonic by a minor second

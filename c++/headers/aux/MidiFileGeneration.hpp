@@ -24,7 +24,7 @@ using namespace smf;
  * @param sol the solution to write
  * @return the time at which the solution ends
  */
-void writeSolToMIDIFile(int size, string fileName, const FourVoiceTexture* sol);
+void writeSolToMIDIFile(int size, const string& fileName, const FourVoiceTexture* sol);
 
 /**
  * Writes all the solutions to a MIDI file

@@ -2,6 +2,8 @@
 // Creation Date: Jan 20 2023
 // Description:   A class that creates a constraint representation of a four voice harmonic problem of tonal music.
 //
+#include <utility>
+
 #include "../../headers/diatony/FourVoiceTexture.hpp"
 
 /***********************************************************************************************************************
@@ -32,7 +34,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     size                                            = s;
     tonality                                        = t;
     chordDegrees                                    = chordDegs;
-    chordQualities                                  = chordQuals;
+    chordQualities                                  = std::move(chordQuals);
     chordStates                                     = chordStas;
     nOfNotesInChord                                 = IntArgs(size);
     /// keep track of the number of notes that should be in each chord if it is complete
@@ -236,7 +238,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
         /// special rule for interrupted cadence
         if (chordDegrees[i] == FIFTH_DEGREE && chordStates[i] == FUNDAMENTAL_STATE &&
         chordDegrees[i + 1] == SIXTH_DEGREE && chordStates[i + 1] == FUNDAMENTAL_STATE) {
-            interrupted_cadence(*this, nOfVoices, i, tonality,
+            interrupted_cadence(*this, i, tonality,
                                 fullChordsVoicing, tenorMelodicIntervals,
                                 altoMelodicIntervals, sopranoMelodicIntervals);
         }

@@ -107,9 +107,9 @@ void tritone_resolution(const Home &home, int nVoices, int currentPosition, Tona
  * @param altoMelodicInterval the melodic intervals of the alto
  * @param sopranoMelodicInterval the melodic intervals of the soprano
  */
-void interrupted_cadence(const Home &home, int nVoices, int currentPosition, Tonality *tonality,
-                         IntVarArray fullChordsVoicing, const IntVarArray &tenorMelodicInterval,
-                         const IntVarArray &altoMelodicInterval, const IntVarArray &sopranoMelodicInterval);
+void interrupted_cadence(const Home &home, int currentPosition, Tonality *tonality, IntVarArray fullChordsVoicing,
+                         const IntVarArray &tenorMelodicInterval, const IntVarArray &altoMelodicInterval,
+                         const IntVarArray &sopranoMelodicInterval);
 
 /***********************************************************************************************************************
  *                                                                                                                     *
