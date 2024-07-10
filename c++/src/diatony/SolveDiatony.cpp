@@ -2,6 +2,8 @@
 // Created by Damien Sprockeels on 03/07/2024.
 //
 
+#include <utility>
+
 #include "../../headers/diatony/SolveDiatony.hpp"
 
 /**
@@ -15,10 +17,11 @@
  * @return A vector<FourVoiceTexture*> representing all the solutions found during search. If no solutions are found,
  * returns an empty vector. If the best solution is not found within the time limit, returns all solutions found so far.
  */
-vector<FourVoiceTexture*> solve_diatony_problem(int size, Tonality* tonality, vector<int> chords, vector<int> qualities,
-                                               vector<int> states){
+vector<FourVoiceTexture *>
+solve_diatony_problem(int size, Tonality *tonality, vector<int> chords, vector<int> qualities, vector<int> states) {
     /// create a new problem
-    auto *pb = new FourVoiceTexture(size, tonality, chords, qualities, states);
+    auto pb = new FourVoiceTexture(size, tonality, std::move(chords), std::move(qualities), std::move(states));
+
     /// Search options
     Search::Options opts;
     opts.threads = 1;
@@ -27,7 +30,6 @@ vector<FourVoiceTexture*> solve_diatony_problem(int size, Tonality* tonality, ve
             Search::Cutoff::linear(2*size),
             Search::Cutoff::geometric((4*size)^2, 2));
     opts.nogoods_limit = size * 4 * 4;
-
 
     //DFS<FourVoiceTexture> solver(pb, opts);
     /// Restart based solver
@@ -80,8 +82,43 @@ vector<FourVoiceTexture*> solve_diatony_problem(int size, Tonality* tonality, ve
  */
 FourVoiceTexture* solve_diatony_problem_optimal(int size, Tonality* tonality, vector<int> chords, vector<int> qualities,
                                                 vector<int> states){
-    auto sols = solve_diatony_problem(size, tonality, chords, qualities, states);
+    auto sols = solve_diatony_problem(size, tonality, std::move(chords), std::move(qualities), std::move(states));
     if(sols.empty())
         return nullptr;
     return sols.back();
+}
+
+/**
+ * Finds all solutions close to the optimal solution, with a margin percentage of deviation from the cost vector. That
+ * margin applies to all costs.
+ * @param size the number of chords
+ * @param tonality the tonaity of the piece
+ * @param chords the chord degrees of the progression
+ * @param qualities the qualities of the chords
+ * @param states the states of the chords
+ * @param costs the cost vector of the best solution found without relaxation
+ * @param margin a percentage of "error" that is allowed to find close to optimal solutions
+ * @return a vector of the solutions that are close to the best solution
+ */
+vector<FourVoiceTexture*> find_optimal_solutions_with_margin(int size, Tonality* tonality, vector<int> chords,
+                                                             vector<int> qualities, vector<int> states, vector<int> costs,
+                                                             double margin){
+
+    auto pb = new FourVoiceTexture(size, tonality, chords, qualities, states, costs, margin);
+
+    DFS<FourVoiceTexture> solver(pb);
+    delete pb;
+
+    vector<FourVoiceTexture*> solutions;
+    int n_sols = 0;
+    while(auto next_sol = solver.next()){
+        n_sols++;
+        std::cout << "Solution found (" << n_sols  << ")" << std::endl;
+        solutions.push_back((FourVoiceTexture*) next_sol->copy());
+        std::cout << next_sol->to_string() << std::endl;
+        std::cout << statistics_to_string(solver.statistics()) << std::endl;
+        delete next_sol;
+    }
+    std::cout << n_sols << " solutions found with a margin on costs of " << to_string(margin) << std::endl;
+    return solutions;
 }

@@ -10,10 +10,6 @@
 #include "../headers/aux/MidiFileGeneration.hpp"
 #include "../headers/diatony/SolveDiatony.hpp"
 
-using namespace Gecode;
-using namespace std;
-using namespace smf;
-
 /**
  * Finds solutions to a musical problem
  * Takes 2 arguments:
@@ -35,8 +31,9 @@ int main(int argc, char* argv[]) {
     /// vectors representing the chords and the states
     vector<int> chords = {FIRST_DEGREE, SECOND_DEGREE, FIFTH_DEGREE, FIRST_DEGREE, FOURTH_DEGREE, FIRST_DEGREE, FIFTH_DEGREE, FIRST_DEGREE};
     vector<int> chords_qualities;
-    for(int i = 0; i < chords.size(); i++){
-        chords_qualities.push_back(tonality->get_chord_quality(chords[i]));
+    chords_qualities.reserve(chords.size());
+    for(int chord : chords){
+        chords_qualities.push_back(tonality->get_chord_quality(chord));
     }
     chords_qualities[2] = DOMINANT_SEVENTH_CHORD;
     chords_qualities[6] = DOMINANT_SEVENTH_CHORD;
@@ -57,13 +54,17 @@ int main(int argc, char* argv[]) {
         for(const auto& c : best_sol_costs){
             costs.push_back(c.val());
         }
-        sols = solve_diatony_problem(size, tonality, chords, chords_qualities, states);
+        ///find all optimal solutions (with or without margin)
+        auto all_sols = find_optimal_solutions_with_margin(size, tonality, chords, chords_qualities, states, costs, 0.1);
+        for(auto sol : all_sols){
+            sols.push_back(sol);
+        }
     }
     else{
         sols.push_back(bestSol);
     }
 
-    if(build_midi == "true" && sols.size() > 0){
+    if(build_midi == "true" && !sols.empty()){
         for(int i = 0; i < sols.size(); i++){
             writeSolToMIDIFile(size, "../out/MidiFiles/sol" + to_string(i), sols[i]);
         }

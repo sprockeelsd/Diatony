@@ -292,21 +292,30 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
 }
 
 /**
- * Constructor to find all optimal solutions based on the cost vector for one of them
+ * Constructor to find all optimal solutions (with or without margin) based on the cost vector for one of the best ones.
  * @param s the number of chords in the progression
  * @param *t a pointer to a Tonality object
  * @param chordDegs the degrees of the chord of the chord progression
  * @param chordQuals the qualities of the chord of the chord progression
  * @param chordStas the states of the chord of the chord progression (fundamental, 1st inversion,...)
  * @param costs the cost vector for one of the best solutions, found by solving the optimization problem first
- * @param offSet the offset to add to the melodic cost vector to find close to optimal solutions
+ * @param margin the offset percentage to add to the melodic cost vector to find close to optimal solutions
  */
 FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, vector<int> chordQuals,
-                                   vector<int> chordStas, vector<int> costs, int offSet) :
-                                   FourVoiceTexture(s, t, chordDegs, chordQuals, chordStas) {
-    for(int i = 0; i < costs.size(); i++){
-        rel(*this, costVector[i] == costs[i]);
+                                   vector<int> chordStas, vector<int> costs, double margin) :
+                                   FourVoiceTexture(s, t,chordDegs, chordQuals, chordStas) {
+    double lb_factor = 1.0 - margin;
+    double ub_factor = 1.0 + margin;
+    std::cout << lb_factor << "   " << ub_factor << std::endl;
+    ///todo c'est moche mais comme le dernier cout est négatif faut faire l'inverse sinon bah il y a pas de solutions
+    for(int i = 0; i < costs.size()-1; i++){
+        std::cout << "lower bound = " << floor(costs[i] * lb_factor) << " upper bound = " << ceil(costs[i] * ub_factor) << std::endl;
+        rel(*this, floor(costs[i] * lb_factor) <= costVector[i]);
+        rel(*this, costVector[i] <= ceil(costs[i] * ub_factor));
     }
+    //todo rendre ça beau plz
+    std::cout << "lower bound = " << floor(costs[costs.size()-1] * ub_factor) << " upper bound = " << ceil(costs[costs.size()-1] * lb_factor) << std::endl;
+    rel(*this, costVector[costs.size()-1] <= ceil(costs[costs.size()-1] * lb_factor));
 }
 
 /**
