@@ -16,5 +16,5 @@ The headers and src folders are organised in three different folders:
 ## Measurements
 - the **efficiency_measurment** folder contains all the scripts used to perform measurements on the model.
 
-More details on the model can be found in **to be published** and the mathematical equations can be found in file **to be added**.
+More details and the complete model can be found in [the publication](https://dial.uclouvain.be/pr/boreal/object/boreal%3A287476/datastream/PDF_01/view).
 
