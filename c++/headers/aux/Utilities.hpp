@@ -151,15 +151,25 @@ enum voices{
 
 const vector<std::string> voiceNames = {"Bass", "Tenor", "Alto", "Soprano"};
 
-/** scale degrees */
+/** scale degrees */ //todo maybe rename the last ones better + check that this does not break anything but it shouldn't
 enum degrees{
-    FIRST_DEGREE,       //0
-    SECOND_DEGREE,      //1
-    THIRD_DEGREE,       //2
-    FOURTH_DEGREE,      //3
-    FIFTH_DEGREE,       //4
-    SIXTH_DEGREE,       //5
-    SEVENTH_DEGREE      //6
+    FIRST_DEGREE,               //0
+    SECOND_DEGREE,              //1
+    THIRD_DEGREE,               //2
+    FOURTH_DEGREE,              //3
+    FIFTH_DEGREE,               //4
+    SIXTH_DEGREE,               //5
+    SEVENTH_DEGREE,             //6
+    FIFTH_DEGREE_APPOGIATURA,   //7
+    FIVE_OF_TWO,                //8
+    FIVE_OF_THREE,              //9
+    FIVE_OF_FOUR,               //10
+    FIVE_OF_FIVE,               //11
+    FIVE_OF_SIX,                //12
+    FIVE_OF_SEVEN,              //13
+    SEVEN_DIMINISHED,           //14
+    FLAT_TWO,                   //15
+    AUGMENTED_SIXTH,            //16
 };
 
 const vector<std::string> degreeNames = {"I", "II", "III", "IV",

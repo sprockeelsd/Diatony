@@ -54,14 +54,6 @@ protected:
 
     IntVarArray                 allMelodicIntervals;
 
-    /// Squared melodic intervals
-    IntVarArray                 squaredBassMelodicIntervals;
-    IntVarArray                 squaredTenorMelodicIntervals;
-    IntVarArray                 squaredAltoMelodicIntervals;
-    IntVarArray                 squaredSopranoMelodicIntervals;
-
-    IntVarArray                 allSquaredMelodicIntervals;
-
     /// Harmonic intervals (always positive)
     IntVarArray                 bassTenorHarmonicIntervals;
     IntVarArray                 bassAltoHarmonicIntervals;

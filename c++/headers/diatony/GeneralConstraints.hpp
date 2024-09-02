@@ -47,23 +47,6 @@ void link_melodic_arrays(const Home &home, int nVoices, int size,
                          IntVarArray sopranoMelodicIntervals);
 
 /**
- * Link the absolute melodic intervals arrays to the corresponding melodic interval arrays
- * @param home the instance of the problem
- * @param bassMelodicIntervals the melodic intervals of the bass
- * @param tenorMelodicIntervals the melodic intervals of the tenor
- * @param altoMelodicIntervals the melodic intervals of the alto
- * @param sopranoMelodicIntervals the melodic intervals of the soprano
- * @param squaredBassMelodicIntervals the squared melodic intervals of the bass
- * @param squaredTenorMelodicIntervals the squared melodic intervals of the tenor
- * @param squaredAltoMelodicIntervals the squared melodic intervals of the alto
- * @param squaredSopranoMelodicIntervals the squared melodic intervals of the soprano
- */
-void link_squared_melodic_arrays(const Home &home,  IntVarArray bassMelodicIntervals,        IntVarArray tenorMelodicIntervals,
-                                                    IntVarArray altoMelodicIntervals,        IntVarArray sopranoMelodicIntervals,
-                                                    IntVarArray squaredBassMelodicIntervals, IntVarArray squaredTenorMelodicIntervals,
-                                                    IntVarArray squaredAltoMelodicIntervals, IntVarArray squaredSopranoMelodicIntervals);
-
-/**
  * Link the harmonic intervals arrays to the fullChordsVoicing array for each voice
  * @param home the instance of the problem
  * @param nVoices the number of voices in the chords

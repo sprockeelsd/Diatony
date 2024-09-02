@@ -51,13 +51,6 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     sopranoMelodicIntervals                         = IntVarArray(*this, size - 1, -PERFECT_OCTAVE, PERFECT_OCTAVE);
 
     allMelodicIntervals                             = IntVarArray(*this, nOfVoices* (size - 1), -PERFECT_OCTAVE, PERFECT_OCTAVE);
-    allSquaredMelodicIntervals                      = IntVarArray(*this, nOfVoices * (size - 1), 0, PERFECT_OCTAVE * PERFECT_OCTAVE);
-
-    /// variable arrays for absolute melodic intervals for each voice
-    squaredBassMelodicIntervals                     = IntVarArray(*this, size - 1, 0, PERFECT_OCTAVE * PERFECT_OCTAVE);
-    squaredTenorMelodicIntervals                    = IntVarArray(*this, size - 1, 0, PERFECT_OCTAVE * PERFECT_OCTAVE);
-    squaredAltoMelodicIntervals                     = IntVarArray(*this, size - 1, 0, PERFECT_OCTAVE * PERFECT_OCTAVE);
-    squaredSopranoMelodicIntervals                  = IntVarArray(*this, size - 1, 0, PERFECT_OCTAVE * PERFECT_OCTAVE);
 
     /// variable arrays for harmonic intervals between adjacent voices (only positive because there is no direction)
     bassTenorHarmonicIntervals                      = IntVarArray(*this, size, 0, PERFECT_OCTAVE + PERFECT_FIFTH);
@@ -103,17 +96,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
         rel(*this, expr(*this, allMelodicIntervals[nOfVoices * i + TENOR]           == tenorMelodicIntervals[i]));
         rel(*this, expr(*this, allMelodicIntervals[nOfVoices * i + ALTO]            == altoMelodicIntervals[i]));
         rel(*this, expr(*this, allMelodicIntervals[nOfVoices * i + SOPRANO]         == sopranoMelodicIntervals[i]));
-
-        rel(*this, expr(*this, allSquaredMelodicIntervals[nOfVoices * i + BASS]     == squaredBassMelodicIntervals[i]));
-        rel(*this, expr(*this, allSquaredMelodicIntervals[nOfVoices * i + TENOR]    == squaredTenorMelodicIntervals[i]));
-        rel(*this, expr(*this, allSquaredMelodicIntervals[nOfVoices * i + ALTO]     == squaredAltoMelodicIntervals[i]));
-        rel(*this, expr(*this, allSquaredMelodicIntervals[nOfVoices * i + SOPRANO]  == squaredSopranoMelodicIntervals[i]));
     }
-
-    link_squared_melodic_arrays(*this,
-                                bassMelodicIntervals, tenorMelodicIntervals, altoMelodicIntervals, sopranoMelodicIntervals,
-                                squaredBassMelodicIntervals, squaredTenorMelodicIntervals, squaredAltoMelodicIntervals,
-                                squaredSopranoMelodicIntervals);
 
     link_harmonic_arrays(*this, nOfVoices, size, fullChordsVoicing,
                          bassTenorHarmonicIntervals, bassAltoHarmonicIntervals, bassSopranoHarmonicIntervals,
@@ -353,13 +336,6 @@ FourVoiceTexture::FourVoiceTexture(FourVoiceTexture& s): IntLexMinimizeSpace(s){
     altoMelodicIntervals.update(*this, s.altoMelodicIntervals);
     sopranoMelodicIntervals.update(*this, s.sopranoMelodicIntervals);
 
-    squaredBassMelodicIntervals.update(*this, s.squaredBassMelodicIntervals);
-    squaredTenorMelodicIntervals.update(*this, s.squaredTenorMelodicIntervals);
-    squaredAltoMelodicIntervals.update(*this, s.squaredAltoMelodicIntervals);
-    squaredSopranoMelodicIntervals.update(*this, s.squaredSopranoMelodicIntervals);
-    allMelodicIntervals.update(*this, s.allMelodicIntervals);
-    allSquaredMelodicIntervals.update(*this, s.allSquaredMelodicIntervals);
-
     bassTenorHarmonicIntervals.update(*this, s.bassTenorHarmonicIntervals);
     tenorAltoHarmonicIntervals.update(*this, s.tenorAltoHarmonicIntervals);
     altoSopranoHarmonicIntervals.update(*this, s.altoSopranoHarmonicIntervals);
@@ -465,12 +441,6 @@ string FourVoiceTexture::to_string(){
     message += "AltoMelodicIntervals = \t\t" + intVarArray_to_string(altoMelodicIntervals) + "\n";
     message += "SopranoMelodicIntervals = \t" + intVarArray_to_string(sopranoMelodicIntervals) + "\n\n";
     message += "AllMelodicIntervals = \t\t" + intVarArray_to_string(allMelodicIntervals) + "\n\n";
-
-    message += "squaredBassMelodicIntervals = \t\t" + intVarArray_to_string(squaredBassMelodicIntervals) + "\n";
-    message += "squaredTenorMelodicIntervals = \t\t" + intVarArray_to_string(squaredTenorMelodicIntervals) + "\n";
-    message += "squaredAltoMelodicIntervals = \t\t" + intVarArray_to_string(squaredAltoMelodicIntervals) + "\n";
-    message += "squaredSopranoMelodicIntervals = \t" + intVarArray_to_string(squaredSopranoMelodicIntervals) + "\n\n";
-    message += "allSquaredMelodicIntervals = \t\t" + intVarArray_to_string(allSquaredMelodicIntervals) + "\n\n";
 
     message += "🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵"
                "🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵\n\n";
