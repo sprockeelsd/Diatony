@@ -166,14 +166,15 @@ enum degrees{
     FIVE_OF_FOUR,               //10
     FIVE_OF_FIVE,               //11
     FIVE_OF_SIX,                //12
-    FIVE_OF_SEVEN,              //13
-    SEVEN_DIMINISHED,           //14
-    FLAT_TWO,                   //15
-    AUGMENTED_SIXTH,            //16
+    SEVEN_DIMINISHED,           //13
+    FLAT_TWO,                   //14
+    AUGMENTED_SIXTH,            //15
 };
 
-const vector<std::string> degreeNames = {"I", "II", "III", "IV",
-                                         "V", "VI", "VII"};
+const vector<std::string> degreeNames = {"I", "II", "III", "IV", "V", "VI", "VII",
+                                         "Vda",
+                                         "V/II", "V/III", "V/IV", "V/V", "V/VI",
+                                         "VIIdim","bII", "6te_aug"};
 
 /** Intervals */
 // "classic" intervals
