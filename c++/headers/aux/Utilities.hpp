@@ -176,6 +176,14 @@ const vector<std::string> degreeNames = {"I", "II", "III", "IV", "V", "VI", "VII
                                          "V/II", "V/III", "V/IV", "V/V", "V/VI",
                                          "VIIdim","bII", "6te_aug"};
 
+enum cadences{
+    PERFECT_CADENCE,    //0
+    PLAGAL_CADENCE,     //1
+    IMPERFECT_CADENCE,  //2
+    HALF_CADENCE,       //3
+    DECEPTIVE_CADENCE   //4
+};
+
 /** Intervals */
 // "classic" intervals
 enum intervals{
