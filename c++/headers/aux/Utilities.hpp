@@ -179,7 +179,6 @@ const vector<std::string> degreeNames = {"I", "II", "III", "IV", "V", "VI", "VII
 enum cadences{
     PERFECT_CADENCE,    //0
     PLAGAL_CADENCE,     //1
-    IMPERFECT_CADENCE,  //2
     HALF_CADENCE,       //3
     DECEPTIVE_CADENCE   //4
 };
