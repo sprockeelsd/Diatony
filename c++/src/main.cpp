@@ -30,7 +30,7 @@ int main(int argc, char* argv[]) {
 
     /// vectors representing the chords and the states
     vector<int> chords = {FIRST_DEGREE, SECOND_DEGREE, FIVE_OF_FOUR, FOURTH_DEGREE, FIRST_DEGREE, FIFTH_DEGREE,
-                          FIVE_OF_SIX, SIXTH_DEGREE, FIFTH_DEGREE, FIRST_DEGREE};
+                          FIVE_OF_SIX, FIVE_OF_TWO, FIVE_OF_FIVE, FIFTH_DEGREE, FIRST_DEGREE};
     vector<int> chords_qualities;
     chords_qualities.reserve(chords.size());
     for(int & chord : chords){
@@ -62,7 +62,7 @@ int main(int argc, char* argv[]) {
     }
     chords_qualities[8] = DOMINANT_SEVENTH_CHORD;
     vector<int> states = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, SECOND_INVERSION, FUNDAMENTAL_STATE,
-                          FUNDAMENTAL_STATE,FUNDAMENTAL_STATE,FUNDAMENTAL_STATE,FUNDAMENTAL_STATE};
+                          FUNDAMENTAL_STATE,FUNDAMENTAL_STATE,FUNDAMENTAL_STATE,FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
 
     int size = chords.size();
 

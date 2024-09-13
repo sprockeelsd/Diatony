@@ -70,6 +70,7 @@ void chord_note_occurrence_fundamental_state(Home home, int nVoices, int pos, ve
     auto third = (root + get_interval_from_root(quality[pos],THIRD)) % PERFECT_OCTAVE;
     auto fifth = (root + get_interval_from_root(quality[pos],FIFTH)) % PERFECT_OCTAVE;
 
+
     /// if the chord is a diminished seventh degree
     if(degree[pos] == SEVENTH_DEGREE && quality[pos] == DIMINISHED_CHORD){
         /// If there are 4 different notes, then the third must be doubled. Otherwise any note can be doubled as
@@ -85,8 +86,7 @@ void chord_note_occurrence_fundamental_state(Home home, int nVoices, int pos, ve
         count(home, currentChord, IntSet(get_all_given_note(fifth)), IRT_GQ,1);
     }
     /// special rule for sixth degree because in the case of an interrupted cadence, the third of the chord is doubled instead of the fundamental
-    else
-    if(degree[pos] == SIXTH_DEGREE && pos > 0 && degree[pos-1] == FIFTH_DEGREE){
+    else if(degree[pos] == SIXTH_DEGREE && pos > 0 && degree[pos-1] == FIFTH_DEGREE){
         /// double the third of the chord
         count(home, currentChord, IntSet(get_all_given_note(root)), IRT_EQ,1);
         count(home, currentChord, IntSet(get_all_given_note(third)), IRT_EQ,2);
@@ -120,10 +120,19 @@ void chord_note_occurrence_fundamental_state(Home home, int nVoices, int pos, ve
         rel(home, isIncomplete, BOT_EQV, expr(home, nOfBassNotes == 3), true);
     }
     else{
-        /// each note is present at least once, the bass is doubled
-        count(home, currentChord, IntSet(get_all_given_note(root)), IRT_EQ,2);
+        /// each note is present at least once, the bass is present at least once, the third exactly once and the fifth at most once
+        count(home, currentChord, IntSet(get_all_given_note(root)), IRT_GQ,1);
         count(home, currentChord, IntSet(get_all_given_note(third)), IRT_EQ,1);
-        count(home, currentChord, IntSet(get_all_given_note(fifth)), IRT_EQ, 1);
+        count(home, currentChord, IntSet(get_all_given_note(fifth)), IRT_LQ, 1);
+        if(quality[pos] >= DOMINANT_SEVENTH_CHORD){
+            auto seventh = (root + get_interval_from_root(quality[pos],SEVENTH)) % PERFECT_OCTAVE;
+            /// the seventh must be present
+            count(home, currentChord, IntSet(get_all_given_note(seventh)), IRT_EQ, 1);
+        }
+        else{
+            /// the fifth must be present exactly once
+            count(home, currentChord, IntSet(get_all_given_note(fifth)), IRT_EQ, 1);
+        }
     }
 }
 
@@ -156,8 +165,7 @@ void chord_note_occurrence_first_inversion(Home home, int size, int nVoices, int
 
     /// if the third is a tonal note, then double it
     set<int> tonalNotes = tonality->get_tonal_notes();
-    if(tonalNotes.find(third) !=
-       tonalNotes.end()) { /// double the third and other notes should be present at least once
+    if(tonalNotes.find(third) != tonalNotes.end()) { /// double the third and other notes should be present at least once
         count(home, currentChord, IntSet(get_all_given_note(third)), IRT_EQ, 2);
     }
     else if(degrees[currentPos] == SEVENTH_DEGREE && qualities[currentPos] == DIMINISHED_CHORD) {
