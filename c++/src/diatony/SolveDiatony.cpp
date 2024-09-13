@@ -21,7 +21,6 @@ vector<FourVoiceTexture *>
 solve_diatony_problem(int size, Tonality *tonality, vector<int> chords, vector<int> qualities, vector<int> states) {
     /// create a new problem
     auto pb = new FourVoiceTexture(size, tonality, std::move(chords), std::move(qualities), std::move(states));
-
     /// Search options
     Search::Options opts;
     opts.threads = 1;
