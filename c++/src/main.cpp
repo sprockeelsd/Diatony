@@ -29,38 +29,13 @@ int main(int argc, char* argv[]) {
     std::string build_midi = argv[2];
 
     /// vectors representing the chords and the states
-    vector<int> chords = {FIRST_DEGREE, SECOND_DEGREE, FIVE_OF_FOUR, FOURTH_DEGREE, FIRST_DEGREE, FIFTH_DEGREE,
-                          FIVE_OF_SIX, FIVE_OF_TWO, FIVE_OF_FIVE, FIFTH_DEGREE, FIRST_DEGREE};
+    vector<int> chords = {FIVE_OF_TWO, FIVE_OF_FIVE, FIVE_OF_SIX, FIVE_OF_THREE, FIVE_OF_FOUR, FLAT_TWO, FIFTH_DEGREE, FIRST_DEGREE};
+
     vector<int> chords_qualities;
     chords_qualities.reserve(chords.size());
-    for(int & chord : chords){
-        switch (chord){//todo make it a function + add other chromatic chords (+ add Vda and check if we need to call this from ChordGenerator as well)
-            case FIVE_OF_TWO:                /// if the chord is V/II, it has to be a dominant 7 by default (can be overriden)
-                chord = SIXTH_DEGREE;
-                chords_qualities.push_back(DOMINANT_SEVENTH_CHORD);
-                break;
-            case FIVE_OF_THREE:              /// if the chord is V/III, it has to be a dominant 7 by default (can be overriden)
-                chord = SEVENTH_DEGREE;
-                chords_qualities.push_back(DOMINANT_SEVENTH_CHORD);
-                break;
-            case FIVE_OF_FOUR:              /// if the chord is V/IV, it has to be a dominant 7 by default (can be overriden)
-                chord = FIRST_DEGREE;
-                chords_qualities.push_back(DOMINANT_SEVENTH_CHORD);
-                break;
-            case FIVE_OF_FIVE:              /// if the chord is V/V, it has to be a dominant 7 by default (can be overriden)
-                chord = SECOND_DEGREE;
-                chords_qualities.push_back(DOMINANT_SEVENTH_CHORD);
-                break;
-            case FIVE_OF_SIX:              /// if the chord is V/VI, it has to be a dominant 7 by default (can be overriden)
-                chord = THIRD_DEGREE;
-                chords_qualities.push_back(DOMINANT_SEVENTH_CHORD);
-                break;
-            default:                       ///default case: diatonic chord, so we just use the tonality's default quality
-                chords_qualities.push_back(tonality->get_chord_quality(chord));
-                break;
-        }
-    }
-    chords_qualities[8] = DOMINANT_SEVENTH_CHORD;
+    for(int chord : chords)
+        chords_qualities.push_back(tonality->get_chord_quality(chord));
+
     vector<int> states = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, SECOND_INVERSION, FUNDAMENTAL_STATE,
                           FUNDAMENTAL_STATE,FUNDAMENTAL_STATE,FUNDAMENTAL_STATE,FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
 

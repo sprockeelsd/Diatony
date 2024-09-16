@@ -132,7 +132,7 @@ string Tonality::to_string(){
     t += "Scale: " + int_vector_to_string(scale) + "\n";
 
     t+= "Default chord qualities: ";
-    for(int i = FIRST_DEGREE; i <= SEVENTH_DEGREE; i++)
+    for(int i = FIRST_DEGREE; i <= FLAT_TWO; i++)
         t += std::to_string(chord_qualities[i]) + "(" + chordQualityNames[chord_qualities[i]] + ") ";
     t += "\n";
 

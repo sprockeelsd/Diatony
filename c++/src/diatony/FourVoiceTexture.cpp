@@ -140,6 +140,8 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     |                                                                                                                  |
     -------------------------------------------------------------------------------------------------------------------*/
 
+    ///todo check the constraint for Vda again with the new representation where it is its own chord!
+
     /// restrain the domain of the voices to their range + state that bass <= tenor <= alto <= soprano
     restrain_voices_domains(*this, nOfVoices, size,
                             {BASS_MIN, TENOR_MIN, ALTO_MIN, SOPRANO_MIN},

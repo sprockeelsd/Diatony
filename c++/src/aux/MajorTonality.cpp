@@ -10,13 +10,22 @@
  */
 MajorTonality::MajorTonality(int t) : Tonality(t, MAJOR_MODE, MAJOR_SCALE){ // calls super() constructor
     /// set the default chord qualities for each degree
-    chord_qualities[FIRST_DEGREE]   = MAJOR_CHORD;
-    chord_qualities[SECOND_DEGREE]  = MINOR_CHORD;
-    chord_qualities[THIRD_DEGREE]   = MINOR_CHORD;
-    chord_qualities[FOURTH_DEGREE]  = MAJOR_CHORD;
-    chord_qualities[FIFTH_DEGREE]   = MAJOR_CHORD;
-    chord_qualities[SIXTH_DEGREE]   = MINOR_CHORD;
-    chord_qualities[SEVENTH_DEGREE] = DIMINISHED_CHORD;
+    chord_qualities[FIRST_DEGREE]               = MAJOR_CHORD;
+    chord_qualities[SECOND_DEGREE]              = MINOR_CHORD;
+    chord_qualities[THIRD_DEGREE]               = MINOR_CHORD;
+    chord_qualities[FOURTH_DEGREE]              = MAJOR_CHORD;
+    chord_qualities[FIFTH_DEGREE]               = MAJOR_CHORD;
+    chord_qualities[SIXTH_DEGREE]               = MINOR_CHORD;
+    chord_qualities[SEVENTH_DEGREE]             = DIMINISHED_CHORD;
+    chord_qualities[FIFTH_DEGREE_APPOGIATURA]   = MAJOR_CHORD;
+    /// chromatic chords
+    chord_qualities[FIVE_OF_TWO]                = DOMINANT_SEVENTH_CHORD;
+    chord_qualities[FIVE_OF_THREE]              = DOMINANT_SEVENTH_CHORD;
+    chord_qualities[FIVE_OF_FOUR]               = DOMINANT_SEVENTH_CHORD;
+    chord_qualities[FIVE_OF_FIVE]               = DOMINANT_SEVENTH_CHORD;
+    chord_qualities[FIVE_OF_SIX]                = DOMINANT_SEVENTH_CHORD;
+    chord_qualities[SEVEN_DIMINISHED]           = DIMINISHED_SEVENTH_CHORD;
+    chord_qualities[FLAT_TWO]                   = MAJOR_CHORD;
 
     for (int i = 0; i < chord_qualities.size(); i++){
         //IntSet set(get_all_notes_from_chord(degrees_notes[i], chord_qualities[i]));
