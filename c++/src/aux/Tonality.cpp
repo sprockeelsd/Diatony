@@ -21,15 +21,25 @@ Tonality::Tonality(int t, int m, vector<int> s) {
     mode = m;
     scale = s;
     name = noteNames[tonic] + " " + modeNames[mode];
-    /// The rest of the attributes are set by the child classes
 
-    degrees_notes[FIRST_DEGREE]   = t;
-    degrees_notes[SECOND_DEGREE]  = (t += scale[FIRST_DEGREE]) % PERFECT_OCTAVE;
-    degrees_notes[THIRD_DEGREE]   = (t += scale[SECOND_DEGREE]) % PERFECT_OCTAVE;
-    degrees_notes[FOURTH_DEGREE]  = (t += scale[THIRD_DEGREE]) % PERFECT_OCTAVE;
-    degrees_notes[FIFTH_DEGREE]   = (t += scale[FOURTH_DEGREE]) % PERFECT_OCTAVE;
-    degrees_notes[SIXTH_DEGREE]   = (t += scale[FIFTH_DEGREE]) % PERFECT_OCTAVE;
-    degrees_notes[SEVENTH_DEGREE] = (t += scale[SIXTH_DEGREE]) % PERFECT_OCTAVE;
+    int note = tonic;
+    degrees_notes[FIRST_DEGREE]                 = note;
+    degrees_notes[FIVE_OF_FOUR]                 = note;
+    degrees_notes[FIFTH_DEGREE_APPOGIATURA]     = note;
+    degrees_notes[FLAT_TWO]                     = (note + MINOR_SECOND)              % PERFECT_OCTAVE;
+    degrees_notes[SECOND_DEGREE]                = (note += scale[FIRST_DEGREE])      % PERFECT_OCTAVE;
+    degrees_notes[FIVE_OF_FIVE]                 = note;
+    degrees_notes[THIRD_DEGREE]                 = (note += scale[SECOND_DEGREE])     % PERFECT_OCTAVE;
+    degrees_notes[FIVE_OF_SIX]                  = note;
+    degrees_notes[FOURTH_DEGREE]                = (note += scale[THIRD_DEGREE])      % PERFECT_OCTAVE;
+    degrees_notes[FIFTH_DEGREE]                 = (note += scale[FOURTH_DEGREE])     % PERFECT_OCTAVE;
+    degrees_notes[SIXTH_DEGREE]                 = (note += scale[FIFTH_DEGREE])      % PERFECT_OCTAVE;
+    degrees_notes[FIVE_OF_TWO]                  = note;
+    degrees_notes[SEVENTH_DEGREE]               = (note += scale[SIXTH_DEGREE])      % PERFECT_OCTAVE;
+    degrees_notes[FIVE_OF_THREE]                = note;
+    degrees_notes[SEVEN_DIMINISHED]             = note;
+    // todo add aug6th
+
 
     tonal_notes = {degrees_notes[FIRST_DEGREE], degrees_notes[FOURTH_DEGREE], degrees_notes[FIFTH_DEGREE]};
     /// Modal notes are the notes that change in major or minor scale (3,6,7 degrees). For simplicity for constraints,
@@ -38,6 +48,7 @@ Tonality::Tonality(int t, int m, vector<int> s) {
         if(tonal_notes.find(i) == tonal_notes.end())
             modal_notes.insert(i);
     }
+    /// The rest of the attributes are set by the child classes
 }
 
 string Tonality::get_name() const {
@@ -126,7 +137,7 @@ string Tonality::to_string(){
     t += "\n";
 
     t+= "Degree notes: ";
-    for(int i = FIRST_DEGREE; i <= SEVENTH_DEGREE; i++)
+    for(int i = FIRST_DEGREE; i <= FLAT_TWO; i++)
         t += std::to_string(degrees_notes[i]) + "(" + noteNames[degrees_notes[i]] + ") ";
     t += "\n";
 

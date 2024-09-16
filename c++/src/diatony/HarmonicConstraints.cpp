@@ -25,7 +25,6 @@
  * @param currentChord the array containing a chord in the form [bass, alto, tenor, soprano]
  */
 void set_to_chord(const Home& home, Tonality* tonality, int degree, int quality, const IntVarArgs& currentChord){
-
     IntSet set(get_all_notes_from_chord(tonality->get_degree_note(degree),
                                         chordQualitiesIntervals.at(quality)));
     //std::cout << "set: " << set << std::endl;
