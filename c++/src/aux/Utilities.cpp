@@ -166,7 +166,7 @@ string intVarArray_to_string(IntVarArray vars){
     for(int i = 0; i < s; i++){
         res += intVar_to_string(vars[i]);
         if(i != s - 1)
-            res += ", ";
+            res += ",\t";
     }
     res += "}";
     return res;
