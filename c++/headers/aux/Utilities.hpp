@@ -254,7 +254,7 @@ enum chordStates{
     THIRD_INVERSION     //3
 };
 
-const vector<std::string> stateNames = {"Fund.", "1st inv.", "2nd inv.", "3rd inv."};
+const vector<std::string> stateNames = {"Fund", "1st inv", "2nd inv", "3rd inv"};
 
 enum chordNotes{
     ROOT,       //0
