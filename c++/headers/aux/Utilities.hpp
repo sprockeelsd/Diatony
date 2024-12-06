@@ -166,15 +166,16 @@ enum degrees{
     FIVE_OF_FOUR,               //10
     FIVE_OF_FIVE,               //11
     FIVE_OF_SIX,                //12
-    SEVEN_DIMINISHED,           //13
-    FLAT_TWO,                   //14
-    AUGMENTED_SIXTH,            //15
+    FIVE_OF_SEVEN,              //13
+    SEVEN_DIMINISHED,           //14
+    FLAT_TWO,                   //15
+    AUGMENTED_SIXTH,            //16
 };
 
 const vector<std::string> degreeNames = {"I", "II", "III", "IV", "V", "VI", "VII",
                                          "Vda",
                                          "V/II", "V/III", "V/IV", "V/V", "V/VI",
-                                         "VIIdim","bII", "6te_aug"};
+                                         "V/VII","VIIdim","bII", "6te_aug"};
 
 enum cadences{
     PERFECT_CADENCE,    //0
@@ -216,12 +217,13 @@ enum chordTypes{
     MAJOR_SEVENTH_CHORD,        //5
     MINOR_SEVENTH_CHORD,        //6
     DIMINISHED_SEVENTH_CHORD,   //7
-    MINOR_MAJOR_SEVENTH_CHORD,  //8
+    HALF_DIMINISHED_CHORD,      //8
+    MINOR_MAJOR_SEVENTH_CHORD,  //9
 };
 
 const vector<std::string> chordQualityNames = {"Major", "Minor", "Diminished", "Augmented", "Dominant seventh",
                                                "Major seventh", "Minor seventh", "Diminished seventh",
-                                               "Minor major seventh"};
+                                               "Half diminished chord", "Minor major seventh"};
 
 /// Types of chords represented by the intervals between their notes in root position up to an octave
 const vector<int> MAJOR_CHORD_INTERVALS =               {MAJOR_THIRD, MINOR_THIRD, PERFECT_FOURTH};
@@ -232,6 +234,7 @@ const vector<int> DOMINANT_SEVENTH_CHORD_INTERVALS =    {MAJOR_THIRD, MINOR_THIR
 const vector<int> MAJOR_SEVENTH_CHORD_INTERVALS =       {MAJOR_THIRD, MINOR_THIRD, MAJOR_THIRD, MINOR_SECOND};
 const vector<int> MINOR_SEVENTH_CHORD_INTERVALS =       {MINOR_THIRD, MAJOR_THIRD, MINOR_THIRD, MAJOR_SECOND};
 const vector<int> DIMINISHED_SEVENTH_CHORD_INTERVALS =  {MINOR_THIRD, MINOR_THIRD, MINOR_THIRD, MINOR_THIRD};
+const vector<int> HALF_DIMINISHED_CHORD_INTERVALS =     {MINOR_THIRD, MINOR_THIRD, MAJOR_THIRD, MINOR_SECOND};
 const vector<int> MINOR_MAJOR_SEVENTH_CHORD_INTERVALS = {MINOR_THIRD, MAJOR_THIRD, MAJOR_THIRD, MAJOR_SECOND};
 
 const map<int, vector<int>> chordQualitiesIntervals = {
@@ -243,6 +246,7 @@ const map<int, vector<int>> chordQualitiesIntervals = {
         {MAJOR_SEVENTH_CHORD,       MAJOR_SEVENTH_CHORD_INTERVALS},
         {MINOR_SEVENTH_CHORD,       MINOR_SEVENTH_CHORD_INTERVALS},
         {DIMINISHED_SEVENTH_CHORD,  DIMINISHED_SEVENTH_CHORD_INTERVALS},
+        {HALF_DIMINISHED_CHORD,     HALF_DIMINISHED_CHORD_INTERVALS},
         {MINOR_MAJOR_SEVENTH_CHORD, MINOR_MAJOR_SEVENTH_CHORD_INTERVALS}
 };
 
