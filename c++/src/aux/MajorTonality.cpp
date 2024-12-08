@@ -24,8 +24,8 @@ MajorTonality::MajorTonality(int t) : Tonality(t, MAJOR_MODE, MAJOR_SCALE){ // c
     chord_qualities[FIVE_OF_FOUR]               = DOMINANT_SEVENTH_CHORD;
     chord_qualities[FIVE_OF_FIVE]               = DOMINANT_SEVENTH_CHORD;
     chord_qualities[FIVE_OF_SIX]                = DOMINANT_SEVENTH_CHORD;
-    chord_qualities[SEVEN_DIMINISHED]           = DIMINISHED_SEVENTH_CHORD;
     chord_qualities[FLAT_TWO]                   = MAJOR_CHORD;
+    chord_qualities[AUGMENTED_SIXTH]            = AUGMENTED_SIXTH_CHORD;
 
     for (int i = 0; i < chord_qualities.size(); i++){
         //IntSet set(get_all_notes_from_chord(degrees_notes[i], chord_qualities[i]));

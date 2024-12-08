@@ -37,9 +37,7 @@ Tonality::Tonality(int t, int m, vector<int> s) {
     degrees_notes[FIVE_OF_TWO]                  = note;
     degrees_notes[SEVENTH_DEGREE]               = (note += scale[SIXTH_DEGREE])      % PERFECT_OCTAVE;
     degrees_notes[FIVE_OF_THREE]                = note;
-    degrees_notes[SEVEN_DIMINISHED]             = note;
     degrees_notes[AUGMENTED_SIXTH]              = tonic + MINOR_SIXTH                % PERFECT_OCTAVE;
-    // todo add aug6th
 
 
     tonal_notes = {degrees_notes[FIRST_DEGREE], degrees_notes[FOURTH_DEGREE], degrees_notes[FIFTH_DEGREE]};
