@@ -167,9 +167,8 @@ enum degrees{
     FIVE_OF_FIVE,               //11
     FIVE_OF_SIX,                //12
     FIVE_OF_SEVEN,              //13
-    SEVEN_DIMINISHED,           //14
-    FLAT_TWO,                   //15
-    AUGMENTED_SIXTH,            //16
+    FLAT_TWO,                   //14
+    AUGMENTED_SIXTH,            //15
 };
 
 const vector<std::string> degreeNames = {"I", "II", "III", "IV", "V", "VI", "VII",
