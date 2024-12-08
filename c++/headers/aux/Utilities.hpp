@@ -219,6 +219,7 @@ enum chordTypes{
     DIMINISHED_SEVENTH_CHORD,   //7
     HALF_DIMINISHED_CHORD,      //8
     MINOR_MAJOR_SEVENTH_CHORD,  //9
+    AUGMENTED_SIXTH_CHORD,      //10
 };
 
 const vector<std::string> chordQualityNames = {"Major", "Minor", "Diminished", "Augmented", "Dominant seventh",
