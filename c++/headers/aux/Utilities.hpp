@@ -174,7 +174,7 @@ enum degrees{
 const vector<std::string> degreeNames = {"I", "II", "III", "IV", "V", "VI", "VII",
                                          "Vda",
                                          "V/II", "V/III", "V/IV", "V/V", "V/VI",
-                                         "V/VII","VIIdim","bII", "6te_aug"};
+                                         "V/VII","bII", "6te_aug"};
 
 enum cadences{
     PERFECT_CADENCE,    //0
