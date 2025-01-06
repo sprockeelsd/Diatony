@@ -203,6 +203,7 @@ enum intervals{
 
 // augmented/diminished intervals
 const int AUGMENTED_SECOND = 3;
+const int DIMINISHED_THIRD = 2;
 const int AUGMENTED_FOURTH = TRITONE;
 const int DIMINISHED_FIFTH = TRITONE;
 
@@ -223,7 +224,7 @@ enum chordTypes{
 
 const vector<std::string> chordQualityNames = {"Major", "Minor", "Diminished", "Augmented", "Dominant seventh",
                                                "Major seventh", "Minor seventh", "Diminished seventh",
-                                               "Half diminished chord", "Minor major seventh"};
+                                               "Half diminished chord", "Minor major seventh", "Augmented sixth"};
 
 /// Types of chords represented by the intervals between their notes in root position up to an octave
 const vector<int> MAJOR_CHORD_INTERVALS =               {MAJOR_THIRD, MINOR_THIRD, PERFECT_FOURTH};
@@ -236,6 +237,8 @@ const vector<int> MINOR_SEVENTH_CHORD_INTERVALS =       {MINOR_THIRD, MAJOR_THIR
 const vector<int> DIMINISHED_SEVENTH_CHORD_INTERVALS =  {MINOR_THIRD, MINOR_THIRD, MINOR_THIRD, MINOR_THIRD};
 const vector<int> HALF_DIMINISHED_CHORD_INTERVALS =     {MINOR_THIRD, MINOR_THIRD, MAJOR_THIRD, MINOR_SECOND};
 const vector<int> MINOR_MAJOR_SEVENTH_CHORD_INTERVALS = {MINOR_THIRD, MAJOR_THIRD, MAJOR_THIRD, MAJOR_SECOND};
+/// There are three types of augmented sixth chords: Italian, French and German. For now, only italian is implemented
+const vector<int> AUGMENTED_SIXTH_CHORD_INTERVALS =     {MAJOR_THIRD, AUGMENTED_FOURTH, DIMINISHED_THIRD};
 
 const map<int, vector<int>> chordQualitiesIntervals = {
         {MAJOR_CHORD,               MAJOR_CHORD_INTERVALS},
@@ -247,7 +250,8 @@ const map<int, vector<int>> chordQualitiesIntervals = {
         {MINOR_SEVENTH_CHORD,       MINOR_SEVENTH_CHORD_INTERVALS},
         {DIMINISHED_SEVENTH_CHORD,  DIMINISHED_SEVENTH_CHORD_INTERVALS},
         {HALF_DIMINISHED_CHORD,     HALF_DIMINISHED_CHORD_INTERVALS},
-        {MINOR_MAJOR_SEVENTH_CHORD, MINOR_MAJOR_SEVENTH_CHORD_INTERVALS}
+        {MINOR_MAJOR_SEVENTH_CHORD, MINOR_MAJOR_SEVENTH_CHORD_INTERVALS},
+        {AUGMENTED_SIXTH_CHORD,     AUGMENTED_SIXTH_CHORD_INTERVALS}
 };
 
 // Chord states

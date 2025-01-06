@@ -23,21 +23,20 @@ int main(int argc, char* argv[]) {
 
     /// Data for the problem
     Tonality* tonality = new MajorTonality(C);
-    std::cout << "tonality: " << tonality->to_string() << std::endl;
+    std::cout << "tonality: " << tonality->pretty() << std::endl;
 
     std::string search_type = argv[1];
     std::string build_midi = argv[2];
 
     /// vectors representing the chords and the states
-    vector<int> chords = {FIVE_OF_TWO, FIVE_OF_FIVE, FIVE_OF_SIX, FIVE_OF_THREE, FIVE_OF_FOUR, FLAT_TWO, FIFTH_DEGREE, FIRST_DEGREE};
+    vector<int> chords = {FIRST_DEGREE, AUGMENTED_SIXTH, FIFTH_DEGREE, FIRST_DEGREE};
 
     vector<int> chords_qualities;
     chords_qualities.reserve(chords.size());
     for(int chord : chords)
         chords_qualities.push_back(tonality->get_chord_quality(chord));
 
-    vector<int> states = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, SECOND_INVERSION, FUNDAMENTAL_STATE,
-                          FUNDAMENTAL_STATE,FUNDAMENTAL_STATE,FUNDAMENTAL_STATE,FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
+    vector<int> states = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
 
     int size = chords.size();
 

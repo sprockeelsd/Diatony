@@ -104,6 +104,8 @@ public:
      */
     string to_string();
 
+    string pretty();
+
     /** ABSTRACT METHODS */
 
     /**

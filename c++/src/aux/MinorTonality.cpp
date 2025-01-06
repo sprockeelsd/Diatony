@@ -16,6 +16,15 @@ MinorTonality::MinorTonality(int t) : Tonality(t, MINOR_MODE, HARMONIC_MINOR_SCA
     chord_qualities[FIFTH_DEGREE]   = MAJOR_CHORD;
     chord_qualities[SIXTH_DEGREE]   = MAJOR_CHORD;
     chord_qualities[SEVENTH_DEGREE] = DIMINISHED_CHORD;
+    /// chromatic chords
+    chord_qualities[FIVE_OF_TWO]                = DOMINANT_SEVENTH_CHORD;
+    chord_qualities[FIVE_OF_THREE]              = DOMINANT_SEVENTH_CHORD;
+    chord_qualities[FIVE_OF_FOUR]               = DOMINANT_SEVENTH_CHORD;
+    chord_qualities[FIVE_OF_FIVE]               = DOMINANT_SEVENTH_CHORD;
+    chord_qualities[FIVE_OF_SIX]                = DOMINANT_SEVENTH_CHORD;
+    chord_qualities[FIVE_OF_SEVEN]              = DOMINANT_SEVENTH_CHORD;
+    chord_qualities[FLAT_TWO]                   = MAJOR_CHORD;
+    chord_qualities[AUGMENTED_SIXTH]            = AUGMENTED_SIXTH_CHORD;
 
     for (int i = 0; i < chord_qualities.size(); i++){
 //        IntSet set(get_all_notes_from_chord(degrees_notes[i], chord_qualities[i]));

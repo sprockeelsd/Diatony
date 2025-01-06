@@ -32,6 +32,7 @@ Tonality::Tonality(int t, int m, vector<int> s) {
     degrees_notes[THIRD_DEGREE]                 = (note += scale[SECOND_DEGREE])     % PERFECT_OCTAVE;
     degrees_notes[FIVE_OF_SIX]                  = note;
     degrees_notes[FOURTH_DEGREE]                = (note += scale[THIRD_DEGREE])      % PERFECT_OCTAVE;
+    degrees_notes[FIVE_OF_SEVEN]                = note;
     degrees_notes[FIFTH_DEGREE]                 = (note += scale[FOURTH_DEGREE])     % PERFECT_OCTAVE;
     degrees_notes[SIXTH_DEGREE]                 = (note += scale[FIFTH_DEGREE])      % PERFECT_OCTAVE;
     degrees_notes[FIVE_OF_TWO]                  = note;
@@ -123,7 +124,7 @@ set<int> Tonality::get_modal_notes() {
 /**
  * @return a string representing a tonality
  */
-string Tonality::to_string(){
+string Tonality::to_string() {
     string t;
     t += "Name: " + name + "\n";
     t += "Tonic: " + std::to_string(tonic) + "(" + noteNames[tonic] + ")\n";
@@ -131,18 +132,35 @@ string Tonality::to_string(){
     t += "Scale: " + int_vector_to_string(scale) + "\n";
 
     t+= "Default chord qualities: ";
-    for(int i = FIRST_DEGREE; i <= FLAT_TWO; i++)
+    for(int i = FIRST_DEGREE; i <= AUGMENTED_SIXTH; i++)
         t += std::to_string(chord_qualities[i]) + "(" + chordQualityNames[chord_qualities[i]] + ") ";
     t += "\n";
 
     t+= "Degree notes: ";
-    for(int i = FIRST_DEGREE; i <= FLAT_TWO; i++)
+    for(int i = FIRST_DEGREE; i <= AUGMENTED_SIXTH; i++)
         t += std::to_string(degrees_notes[i]) + "(" + noteNames[degrees_notes[i]] + ") ";
     t += "\n";
 
     t += "Tonal notes: ";
     for (auto elem: tonal_notes)
         t += std::to_string(elem) + " ";
+
+    return t;
+}
+
+string Tonality::pretty() {
+    string t;
+    t += "Name: " + name + "\n";
+
+    t+= "Default chord qualities: ";
+    for(int i = FIRST_DEGREE; i <= AUGMENTED_SIXTH; i++)
+        t += degreeNames[i] + "(" + chordQualityNames[chord_qualities[i]] + ") ";
+    t += "\n";
+
+    t+= "Degree notes: ";
+    for(int i = FIRST_DEGREE; i <= AUGMENTED_SIXTH; i++)
+        t += degreeNames[i] + "(" + noteNames[degrees_notes[i]] + ") ";
+    t += "\n";
 
     return t;
 }

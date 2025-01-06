@@ -14,7 +14,7 @@ public:
      * Constructor
      * @param t the tonic of the tonality
      */
-    MajorTonality(int t);
+    explicit MajorTonality(int t);
 
     /** Abstract methods from Tonality class */
 
@@ -23,14 +23,14 @@ public:
      * @param degree a degree of the scale [0,6]
      * @return the default chord quality for the given degree
      */
-    int get_chord_quality(int degree);
+    int get_chord_quality(int degree) override;
 
     /**
      * Get the chord notes for a given degree
      * @param degree a degree of the scale [1,7]
      * @return an IntSet containing the chord notes for the given degree
      */
-    IntSet get_scale_degree_chord(int degree);
+    IntSet get_scale_degree_chord(int degree) override;
 };
 
 
