@@ -213,18 +213,19 @@ enum chordTypes{
     MINOR_CHORD,                //1
     DIMINISHED_CHORD,           //2
     AUGMENTED_CHORD,            //3
-    DOMINANT_SEVENTH_CHORD,     //4
-    MAJOR_SEVENTH_CHORD,        //5
-    MINOR_SEVENTH_CHORD,        //6
-    DIMINISHED_SEVENTH_CHORD,   //7
-    HALF_DIMINISHED_CHORD,      //8
-    MINOR_MAJOR_SEVENTH_CHORD,  //9
-    AUGMENTED_SIXTH_CHORD,      //10
+    AUGMENTED_SIXTH_CHORD,      //4
+    DOMINANT_SEVENTH_CHORD,     //5
+    MAJOR_SEVENTH_CHORD,        //6
+    MINOR_SEVENTH_CHORD,        //7
+    DIMINISHED_SEVENTH_CHORD,   //8
+    HALF_DIMINISHED_CHORD,      //9
+    MINOR_MAJOR_SEVENTH_CHORD,  //10
 };
 
-const vector<std::string> chordQualityNames = {"Major", "Minor", "Diminished", "Augmented", "Dominant seventh",
-                                               "Major seventh", "Minor seventh", "Diminished seventh",
-                                               "Half diminished chord", "Minor major seventh", "Augmented sixth"};
+const vector<std::string> chordQualityNames = {"Major", "Minor", "Diminished", "Augmented","Augmented sixth",
+                                                    "Dominant seventh", "Major seventh", "Minor seventh",
+                                                    "Diminished seventh", "Half diminished chord",
+                                                    "Minor major seventh"};
 
 /// Types of chords represented by the intervals between their notes in root position up to an octave
 const vector<int> MAJOR_CHORD_INTERVALS =               {MAJOR_THIRD, MINOR_THIRD, PERFECT_FOURTH};

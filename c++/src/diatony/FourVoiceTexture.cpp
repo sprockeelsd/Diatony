@@ -30,6 +30,7 @@
  * posted.
  */
 FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, vector<int> chordQuals, vector<int> chordStas) {
+    //todo: check doubling and voicing for Aug. 6th, bII, and V/... chords
     /// Parameters
     size                                            = s;
     tonality                                        = t;

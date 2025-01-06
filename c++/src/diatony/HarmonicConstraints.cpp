@@ -126,7 +126,7 @@ void chord_note_occurrence_fundamental_state(Home home, int nVoices, int pos, ve
         count(home, currentChord, IntSet(get_all_given_note(third)), IRT_EQ,1);
         count(home, currentChord, IntSet(get_all_given_note(fifth)), IRT_LQ, 1);
 
-        if(quality[pos] >= DOMINANT_SEVENTH_CHORD && quality[pos] != AUGMENTED_SIXTH_CHORD){
+        if(quality[pos] >= DOMINANT_SEVENTH_CHORD && quality[pos]){
             auto seventh = (root + get_interval_from_root(quality[pos],SEVENTH)) % PERFECT_OCTAVE;
             /// the seventh must be present
             count(home, currentChord, IntSet(get_all_given_note(seventh)), IRT_EQ, 1);
@@ -212,7 +212,7 @@ void chord_note_occurrence_first_inversion(Home home, int size, int nVoices, int
     count(home, currentChord, IntSet(get_all_given_note(root)), IRT_GQ, 1);
     count(home, currentChord, IntSet(get_all_given_note(third)), IRT_GQ, 1);
     count(home, currentChord, IntSet(get_all_given_note(fifth)), IRT_GQ, 1);
-    if(qualities[currentPos] >= DOMINANT_SEVENTH_CHORD && qualities[currentPos] != AUGMENTED_SIXTH_CHORD){
+    if(qualities[currentPos] >= DOMINANT_SEVENTH_CHORD){
         auto seventh = (root + get_interval_from_root(qualities[currentPos],SEVENTH)) % PERFECT_OCTAVE;
         count(home, currentChord, IntSet(get_all_given_note(seventh)), IRT_GQ, 1);
     }
