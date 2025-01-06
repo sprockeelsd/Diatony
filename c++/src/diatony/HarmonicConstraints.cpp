@@ -53,6 +53,7 @@ void set_bass(const Home &home, Tonality *tonality, int degree, int quality, int
 
 /**
  * Sets the number of times each note of the notes of the chord are present in the chord
+ * @todo check this still works for the different types of Aug. 6th chords
  * @param home the instance of the problem
  * @param degree the degree of the chord
  * @param quality the quality of the chord
@@ -65,10 +66,10 @@ void chord_note_occurrence_fundamental_state(Home home, int nVoices, int pos, ve
                                              Tonality *tonality, const IntVarArgs &currentChord,
                                              const IntVar &nDifferentValuesInDiminishedChord,
                                              const IntVar &nOfNotesInChord) {
+
     auto root = tonality->get_degree_note(degree[pos]);
     auto third = (root + get_interval_from_root(quality[pos],THIRD)) % PERFECT_OCTAVE;
     auto fifth = (root + get_interval_from_root(quality[pos],FIFTH)) % PERFECT_OCTAVE;
-
 
     /// if the chord is a diminished seventh degree
     if(degree[pos] == SEVENTH_DEGREE && quality[pos] == DIMINISHED_CHORD){
@@ -119,11 +120,13 @@ void chord_note_occurrence_fundamental_state(Home home, int nVoices, int pos, ve
         rel(home, isIncomplete, BOT_EQV, expr(home, nOfBassNotes == 3), true);
     }
     else{
+        std::cout << "Degree: " << degree[pos]  << " Quality: " << quality[pos] << std::endl;
         /// each note is present at least once, the bass is present at least once, the third exactly once and the fifth at most once
         count(home, currentChord, IntSet(get_all_given_note(root)), IRT_GQ,1);
         count(home, currentChord, IntSet(get_all_given_note(third)), IRT_EQ,1);
         count(home, currentChord, IntSet(get_all_given_note(fifth)), IRT_LQ, 1);
-        if(quality[pos] >= DOMINANT_SEVENTH_CHORD){
+
+        if(quality[pos] >= DOMINANT_SEVENTH_CHORD && quality[pos] != AUGMENTED_SIXTH_CHORD){
             auto seventh = (root + get_interval_from_root(quality[pos],SEVENTH)) % PERFECT_OCTAVE;
             /// the seventh must be present
             count(home, currentChord, IntSet(get_all_given_note(seventh)), IRT_EQ, 1);
@@ -209,7 +212,7 @@ void chord_note_occurrence_first_inversion(Home home, int size, int nVoices, int
     count(home, currentChord, IntSet(get_all_given_note(root)), IRT_GQ, 1);
     count(home, currentChord, IntSet(get_all_given_note(third)), IRT_GQ, 1);
     count(home, currentChord, IntSet(get_all_given_note(fifth)), IRT_GQ, 1);
-    if(qualities[currentPos] >= DOMINANT_SEVENTH_CHORD){
+    if(qualities[currentPos] >= DOMINANT_SEVENTH_CHORD && qualities[currentPos] != AUGMENTED_SIXTH_CHORD){
         auto seventh = (root + get_interval_from_root(qualities[currentPos],SEVENTH)) % PERFECT_OCTAVE;
         count(home, currentChord, IntSet(get_all_given_note(seventh)), IRT_GQ, 1);
     }
