@@ -2,6 +2,7 @@
 // Creation Date: Jan 20 2023
 // Description:   A file that contains all the harmonic constraints for the diatonic harmonic problem
 //
+// ReSharper disable All
 #include "../../headers/diatony/HarmonicConstraints.hpp"
 
 /***********************************************************************************************************************
@@ -84,6 +85,11 @@ void chord_note_occurrence_fundamental_state(Home home, int nVoices, int pos, ve
         count(home, currentChord, IntSet(get_all_given_note(root)), IRT_GQ,1);
         count(home, currentChord, IntSet(get_all_given_note(third)), IRT_GQ,1);
         count(home, currentChord, IntSet(get_all_given_note(fifth)), IRT_GQ,1);
+    }
+    else if (degree[pos] == FLAT_TWO) {
+        count(home, currentChord, IntSet(get_all_given_note(root)), IRT_EQ, 1);
+        count(home, currentChord, IntSet(get_all_given_note(third)), IRT_EQ, 2);
+        count(home, currentChord, IntSet(get_all_given_note(fifth)), IRT_GQ, 1);
     }
     /// special rule for sixth degree because in the case of an interrupted cadence, the third of the chord is doubled instead of the fundamental
     else if(degree[pos] == SIXTH_DEGREE && pos > 0 && degree[pos-1] == FIFTH_DEGREE){
@@ -170,7 +176,8 @@ void chord_note_occurrence_first_inversion(Home home, int size, int nVoices, int
     if(tonalNotes.find(third) != tonalNotes.end()) { /// double the third and other notes should be present at least once
         count(home, currentChord, IntSet(get_all_given_note(third)), IRT_EQ, 2);
     }
-    else if(degrees[currentPos] == SEVENTH_DEGREE && qualities[currentPos] == DIMINISHED_CHORD) {
+    else if((degrees[currentPos] == SEVENTH_DEGREE && qualities[currentPos] == DIMINISHED_CHORD) ||
+        degrees[currentPos] == FLAT_TWO) {
         /// double the third and other notes should be present at least once
         count(home, currentChord, IntSet(get_all_given_note(third)), IRT_EQ, 2);
     }

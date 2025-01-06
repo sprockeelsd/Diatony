@@ -22,7 +22,7 @@
 /**
  * Constructor
  * @param s the number of chords in the progression
- * @param *t a pointer to a Tonality object
+ * @param t a pointer to a Tonality object
  * @param chordDegs the degrees of the chord of the chord progression
  * @param chordQuals the qualities of the chord of the chord progression
  * @param chordStas the states of the chord of the chord progression (fundamental, 1st inversion,...)
