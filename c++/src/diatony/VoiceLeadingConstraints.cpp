@@ -217,6 +217,37 @@ true);
     }
 }
 
+/**
+ * Posts the voicing constraints for augmented sixth chords (italian)
+ * @param home
+ * @param nOfVoices
+ * @param currentPosition
+ * @param tonality
+ * @param fullChordsVoicing
+ * @param bassMelodicIntervals
+ * @param tenorMelodicIntervals
+ * @param altoMelodicIntervals
+ * @param sopranoMelodicIntervals
+ */
+void italian_augmented_sixth(const Home &home, int nOfVoices, int currentPosition, Tonality *tonality, IntVarArray fullChordsVoicing,
+                             const IntVarArray &bassMelodicIntervals, const IntVarArray &tenorMelodicIntervals,
+                             const IntVarArray &altoMelodicIntervals, const IntVarArray &sopranoMelodicIntervals) {
+    IntVarArgs currentChord = fullChordsVoicing.slice(nOfVoices * currentPosition, 1, nOfVoices);
+
+    vector<IntVarArray> melodicIntervals(
+            {bassMelodicIntervals, tenorMelodicIntervals, altoMelodicIntervals, sopranoMelodicIntervals});
+
+    for(int voice = TENOR; voice <= SOPRANO; voice++) {
+        /// third of the chord goes up by step or down by half step
+        rel(home, expr(home, currentChord[voice] % PERFECT_OCTAVE == tonality->get_tonic()), BOT_IMP,
+        expr(home, melodicIntervals[voice][currentPosition] == -MINOR_SECOND || melodicIntervals[voice][currentPosition] == MAJOR_SECOND), true);
+
+        rel(home, expr(home, currentChord[voice] % PERFECT_OCTAVE ==
+            (tonality->get_degree_note(AUGMENTED_SIXTH) + MINOR_SIXTH) % PERFECT_OCTAVE), BOT_IMP,
+        expr(home, melodicIntervals[voice][currentPosition] == -MINOR_SECOND), true);
+    }
+}
+
 /***********************************************************************************************************************
  *                                                                                                                     *
  *                                           First inversion chord constraints                                         *

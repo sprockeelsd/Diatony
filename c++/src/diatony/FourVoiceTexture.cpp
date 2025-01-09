@@ -30,7 +30,7 @@
  * posted.
  */
 FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, vector<int> chordQuals, vector<int> chordStas) {
-    //todo: check doubling and voicing for Aug. 6th, bII, and V/... chords
+    //todo: check doubling and voicing and V/... chords + support seventh chords for all chord degrees
     /// Parameters
     size                                            = s;
     tonality                                        = t;
@@ -228,6 +228,12 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
             interrupted_cadence(*this, i, tonality,
                                 fullChordsVoicing, tenorMelodicIntervals,
                                 altoMelodicIntervals, sopranoMelodicIntervals);
+        }
+        /// special rules for augmented sixth chords
+        else if (chordDegrees[i] == AUGMENTED_SIXTH) {
+            italian_augmented_sixth(*this, nOfVoices, i, tonality, fullChordsVoicing,
+                                    bassMelodicIntervals, tenorMelodicIntervals,
+                                    altoMelodicIntervals, sopranoMelodicIntervals);
         }
         /// if we have an appogiatura for the V degree chord, the voice with the fundamental must move in contrary
         /// motion to the bass

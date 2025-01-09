@@ -111,6 +111,22 @@ void interrupted_cadence(const Home &home, int currentPosition, Tonality *tonali
                          const IntVarArray &tenorMelodicInterval, const IntVarArray &altoMelodicInterval,
                          const IntVarArray &sopranoMelodicInterval);
 
+/**
+ * Posts the voicing constraints for augmented sixth chords (italian)
+ * @param home
+ * @param nOfVoices
+ * @param currentPosition
+ * @param tonality
+ * @param fullChordsVoicing
+ * @param bassMelodicIntervals
+ * @param tenorMelodicIntervals
+ * @param altoMelodicIntervals
+ * @param sopranoMelodicIntervals
+ */
+void italian_augmented_sixth(const Home &home, int nOfVoices, int currentPosition, Tonality *tonality, IntVarArray fullChordsVoicing,
+                             const IntVarArray &bassMelodicIntervals, const IntVarArray &tenorMelodicIntervals,
+                             const IntVarArray &altoMelodicIntervals, const IntVarArray &sopranoMelodicIntervals);
+
 /***********************************************************************************************************************
  *                                                                                                                     *
  *                                           First inversion chord constraints                                         *

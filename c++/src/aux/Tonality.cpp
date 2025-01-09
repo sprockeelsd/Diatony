@@ -28,17 +28,19 @@ Tonality::Tonality(int t, int m, vector<int> s) {
     degrees_notes[FIFTH_DEGREE_APPOGIATURA]     = note;
     degrees_notes[FLAT_TWO]                     = (note + MINOR_SECOND)              % PERFECT_OCTAVE;
     degrees_notes[SECOND_DEGREE]                = (note += scale[FIRST_DEGREE])      % PERFECT_OCTAVE;
-    degrees_notes[FIVE_OF_FIVE]                 = note;
+    degrees_notes[FIVE_OF_FIVE]                 = note                               % PERFECT_OCTAVE;
     degrees_notes[THIRD_DEGREE]                 = (note += scale[SECOND_DEGREE])     % PERFECT_OCTAVE;
-    degrees_notes[FIVE_OF_SIX]                  = note;
+    degrees_notes[FIVE_OF_SIX]                  = note                               % PERFECT_OCTAVE;
     degrees_notes[FOURTH_DEGREE]                = (note += scale[THIRD_DEGREE])      % PERFECT_OCTAVE;
-    degrees_notes[FIVE_OF_SEVEN]                = note;
+    degrees_notes[FIVE_OF_SEVEN]                = note                               % PERFECT_OCTAVE;
     degrees_notes[FIFTH_DEGREE]                 = (note += scale[FOURTH_DEGREE])     % PERFECT_OCTAVE;
     degrees_notes[SIXTH_DEGREE]                 = (note += scale[FIFTH_DEGREE])      % PERFECT_OCTAVE;
-    degrees_notes[FIVE_OF_TWO]                  = note;
+    degrees_notes[FIVE_OF_TWO]                  = note                               % PERFECT_OCTAVE;
     degrees_notes[SEVENTH_DEGREE]               = (note += scale[SIXTH_DEGREE])      % PERFECT_OCTAVE;
-    degrees_notes[FIVE_OF_THREE]                = note;
-    degrees_notes[AUGMENTED_SIXTH]              = tonic + MINOR_SIXTH                % PERFECT_OCTAVE;
+    if (m == MINOR_MODE)    degrees_notes[FIVE_OF_THREE] = (note - 1)                % PERFECT_OCTAVE;
+    else                    degrees_notes[FIVE_OF_THREE] = note                      % PERFECT_OCTAVE;
+    degrees_notes[AUGMENTED_SIXTH]              = (tonic + MINOR_SIXTH)              % PERFECT_OCTAVE;
+    std::cout << " V/VI" << degrees_notes[FIVE_OF_SIX] << std::endl;
 
 
     tonal_notes = {degrees_notes[FIRST_DEGREE], degrees_notes[FOURTH_DEGREE], degrees_notes[FIFTH_DEGREE]};
