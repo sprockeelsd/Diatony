@@ -106,4 +106,18 @@ void chord_note_occurrence_first_inversion(Home home, int size, int nVoices, int
  */
 void chord_note_occurrence_second_inversion(const Home& home, int size, int nVoices, int currentPos, Tonality *tonality,
                                             vector<int> degrees, vector<int> qualities, const IntVarArgs &currentChord);
+
+/**
+ *
+ * @param home
+ * @param size
+ * @param nVoices
+ * @param currentPos
+ * @param tonality
+ * @param degrees
+ * @param qualities
+ * @param currentChord
+ */
+void chord_note_occurrence_third_inversion(const Home& home, int size, int nVoices, int currentPos, Tonality *tonality,
+                                           vector<int> degrees, vector<int> qualities, const IntVarArgs &currentChord);
 #endif

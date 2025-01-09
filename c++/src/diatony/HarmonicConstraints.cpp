@@ -16,6 +16,9 @@
  *                                                                                                                     *
  ***********************************************************************************************************************/
 
+//todo refaire les contraintes de doublure pour tous les états en mettant le maximum des trucs en commun à la fin \
+(septième etc)
+
 /**
  * Set the notes of the fullChordsVoicing array to the notes of the given chord
  * @todo changer
@@ -268,5 +271,31 @@ void chord_note_occurrence_second_inversion(const Home& home, int size, int nVoi
             auto seventh = (root + get_interval_from_root(qualities[currentPos],SEVENTH)) % PERFECT_OCTAVE;
             count(home, currentChord, IntSet(get_all_given_note(seventh)), IRT_EQ, 1);
         }
+    }
+}
+
+/**
+ *
+ * @param home
+ * @param size
+ * @param nVoices
+ * @param currentPos
+ * @param tonality
+ * @param degrees
+ * @param qualities
+ * @param currentChord
+ */
+void chord_note_occurrence_third_inversion(const Home& home, int size, int nVoices, int currentPos, Tonality *tonality,
+                                           vector<int> degrees, vector<int> qualities, const IntVarArgs &currentChord) {
+    auto root = tonality->get_degree_note(degrees[currentPos]);
+    auto third = (root + get_interval_from_root(qualities[currentPos],THIRD)) % PERFECT_OCTAVE;
+    auto fifth = (root + get_interval_from_root(qualities[currentPos],FIFTH)) % PERFECT_OCTAVE;
+
+    count(home, currentChord, IntSet(get_all_given_note(root)), IRT_EQ, 1);
+    count(home, currentChord, IntSet(get_all_given_note(third)), IRT_EQ, 1);
+    count(home, currentChord, IntSet(get_all_given_note(fifth)), IRT_GQ, 1);
+    if(qualities[currentPos] >= DOMINANT_SEVENTH_CHORD){
+        auto seventh = (root + get_interval_from_root(qualities[currentPos],SEVENTH)) % PERFECT_OCTAVE;
+        count(home, currentChord, IntSet(get_all_given_note(seventh)), IRT_EQ, 1);
     }
 }

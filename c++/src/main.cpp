@@ -29,14 +29,17 @@ int main(int argc, char* argv[]) {
     std::string build_midi = argv[2];
 
     /// vectors representing the chords and the states
-    vector<int> chords = {FIRST_DEGREE, AUGMENTED_SIXTH, FIFTH_DEGREE, FIRST_DEGREE};
+    vector<int> chords = {FIRST_DEGREE, FIVE_OF_TWO, FIVE_OF_FIVE, FIFTH_DEGREE, FIRST_DEGREE};
 
     vector<int> chords_qualities;
     chords_qualities.reserve(chords.size());
     for(int chord : chords)
         chords_qualities.push_back(tonality->get_chord_quality(chord));
 
-    vector<int> states = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
+    chords_qualities[1] = DOMINANT_SEVENTH_CHORD;
+
+    vector<int> states = {FUNDAMENTAL_STATE, FIRST_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
+    std::cout << int_vector_to_string(chords_qualities) << std::endl;
 
     int size = chords.size();
 

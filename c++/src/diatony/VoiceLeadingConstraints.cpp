@@ -308,6 +308,7 @@ void fifth_degree_appogiatura(const Home& home, int nVoices, int currentPosition
  ***********************************************************************************************************************/
 
 /**
+ * todo modify so that it also works for secondary dominant chords, right now it is based on the scale and not on the chord degree
  * Forces the tritone to resolve properly
  * @param home the instance of the problem
  * @param nvoices the number of voices in the piece

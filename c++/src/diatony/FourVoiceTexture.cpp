@@ -188,6 +188,10 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
             chord_note_occurrence_second_inversion(*this, size, nOfVoices, i, tonality,
                                                    chordDegrees, chordQualities, currentChord);
         }
+        else if (chordStas[i] == THIRD_INVERSION){
+            chord_note_occurrence_third_inversion(*this, size, nOfVoices, i, tonality,
+                                                  chordDegrees, chordQualities, currentChord);
+        }
         else{
         }
     }
@@ -212,8 +216,9 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
         }
 
         /// resolve the tritone if there is one and it needs to be resolved
-        if (chordDegrees[i] == SEVENTH_DEGREE && chordQualities[i] == DIMINISHED_CHORD && chordDegrees[i + 1] == FIRST_DEGREE ||
-            chordDegrees[i] == FIFTH_DEGREE && chordDegrees[i+1] == FIRST_DEGREE) {
+        if ((chordDegrees[i] == SEVENTH_DEGREE && chordQualities[i] == DIMINISHED_CHORD && chordDegrees[i + 1] == FIRST_DEGREE) ||
+            (chordDegrees[i] == FIFTH_DEGREE && chordDegrees[i+1] == FIRST_DEGREE) ||
+            (chordDegrees[i] >= FIVE_OF_TWO && chordDegrees[i] <= FIVE_OF_SEVEN)){
             //@todo add other chords that have the tritone
             tritone_resolution(*this, nOfVoices, i, tonality, chordDegrees,
                                chordQualities, chordStates, bassMelodicIntervals,
