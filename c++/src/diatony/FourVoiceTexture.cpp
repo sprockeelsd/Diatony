@@ -30,7 +30,7 @@
  * posted.
  */
 FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, vector<int> chordQuals, vector<int> chordStas) {
-    //todo: check doubling and voicing and V/... chords + support seventh chords for all chord degrees
+    //todo: check doubling and voicing and V/... chords + support seventh chords for all chord degrees + diminished seventh chords
     /// Parameters
     size                                            = s;
     tonality                                        = t;

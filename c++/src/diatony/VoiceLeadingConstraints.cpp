@@ -309,9 +309,10 @@ void fifth_degree_appogiatura(const Home& home, int nVoices, int currentPosition
 
 /**
  * todo modify so that it also works for secondary dominant chords, right now it is based on the scale and not on the chord degree
+ * todo make it cleaner, the two parts should be joined
  * Forces the tritone to resolve properly
  * @param home the instance of the problem
- * @param nvoices the number of voices in the piece
+ * @param nVoices the number of voices in the piece
  * @param currentPosition the current position in the chord progression
  * @param tonality the tonality of the piece
  * @param chordDegs the degrees of the chords
@@ -330,38 +331,64 @@ void tritone_resolution(const Home &home, int nVoices, int currentPosition, Tona
     IntVarArgs currentChord (fullChordsVoicing.slice(nVoices * currentPosition, 1, nVoices));
     vector<IntVarArray> melodicIntervals({bassMelodicIntervals, tenorMelodicIntervals, altoMelodicIntervals, sopranoMelodicIntervals});
 
-    for(int voice = BASS; voice <= SOPRANO; voice++){
-        /// special case
-        /// if the chords are VII (1st inversion) -> I (1st inversion) or V(+6)->I(6)
-        if ((chordDegs[currentPosition]     == SEVENTH_DEGREE   && chordStas[currentPosition]   == FIRST_INVERSION &&
-            chordDegs[currentPosition+1]    == FIRST_DEGREE     && chordStas[currentPosition+1] == FIRST_INVERSION) ||
-            (chordDegs[currentPosition]     == FIFTH_DEGREE     && chordQuals[currentPosition]  == DOMINANT_SEVENTH_CHORD &&
-            chordStas[currentPosition]      == SECOND_INVERSION
-            && chordDegs[currentPosition+1] == FIRST_DEGREE     && chordStas[currentPosition+1]    == FIRST_INVERSION)){
-            /// the fourth of the scale must go up by a step
+    if (chordDegs[currentPosition] == FIFTH_DEGREE || chordDegs[currentPosition] == SEVENTH_DEGREE) {
+        std::cout << "five or seven" << std::endl;
+        for(int voice = BASS; voice <= SOPRANO; voice++){
+            /// special case
+            /// if the chords are VII (1st inversion) -> I (1st inversion) or V(+6)->I(6)
+            if ((chordDegs[currentPosition]     == SEVENTH_DEGREE   && chordStas[currentPosition]   == FIRST_INVERSION &&
+                chordDegs[currentPosition+1]    == FIRST_DEGREE     && chordStas[currentPosition+1] == FIRST_INVERSION) ||
+                (chordDegs[currentPosition]     == FIFTH_DEGREE     && chordQuals[currentPosition]  == DOMINANT_SEVENTH_CHORD &&
+                chordStas[currentPosition]      == SECOND_INVERSION
+                && chordDegs[currentPosition+1] == FIRST_DEGREE     && chordStas[currentPosition+1]    == FIRST_INVERSION)){
+                /// the fourth of the scale must go up by a step
+                rel(home,
+                    /// the note in this voice is the fourth of the scale
+                    expr(home,currentChord[voice] % PERFECT_OCTAVE == (tonality->get_tonic() + PERFECT_FOURTH) % PERFECT_OCTAVE),
+                    BOT_IMP,
+                    /// it must go up by step
+                    expr(home, expr(home, melodicIntervals[voice][currentPosition] > 0) && expr(home, melodicIntervals[voice][currentPosition] <= 2)),
+            true);
+            }
+            else{ /// the fourth of the scale must go down by a step
+                rel(home,
+                    /// the note is the fourth of the scale
+                    expr(home, currentChord[voice] % PERFECT_OCTAVE == (tonality->get_tonic() + PERFECT_FOURTH) % PERFECT_OCTAVE),
+                    BOT_IMP,
+                    /// it must go down by step
+                    expr(home, expr(home, melodicIntervals[voice][currentPosition] < 0) && expr(home, melodicIntervals[voice][currentPosition] >= -2)),
+            true);
+            }
+            /// if the note is the leading tone of the scale, it must go up to the tonic by step
             rel(home,
-                /// the note in this voice is the fourth of the scale
-                expr(home,currentChord[voice] % PERFECT_OCTAVE == (tonality->get_tonic() + PERFECT_FOURTH) % PERFECT_OCTAVE),
+                expr(home, currentChord[voice] % PERFECT_OCTAVE == (tonality->get_tonic() + MAJOR_SEVENTH) % PERFECT_OCTAVE),
                 BOT_IMP,
-                /// it must go up by step
-                expr(home, expr(home, melodicIntervals[voice][currentPosition] > 0) && expr(home, melodicIntervals[voice][currentPosition] <= 2)),
-        true);
+                expr(home, melodicIntervals[voice][currentPosition] == 1),
+                true);
         }
-        else{ /// the fourth of the scale must go down by a step
+    }
+    else { /// secondary dominant chords
+        std::cout << "secondary dominant" << std::endl;
+        auto third = (tonality->get_degree_note(chordDegs[currentPosition]) + MAJOR_THIRD) % PERFECT_OCTAVE;
+        auto seventh = (tonality->get_degree_note(chordDegs[currentPosition]) + MINOR_SEVENTH) % PERFECT_OCTAVE;
+        std::cout << "third: " << third << " seventh: " << seventh << std::endl;
+
+        for(int voice = BASS; voice <= SOPRANO; voice++) {
             rel(home,
-                /// the note is the fourth of the scale
-                expr(home, currentChord[voice] % PERFECT_OCTAVE == (tonality->get_tonic() + PERFECT_FOURTH) % PERFECT_OCTAVE),
-                BOT_IMP,
-                /// it must go down by step
-                expr(home, expr(home, melodicIntervals[voice][currentPosition] < 0) && expr(home, melodicIntervals[voice][currentPosition] >= -2)),
-        true);
+                        /// the note is the seventh of the chord
+                        expr(home, currentChord[voice] % PERFECT_OCTAVE == seventh),
+                        BOT_IMP,
+                        /// it must go down by step
+                        expr(home, expr(home, melodicIntervals[voice][currentPosition] < 0) && expr(home, melodicIntervals[voice][currentPosition] >= -2)),
+                true);
+            rel(home,
+                        /// the note is the third of the chord
+                        expr(home, currentChord[voice] % PERFECT_OCTAVE == third),
+                        BOT_IMP,
+                        /// it must go up by step
+                        expr(home, melodicIntervals[voice][currentPosition] == 1),
+                true);
         }
-        /// if the note is the leading tone of the scale, it must go up to the tonic by step
-        rel(home,
-            expr(home, currentChord[voice] % PERFECT_OCTAVE == (tonality->get_tonic() + MAJOR_SEVENTH) % PERFECT_OCTAVE),
-            BOT_IMP,
-            expr(home, melodicIntervals[voice][currentPosition] == 1),
-    true);
     }
 }
 
