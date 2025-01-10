@@ -228,18 +228,17 @@ const vector<std::string> chordQualityNames = {"Major", "Minor", "Diminished", "
                                                     "Minor major seventh"};
 
 /// Types of chords represented by the intervals between their notes in root position up to an octave
-const vector<int> MAJOR_CHORD_INTERVALS =               {MAJOR_THIRD, MINOR_THIRD, PERFECT_FOURTH};
-const vector<int> MINOR_CHORD_INTERVALS =               {MINOR_THIRD, MAJOR_THIRD, PERFECT_FOURTH};
-const vector<int> DIMINISHED_CHORD_INTERVALS =          {MINOR_THIRD, MINOR_THIRD, TRITONE};
-const vector<int> AUGMENTED_CHORD_INTERVALS =           {MAJOR_THIRD, MAJOR_THIRD, MAJOR_THIRD};
-const vector<int> DOMINANT_SEVENTH_CHORD_INTERVALS =    {MAJOR_THIRD, MINOR_THIRD, MINOR_THIRD, MAJOR_SECOND};
-const vector<int> MAJOR_SEVENTH_CHORD_INTERVALS =       {MAJOR_THIRD, MINOR_THIRD, MAJOR_THIRD, MINOR_SECOND};
-const vector<int> MINOR_SEVENTH_CHORD_INTERVALS =       {MINOR_THIRD, MAJOR_THIRD, MINOR_THIRD, MAJOR_SECOND};
-const vector<int> DIMINISHED_SEVENTH_CHORD_INTERVALS =  {MINOR_THIRD, MINOR_THIRD, MINOR_THIRD, MINOR_THIRD};
-const vector<int> HALF_DIMINISHED_CHORD_INTERVALS =     {MINOR_THIRD, MINOR_THIRD, MAJOR_THIRD, MINOR_SECOND};
-const vector<int> MINOR_MAJOR_SEVENTH_CHORD_INTERVALS = {MINOR_THIRD, MAJOR_THIRD, MAJOR_THIRD, MAJOR_SECOND};
+const vector<int> MAJOR_CHORD_INTERVALS                         = {MAJOR_THIRD, MINOR_THIRD, PERFECT_FOURTH};
+const vector<int> MINOR_CHORD_INTERVALS                         = {MINOR_THIRD, MAJOR_THIRD, PERFECT_FOURTH};
+const vector<int> DIMINISHED_CHORD_INTERVALS                    = {MINOR_THIRD, MINOR_THIRD, TRITONE};
+const vector<int> AUGMENTED_CHORD_INTERVALS                     = {MAJOR_THIRD, MAJOR_THIRD, MAJOR_THIRD};
+const vector<int> MAJOR_SEVENTH_CHORD_INTERVALS                 = {MAJOR_THIRD, MINOR_THIRD, MAJOR_THIRD, MINOR_SECOND};
+const vector<int> MINOR_SEVENTH_CHORD_INTERVALS                 = {MINOR_THIRD, MAJOR_THIRD, MINOR_THIRD, MAJOR_SECOND};
+const vector<int> DIMINISHED_SEVENTH_CHORD_INTERVALS            = {MINOR_THIRD, MINOR_THIRD, MINOR_THIRD, MINOR_THIRD};
+const vector<int> HALF_DIMINISHED_CHORD_INTERVALS               = {MINOR_THIRD, MINOR_THIRD, MAJOR_THIRD, MINOR_SECOND};
+const vector<int> MINOR_MAJOR_SEVENTH_CHORD_INTERVALS           = {MINOR_THIRD, MAJOR_THIRD, MAJOR_THIRD, MAJOR_SECOND};
 /// There are three types of augmented sixth chords: Italian, French and German. For now, only italian is implemented
-const vector<int> AUGMENTED_SIXTH_CHORD_INTERVALS =     {MAJOR_THIRD, AUGMENTED_FOURTH, DIMINISHED_THIRD};
+const vector<int> AUGMENTED_SIXTH_CHORD_INTERVALS               = {MAJOR_THIRD, AUGMENTED_FOURTH, DIMINISHED_THIRD};
 
 const map<int, vector<int>> chordQualitiesIntervals = {
         {MAJOR_CHORD,               MAJOR_CHORD_INTERVALS},

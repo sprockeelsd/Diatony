@@ -36,7 +36,7 @@ int main(int argc, char* argv[]) {
     for(int chord : chords)
         chords_qualities.push_back(tonality->get_chord_quality(chord));
 
-    chords_qualities[1] = DOMINANT_SEVENTH_CHORD;
+    chords_qualities[1] = DIMINISHED_SEVENTH_CHORD;
 
     vector<int> states = {FUNDAMENTAL_STATE, FIRST_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE};
     std::cout << int_vector_to_string(chords_qualities) << std::endl;

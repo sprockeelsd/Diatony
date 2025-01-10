@@ -74,6 +74,8 @@ void chord_note_occurrence_fundamental_state(Home home, int nVoices, int pos, ve
     auto root = tonality->get_degree_note(degrees[pos]);
     auto third = (root + get_interval_from_root(qualities[pos],THIRD)) % PERFECT_OCTAVE;
     auto fifth = (root + get_interval_from_root(qualities[pos],FIFTH)) % PERFECT_OCTAVE;
+    auto seventh = (root + get_interval_from_root(qualities[pos],SEVENTH)) % PERFECT_OCTAVE;
+    //auto nineth = (root + get_interval_from_root(qualities[pos],NINETH)) % PERFECT_OCTAVE;
 
     /// if the chord is a diminished seventh degree
     if(degrees[pos] == SEVENTH_DEGREE && qualities[pos] == DIMINISHED_CHORD){
@@ -98,6 +100,10 @@ void chord_note_occurrence_fundamental_state(Home home, int nVoices, int pos, ve
         count(home, currentChord, IntSet(get_all_given_note(root)), IRT_EQ, 1);
         count(home, currentChord, IntSet(get_all_given_note(third)), IRT_EQ, 2);
         count(home, currentChord, IntSet(get_all_given_note(fifth)), IRT_EQ, 1);
+    }
+    /// Dominant diminished seventh chords
+    else if ((degrees[pos] == FIFTH_DEGREE || (degrees[pos] >= FIVE_OF_TWO && degrees[pos] <= FIVE_OF_SEVEN)) && qualities[pos] == DIMINISHED_SEVENTH_CHORD) {
+
     }
     /// special rule for sixth degree because in the case of an interrupted cadence, the third of the chord is doubled instead of the fundamental
     else if(degrees[pos] == SIXTH_DEGREE && pos > 0 && degrees[pos-1] == FIFTH_DEGREE){
