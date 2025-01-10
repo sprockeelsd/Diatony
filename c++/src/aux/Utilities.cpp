@@ -5,46 +5,33 @@
 #include "../../headers/aux/Utilities.hpp"
 
 /**
- * For a given set of intervals between notes that loops and a starting note, returns all the possible notes
- * @param note the starting note
- * @param intervals the set of intervals between notes. It must make a loop. For example, to get all notes from a major
- * scale from note, use {2, 2, 1, 2, 2, 2, 1}. To get all notes from a minor chord, use {3, 4, 5}.
- * @return vector<int> all the notes
- */
-vector<int> get_all_notes_from_interval_loop(int n, vector<int> intervals)
-{
-    int note = n % PERFECT_OCTAVE; // bring the root back to [12,23] in case the argument is wrong
-    vector<int> notes;
-
-    int i = 0;
-    while (note <= 127)
-    {
-        notes.push_back(note);
-        note += intervals[i % intervals.size()];
-        ++i;
-    }
-    return notes;
-}
-
-/**
- * For a given tonality (root + mode), returns all the possible notes
- * @param root the root of the tonality (in [0,11])
- * @param scale the set of tones and semitones that define the scale
- * @return vector<int> all the possible notes from that tonality
- */
-vector<int> get_all_notes_from_scale(int root, vector<int> scale)
-{
-    return get_all_notes_from_interval_loop(root, scale);
-}
-
-/**
- * For a given chord (root + mode), returns all the possible notes
+ * Returns a vector containing all the notes in a chord
  * @param root the root of the chord
- * @param quality the set of tones and semitones that define the chord
- * @return vector<int> all the possible notes from that chord
+ * @param quality the quality of the chord
+ * @return
  */
-vector<int> get_all_notes_from_chord(int root, vector<int> quality){
-    return get_all_notes_from_interval_loop(root, quality);
+vector<int> get_all_notes_in_chord(int root, int quality) {
+    /// get the intervals constituting the chord
+    auto intervals = chordQualitiesIntervals.at(quality);
+    /// bring back the note to [0,11]
+    int note = root % PERFECT_OCTAVE;
+
+    vector<int> notes, chord_notes;
+    /// add the note to the chord notes
+    notes.push_back(note);
+    /// add the other notes in the chord
+    for (auto interval : intervals) {
+        notes.push_back((note += interval) % PERFECT_OCTAVE);
+    }
+    /// for each note in the chord, add all the notes in the range [0,127]
+    for (int n : notes) {
+        int curr_note = n;
+        while (curr_note < 127) {
+            chord_notes.push_back(curr_note);
+            curr_note += PERFECT_OCTAVE;
+        }
+    }
+    return chord_notes;
 }
 
 /**
