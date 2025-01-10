@@ -151,7 +151,7 @@ enum voices{
 
 const vector<std::string> voiceNames = {"Bass", "Tenor", "Alto", "Soprano"};
 
-/** scale degrees */ //todo maybe rename the last ones better + check that this does not break anything but it shouldn't
+/** scale degrees */ //todo maybe rename the last ones better
 enum degrees{
     FIRST_DEGREE,               //0
     SECOND_DEGREE,              //1
@@ -220,6 +220,8 @@ enum chordTypes{
     DIMINISHED_SEVENTH_CHORD,   //8
     HALF_DIMINISHED_CHORD,      //9
     MINOR_MAJOR_SEVENTH_CHORD,  //10
+    MAJOR_NINTH_DOMINANT_CHORD,//11
+    MINOR_NINTH_DOMINANT_CHORD //12
 };
 
 const vector<std::string> chordQualityNames = {"Major", "Minor", "Diminished", "Augmented","Augmented sixth",
@@ -228,30 +230,35 @@ const vector<std::string> chordQualityNames = {"Major", "Minor", "Diminished", "
                                                     "Minor major seventh"};
 
 /// Types of chords represented by the intervals between their notes in root position up to an octave
-const vector<int> MAJOR_CHORD_INTERVALS                         = {MAJOR_THIRD, MINOR_THIRD, PERFECT_FOURTH};
-const vector<int> MINOR_CHORD_INTERVALS                         = {MINOR_THIRD, MAJOR_THIRD, PERFECT_FOURTH};
-const vector<int> DIMINISHED_CHORD_INTERVALS                    = {MINOR_THIRD, MINOR_THIRD, TRITONE};
-const vector<int> AUGMENTED_CHORD_INTERVALS                     = {MAJOR_THIRD, MAJOR_THIRD, MAJOR_THIRD};
-const vector<int> MAJOR_SEVENTH_CHORD_INTERVALS                 = {MAJOR_THIRD, MINOR_THIRD, MAJOR_THIRD, MINOR_SECOND};
-const vector<int> MINOR_SEVENTH_CHORD_INTERVALS                 = {MINOR_THIRD, MAJOR_THIRD, MINOR_THIRD, MAJOR_SECOND};
-const vector<int> DIMINISHED_SEVENTH_CHORD_INTERVALS            = {MINOR_THIRD, MINOR_THIRD, MINOR_THIRD, MINOR_THIRD};
-const vector<int> HALF_DIMINISHED_CHORD_INTERVALS               = {MINOR_THIRD, MINOR_THIRD, MAJOR_THIRD, MINOR_SECOND};
-const vector<int> MINOR_MAJOR_SEVENTH_CHORD_INTERVALS           = {MINOR_THIRD, MAJOR_THIRD, MAJOR_THIRD, MAJOR_SECOND};
-/// There are three types of augmented sixth chords: Italian, French and German. For now, only italian is implemented
-const vector<int> AUGMENTED_SIXTH_CHORD_INTERVALS               = {MAJOR_THIRD, AUGMENTED_FOURTH, DIMINISHED_THIRD};
+const vector<int> MAJOR_CHORD_INTERVALS                         = {MAJOR_THIRD, MINOR_THIRD};
+const vector<int> MINOR_CHORD_INTERVALS                         = {MINOR_THIRD, MAJOR_THIRD};
+const vector<int> DIMINISHED_CHORD_INTERVALS                    = {MINOR_THIRD, MINOR_THIRD};
+const vector<int> AUGMENTED_CHORD_INTERVALS                     = {MAJOR_THIRD, MAJOR_THIRD};
+const vector<int> DOMINANT_SEVENTH_CHORD_INTERVALS              = {MAJOR_THIRD, MINOR_THIRD, MINOR_THIRD};
+const vector<int> MAJOR_SEVENTH_CHORD_INTERVALS                 = {MAJOR_THIRD, MINOR_THIRD, MAJOR_THIRD};
+const vector<int> MINOR_SEVENTH_CHORD_INTERVALS                 = {MINOR_THIRD, MAJOR_THIRD, MINOR_THIRD};
+const vector<int> DIMINISHED_SEVENTH_CHORD_INTERVALS            = {MINOR_THIRD, MINOR_THIRD, MINOR_THIRD};
+const vector<int> HALF_DIMINISHED_CHORD_INTERVALS               = {MINOR_THIRD, MINOR_THIRD, MAJOR_THIRD};
+const vector<int> MINOR_MAJOR_SEVENTH_CHORD_INTERVALS           = {MINOR_THIRD, MAJOR_THIRD, MAJOR_THIRD};
+/// todo There are three types of augmented sixth chords: Italian, French and German. For now, only italian is implemented
+const vector<int> AUGMENTED_SIXTH_CHORD_INTERVALS               = {MAJOR_THIRD, AUGMENTED_FOURTH};
+const vector<int> MAJOR_NINTH_DOMINANT_CHORD_INTERVALS         = {MAJOR_THIRD, MINOR_THIRD, MINOR_THIRD, MAJOR_THIRD};
+const vector<int> MINOR_NINTH_DOMINANT_CHORD_INTERVALS         = {MAJOR_THIRD, MINOR_THIRD, MINOR_THIRD, MINOR_THIRD};
 
 const map<int, vector<int>> chordQualitiesIntervals = {
-        {MAJOR_CHORD,               MAJOR_CHORD_INTERVALS},
-        {MINOR_CHORD,               MINOR_CHORD_INTERVALS},
-        {DIMINISHED_CHORD,          DIMINISHED_CHORD_INTERVALS},
-        {AUGMENTED_CHORD,           AUGMENTED_CHORD_INTERVALS},
-        {DOMINANT_SEVENTH_CHORD,    DOMINANT_SEVENTH_CHORD_INTERVALS},
-        {MAJOR_SEVENTH_CHORD,       MAJOR_SEVENTH_CHORD_INTERVALS},
-        {MINOR_SEVENTH_CHORD,       MINOR_SEVENTH_CHORD_INTERVALS},
-        {DIMINISHED_SEVENTH_CHORD,  DIMINISHED_SEVENTH_CHORD_INTERVALS},
-        {HALF_DIMINISHED_CHORD,     HALF_DIMINISHED_CHORD_INTERVALS},
-        {MINOR_MAJOR_SEVENTH_CHORD, MINOR_MAJOR_SEVENTH_CHORD_INTERVALS},
-        {AUGMENTED_SIXTH_CHORD,     AUGMENTED_SIXTH_CHORD_INTERVALS}
+        {MAJOR_CHORD,                   MAJOR_CHORD_INTERVALS},
+        {MINOR_CHORD,                   MINOR_CHORD_INTERVALS},
+        {DIMINISHED_CHORD,              DIMINISHED_CHORD_INTERVALS},
+        {AUGMENTED_CHORD,               AUGMENTED_CHORD_INTERVALS},
+        {DOMINANT_SEVENTH_CHORD,        DOMINANT_SEVENTH_CHORD_INTERVALS},
+        {MAJOR_SEVENTH_CHORD,           MAJOR_SEVENTH_CHORD_INTERVALS},
+        {MINOR_SEVENTH_CHORD,           MINOR_SEVENTH_CHORD_INTERVALS},
+        {DIMINISHED_SEVENTH_CHORD,      DIMINISHED_SEVENTH_CHORD_INTERVALS},
+        {HALF_DIMINISHED_CHORD,         HALF_DIMINISHED_CHORD_INTERVALS},
+        {MINOR_MAJOR_SEVENTH_CHORD,     MINOR_MAJOR_SEVENTH_CHORD_INTERVALS},
+        {AUGMENTED_SIXTH_CHORD,         AUGMENTED_SIXTH_CHORD_INTERVALS},
+        {MAJOR_NINTH_DOMINANT_CHORD,   MAJOR_NINTH_DOMINANT_CHORD_INTERVALS},
+        {MINOR_NINTH_DOMINANT_CHORD,   MINOR_NINTH_DOMINANT_CHORD_INTERVALS}
 };
 
 // Chord states
@@ -306,29 +313,12 @@ const vector<int> MELODIC_MINOR_SCALE = {MAJOR_SECOND, MINOR_SECOND, MAJOR_SECON
  ***********************************************************************************************************************/
 
 /**
- * For a given set of intervals between notes that loops and a starting note, returns all the possible notes
- * @param note the starting note
- * @param intervals the set of intervals between notes. It must make a loop. For example, to get all notes from a major
- * scale from note, use {2, 2, 1, 2, 2, 2, 1}. To get all notes from a minor chord, use {3, 4, 5}.
- * @return vector<int> all the notes
- */
-vector<int> get_all_notes_from_interval_loop(int n, vector<int> intervals);
-
-/**
- * For a given tonality (root + mode), returns all the possible notes
- * @param root the root of the tonality (in [0,11])
- * @param scale the set of tones and semitones that define the scale
- * @return vector<int> all the possible notes from that tonality
- */
-vector<int> get_all_notes_from_scale(int root, vector<int> scale);
-
-/**
- * For a given chord (root + mode), returns all the possible notes
+ * Returns a vector containing all the notes in a chord
  * @param root the root of the chord
- * @param quality the set of tones and semitones that define the chord
- * @return vector<int> all the possible notes from that chord
+ * @param quality the quality of the chord
+ * @return
  */
-vector<int> get_all_notes_from_chord(int root, vector<int> quality);
+vector<int> get_all_notes_in_chord(int root, int quality);
 
 /**
  * Get all values for a given note
