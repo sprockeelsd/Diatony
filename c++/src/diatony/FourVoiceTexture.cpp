@@ -40,7 +40,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     nOfNotesInChord                                 = IntArgs(size);
     /// keep track of the number of notes that should be in each chord if it is complete
     for(int i = 0; i < size; i++)
-        nOfNotesInChord[i] = chordQualitiesIntervals.at(chordQualities[i]).size();
+        nOfNotesInChord[i] = chordQualitiesIntervals.at(chordQualities[i]).size() + 1;
 
     /// solution array
     fullChordsVoicing                               = IntVarArray(*this, nOfVoices * size, 0, 127);
@@ -81,6 +81,8 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
                   costOfMelodicIntervals, nOfCommonNotesInSameVoice};
 
     /// Test constraints
+
+    //rel(*this, fullChordsVoicing[nOfVoices * 4 + 1] == 64);
 
     /**-----------------------------------------------------------------------------------------------------------------
     |                                                                                                                  |
@@ -218,7 +220,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
         /// resolve the tritone if there is one and it needs to be resolved
         if ((chordDegrees[i] == SEVENTH_DEGREE && chordQualities[i] == DIMINISHED_CHORD && chordDegrees[i + 1] == FIRST_DEGREE) ||
             (chordDegrees[i] == FIFTH_DEGREE && chordDegrees[i+1] == FIRST_DEGREE) ||
-            (chordDegrees[i] >= FIVE_OF_TWO && chordDegrees[i] <= FIVE_OF_SEVEN)){
+            ((chordDegrees[i] >= FIVE_OF_TWO && chordDegrees[i] <= FIVE_OF_SEVEN) && chordDegrees[i+1] != FIFTH_DEGREE_APPOGIATURA)){
             //@todo add other chords that have the tritone
             tritone_resolution(*this, nOfVoices, i, tonality, chordDegrees,
                                chordQualities, chordStates, bassMelodicIntervals,

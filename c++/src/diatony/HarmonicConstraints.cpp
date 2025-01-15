@@ -197,7 +197,7 @@ void chord_note_occurrence_first_inversion(Home home, int size, int nVoices, int
         && qualities[currentPos] == MINOR_NINTH_DOMINANT_CHORD) {
         std::cout << "ninth chord" << std::endl;
         auto seventh = (root + get_interval_from_root(qualities[currentPos],SEVENTH)) % PERFECT_OCTAVE;
-        auto nineth = (root + get_interval_from_root(qualities[currentPos],NINETH)) % PERFECT_OCTAVE;
+        auto nineth = (root + get_interval_from_root(qualities[currentPos],NINTH)) % PERFECT_OCTAVE;
 
         count(home, currentChord, IntSet(get_all_given_note(root)), IRT_EQ, 0);
         count(home, currentChord, IntSet(get_all_given_note(third)), IRT_EQ, 1);
@@ -305,6 +305,9 @@ void chord_note_occurrence_second_inversion(const Home& home, int size, int nVoi
  */
 void chord_note_occurrence_third_inversion(const Home& home, int size, int nVoices, int currentPos, Tonality *tonality,
                                            vector<int> degrees, vector<int> qualities, const IntVarArgs &currentChord) {
+    if (qualities[currentPos] < DOMINANT_SEVENTH_CHORD) {
+        throw std::invalid_argument("The chord cannot be in third inversion");
+    }
     auto root = tonality->get_degree_note(degrees[currentPos]);
     auto third = (root + get_interval_from_root(qualities[currentPos],THIRD)) % PERFECT_OCTAVE;
     auto fifth = (root + get_interval_from_root(qualities[currentPos],FIFTH)) % PERFECT_OCTAVE;

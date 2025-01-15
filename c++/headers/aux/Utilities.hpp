@@ -276,7 +276,7 @@ enum chordNotes{
     THIRD,      //1
     FIFTH,      //2
     SEVENTH,    //3
-    NINETH      //4
+    NINTH      //4
 };
 
 /** Modes */
