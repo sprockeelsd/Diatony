@@ -22,14 +22,13 @@ int main(int argc, char* argv[]) {
         return 1;
 
     /// Data for the problem
-    Tonality* tonality = new MajorTonality(A);
+    Tonality* tonality = new MajorTonality(C);
     std::cout << "tonality: " << tonality->pretty() << std::endl;
 
     std::string search_type = argv[1];
     std::string build_midi = argv[2];
 
     /// vectors representing the chords and the states
-    /// todo pb with tritone resolution of secondary dominant chords
     vector<int> chords = {FIRST_DEGREE, FOURTH_DEGREE, FIVE_OF_FIVE, FIFTH_DEGREE_APPOGIATURA, FIFTH_DEGREE, FIRST_DEGREE
     };
 
@@ -38,11 +37,11 @@ int main(int argc, char* argv[]) {
     for(int chord : chords)
         chords_qualities.push_back(tonality->get_chord_quality(chord));
 
-    chords_qualities[2] == DOMINANT_SEVENTH_CHORD;
-    chords_qualities[4] == DOMINANT_SEVENTH_CHORD;
+    chords_qualities[2] = MINOR_NINTH_DOMINANT_CHORD;
+    chords_qualities[4] = DOMINANT_SEVENTH_CHORD;
 
 
-    vector<int> states = {FUNDAMENTAL_STATE, FIRST_INVERSION, FUNDAMENTAL_STATE, SECOND_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE
+    vector<int> states = {FUNDAMENTAL_STATE, FIRST_INVERSION, FIRST_INVERSION, SECOND_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE
     };
 
     int size = chords.size();

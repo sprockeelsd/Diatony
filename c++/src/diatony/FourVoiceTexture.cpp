@@ -28,6 +28,7 @@
  * @param chordStas the states of the chord of the chord progression (fundamental, 1st inversion,...)
  * @return an instance of FourVoiceTexture initialized with the given parameters, constraints and branching strategies
  * posted.
+ * /!\ dominant diminished seventh chords are considered as minor ninth dominant chords without their fundamental
  */
 FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, vector<int> chordQuals, vector<int> chordStas) {
     //todo: support seventh chords for all chord degrees + diminished seventh chords
