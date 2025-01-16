@@ -24,7 +24,7 @@ solve_diatony_problem(int size, Tonality *tonality, vector<int> chords, vector<i
     /// Search options
     Search::Options opts;
     opts.threads = 1;
-    opts.stop = Search::Stop::time(600000); // stop after 120 seconds
+    opts.stop = Search::Stop::time(60000); // stop after 120 seconds
     opts.cutoff = Search::Cutoff::merge(
             Search::Cutoff::linear(2*size),
             Search::Cutoff::geometric((4*size)^2, 2));

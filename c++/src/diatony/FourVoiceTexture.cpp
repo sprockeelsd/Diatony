@@ -28,9 +28,10 @@
  * @param chordStas the states of the chord of the chord progression (fundamental, 1st inversion,...)
  * @return an instance of FourVoiceTexture initialized with the given parameters, constraints and branching strategies
  * posted.
+ * /!\ dominant diminished seventh chords are considered as minor ninth dominant chords without their fundamental
  */
 FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, vector<int> chordQuals, vector<int> chordStas) {
-    //todo: check doubling and voicing and V/... chords + support seventh chords for all chord degrees + diminished seventh chords
+    //todo: support seventh chords for all chord degrees + diminished seventh chords
     /// Parameters
     size                                            = s;
     tonality                                        = t;
@@ -40,7 +41,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
     nOfNotesInChord                                 = IntArgs(size);
     /// keep track of the number of notes that should be in each chord if it is complete
     for(int i = 0; i < size; i++)
-        nOfNotesInChord[i] = chordQualitiesIntervals.at(chordQualities[i]).size();
+        nOfNotesInChord[i] = chordQualitiesIntervals.at(chordQualities[i]).size() + 1;
 
     /// solution array
     fullChordsVoicing                               = IntVarArray(*this, nOfVoices * size, 0, 127);
@@ -81,6 +82,8 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
                   costOfMelodicIntervals, nOfCommonNotesInSameVoice};
 
     /// Test constraints
+
+    //rel(*this, fullChordsVoicing[nOfVoices * 4 + 1] == 64);
 
     /**-----------------------------------------------------------------------------------------------------------------
     |                                                                                                                  |
@@ -218,7 +221,7 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
         /// resolve the tritone if there is one and it needs to be resolved
         if ((chordDegrees[i] == SEVENTH_DEGREE && chordQualities[i] == DIMINISHED_CHORD && chordDegrees[i + 1] == FIRST_DEGREE) ||
             (chordDegrees[i] == FIFTH_DEGREE && chordDegrees[i+1] == FIRST_DEGREE) ||
-            (chordDegrees[i] >= FIVE_OF_TWO && chordDegrees[i] <= FIVE_OF_SEVEN)){
+            ((chordDegrees[i] >= FIVE_OF_TWO && chordDegrees[i] <= FIVE_OF_SEVEN) && chordDegrees[i+1] != FIFTH_DEGREE_APPOGIATURA)){
             //@todo add other chords that have the tritone
             tritone_resolution(*this, nOfVoices, i, tonality, chordDegrees,
                                chordQualities, chordStates, bassMelodicIntervals,
@@ -250,6 +253,12 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
         }
         /// general voice leading rules
         else {
+            if ((chordQualities[i+1] == MAJOR_SEVENTH_CHORD || chordQualities[i+1] == MINOR_SEVENTH_CHORD || chordQualities[i+1] == DIMINISHED_SEVENTH_CHORD
+                || chordQualities[i+1] == HALF_DIMINISHED_CHORD)  && chordDegrees[i+1] <= SEVENTH_DEGREE) {
+                /// the seventh must be prepared
+                species_seventh(*this, nOfVoices, i, tonality, chordDegrees, chordQualities, fullChordsVoicing);
+            }
+
             /// If the bass moves by a step, other voices should move in contrary motion
             int bassFirstChord = (tonality->get_degree_note(chordDegrees[i] + 2 * chordStates[i])
                     % PERFECT_OCTAVE);

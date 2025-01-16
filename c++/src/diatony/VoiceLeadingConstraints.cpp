@@ -261,6 +261,23 @@ void italian_augmented_sixth(const Home &home, int nOfVoices, int currentPositio
  ***********************************************************************************************************************/
 
 /**
+ *
+ **/
+void species_seventh(const Home &home, int nOfVoices, int currentPosition, Tonality* tonality, vector<int> chordDegrees, vector<int> chordQualities,
+    IntVarArray fullChordsVoicing){
+        auto next_chord_seventh = (tonality->get_degree_note(chordDegrees[currentPosition+1]) +
+            get_interval_from_root(chordQualities[currentPosition+1],SEVENTH)) % PERFECT_OCTAVE;
+
+IntVarArgs currentChord = fullChordsVoicing.slice(nOfVoices * currentPosition, 1, nOfVoices);
+IntVarArgs nextChord = fullChordsVoicing.slice(nOfVoices * (currentPosition+1), 1, nOfVoices);
+for (int j = BASS; j <= SOPRANO; j++) {
+    rel(home, expr(home, currentChord[j] % PERFECT_OCTAVE == next_chord_seventh), BOT_EQV,
+        expr(home, nextChord[j] % PERFECT_OCTAVE == next_chord_seventh), true);
+}
+    }
+
+
+/**
  * Sets the constraint for a first degree in second inversion followed by a fifth degree (appogiatura)
  * @param home the instance of the problem
  * @param nVoices the number of voices in the piece
@@ -332,7 +349,6 @@ void tritone_resolution(const Home &home, int nVoices, int currentPosition, Tona
     vector<IntVarArray> melodicIntervals({bassMelodicIntervals, tenorMelodicIntervals, altoMelodicIntervals, sopranoMelodicIntervals});
 
     if (chordDegs[currentPosition] == FIFTH_DEGREE || chordDegs[currentPosition] == SEVENTH_DEGREE) {
-        std::cout << "five or seven" << std::endl;
         for(int voice = BASS; voice <= SOPRANO; voice++){
             /// special case
             /// if the chords are VII (1st inversion) -> I (1st inversion) or V(+6)->I(6)
@@ -368,10 +384,8 @@ void tritone_resolution(const Home &home, int nVoices, int currentPosition, Tona
         }
     }
     else { /// secondary dominant chords
-        std::cout << "secondary dominant" << std::endl;
         auto third = (tonality->get_degree_note(chordDegs[currentPosition]) + MAJOR_THIRD) % PERFECT_OCTAVE;
         auto seventh = (tonality->get_degree_note(chordDegs[currentPosition]) + MINOR_SEVENTH) % PERFECT_OCTAVE;
-        std::cout << "third: " << third << " seventh: " << seventh << std::endl;
 
         for(int voice = BASS; voice <= SOPRANO; voice++) {
             rel(home,
