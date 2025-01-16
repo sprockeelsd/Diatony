@@ -266,7 +266,8 @@ enum chordStates{
     FUNDAMENTAL_STATE,  //0
     FIRST_INVERSION,    //1
     SECOND_INVERSION,   //2
-    THIRD_INVERSION     //3
+    THIRD_INVERSION,    //3
+    FOURTH_INVERSION    //4
 };
 
 const vector<std::string> stateNames = {"Fund", "1st inv", "2nd inv", "3rd inv"};
