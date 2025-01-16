@@ -134,6 +134,11 @@ void chord_note_occurrence_fundamental_state(Home home, int nVoices, int pos, ve
         IntVar nOfBassNotes(home,0,4);
         count(home, currentChord, IntSet(get_all_given_note(root)), IRT_EQ,nOfBassNotes);
         rel(home, isIncomplete, BOT_EQV, expr(home, nOfBassNotes == 3), true);
+        if(qualities[pos] >= DOMINANT_SEVENTH_CHORD){
+            auto seventh = (root + get_interval_from_root(qualities[pos],SEVENTH)) % PERFECT_OCTAVE;
+            /// the seventh must be present
+            count(home, currentChord, IntSet(get_all_given_note(seventh)), IRT_EQ, 1);
+        }
     }
     else{
         std::cout << "Degree: " << degrees[pos]  << " Quality: " << qualities[pos] << std::endl;
@@ -142,7 +147,7 @@ void chord_note_occurrence_fundamental_state(Home home, int nVoices, int pos, ve
         count(home, currentChord, IntSet(get_all_given_note(third)), IRT_EQ,1);
         count(home, currentChord, IntSet(get_all_given_note(fifth)), IRT_LQ, 1);
 
-        if(qualities[pos] >= DOMINANT_SEVENTH_CHORD && qualities[pos]){
+        if(qualities[pos] >= DOMINANT_SEVENTH_CHORD){
             auto seventh = (root + get_interval_from_root(qualities[pos],SEVENTH)) % PERFECT_OCTAVE;
             /// the seventh must be present
             count(home, currentChord, IntSet(get_all_given_note(seventh)), IRT_EQ, 1);
@@ -195,7 +200,7 @@ void chord_note_occurrence_first_inversion(Home home, int size, int nVoices, int
     /// Dominant diminished seventh chords (aka minor ninth dominant chords without the root)
     else if ((degrees[currentPos] == FIFTH_DEGREE || (degrees[currentPos] >= FIVE_OF_TWO && degrees[currentPos] <= FIVE_OF_SEVEN))
         && qualities[currentPos] == MINOR_NINTH_DOMINANT_CHORD) {
-        std::cout << "ninth chord" << std::endl;
+        std::cout << "dimimnished seventh dominant chord" << std::endl;
         auto seventh = (root + get_interval_from_root(qualities[currentPos],SEVENTH)) % PERFECT_OCTAVE;
         auto nineth = (root + get_interval_from_root(qualities[currentPos],NINTH)) % PERFECT_OCTAVE;
 

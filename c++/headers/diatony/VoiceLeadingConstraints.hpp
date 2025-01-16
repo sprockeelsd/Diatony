@@ -139,6 +139,9 @@ void italian_augmented_sixth(const Home &home, int nOfVoices, int currentPositio
  *                                                                                                                     *
  ***********************************************************************************************************************/
 
+void species_seventh(const Home &home, int nOfVoices, int currentPosition, Tonality* tonality, vector<int> chordDegrees, vector<int> chordQualities,
+    IntVarArray fullChordsVoicing);
+
 /**
  * Sets the constraint for a first degree in second inversion followed by a fifth degree (appogiatura)
  * @param home the instance of the problem

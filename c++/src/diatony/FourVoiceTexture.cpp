@@ -253,6 +253,12 @@ FourVoiceTexture::FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, ve
         }
         /// general voice leading rules
         else {
+            if ((chordQualities[i+1] == MAJOR_SEVENTH_CHORD || chordQualities[i+1] == MINOR_SEVENTH_CHORD || chordQualities[i+1] == DIMINISHED_SEVENTH_CHORD
+                || chordQualities[i+1] == HALF_DIMINISHED_CHORD)  && chordDegrees[i+1] <= SEVENTH_DEGREE) {
+                /// the seventh must be prepared
+                species_seventh(*this, nOfVoices, i, tonality, chordDegrees, chordQualities, fullChordsVoicing);
+            }
+
             /// If the bass moves by a step, other voices should move in contrary motion
             int bassFirstChord = (tonality->get_degree_note(chordDegrees[i] + 2 * chordStates[i])
                     % PERFECT_OCTAVE);
