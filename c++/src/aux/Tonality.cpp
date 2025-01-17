@@ -40,8 +40,6 @@ Tonality::Tonality(int t, int m, vector<int> s) {
     if (m == MINOR_MODE)    degrees_notes[FIVE_OF_THREE] = (note - 1)                % PERFECT_OCTAVE;
     else                    degrees_notes[FIVE_OF_THREE] = note                      % PERFECT_OCTAVE;
     degrees_notes[AUGMENTED_SIXTH]              = (tonic + MINOR_SIXTH)              % PERFECT_OCTAVE;
-    std::cout << " V/VI" << degrees_notes[FIVE_OF_SIX] << std::endl;
-
 
     tonal_notes = {degrees_notes[FIRST_DEGREE], degrees_notes[FOURTH_DEGREE], degrees_notes[FIFTH_DEGREE]};
     /// Modal notes are the notes that change in major or minor scale (3,6,7 degrees). For simplicity for constraints,

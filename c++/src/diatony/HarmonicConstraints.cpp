@@ -76,7 +76,7 @@ void chord_note_occurrence_fundamental_state(Home home, int nVoices, int pos, ve
 
     /// if the chord is a diminished seventh degree
     if(degrees[pos] == SEVENTH_DEGREE && qualities[pos] == DIMINISHED_CHORD){
-        std::cout << "diminished chord of seventh degree" << std::endl;
+        //std::cout << "diminished chord of seventh degree" << std::endl;
         /// If there are 4 different notes, then the third must be doubled. Otherwise any note can be doubled as
         /// there are only 3 values
         IntVar nOfThirds(home,0,nVoices);
@@ -90,13 +90,13 @@ void chord_note_occurrence_fundamental_state(Home home, int nVoices, int pos, ve
         count(home, currentChord, IntSet(get_all_given_note(fifth)), IRT_GQ,1);
     }
     else if (degrees[pos] == FLAT_TWO) {
-        std::cout << "bII" << std::endl;
+        //std::cout << "bII" << std::endl;
         count(home, currentChord, IntSet(get_all_given_note(root)), IRT_EQ, 1);
         count(home, currentChord, IntSet(get_all_given_note(third)), IRT_EQ, 2);
         count(home, currentChord, IntSet(get_all_given_note(fifth)), IRT_GQ, 1);
     }
     else if (degrees[pos] == AUGMENTED_SIXTH) {
-        std::cout << "Aug. 6th" << std::endl;
+        //std::cout << "Aug. 6th" << std::endl;
         count(home, currentChord, IntSet(get_all_given_note(root)), IRT_EQ, 1);
         count(home, currentChord, IntSet(get_all_given_note(third)), IRT_EQ, 2);
         count(home, currentChord, IntSet(get_all_given_note(fifth)), IRT_EQ, 1);
@@ -141,7 +141,7 @@ void chord_note_occurrence_fundamental_state(Home home, int nVoices, int pos, ve
         }
     }
     else{
-        std::cout << "Degree: " << degrees[pos]  << " Quality: " << qualities[pos] << std::endl;
+        //std::cout << "Degree: " << degrees[pos]  << " Quality: " << qualities[pos] << std::endl;
         /// each note is present at least once, the bass is present at least once, the third exactly once and the fifth at most once
         count(home, currentChord, IntSet(get_all_given_note(root)), IRT_GQ,1);
         count(home, currentChord, IntSet(get_all_given_note(third)), IRT_EQ,1);
@@ -200,7 +200,7 @@ void chord_note_occurrence_first_inversion(Home home, int size, int nVoices, int
     /// Dominant diminished seventh chords (aka minor ninth dominant chords without the root)
     else if ((degrees[currentPos] == FIFTH_DEGREE || (degrees[currentPos] >= FIVE_OF_TWO && degrees[currentPos] <= FIVE_OF_SEVEN))
         && qualities[currentPos] == DIMINISHED_SEVENTH_CHORD) {
-        std::cout << "diminished seventh dominant chord" << std::endl;
+        //std::cout << "diminished seventh dominant chord" << std::endl;
         auto root_dim = (root + MINOR_THIRD) % PERFECT_OCTAVE;
         auto third_dim = (root_dim + MINOR_THIRD) % PERFECT_OCTAVE;
         auto fifth_dim = (third_dim + MINOR_THIRD) % PERFECT_OCTAVE;

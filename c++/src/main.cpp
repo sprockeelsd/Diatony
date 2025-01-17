@@ -49,7 +49,7 @@ int main(int argc, char* argv[]) {
     /// Solve the problem
     vector<FourVoiceTexture*> sols;
     /// Find the best solution
-    FourVoiceTexture* bestSol = solve_diatony_problem_optimal(size, tonality, chords, chords_qualities, states, true);
+    FourVoiceTexture* bestSol = solve_diatony_problem_optimal(size, tonality, chords, chords_qualities, states);
 
     if(search_type == "all"){ /// We want to generate all solutions that are close to optimal
         auto best_sol_costs = bestSol->get_cost_vector();
