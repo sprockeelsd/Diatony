@@ -390,6 +390,8 @@ FourVoiceTexture::FourVoiceTexture(FourVoiceTexture& s): IntLexMinimizeSpace(s){
  */
 int FourVoiceTexture::get_size() const{ return size; }
 
+IntVarArray FourVoiceTexture::getFullVoicing() { return fullChordsVoicing; }
+
 /**
  * Copy method
  * @return a copy of the current instance of the FourVoiceTexture class. Calls the copy constructor

@@ -123,6 +123,8 @@ public:
      */
     int get_size() const;
 
+    IntVarArray getFullVoicing();
+
     /**
      * Returns the values taken by the variables vars in a solution as a pointer to an integer array
      * @return an array of integers representing the values of the variables in a solution
