@@ -39,7 +39,7 @@ int main(int argc, char* argv[]) {
 
     chords_qualities[1] = MINOR_SEVENTH_CHORD;
     chords_qualities[2] = MINOR_NINTH_DOMINANT_CHORD;
-    chords_qualities[4] = DOMINANT_SEVENTH_CHORD;
+    chords_qualities[4] = DIMINISHED_SEVENTH_CHORD;
 
 
     vector<int> states = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FIRST_INVERSION, SECOND_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE

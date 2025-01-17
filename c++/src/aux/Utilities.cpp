@@ -159,6 +159,17 @@ string intVarArray_to_string(IntVarArray vars){
     return res;
 }
 
+vector<int> intVarArray_to_int_vector(IntVarArray vars) {
+    vector<int> res;
+    for (auto & var : vars) {
+        if (!var.assigned()) {
+            throw std::invalid_argument("Variable not assigned");
+        }
+        res.push_back(var.val());
+    }
+    return res;
+}
+
 /**
  * Returns the values of an IntVarArgs as a string
  * @param args an IntVarArgs

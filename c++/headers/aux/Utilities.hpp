@@ -380,6 +380,8 @@ string intVar_to_string(const IntVar &var, bool absolute = false);
  */
 string intVarArray_to_string(IntVarArray vars);
 
+vector<int> intVarArray_to_int_vector(IntVarArray vars);
+
 /**
  * Returns the values of an IntVarArgs as a string
  * @param args an IntVarArgs

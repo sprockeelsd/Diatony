@@ -199,16 +199,17 @@ void chord_note_occurrence_first_inversion(Home home, int size, int nVoices, int
     }
     /// Dominant diminished seventh chords (aka minor ninth dominant chords without the root)
     else if ((degrees[currentPos] == FIFTH_DEGREE || (degrees[currentPos] >= FIVE_OF_TWO && degrees[currentPos] <= FIVE_OF_SEVEN))
-        && qualities[currentPos] == MINOR_NINTH_DOMINANT_CHORD) {
-        std::cout << "dimimnished seventh dominant chord" << std::endl;
-        auto seventh = (root + get_interval_from_root(qualities[currentPos],SEVENTH)) % PERFECT_OCTAVE;
-        auto nineth = (root + get_interval_from_root(qualities[currentPos],NINTH)) % PERFECT_OCTAVE;
+        && qualities[currentPos] == DIMINISHED_SEVENTH_CHORD) {
+        std::cout << "diminished seventh dominant chord" << std::endl;
+        auto root_dim = (root + MINOR_THIRD) % PERFECT_OCTAVE;
+        auto third_dim = (root_dim + MINOR_THIRD) % PERFECT_OCTAVE;
+        auto fifth_dim = (third_dim + MINOR_THIRD) % PERFECT_OCTAVE;
+        auto seventh_dim = (fifth_dim + MINOR_THIRD) % PERFECT_OCTAVE;
 
-        count(home, currentChord, IntSet(get_all_given_note(root)), IRT_EQ, 0);
-        count(home, currentChord, IntSet(get_all_given_note(third)), IRT_EQ, 1);
-        count(home, currentChord, IntSet(get_all_given_note(fifth)), IRT_EQ, 1);
-        count(home, currentChord, IntSet(get_all_given_note(seventh)), IRT_EQ, 1);
-        count(home, currentChord, IntSet(get_all_given_note(nineth)), IRT_EQ, 1);
+        count(home, currentChord, IntSet(get_all_given_note(root_dim)), IRT_EQ, 1);
+        count(home, currentChord, IntSet(get_all_given_note(third_dim)), IRT_EQ, 1);
+        count(home, currentChord, IntSet(get_all_given_note(fifth_dim)), IRT_EQ, 1);
+        count(home, currentChord, IntSet(get_all_given_note(seventh_dim)), IRT_EQ, 1);
         }
     else{ /// default case: double the fundamental or the fifth of the chord unless the top and bottom voices move down and up respectively
         if(currentPos < size-1 && currentPos > 0){ /// this special case cannot happen on the first and last chord
