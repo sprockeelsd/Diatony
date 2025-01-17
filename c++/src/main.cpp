@@ -23,7 +23,6 @@ int main(int argc, char* argv[]) {
 
     /// Data for the problem
     Tonality* tonality = new MajorTonality(C);
-    std::cout << "tonality: " << tonality->pretty() << std::endl;
 
     std::string search_type = argv[1];
     std::string build_midi = argv[2];
@@ -50,7 +49,7 @@ int main(int argc, char* argv[]) {
     /// Solve the problem
     vector<FourVoiceTexture*> sols;
     /// Find the best solution
-    FourVoiceTexture* bestSol = solve_diatony_problem_optimal(size, tonality, chords, chords_qualities, states);
+    FourVoiceTexture* bestSol = solve_diatony_problem_optimal(size, tonality, chords, chords_qualities, states, true);
 
     if(search_type == "all"){ /// We want to generate all solutions that are close to optimal
         auto best_sol_costs = bestSol->get_cost_vector();

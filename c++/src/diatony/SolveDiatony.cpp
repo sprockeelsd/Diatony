@@ -14,11 +14,12 @@
  * @param chords the chord degrees of the progression
  * @param qualities the qualities of the chords
  * @param states the states of the chords
+ * @param print
  * @return A vector<FourVoiceTexture*> representing all the solutions found during search. If no solutions are found,
  * returns an empty vector. If the best solution is not found within the time limit, returns all solutions found so far.
  */
 vector<FourVoiceTexture *>
-solve_diatony_problem(int size, Tonality *tonality, vector<int> chords, vector<int> qualities, vector<int> states) {
+solve_diatony_problem(int size, Tonality *tonality, vector<int> chords, vector<int> qualities, vector<int> states, bool print) {
     /// create a new problem
     auto pb = new FourVoiceTexture(size, tonality, std::move(chords), std::move(qualities), std::move(states));
     /// Search options
@@ -42,30 +43,35 @@ solve_diatony_problem(int size, Tonality *tonality, vector<int> chords, vector<i
     /// Find all solutions
     while(FourVoiceTexture* next_sol = solver.next()){
         n_sols++;
-        std::cout << "temporary solution found (" << n_sols  << ")" << std::endl;
+        if (print) {
+            std::cout << "temporary solution found (" << n_sols  << ")" << std::endl;
+            std::cout << next_sol->to_string() << std::endl;
+            std::cout << statistics_to_string(solver.statistics()) << std::endl;
+        }
         solutions.push_back((FourVoiceTexture*) next_sol->copy());
-        std::cout << next_sol->to_string() << std::endl;
-        std::cout << statistics_to_string(solver.statistics()) << std::endl;
         delete next_sol;
     }
     /// Give info on the search (complete, optimal, etc)
-    std::cout << "search over" << std::endl;
+
     auto currTime = std::chrono::high_resolution_clock::now();     /// current time
     std::chrono::duration<double> duration = currTime - start;
-    if(solver.stopped()){
-        std::cout << "Best solution not found within the time limit. Current best solution found: " << std::endl;
-        std::cout << solutions[n_sols-1]->to_string() << std::endl;
-        std::cout << statistics_to_string(solver.statistics()) << std::endl;
+    if (print) {
+        std::cout << "search over" << std::endl;
+        if(solver.stopped()){
+            std::cout << "Best solution not found within the time limit. Current best solution found: " << std::endl;
+            std::cout << solutions[n_sols-1]->to_string() << std::endl;
+            std::cout << statistics_to_string(solver.statistics()) << std::endl;
+        }
+        else if(n_sols == 0){
+            std::cout << "No solutions" << std::endl;
+        }
+        else{
+            std::cout << "Best solution found" << std::endl;
+            std::cout << solutions[n_sols-1]->to_string() << std::endl;
+            std::cout << statistics_to_string(solver.statistics()) << std::endl;
+        }
+        std::cout << "time taken: " << duration.count() << " seconds and " << n_sols << " solutions found.\n" << std::endl;
     }
-    else if(n_sols == 0){
-        std::cout << "No solutions" << std::endl;
-    }
-    else{
-        std::cout << "Best solution found" << std::endl;
-        std::cout << solutions[n_sols-1]->to_string() << std::endl;
-        std::cout << statistics_to_string(solver.statistics()) << std::endl;
-    }
-    std::cout << "time taken: " << duration.count() << " seconds and " << n_sols << " solutions found.\n" << std::endl;
     return solutions;
 }
 
@@ -76,12 +82,13 @@ solve_diatony_problem(int size, Tonality *tonality, vector<int> chords, vector<i
  * @param chords the chord degrees of the progression
  * @param qualities the qualities of the chords
  * @param states the states of the chords
+ * @param print
  * @return A FourVoiceTexture* representing the best solution found. If no solution is found, returns nullptr.
  * If the best solution is not found during search, returns the last solution found (best so far).
  */
 FourVoiceTexture* solve_diatony_problem_optimal(int size, Tonality* tonality, vector<int> chords, vector<int> qualities,
-                                                vector<int> states){
-    auto sols = solve_diatony_problem(size, tonality, std::move(chords), std::move(qualities), std::move(states));
+                                                vector<int> states, bool print){
+    auto sols = solve_diatony_problem(size, tonality, std::move(chords), std::move(qualities), std::move(states), print);
     if(sols.empty())
         return nullptr;
     return sols.back();

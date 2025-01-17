@@ -15,10 +15,11 @@
  * @param chords the chord degrees of the progression
  * @param qualities the qualities of the chords
  * @param states the states of the chords
+ * @param print
  * @return A list of FourVoiceTexture* representing all the solutions found during search
  */
 vector<FourVoiceTexture *> solve_diatony_problem(int size, Tonality *tonality, vector<int> chords, vector<int> qualities,
-                                                 vector<int> states);
+                                                 vector<int> states, bool print = false);
 /**
  * Finds an optimal solution for a four voice texture problem.
  * @param size the number of chords
@@ -26,11 +27,12 @@ vector<FourVoiceTexture *> solve_diatony_problem(int size, Tonality *tonality, v
  * @param chords the chord degrees of the progression
  * @param qualities the qualities of the chords
  * @param states the states of the chords
+ * @param print
  * @return A FourVoiceTexture* representing the best solution found. If no solution is found, returns nullptr.
  * If the best solution is not found during search, returns the last solution found (best so far).
  */
 FourVoiceTexture* solve_diatony_problem_optimal(int size, Tonality* tonality, vector<int> chords, vector<int> qualities,
-                                               vector<int> states);
+                                                vector<int> states, bool print = false);
 
 /**
  * Finds all solutions close to the optimal solution, with a margin percentage of deviation from the cost vector. That
