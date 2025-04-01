@@ -121,9 +121,33 @@ public:
      * Returns the number of chords of the problem
      * @return an integer representing the number of chords of the problem
      */
-    int get_size() const;
+    int get_size() const { return size; }
 
-    IntVarArray getFullVoicing();
+    /**
+     * Returns the array of variables for the notes
+     * @return
+     */
+    IntVarArray getFullVoicing(){ return fullChordsVoicing; }
+
+    IntVarArray getBassMelodicIntervals(){ return bassMelodicIntervals; }
+
+    IntVarArray getTenorMelodicIntervals(){ return tenorMelodicIntervals; }
+
+    IntVarArray getAltoMelodicIntervals(){ return altoMelodicIntervals; }
+
+    IntVarArray getSopranoMelodicIntervals(){ return sopranoMelodicIntervals; }
+
+    IntVarArray getBassTenorHarmonicIntervals(){ return bassTenorHarmonicIntervals; }
+
+    IntVarArray getBassAltoHarmonicIntervals(){ return bassAltoHarmonicIntervals; }
+
+    IntVarArray getBassSopranoHarmonicIntervals(){ return bassSopranoHarmonicIntervals; }
+
+    IntVarArray getTenorAltoHarmonicIntervals(){ return tenorAltoHarmonicIntervals; }
+
+    IntVarArray getTenorSopranoHarmonicIntervals(){ return tenorSopranoHarmonicIntervals; }
+
+    IntVarArray getAltoSopranoHarmonicIntervals(){ return altoSopranoHarmonicIntervals; }
 
     /**
      * Returns the values taken by the variables vars in a solution as a pointer to an integer array

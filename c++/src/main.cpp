@@ -36,10 +36,6 @@ int main(int argc, char* argv[]) {
     for(int chord : chords)
         chords_qualities.push_back(tonality->get_chord_quality(chord));
 
-    chords_qualities[1] = MINOR_SEVENTH_CHORD;
-    chords_qualities[2] = MINOR_NINTH_DOMINANT_CHORD;
-    chords_qualities[4] = DIMINISHED_SEVENTH_CHORD;
-
 
     vector<int> states = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FIRST_INVERSION, SECOND_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE
     };
@@ -49,7 +45,7 @@ int main(int argc, char* argv[]) {
     /// Solve the problem
     vector<FourVoiceTexture*> sols;
     /// Find the best solution
-    FourVoiceTexture* bestSol = solve_diatony_problem_optimal(size, tonality, chords, chords_qualities, states);
+    FourVoiceTexture* bestSol = solve_diatony_problem_optimal(size, tonality, chords, chords_qualities, states, true);
 
     if(search_type == "all"){ /// We want to generate all solutions that are close to optimal
         auto best_sol_costs = bestSol->get_cost_vector();

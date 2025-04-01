@@ -30,6 +30,8 @@ using namespace Gecode;
  *                                                                                                                     *
  ***********************************************************************************************************************/
 
+// TODO remove useless stuff
+
 /** Files */
 const string LOG_FILE = "log.txt";
 
