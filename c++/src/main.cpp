@@ -8,6 +8,7 @@
 #include "../headers/aux/MajorTonality.hpp"
 #include "../headers/aux/MinorTonality.hpp"
 #include "../headers/aux/MidiFileGeneration.hpp"
+#include "../headers/diatony/FourVoiceTexture.hpp"
 #include "../headers/diatony/SolveDiatony.hpp"
 
 /**
@@ -42,33 +43,7 @@ int main(int argc, char* argv[]) {
 
     int size = chords.size();
 
-    /// Solve the problem
-    vector<FourVoiceTexture*> sols;
-    /// Find the best solution
-    FourVoiceTexture* bestSol = solve_diatony_problem_optimal(size, tonality, chords, chords_qualities, states, true);
+    auto space = new FourVoiceTexture(6, tonality, chords, chords_qualities, states);
 
-    if(search_type == "all"){ /// We want to generate all solutions that are close to optimal
-        auto best_sol_costs = bestSol->get_cost_vector();
-        vector<int> costs;
-        costs.reserve(best_sol_costs.size());
-        for(const auto& c : best_sol_costs){
-            costs.push_back(c.val());
-        }
-        ///find all optimal solutions (with or without margin)
-        auto all_sols = find_optimal_solutions_with_margin(size, tonality, chords, chords_qualities, states, costs, 0.1);
-        for(auto sol : all_sols){
-            sols.push_back(sol);
-        }
-    }
-    else{
-        sols.push_back(bestSol);
-    }
-
-    if(build_midi == "true" && !sols.empty()){
-        for(int i = 0; i < sols.size(); i++){
-            writeSolToMIDIFile(size, "../out/MidiFiles/sol" + to_string(i), sols[i]);
-        }
-        cout << "MIDI file(s) created" << endl;
-    }
     return 0;
 }

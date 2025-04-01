@@ -10,7 +10,7 @@
 #include "MajorTonality.hpp"
 #include "MinorTonality.hpp"
 
-#include "../diatony/FourVoiceTexture.hpp"
+#include "../diatony/TonalProgression.hpp"
 
 #include "../midifile/MidiFile.h"
 
@@ -24,7 +24,7 @@ using namespace smf;
  * @param sol the solution to write
  * @return the time at which the solution ends
  */
-void writeSolToMIDIFile(int size, const string& fileName, const FourVoiceTexture* sol);
+void writeSolToMIDIFile(int size, const string& fileName, const TonalProgression* sol);
 
 /**
  * Writes all the solutions to a MIDI file
@@ -33,6 +33,6 @@ void writeSolToMIDIFile(int size, const string& fileName, const FourVoiceTexture
  * @param sols the solutions to write
  * @param file the MIDI file to write to
  */
-void writeSolsToMIDIFile(int size, vector<const FourVoiceTexture*> sols);
+void writeSolsToMIDIFile(int size, vector<const TonalProgression*> sols);
 
 #endif //MYPROJECT_MIDIFILEGENERATION_HPP

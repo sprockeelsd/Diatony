@@ -5,7 +5,7 @@
 #ifndef DIATONY_SOLVEPROBLEM_HPP
 #define DIATONY_SOLVEPROBLEM_HPP
 
-#include "FourVoiceTexture.hpp"
+#include "TonalProgression.hpp"
 
 /**
  * Finds an optimal solution for a four voice texture problem and returns the list of all intermediate solutions found
@@ -18,7 +18,7 @@
  * @param print
  * @return A list of FourVoiceTexture* representing all the solutions found during search
  */
-vector<FourVoiceTexture *> solve_diatony_problem(int size, Tonality *tonality, vector<int> chords, vector<int> qualities,
+vector<TonalProgression *> solve_diatony_problem(int size, Tonality *tonality, vector<int> chords, vector<int> qualities,
                                                  vector<int> states, bool print = false);
 /**
  * Finds an optimal solution for a four voice texture problem.
@@ -31,7 +31,7 @@ vector<FourVoiceTexture *> solve_diatony_problem(int size, Tonality *tonality, v
  * @return A FourVoiceTexture* representing the best solution found. If no solution is found, returns nullptr.
  * If the best solution is not found during search, returns the last solution found (best so far).
  */
-FourVoiceTexture* solve_diatony_problem_optimal(int size, Tonality* tonality, vector<int> chords, vector<int> qualities,
+TonalProgression* solve_diatony_problem_optimal(int size, Tonality* tonality, vector<int> chords, vector<int> qualities,
                                                 vector<int> states, bool print = false);
 
 /**
@@ -46,7 +46,7 @@ FourVoiceTexture* solve_diatony_problem_optimal(int size, Tonality* tonality, ve
  * @param margin a percentage of "error" that is allowed to find close to optimal solutions
  * @return a vector of the solutions that are close to the best solution
  */
-vector<FourVoiceTexture*> find_optimal_solutions_with_margin(int size, Tonality* tonality, vector<int> chords,
+vector<TonalProgression*> find_optimal_solutions_with_margin(int size, Tonality* tonality, vector<int> chords,
                                                              vector<int> qualities, vector<int> states, vector<int> costs,
                                                              double margin = 0.0);
 
