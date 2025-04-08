@@ -44,6 +44,18 @@ int main(int argc, char* argv[]) {
     int size = chords.size();
 
     auto space = new FourVoiceTexture(6, tonality, chords, chords_qualities, states);
+    //todo solve it without constraints to see if it works
+    DFS<FourVoiceTexture> e(space);
+    delete space;
+
+    int n_sols = 0;
+    while (FourVoiceTexture* sol = e.next()) {
+        n_sols += 1;
+        std::cout << sol->to_string() << std::endl;
+        if (n_sols > 10) break;
+    }
+
+
 
     return 0;
 }

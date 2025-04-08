@@ -57,8 +57,8 @@ TonalProgression::TonalProgression(Home home, int s, Tonality *t,
     tenorMelodicIntervals                           = IntVarArray(home, size - 1, -PERFECT_OCTAVE, PERFECT_OCTAVE);
     altoMelodicIntervals                            = IntVarArray(home, size - 1, -PERFECT_OCTAVE, PERFECT_OCTAVE);
     sopranoMelodicIntervals                         = IntVarArray(home, size - 1, -PERFECT_OCTAVE, PERFECT_OCTAVE);
-    //
-    // allMelodicIntervals                             = IntVarArray(home, nVoices* (size - 1), -PERFECT_OCTAVE, PERFECT_OCTAVE);
+
+    allMelodicIntervals                             = IntVarArray(home, nVoices* (size - 1), -PERFECT_OCTAVE, PERFECT_OCTAVE);
 
     /// variable arrays for harmonic intervals between adjacent voices (only positive because there is no direction)
     bassTenorHarmonicIntervals                      = IntVarArray(home, size, 0, PERFECT_OCTAVE + PERFECT_FIFTH);
@@ -69,23 +69,23 @@ TonalProgression::TonalProgression(Home home, int s, Tonality *t,
     altoSopranoHarmonicIntervals                    = IntVarArray(home, size, 0, PERFECT_OCTAVE);
 
     /// cost variables auxiliary arrays
-    // nDifferentValuesInDiminishedChord               = IntVarArray(home, size, 0, nVoices);
-    // nDifferentValuesAllChords                       = IntVarArray(home, size, 0, nVoices);
-    // nOFDifferentNotesInChords                       = IntVarArray(home, size, 0, nVoices);
-    // commonNotesInSameVoice                          = IntVarArray(home, nVoices, 0, size - 1);
-    // costsAllMelodicIntervals                        = IntVarArray(home, nVoices * (size - 1), UNISON_COST, MAX_MELODIC_COST);
+    nDifferentValuesInDiminishedChord               = IntVarArray(home, size, 0, nVoices);
+    nDifferentValuesAllChords                       = IntVarArray(home, size, 0, nVoices);
+    nOFDifferentNotesInChords                       = IntVarArray(home, size, 0, nVoices);
+    commonNotesInSameVoice                          = IntVarArray(home, nVoices, 0, size - 1);
+    costsAllMelodicIntervals                        = IntVarArray(home, nVoices * (size - 1), UNISON_COST, MAX_MELODIC_COST);
 
-    // nOfUnissons                                     = IntVar(home, 0, nVoices * (size - 1));
+    nOfUnissons                                     = IntVar(home, 0, nVoices * (size - 1));
 
     /// cost variables
-    // nOfFundStateDiminishedChordsWith4notes          = IntVar(home, 0, size);
-    // nOfChordsWithLessThan4Values                    = IntVar(home, 0, size);
-    // nOfIncompleteChords                             = IntVar(home, 0, size);
-    // nOfCommonNotesInSameVoice                       = IntVar(home, - nVoices * (size - 1), 0);
-    // costOfMelodicIntervals                          = IntVar(home, 0, nVoices*(size-1)* MAX_MELODIC_COST);
-    //
-    // costVector = {nOfIncompleteChords, nOfFundStateDiminishedChordsWith4notes, nOfChordsWithLessThan4Values,
-    //               costOfMelodicIntervals, nOfCommonNotesInSameVoice};
+    nOfFundStateDiminishedChordsWith4notes          = IntVar(home, 0, size);
+    nOfChordsWithLessThan4Values                    = IntVar(home, 0, size);
+    nOfIncompleteChords                             = IntVar(home, 0, size);
+    nOfCommonNotesInSameVoice                       = IntVar(home, - nVoices * (size - 1), 0);
+    costOfMelodicIntervals                          = IntVar(home, 0, nVoices*(size-1)* MAX_MELODIC_COST);
+
+    costVector = {nOfIncompleteChords, nOfFundStateDiminishedChordsWith4notes, nOfChordsWithLessThan4Values,
+                  costOfMelodicIntervals, nOfCommonNotesInSameVoice};
 
     /// Test constraints
 
@@ -97,20 +97,20 @@ TonalProgression::TonalProgression(Home home, int s, Tonality *t,
     |                                                                                                                  |
     -------------------------------------------------------------------------------------------------------------------*/
 
-    // link_melodic_arrays(home, nVoices, size, voicing, bassMelodicIntervals,
-    //                     altoMelodicIntervals, tenorMelodicIntervals, sopranoMelodicIntervals);
+    link_melodic_arrays(home, nVoices, size, voicing, bassMelodicIntervals,
+                        altoMelodicIntervals, tenorMelodicIntervals, sopranoMelodicIntervals);
 
     /// global arrays
-    // for(int i = 0; i < size-1; i++){
-    //     rel(home, expr(home, allMelodicIntervals[nVoices * i + BASS]            == bassMelodicIntervals[i]));
-    //     rel(home, expr(home, allMelodicIntervals[nVoices * i + TENOR]           == tenorMelodicIntervals[i]));
-    //     rel(home, expr(home, allMelodicIntervals[nVoices * i + ALTO]            == altoMelodicIntervals[i]));
-    //     rel(home, expr(home, allMelodicIntervals[nVoices * i + SOPRANO]         == sopranoMelodicIntervals[i]));
-    // }
+    for(int i = 0; i < size-1; i++){
+        rel(home, expr(home, allMelodicIntervals[nVoices * i + BASS]            == bassMelodicIntervals[i]));
+        rel(home, expr(home, allMelodicIntervals[nVoices * i + TENOR]           == tenorMelodicIntervals[i]));
+        rel(home, expr(home, allMelodicIntervals[nVoices * i + ALTO]            == altoMelodicIntervals[i]));
+        rel(home, expr(home, allMelodicIntervals[nVoices * i + SOPRANO]         == sopranoMelodicIntervals[i]));
+    }
 
-    // link_harmonic_arrays(home, nVoices, size, voicing,
-    //                      bassTenorHarmonicIntervals, bassAltoHarmonicIntervals, bassSopranoHarmonicIntervals,
-    //                      tenorAltoHarmonicIntervals, tenorSopranoHarmonicIntervals, altoSopranoHarmonicIntervals);
+    link_harmonic_arrays(home, nVoices, size, voicing,
+                         bassTenorHarmonicIntervals, bassAltoHarmonicIntervals, bassSopranoHarmonicIntervals,
+                         tenorAltoHarmonicIntervals, tenorSopranoHarmonicIntervals, altoSopranoHarmonicIntervals);
 
     /**-----------------------------------------------------------------------------------------------------------------
     |                                                                                                                  |
@@ -121,28 +121,28 @@ TonalProgression::TonalProgression(Home home, int s, Tonality *t,
     // @todo add a cost for doubled notes that are not tonal notes -> if a value is not in the tonal notes (1-2-4-5), then its occurence cannot be greater than 1 for each chord
 
     /// number of diminished chords in fundamental state with more than 3 notes (cost to minimize)
-    // compute_diminished_chords_cost(home, nVoices, size,
-    //                                chordStates, chordQualities, voicing, nDifferentValuesInDiminishedChord,
-    //                                nOfFundStateDiminishedChordsWith4notes);
+    compute_diminished_chords_cost(home, nVoices, size,
+                                   chordStates, chordQualities, voicing, nDifferentValuesInDiminishedChord,
+                                   nOfFundStateDiminishedChordsWith4notes);
 
     /// number of chords with less than 4 note values (cost to minimize)
-    // compute_n_of_notes_in_chord_cost(home, nVoices, size, voicing,
-    //                                  nDifferentValuesAllChords, nOfChordsWithLessThan4Values);
+    compute_n_of_notes_in_chord_cost(home, nVoices, size, voicing,
+                                     nDifferentValuesAllChords, nOfChordsWithLessThan4Values);
 
     /// number of chords that don't have all their possible note values (cost to minimize)
-    // compute_cost_for_incomplete_chords(home, nVoices, size, nOfNotesInChord,
-    //                                    voicing, nOFDifferentNotesInChords, nOfIncompleteChords);
+    compute_cost_for_incomplete_chords(home, nVoices, size, nOfNotesInChord,
+                                       voicing, nOFDifferentNotesInChords, nOfIncompleteChords);
 
     /// count the number of common notes in the same voice between consecutive chords (cost to MAXIMIZE)
     /// /!\ The variable nOfCommonNotesInSameVoice has a NEGATIVE value so the minimization will maximize its absolute value
-    // compute_cost_for_common_notes_not_in_same_voice(home, bassMelodicIntervals, tenorMelodicIntervals,
-    //                                                 altoMelodicIntervals, sopranoMelodicIntervals, nOfUnissons,
-    //                                                 commonNotesInSameVoice,
-    //                                                 nOfCommonNotesInSameVoice);
+    compute_cost_for_common_notes_not_in_same_voice(home, bassMelodicIntervals, tenorMelodicIntervals,
+                                                    altoMelodicIntervals, sopranoMelodicIntervals, nOfUnissons,
+                                                    commonNotesInSameVoice,
+                                                    nOfCommonNotesInSameVoice);
 
     /// weighted sum of melodic intervals (cost to minimize)
-    // compute_cost_for_melodic_intervals(home, allMelodicIntervals, nOfUnissons,
-    //                                    costOfMelodicIntervals, costsAllMelodicIntervals);
+    compute_cost_for_melodic_intervals(home, allMelodicIntervals, nOfUnissons,
+                                       costOfMelodicIntervals, costsAllMelodicIntervals);
 
     /**-----------------------------------------------------------------------------------------------------------------
     |                                                                                                                  |
@@ -154,20 +154,20 @@ TonalProgression::TonalProgression(Home home, int s, Tonality *t,
     ///todo check that all constraints still work as expected with the new additions
 
     /// restrain the domain of the voices to their range + state that bass <= tenor <= alto <= soprano
-    // restrain_voices_domains(home, nVoices, size,
-    //                         {BASS_MIN, TENOR_MIN, ALTO_MIN, SOPRANO_MIN},
-    //                         {BASS_MAX, TENOR_MAX, ALTO_MAX, SOPRANO_MAX},
-    //                         voicing);
+    restrain_voices_domains(home, nVoices, size,
+                            {BASS_MIN, TENOR_MIN, ALTO_MIN, SOPRANO_MIN},
+                            {BASS_MAX, TENOR_MAX, ALTO_MAX, SOPRANO_MAX},
+                            voicing);
 
-    // for(int i = 0; i < size; i++) {
-    //     IntVarArgs currentChord(voicing.slice(nVoices * i, 1, nVoices));
+     for(int i = 0; i < size; i++) {
+         IntVarArgs currentChord(voicing.slice(nVoices * i, 1, nVoices));
 
-        /// set the chord's domain to the notes of the degree chordDegrees[i]'s chord with the right quality
-        // set_to_chord(home, tonality, chordDegrees[i], chordQualities[i], currentChord);
+         //set the chord's domain to the notes of the degree chordDegrees[i]'s chord with the right quality
+         set_to_chord(home, tonality, chordDegrees[i], chordQualities[i], currentChord);
 
-        /// set the bass based on the chord's state
-        // set_bass(home, tonality, chordDegrees[i], chordQualities[i], chordStates[i], currentChord);
-    //}
+         //set the bass based on the chord's state
+         set_bass(home, tonality, chordDegrees[i], chordQualities[i], chordStates[i], currentChord);
+    }
 
     /**-----------------------------------------------------------------------------------------------------------------
     |                                                                                                                  |
@@ -175,35 +175,35 @@ TonalProgression::TonalProgression(Home home, int s, Tonality *t,
     |                                                                                                                  |
     -------------------------------------------------------------------------------------------------------------------*/
 
-    // for(int i = 0; i < size; i++){
-    //     IntVarArgs currentChord(voicing.slice(nVoices * i, 1, nVoices));
-    //
-    //     /// post the constraints depending on the chord's state
-    //     if(chordStas[i] == FUNDAMENTAL_STATE){
-    //         /// each note should be present at least once, doubling is determined with costs
-    //         chord_note_occurrence_fundamental_state(home, nVoices, i, chordDegrees,
-    //                                                 chordQualities, tonality, currentChord,
-    //                                                 nDifferentValuesInDiminishedChord[i],
-    //                                                 nOFDifferentNotesInChords[i % nVoices]);
-    //     }
-    //     /// post the constraints specific to first inversion chords
-    //     else if(chordStas[i] == FIRST_INVERSION){
-    //         chord_note_occurrence_first_inversion(home, size, nVoices, i, tonality,
-    //                                               chordDegrees, chordQualities, currentChord,
-    //                                               bassMelodicIntervals, sopranoMelodicIntervals);
-    //     }
-    //     /// post the constraints specific to second inversion chords
-    //     else if(chordStas[i] == SECOND_INVERSION){
-    //         chord_note_occurrence_second_inversion(home, size, nVoices, i, tonality,
-    //                                                chordDegrees, chordQualities, currentChord);
-    //     }
-    //     else if (chordStas[i] == THIRD_INVERSION){
-    //         chord_note_occurrence_third_inversion(home, size, nVoices, i, tonality,
-    //                                               chordDegrees, chordQualities, currentChord);
-    //     }
-    //     else{
-    //     }
-    // }
+    for(int i = 0; i < size; i++){
+        IntVarArgs currentChord(voicing.slice(nVoices * i, 1, nVoices));
+
+        /// post the constraints depending on the chord's state
+        if(chordStas[i] == FUNDAMENTAL_STATE){
+            /// each note should be present at least once, doubling is determined with costs
+            chord_note_occurrence_fundamental_state(home, nVoices, i, chordDegrees,
+                                                    chordQualities, tonality, currentChord,
+                                                    nDifferentValuesInDiminishedChord[i],
+                                                    nOFDifferentNotesInChords[i % nVoices]);
+        }
+        /// post the constraints specific to first inversion chords
+        else if(chordStas[i] == FIRST_INVERSION){
+            chord_note_occurrence_first_inversion(home, size, nVoices, i, tonality,
+                                                  chordDegrees, chordQualities, currentChord,
+                                                  bassMelodicIntervals, sopranoMelodicIntervals);
+        }
+        /// post the constraints specific to second inversion chords
+        else if(chordStas[i] == SECOND_INVERSION){
+            chord_note_occurrence_second_inversion(home, size, nVoices, i, tonality,
+                                                   chordDegrees, chordQualities, currentChord);
+        }
+        else if (chordStas[i] == THIRD_INVERSION){
+            chord_note_occurrence_third_inversion(home, size, nVoices, i, tonality,
+                                                  chordDegrees, chordQualities, currentChord);
+        }
+        else{
+        }
+    }
 
     /**-----------------------------------------------------------------------------------------------------------------
     |                                                                                                                  |
@@ -213,97 +213,85 @@ TonalProgression::TonalProgression(Home home, int s, Tonality *t,
     -------------------------------------------------------------------------------------------------------------------*/
 
     /// between each chord
-    // for(int i = 0; i < size-1; i++) {
-    //     /// parallel unissons, fifths and octaves are forbidden unless we have the same chord twice in a row
-    //     if(chordDegrees[i] != chordDegrees[i + 1]){
-    //         /// @todo maybe do it also <--- so that it can propagate in both directions, if the harmonic interval is a perfect fifth or octave the previous and next chords can't
-    //         //todo maybe rewrite this
-    //         forbid_parallel_intervals(home, size, nVoices, {PERFECT_FIFTH, PERFECT_OCTAVE, UNISSON},
-    //                                   voicing, bassTenorHarmonicIntervals, bassAltoHarmonicIntervals,
-    //                                   bassSopranoHarmonicIntervals, tenorAltoHarmonicIntervals,
-    //                                   tenorSopranoHarmonicIntervals, altoSopranoHarmonicIntervals);
-    //     }
-    //
-    //     /// resolve the tritone if there is one and it needs to be resolved
-    //     if ((chordDegrees[i] == SEVENTH_DEGREE && chordQualities[i] == DIMINISHED_CHORD && chordDegrees[i + 1] == FIRST_DEGREE) ||
-    //         (chordDegrees[i] == FIFTH_DEGREE && chordDegrees[i+1] == FIRST_DEGREE) ||
-    //         ((chordDegrees[i] >= FIVE_OF_TWO && chordDegrees[i] <= FIVE_OF_SEVEN) && chordDegrees[i+1] != FIFTH_DEGREE_APPOGIATURA)){
-    //         //@todo add other chords that have the tritone
-    //         tritone_resolution(home, nVoices, i, tonality, chordDegrees,
-    //                            chordQualities, chordStates, bassMelodicIntervals,
-    //                            tenorMelodicIntervals, altoMelodicIntervals, sopranoMelodicIntervals, voicing);
-    //     }
-    //
-    //     /// Exceptions to the general voice leading rules
-    //
-    //     /// special rule for interrupted cadence
-    //     if (chordDegrees[i] == FIFTH_DEGREE && chordStates[i] == FUNDAMENTAL_STATE &&
-    //     chordDegrees[i + 1] == SIXTH_DEGREE && chordStates[i + 1] == FUNDAMENTAL_STATE) {
-    //         interrupted_cadence(home, i, tonality,
-    //                             voicing, tenorMelodicIntervals,
-    //                             altoMelodicIntervals, sopranoMelodicIntervals);
-    //     }
-    //     /// special rules for augmented sixth chords
-    //     else if (chordDegrees[i] == AUGMENTED_SIXTH) {
-    //         italian_augmented_sixth(home, nVoices, i, tonality, voicing,
-    //                                 bassMelodicIntervals, tenorMelodicIntervals,
-    //                                 altoMelodicIntervals, sopranoMelodicIntervals);
-    //     }
-    //     /// if we have an appogiatura for the V degree chord, the voice with the fundamental must move in contrary
-    //     /// motion to the bass
-    //     else if(chordDegs[i] == FIRST_DEGREE && chordStates[i] == SECOND_INVERSION &&
-    //             chordDegs[i+1] == FIFTH_DEGREE && (chordQualities[i] == MAJOR_CHORD || chordQualities[i] == DOMINANT_SEVENTH_CHORD)){
-    //         fifth_degree_appogiatura(home, nVoices, i, tonality, voicing,
-    //                                  bassMelodicIntervals, tenorMelodicIntervals,
-    //                                  altoMelodicIntervals, sopranoMelodicIntervals);
-    //     }
-    //     /// general voice leading rules
-    //     else {
-    //         if ((chordQualities[i+1] == MAJOR_SEVENTH_CHORD || chordQualities[i+1] == MINOR_SEVENTH_CHORD || chordQualities[i+1] == DIMINISHED_SEVENTH_CHORD
-    //             || chordQualities[i+1] == HALF_DIMINISHED_CHORD)  && chordDegrees[i+1] <= SEVENTH_DEGREE) {
-    //             /// the seventh must be prepared
-    //             species_seventh(home, nVoices, i, tonality, chordDegrees, chordQualities, voicing);
-    //         }
-    //
-    //         /// If the bass moves by a step, other voices should move in contrary motion
-    //         int bassFirstChord = (tonality->get_degree_note(chordDegrees[i] + 2 * chordStates[i])
-    //                 % PERFECT_OCTAVE);
-    //         int bassSecondChord = (tonality->get_degree_note(chordDegrees[i + 1] + 2 * chordStates[i + 1])
-    //                 % PERFECT_OCTAVE);
-    //         int bassMelodicMotion = abs(bassSecondChord - bassFirstChord);
-    //         /// if the bass moves by a step between fund. state chords @todo check if this needs to apply in other cases
-    //         if ((bassMelodicMotion == MINOR_SECOND || bassMelodicMotion == MAJOR_SECOND ||
-    //             bassMelodicMotion == MINOR_SEVENTH || bassMelodicMotion == MAJOR_SEVENTH) &&
-    //             (chordStas[i] == FUNDAMENTAL_STATE && chordStas[i+1] == FUNDAMENTAL_STATE)){
-    //             /// move other voices in contrary motion
-    //             contrary_motion_to_bass(home, i,bassMelodicIntervals,
-    //                                     tenorMelodicIntervals,altoMelodicIntervals,
-    //                                     sopranoMelodicIntervals);
-    //         }
-    //         /// if II -> V, move voices in contrary motion to bass
-    //         else if(chordDegs[i] == SECOND_DEGREE && chordDegs[i+1] == FIFTH_DEGREE){
-    //             contrary_motion_to_bass(home, i, bassMelodicIntervals,
-    //                                     tenorMelodicIntervals, altoMelodicIntervals,
-    //                                     sopranoMelodicIntervals);
-    //         }
-    //         else if(chordDegrees[i] != chordDegrees[i + 1]){
-    //             /// Otherwise, keep common notes in the same voice whenever possible (cost to minimize)
-    //         }
-    //     }
-    // }
+    for(int i = 0; i < size-1; i++) {
+        /// parallel unissons, fifths and octaves are forbidden unless we have the same chord twice in a row
+        if(chordDegrees[i] != chordDegrees[i + 1]){
+            /// @todo maybe do it also <--- so that it can propagate in both directions, if the harmonic interval is a perfect fifth or octave the previous and next chords can't
+            //todo maybe rewrite this
+            forbid_parallel_intervals(home, size, nVoices, {PERFECT_FIFTH, PERFECT_OCTAVE, UNISSON},
+                                      voicing, bassTenorHarmonicIntervals, bassAltoHarmonicIntervals,
+                                      bassSopranoHarmonicIntervals, tenorAltoHarmonicIntervals,
+                                      tenorSopranoHarmonicIntervals, altoSopranoHarmonicIntervals);
+        }
 
-    /**-----------------------------------------------------------------------------------------------------------------
-    |                                                                                                                  |
-    |                                                       Branching                                                  |
-    |                                                                                                                  |
-    -------------------------------------------------------------------------------------------------------------------*/
+        /// resolve the tritone if there is one and it needs to be resolved
+        if ((chordDegrees[i] == SEVENTH_DEGREE && chordQualities[i] == DIMINISHED_CHORD && chordDegrees[i + 1] == FIRST_DEGREE) ||
+            (chordDegrees[i] == FIFTH_DEGREE && chordDegrees[i+1] == FIRST_DEGREE) ||
+            ((chordDegrees[i] >= FIVE_OF_TWO && chordDegrees[i] <= FIVE_OF_SEVEN) && chordDegrees[i+1] != FIFTH_DEGREE_APPOGIATURA)){
+            //@todo add other chords that have the tritone
+            tritone_resolution(home, nVoices, i, tonality, chordDegrees,
+                               chordQualities, chordStates, bassMelodicIntervals,
+                               tenorMelodicIntervals, altoMelodicIntervals, sopranoMelodicIntervals, voicing);
+        }
 
-    /// go <-- soprano->bass: 4-3-2-1-8-7-6-5 etc
-    auto r_to_l = [](const Space& home, const IntVar& x, int i) {
-        return i;
-    };
+        /// Exceptions to the general voice leading rules
 
-    branch(home, voicing, INT_VAR_MERIT_MAX(r_to_l), INT_VAL_RND(1U));
+        /// special rule for interrupted cadence
+        if (chordDegrees[i] == FIFTH_DEGREE && chordStates[i] == FUNDAMENTAL_STATE &&
+        chordDegrees[i + 1] == SIXTH_DEGREE && chordStates[i + 1] == FUNDAMENTAL_STATE) {
+            interrupted_cadence(home, i, tonality,
+                                voicing, tenorMelodicIntervals,
+                                altoMelodicIntervals, sopranoMelodicIntervals);
+        }
+        /// special rules for augmented sixth chords
+        else if (chordDegrees[i] == AUGMENTED_SIXTH) {
+            italian_augmented_sixth(home, nVoices, i, tonality, voicing,
+                                    bassMelodicIntervals, tenorMelodicIntervals,
+                                    altoMelodicIntervals, sopranoMelodicIntervals);
+        }
+        /// if we have an appogiatura for the V degree chord, the voice with the fundamental must move in contrary
+        /// motion to the bass
+        else if(chordDegs[i] == FIRST_DEGREE && chordStates[i] == SECOND_INVERSION &&
+                chordDegs[i+1] == FIFTH_DEGREE && (chordQualities[i] == MAJOR_CHORD || chordQualities[i] == DOMINANT_SEVENTH_CHORD)){
+            fifth_degree_appogiatura(home, nVoices, i, tonality, voicing,
+                                     bassMelodicIntervals, tenorMelodicIntervals,
+                                     altoMelodicIntervals, sopranoMelodicIntervals);
+        }
+        /// general voice leading rules
+        else {
+            if ((chordQualities[i+1] == MAJOR_SEVENTH_CHORD || chordQualities[i+1] == MINOR_SEVENTH_CHORD || chordQualities[i+1] == DIMINISHED_SEVENTH_CHORD
+                || chordQualities[i+1] == HALF_DIMINISHED_CHORD)  && chordDegrees[i+1] <= SEVENTH_DEGREE) {
+                /// the seventh must be prepared
+                species_seventh(home, nVoices, i, tonality, chordDegrees, chordQualities, voicing);
+            }
+
+            /// If the bass moves by a step, other voices should move in contrary motion
+            int bassFirstChord = (tonality->get_degree_note(chordDegrees[i] + 2 * chordStates[i])
+                    % PERFECT_OCTAVE);
+            int bassSecondChord = (tonality->get_degree_note(chordDegrees[i + 1] + 2 * chordStates[i + 1])
+                    % PERFECT_OCTAVE);
+            int bassMelodicMotion = abs(bassSecondChord - bassFirstChord);
+            /// if the bass moves by a step between fund. state chords @todo check if this needs to apply in other cases
+            if ((bassMelodicMotion == MINOR_SECOND || bassMelodicMotion == MAJOR_SECOND ||
+                bassMelodicMotion == MINOR_SEVENTH || bassMelodicMotion == MAJOR_SEVENTH) &&
+                (chordStas[i] == FUNDAMENTAL_STATE && chordStas[i+1] == FUNDAMENTAL_STATE)){
+                /// move other voices in contrary motion
+                contrary_motion_to_bass(home, i,bassMelodicIntervals,
+                                        tenorMelodicIntervals,altoMelodicIntervals,
+                                        sopranoMelodicIntervals);
+            }
+            /// if II -> V, move voices in contrary motion to bass
+            else if(chordDegs[i] == SECOND_DEGREE && chordDegs[i+1] == FIFTH_DEGREE){
+                contrary_motion_to_bass(home, i, bassMelodicIntervals,
+                                        tenorMelodicIntervals, altoMelodicIntervals,
+                                        sopranoMelodicIntervals);
+            }
+            else if(chordDegrees[i] != chordDegrees[i + 1]){
+                /// Otherwise, keep common notes in the same voice whenever possible (cost to minimize)
+            }
+        }
+    }
+
 }
 
 /**
@@ -316,22 +304,22 @@ TonalProgression::TonalProgression(Home home, int s, Tonality *t,
  * @param costs the cost vector for one of the best solutions, found by solving the optimization problem first
  * @param margin the offset percentage to add to the melodic cost vector to find close to optimal solutions
  */
-TonalProgression::TonalProgression(Home home, int s, Tonality *t, vector<int> chordDegs, vector<int> chordQuals,
-    vector<int> chordStas, IntVarArray& fullVoicing, vector<int> costs, double margin) :
-        TonalProgression(home, s, t,chordDegs, chordQuals, chordStas, fullVoicing) {
-    double lb_factor = 1.0 - margin;
-    double ub_factor = 1.0 + margin;
-    std::cout << lb_factor << "   " << ub_factor << std::endl;
-    ///todo c'est moche mais comme le dernier cout est négatif faut faire l'inverse sinon bah il y a pas de solutions
-    for(int i = 0; i < costs.size()-1; i++){
-        std::cout << "lower bound = " << floor(costs[i] * lb_factor) << " upper bound = " << ceil(costs[i] * ub_factor) << std::endl;
-        rel(home, floor(costs[i] * lb_factor) <= costVector[i]);
-        rel(home, costVector[i] <= ceil(costs[i] * ub_factor));
-    }
-    //todo rendre ça beau plz
-    std::cout << "lower bound = " << floor(costs[costs.size()-1] * ub_factor) << " upper bound = " << ceil(costs[costs.size()-1] * lb_factor) << std::endl;
-    rel(home, costVector[costs.size()-1] <= ceil(costs[costs.size()-1] * lb_factor));
-}
+// TonalProgression::TonalProgression(Home home, int s, Tonality *t, vector<int> chordDegs, vector<int> chordQuals,
+//     vector<int> chordStas, IntVarArray& fullVoicing, vector<int> costs, double margin) :
+//         TonalProgression(home, s, t,chordDegs, chordQuals, chordStas, fullVoicing) {
+//     double lb_factor = 1.0 - margin;
+//     double ub_factor = 1.0 + margin;
+//     std::cout << lb_factor << "   " << ub_factor << std::endl;
+//     ///todo c'est moche mais comme le dernier cout est négatif faut faire l'inverse sinon bah il y a pas de solutions
+//     for(int i = 0; i < costs.size()-1; i++){
+//         std::cout << "lower bound = " << floor(costs[i] * lb_factor) << " upper bound = " << ceil(costs[i] * ub_factor) << std::endl;
+//         rel(home, floor(costs[i] * lb_factor) <= costVector[i]);
+//         rel(home, costVector[i] <= ceil(costs[i] * ub_factor));
+//     }
+//     //todo rendre ça beau plz
+//     std::cout << "lower bound = " << floor(costs[costs.size()-1] * ub_factor) << " upper bound = " << ceil(costs[costs.size()-1] * lb_factor) << std::endl;
+//     rel(home, costVector[costs.size()-1] <= ceil(costs[costs.size()-1] * lb_factor));
+// }
 
 /**
  * Cost function for lexicographical minimization. The order is as follows:
@@ -343,9 +331,9 @@ TonalProgression::TonalProgression(Home home, int s, Tonality *t, vector<int> ch
  * 6. Number of common notes in the same voice between consecutive chords.
  * @return the cost variables in order of importance
  */
-IntVarArgs TonalProgression::cost() const {
-    return costVector;
-}
+// IntVarArgs TonalProgression::cost() const {
+//     return costVector;
+// }
 
 /**
  * Copy constructor
@@ -365,9 +353,13 @@ TonalProgression::TonalProgression(Home home, TonalProgression& s){
     tenorMelodicIntervals.update(home, s.tenorMelodicIntervals);
     altoMelodicIntervals.update(home, s.altoMelodicIntervals);
     sopranoMelodicIntervals.update(home, s.sopranoMelodicIntervals);
+    allMelodicIntervals.update(home, s.allMelodicIntervals);
 
     bassTenorHarmonicIntervals.update(home, s.bassTenorHarmonicIntervals);
+    bassAltoHarmonicIntervals.update(home, s.bassAltoHarmonicIntervals);
+    bassSopranoHarmonicIntervals.update(home, s.bassSopranoHarmonicIntervals);
     tenorAltoHarmonicIntervals.update(home, s.tenorAltoHarmonicIntervals);
+    tenorSopranoHarmonicIntervals.update(home, s.tenorSopranoHarmonicIntervals);
     altoSopranoHarmonicIntervals.update(home, s.altoSopranoHarmonicIntervals);
 
     voicing.update(home, s.voicing);
@@ -457,36 +449,36 @@ string TonalProgression::to_string(){
     message += "AltoMelodicIntervals = \t\t" + intVarArray_to_string(altoMelodicIntervals) + "\n";
     message += "SopranoMelodicIntervals = \t" + intVarArray_to_string(sopranoMelodicIntervals) + "\n\n";
     // message += "AllMelodicIntervals = \t\t" + intVarArray_to_string(allMelodicIntervals) + "\n\n";
-    //
+
     message += "🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵"
                "🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵\n\n";
     message += "fullChordsVoicing = " + intVarArray_to_string(voicing) + "\n\n";
     message += "🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵"
                "🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵\n\n";
-    //
-    // message += "-------------------------------cost-related auxiliary arrays------------------------------\n";
-    //
-    // message += "nDifferentValuesInDiminishedChord = \t" + intVarArray_to_string(nDifferentValuesInDiminishedChord) + "\n";
-    // message += "nDifferentValuesInAllChords = \t\t" + intVarArray_to_string(nDifferentValuesAllChords) + "\n";
-    // message += "commonNotesInSameVoice = \t\t" + intVarArray_to_string(commonNotesInSameVoice) + "\n";
-    // message += "nOFDifferentNotesInChords = \t\t" + intVarArray_to_string(nOFDifferentNotesInChords) + "\n";
-    // message += "costsAllMelodicIntervals = \t\t" + intVarArray_to_string(costsAllMelodicIntervals) + "\n\n";
-    //
-    // message += "nOfUnissons = \t\t" + intVar_to_string(nOfUnissons) + "\n\n";
-    //
-    // message += "------------------------------------cost variables----------------------------------------\n";
-    //
-    // message += "nOfFundStateDiminishedChordsWith4notes = " + intVar_to_string(nOfFundStateDiminishedChordsWith4notes) + "\n";
-    // message += "nOfChordsWithLessThan4Values = " + intVar_to_string(nOfChordsWithLessThan4Values) + "\n";
-    // message += "nOfIncompleteChords = " + intVar_to_string(nOfIncompleteChords) + "\n";
-    // message += "nOfCommonNotesInSameVoice = " + intVar_to_string(nOfCommonNotesInSameVoice,true) + "\n";
-    // message += "nOfCommonNotesTenor = " + intVar_to_string(commonNotesInSameVoice[TENOR]) + "\n";
-    // message += "nOfCommonNotesAlto = " + intVar_to_string(commonNotesInSameVoice[ALTO]) + "\n";
-    // message += "nOfCommonNotesSoprano = " + intVar_to_string(commonNotesInSameVoice[SOPRANO]) + "\n";
-    // message += "nOfCommonNotesBass = " + intVar_to_string(commonNotesInSameVoice[BASS]) + "\n";
-    // message += "costOfMelodicIntervals = " + intVar_to_string(costOfMelodicIntervals) + "\n\n";
-    //
-    // message += "Cost vector = {" + intVarArgs_to_string(costVector) + "}\n\n";
+
+    message += "-------------------------------cost-related auxiliary arrays------------------------------\n";
+
+    message += "nDifferentValuesInDiminishedChord = \t" + intVarArray_to_string(nDifferentValuesInDiminishedChord) + "\n";
+    message += "nDifferentValuesInAllChords = \t\t" + intVarArray_to_string(nDifferentValuesAllChords) + "\n";
+    message += "commonNotesInSameVoice = \t\t" + intVarArray_to_string(commonNotesInSameVoice) + "\n";
+    message += "nOFDifferentNotesInChords = \t\t" + intVarArray_to_string(nOFDifferentNotesInChords) + "\n";
+    message += "costsAllMelodicIntervals = \t\t" + intVarArray_to_string(costsAllMelodicIntervals) + "\n\n";
+
+    message += "nOfUnissons = \t\t" + intVar_to_string(nOfUnissons) + "\n\n";
+
+    message += "------------------------------------cost variables----------------------------------------\n";
+
+    message += "nOfFundStateDiminishedChordsWith4notes = " + intVar_to_string(nOfFundStateDiminishedChordsWith4notes) + "\n";
+    message += "nOfChordsWithLessThan4Values = " + intVar_to_string(nOfChordsWithLessThan4Values) + "\n";
+    message += "nOfIncompleteChords = " + intVar_to_string(nOfIncompleteChords) + "\n";
+    message += "nOfCommonNotesInSameVoice = " + intVar_to_string(nOfCommonNotesInSameVoice,true) + "\n";
+    message += "nOfCommonNotesTenor = " + intVar_to_string(commonNotesInSameVoice[TENOR]) + "\n";
+    message += "nOfCommonNotesAlto = " + intVar_to_string(commonNotesInSameVoice[ALTO]) + "\n";
+    message += "nOfCommonNotesSoprano = " + intVar_to_string(commonNotesInSameVoice[SOPRANO]) + "\n";
+    message += "nOfCommonNotesBass = " + intVar_to_string(commonNotesInSameVoice[BASS]) + "\n";
+    message += "costOfMelodicIntervals = " + intVar_to_string(costOfMelodicIntervals) + "\n\n";
+
+    message += "Cost vector = {" + intVarArgs_to_string(costVector) + "}\n\n";
 
     return message;
 }

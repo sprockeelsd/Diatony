@@ -111,9 +111,9 @@ public:
      * @param costs the cost vector for one of the best solutions, found by solving the optimization problem first
      * @param margin the offset percentage to add to the melodic cost vector to find close to optimal solutions
      */
-    TonalProgression(Home home, int s, Tonality *t, vector<int> chordDegs, vector<int> chordQuals, vector<int> chordStas,
-    IntVarArray& fullVoicing,
-    vector<int> costs, double margin = 0.0);
+    // TonalProgression(Home home, int s, Tonality *t, vector<int> chordDegs, vector<int> chordQuals, vector<int> chordStas,
+    // IntVarArray& fullVoicing,
+    // vector<int> costs, double margin = 0.0);
 
     /**
      * Copy constructor
@@ -178,7 +178,7 @@ public:
      * 6. Number of common notes in the same voice between consecutive chords.
      * @return the cost variables in order of importance
      */
-    virtual IntVarArgs cost() const;
+    // virtual IntVarArgs cost() const;
 
     /**
      * returns the parameters in a string

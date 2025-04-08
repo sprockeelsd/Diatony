@@ -229,7 +229,7 @@ true);
  * @param altoMelodicIntervals
  * @param sopranoMelodicIntervals
  */
-void italian_augmented_sixth(const Home &home, int nOfVoices, int currentPosition, Tonality *tonality, IntVarArray fullChordsVoicing,
+void italian_augmented_sixth(const Home &home, int nOfVoices, int currentPosition, Tonality *tonality, IntVarArray &fullChordsVoicing,
                              const IntVarArray &bassMelodicIntervals, const IntVarArray &tenorMelodicIntervals,
                              const IntVarArray &altoMelodicIntervals, const IntVarArray &sopranoMelodicIntervals) {
     IntVarArgs currentChord = fullChordsVoicing.slice(nOfVoices * currentPosition, 1, nOfVoices);
@@ -264,7 +264,7 @@ void italian_augmented_sixth(const Home &home, int nOfVoices, int currentPositio
  *
  **/
 void species_seventh(const Home &home, int nOfVoices, int currentPosition, Tonality* tonality, vector<int> chordDegrees, vector<int> chordQualities,
-    IntVarArray fullChordsVoicing){
+                     IntVarArray &fullChordsVoicing){
         auto next_chord_seventh = (tonality->get_degree_note(chordDegrees[currentPosition+1]) +
             get_interval_from_root(chordQualities[currentPosition+1],SEVENTH)) % PERFECT_OCTAVE;
 
@@ -289,8 +289,8 @@ for (int j = BASS; j <= SOPRANO; j++) {
  * @param altoMelodicInterval the melodic interval of the alto between the current position and the next
  * @param sopranoMelodicInterval the melodic interval of the soprano between the current position and the next
  */
-void fifth_degree_appogiatura(const Home& home, int nVoices, int currentPosition, Tonality *tonality, IntVarArray fullChordsVoicing,
-                              IntVarArray bassMelodicInterval, const IntVarArray& tenorMelodicInterval,
+void fifth_degree_appogiatura(const Home& home, int nVoices, int currentPosition, Tonality *tonality, IntVarArray &fullChordsVoicing,
+                              IntVarArray &bassMelodicInterval, const IntVarArray& tenorMelodicInterval,
                               const IntVarArray& altoMelodicInterval, const IntVarArray& sopranoMelodicInterval){
     IntVarArgs currentChord = fullChordsVoicing.slice(nVoices * currentPosition, 1, nVoices);
 
@@ -343,7 +343,7 @@ void fifth_degree_appogiatura(const Home& home, int nVoices, int currentPosition
 void tritone_resolution(const Home &home, int nVoices, int currentPosition, Tonality *tonality, vector<int> chordDegs,
                         vector<int> chordQuals, vector<int> chordStas, const IntVarArray &bassMelodicIntervals,
                         const IntVarArray &tenorMelodicIntervals, const IntVarArray &altoMelodicIntervals,
-                        const IntVarArray &sopranoMelodicIntervals, IntVarArray fullChordsVoicing) {
+                        const IntVarArray &sopranoMelodicIntervals, IntVarArray &fullChordsVoicing) {
 
     IntVarArgs currentChord (fullChordsVoicing.slice(nVoices * currentPosition, 1, nVoices));
     vector<IntVarArray> melodicIntervals({bassMelodicIntervals, tenorMelodicIntervals, altoMelodicIntervals, sopranoMelodicIntervals});

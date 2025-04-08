@@ -27,6 +27,8 @@ public:
 
     //virtual IntVarArgs cost() const;
 
+    string to_string() const;
+
 };
 
 

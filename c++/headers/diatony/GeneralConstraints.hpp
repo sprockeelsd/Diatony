@@ -28,7 +28,7 @@
  * @param fullChordsVoicing the array containing all the chords in the form [bass0, alto0, tenor0, soprano0, bass1, ...]
  */
 void restrain_voices_domains(const Home &home, int nVoices, int n, vector<int> lowerBounds, vector<int> upperBounds,
-                        IntVarArray fullChordsVoicing);
+                             IntVarArray &fullChordsVoicing);
 
 /**
  * Link the melodic intervals arrays to the fullChordsVoicing array
@@ -42,9 +42,9 @@ void restrain_voices_domains(const Home &home, int nVoices, int n, vector<int> l
  * @param sopranoMelodicIntervals the melodic intervals of the soprano
  */
 void link_melodic_arrays(const Home &home, int nVoices, int size,
-                         IntVarArray fullChordsVoicing, IntVarArray bassMelodicIntervals,
-                         IntVarArray altoMelodicIntervals, IntVarArray tenorMelodicIntervals,
-                         IntVarArray sopranoMelodicIntervals);
+                         IntVarArray &fullChordsVoicing, IntVarArray &bassMelodicIntervals,
+                         IntVarArray &altoMelodicIntervals, IntVarArray &tenorMelodicIntervals,
+                         IntVarArray &sopranoMelodicIntervals);
 
 /**
  * Link the harmonic intervals arrays to the fullChordsVoicing array for each voice

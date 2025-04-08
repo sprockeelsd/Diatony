@@ -181,8 +181,8 @@ void chord_note_occurrence_fundamental_state(Home home, int nVoices, int pos, ve
  */
 void chord_note_occurrence_first_inversion(Home home, int size, int nVoices, int currentPos, Tonality *tonality,
                                            vector<int> degrees, vector<int> qualities,
-                                           const IntVarArgs &currentChord, IntVarArray bassMelodicIntervals,
-                                           IntVarArray sopranoMelodicIntervals){
+                                           const IntVarArgs &currentChord, IntVarArray &bassMelodicIntervals,
+                                           IntVarArray &sopranoMelodicIntervals){
     auto root = tonality->get_degree_note(degrees[currentPos]);
     auto third = (root + get_interval_from_root(qualities[currentPos],THIRD)) % PERFECT_OCTAVE;
     auto fifth = (root + get_interval_from_root(qualities[currentPos],FIFTH)) % PERFECT_OCTAVE;

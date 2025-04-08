@@ -24,8 +24,8 @@
  * @param fullChordsVoicing the array containing all the chords in the form [bass0, alto0, tenor0, soprano0, bass1, ...]
  */
 void restrain_voices_domains(const Home &home, int nVoices, int n,
-                        vector<int> lowerBounds, vector<int> upperBounds,
-                        IntVarArray fullChordsVoicing) {
+                             vector<int> lowerBounds, vector<int> upperBounds,
+                             IntVarArray &fullChordsVoicing) {
     /// Restrain the domains of the different voices to their range
     for(int i = BASS; i <= SOPRANO; i++){
         IntVarArgs currentVoice(fullChordsVoicing.slice(i, nVoices, nVoices * n));
@@ -51,9 +51,9 @@ void restrain_voices_domains(const Home &home, int nVoices, int n,
  * @param sopranoMelodicIntervals the melodic intervals of the soprano
  */
 void link_melodic_arrays(const Home &home, int nVoices, int size,
-                         IntVarArray fullChordsVoicing,     IntVarArray bassMelodicIntervals,
-                         IntVarArray altoMelodicIntervals,  IntVarArray tenorMelodicIntervals,
-                         IntVarArray sopranoMelodicIntervals) {
+                         IntVarArray &fullChordsVoicing, IntVarArray &bassMelodicIntervals,
+                         IntVarArray &altoMelodicIntervals, IntVarArray &tenorMelodicIntervals,
+                         IntVarArray &sopranoMelodicIntervals) {
 
     for (int i = 0; i < size - 1; ++i)
     {
