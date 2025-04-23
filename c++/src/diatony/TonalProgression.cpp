@@ -31,6 +31,10 @@
  */
 TonalProgression::TonalProgression(Home home, TonalProgressionParameters* params,
         IntVarArray& fullVoicing) : params(params){
+
+    if (params->get_size() != params->get_end() - params->get_start() + 1)
+        throw std::runtime_error("TonalProgression: the length is not coherent with the start and end positions");
+
     //todo: support seventh chords for all chord degrees + diminished seventh chords
     /// Parameters
     nOfNotesInChord                                 = IntArgs(params->get_size());
@@ -39,7 +43,10 @@ TonalProgression::TonalProgression(Home home, TonalProgressionParameters* params
         nOfNotesInChord[i] = chordQualitiesIntervals.at(params->get_chordQualities()[i]).size() + 1;
 
     /// solution array
-    voicing                               = fullVoicing;
+    std::cout << "start - duration " << params->get_start() << "   " << params->get_size() << std::endl;
+    voicing                               = IntVarArray(home, fullVoicing.slice(params->get_start()*nVoices, 1, params->get_size()*nVoices));
+    std::cout << "marche pas" << std::endl;
+    //voicing = fullVoicing;
 
     /// variable arrays for melodic intervals for each voice
     bassMelodicIntervals                            = IntVarArray(home, params->get_size() - 1, -PERFECT_OCTAVE, PERFECT_OCTAVE);
@@ -78,16 +85,17 @@ TonalProgression::TonalProgression(Home home, TonalProgressionParameters* params
 
     /// Test constraints
 
-    //rel(*this, fullChordsVoicing[nOfVoices * 4 + 1] == 64);
-
     /**-----------------------------------------------------------------------------------------------------------------
     |                                                                                                                  |
     |                                              link the arrays together                                            |
     |                                                                                                                  |
     -------------------------------------------------------------------------------------------------------------------*/
 
+    std::cout << "Still here" << std::endl;
     link_melodic_arrays(home, nVoices, params->get_size(), voicing, bassMelodicIntervals,
                         altoMelodicIntervals, tenorMelodicIntervals, sopranoMelodicIntervals);
+    std::cout << "Not here anymore" << std::endl;
+
 
     /// global arrays
     for(int i = 0; i < params->get_size()-1; i++){

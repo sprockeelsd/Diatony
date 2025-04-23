@@ -16,6 +16,8 @@
 class TonalProgressionParameters {
 protected:
     const int                         size;                                       // The number of chords in the progression
+    int                               start;
+    int                               end;
     Tonality*                         tonality;                                   // The tonality of the progression
     const vector<int>                 chordDegrees;                               // The degrees of the chords in that tonality
     const vector<int>                 chordQualities;                             // The qualities of the chords
@@ -25,18 +27,24 @@ public:
     /**
      * Constructor
      * @param s the number of chords
+     * @param start the start position of this progression in the whole piece
+     * @param end the end position of this progression in the whole piece
      * @param t the tonality
      * @param chordDegs the chord degrees
      * @param chordQuals the chord qualities
      * @param chordStas the chord states
      */
-    TonalProgressionParameters(const int s, Tonality *t,
+    TonalProgressionParameters(const int s, int start, int end, Tonality *t,
                                 vector<int> chordDegs, vector<int> chordQuals, vector<int> chordStas):
-        size(s), tonality(t), chordDegrees(std::move(chordDegs)), chordQualities(std::move(chordQuals)),
+        size(s), start(start), end(end), tonality(t), chordDegrees(std::move(chordDegs)), chordQualities(std::move(chordQuals)),
         chordStates(std::move(chordStas)) {}
 
     /// ----------------getters----------------------------
     int get_size() const { return size; }
+
+    int get_start() const { return start; }
+
+    int get_end() const { return end; }
 
     Tonality *get_tonality() const { return tonality; }
 

@@ -23,9 +23,11 @@ int main(int argc, char* argv[]) {
         return 1;
 
     /// Data for the problem
-    Tonality* tonality = new MajorTonality(C);
+    Tonality* CMajor = new MajorTonality(C);
+    Tonality* GMajor = new MajorTonality(G);
 
-    vector<Tonality*> tonalities = {tonality};
+    vector<Tonality*> tonalities = {CMajor};
+
 
     std::string search_type = argv[1];
     std::string build_midi = argv[2];
@@ -33,23 +35,33 @@ int main(int argc, char* argv[]) {
     /// vectors representing the chords and the states
     vector<int> chords = {FIRST_DEGREE, SIXTH_DEGREE, FIVE_OF_FIVE, FIFTH_DEGREE_APPOGIATURA, FIFTH_DEGREE, FIRST_DEGREE
     };
-
     vector<int> chords_qualities;
     chords_qualities.reserve(chords.size());
     for(int chord : chords)
-        chords_qualities.push_back(tonality->get_chord_quality(chord));
-
+        chords_qualities.push_back(CMajor->get_chord_quality(chord));
     vector<int> states = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FIRST_INVERSION, SECOND_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE
     };
-
     // TonalProgressionParameters(const int s, Tonality *t,
     //                             vector<int> chordDegs, vector<int> chordQuals, vector<int> chordStas)
-    auto sec1params = new TonalProgressionParameters(chords.size(), tonality, chords, chords_qualities, states);
-    vector<TonalProgressionParameters*> sectionParams = {sec1params};
+    auto sec1params = new TonalProgressionParameters(chords.size(), 0, 5, CMajor, chords, chords_qualities, states);
 
-    auto pieceParams = new FourVoiceTextureParameters(chords.size(), 1, {0}, {9}, tonalities, sectionParams);
+
+    vector<int> chords2 = {FIRST_DEGREE, SIXTH_DEGREE, FIVE_OF_FIVE, FIFTH_DEGREE, FIRST_DEGREE
+    };
+    vector<int> chords_qualities2;
+    chords_qualities2.reserve(chords2.size());
+    for(int chord : chords2)
+        chords_qualities2.push_back(GMajor->get_chord_quality(chord));
+    vector<int> states2 = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE
+    };
+    auto sec2params = new TonalProgressionParameters(chords2.size(), 6, 10,  GMajor, chords2, chords_qualities2, states2);
+
+    vector<TonalProgressionParameters*> sectionParams = {sec1params, sec2params};
+
+    auto pieceParams = new FourVoiceTextureParameters(11, 2, sectionParams);
 
     auto space = new FourVoiceTexture(pieceParams);
+    std::cout << "Global piece: \n" << space->to_string() << std::endl;
     //return 0;
 
     DFS<FourVoiceTexture> e(space);
@@ -61,5 +73,8 @@ int main(int argc, char* argv[]) {
         std::cout << sol->to_string() << std::endl;
         if (n_sols > 10) break;
     }
+    std::cout << n_sols << " solutions found." << std::endl;
+
+
     return 0;
 }

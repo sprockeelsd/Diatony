@@ -12,6 +12,8 @@
 string TonalProgressionParameters::to_string() const {
     string message;
     message += "Number of chords: " + std::to_string(size) + "\n" +
+        "Start: " + std::to_string(start) + "\n" +
+            "End: " + std::to_string(end) + "\n" +
          "Tonality: " + midi_to_letter(tonality->get_tonic()) + " " + mode_int_to_name(tonality->get_mode()) + "\n" +
          "Chords: " +
          int_vector_to_string(chordDegrees) + "\n" +
