@@ -12,12 +12,13 @@ class FourVoiceTexture : public Space { // todo add IntLexMinimizeSpace again wh
 private:
     int                         nVoices = 4;
     int                         size; /// the number of chords in the progression
+    TonalProgressionParameters* params;
     TonalProgression*           tonalProgression;
 
     IntVarArray                 fullVoicing;
 
 public:
-    FourVoiceTexture(int s, Tonality *t, vector<int> chordDegs, vector<int> chordQuals, vector<int> chordStas);
+    FourVoiceTexture(int size, TonalProgressionParameters* params);
 
     FourVoiceTexture(FourVoiceTexture& s);
 

@@ -37,14 +37,17 @@ int main(int argc, char* argv[]) {
     for(int chord : chords)
         chords_qualities.push_back(tonality->get_chord_quality(chord));
 
-
     vector<int> states = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FIRST_INVERSION, SECOND_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE
     };
 
     int size = chords.size();
 
-    auto space = new FourVoiceTexture(6, tonality, chords, chords_qualities, states);
-    //todo solve it without constraints to see if it works
+    auto progressionParams = new TonalProgressionParameters(6, tonality, chords, chords_qualities, states);
+    std::cout << progressionParams->to_string() << std::endl;
+    return 0;
+
+    auto space = new FourVoiceTexture(6, progressionParams);
+    //return 0;
     DFS<FourVoiceTexture> e(space);
     delete space;
 

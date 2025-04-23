@@ -4,13 +4,11 @@
 
 #include "../../headers/diatony/FourVoiceTexture.hpp"
 
-FourVoiceTexture::FourVoiceTexture(int s, Tonality *t,
-    vector<int> chordDegs, vector<int> chordQuals, vector<int> chordStas) {
-    size = s;
+FourVoiceTexture::FourVoiceTexture(int size, TonalProgressionParameters* params) : size(size), params(params) {;
 
     fullVoicing                                     = IntVarArray(*this, nVoices * size, 0, 127);
 
-    tonalProgression = new TonalProgression(*this, size, t, chordDegs, chordQuals, chordStas, fullVoicing);
+    tonalProgression = new TonalProgression(*this, this->params, fullVoicing);
     std::cout << "here: " << tonalProgression->to_string() << std::endl;
 
     /// go <-- soprano->bass: 4-3-2-1-8-7-6-5 etc

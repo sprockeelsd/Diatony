@@ -9,6 +9,7 @@
 #include "../aux/Tonality.hpp"
 #include "../aux/MajorTonality.hpp"
 #include "../aux/MinorTonality.hpp"
+#include "TonalProgressionParameters.hpp"
 #include "GeneralConstraints.hpp"
 #include "HarmonicConstraints.hpp"
 #include "VoiceLeadingConstraints.hpp"
@@ -31,15 +32,9 @@ using namespace std;
 
 class TonalProgression {
 protected:
-    /** ----------------------------------Problem parameters-------------------------------------------------------- **/
-
-    int                         nVoices = 4;                                // The number of voices
-    int                         size;                                       // The number of chords
-    Tonality*                   tonality;                                   // The tonality of the piece
-    vector<int>                 chordDegrees;                               // The degrees of the chords
-    vector<int>                 chordQualities;                             // The qualities of the chords
-    vector<int>                 chordStates;                                // The states of the chords
-    IntArgs                     nOfNotesInChord;                            // The max number of notes in each chord
+    int                             nVoices = 4;                                // The number of voices
+    TonalProgressionParameters*     params;                                     // The parameters of the problem
+    IntArgs                         nOfNotesInChord;                            // The max number of notes in each chord
 
     /** ----------------------------------Problem variables--------------------------------------------------------- **/
 
@@ -70,7 +65,7 @@ protected:
     IntVarArray                 costsAllMelodicIntervals;
 
     /// Variables for each type of interval
-    IntVar                      nOfUnissons;                                // number of intervals that are a unisson
+    IntVar                      nOfUnissons;                                // number of intervals that are a unison
 
     /// cost variables
     IntVar                      nOfFundStateDiminishedChordsWith4notes;
@@ -86,31 +81,15 @@ protected:
 public:
     /**
      * Constructor
-     * @param home
-     * @param s the number of chords in the progression
-     * @param *t a pointer to a Tonality object
-     * @param chordDegs the degrees of the chord of the chord progression
-     * @param chordQuals the qualities of the chord of the chord progression
-     * @param chordStas the states of the chord of the chord progression (fundamental, 1st inversion,...)
-     * @param fullVoicing
-     * @return an instance of FourVoiceTexture initialized with the given parameters, constraints and branching strategies
-     * posted as well as the cost vector to minimize in lexicographical order
+     * @param home the space of the problem
+     * @param params an object containing the parameters of the problem
+     * @param fullVoicing the array of variables on which the problem is defined
+     * @return an object constraining the variables on which the problem is defined
+     * /!\ dominant diminished seventh chords are considered as minor ninth dominant chords without their fundamental
      */
-    TonalProgression(Home home, int s, Tonality *t,
-        vector<int> chordDegs, vector<int> chordQuals, vector<int> chordStas,
+    TonalProgression(Home home, TonalProgressionParameters* params,
         IntVarArray& fullVoicing);
 
-    /**
-     * Constructor to find all optimal solutions (with or without margin) based on the cost vector for one of the best ones.
-     * @param home
-     * @param s the number of chords in the progression
-     * @param *t a pointer to a Tonality object
-     * @param chordDegs the degrees of the chord of the chord progression
-     * @param chordQuals the qualities of the chord of the chord progression
-     * @param chordStas the states of the chord of the chord progression (fundamental, 1st inversion,...)
-     * @param costs the cost vector for one of the best solutions, found by solving the optimization problem first
-     * @param margin the offset percentage to add to the melodic cost vector to find close to optimal solutions
-     */
     // TonalProgression(Home home, int s, Tonality *t, vector<int> chordDegs, vector<int> chordQuals, vector<int> chordStas,
     // IntVarArray& fullVoicing,
     // vector<int> costs, double margin = 0.0);
@@ -118,22 +97,15 @@ public:
     /**
      * Copy constructor
      * @param home
-     * @param s an instance of the FourVoiceTexture class
-     * @return a copy of the given instance of the FourVoiceTexture class
+     * @param s an instance of the TonalProgression class
+     * @return a copy of the given instance of the TonalProgression class
      * /!\ It is important to copy every variable instance variable of the given instance to the new instance
      */
     TonalProgression(Home home, TonalProgression &s);
 
-    /**
-     * Returns the number of chords of the problem
-     * @return an integer representing the number of chords of the problem
-     */
-    int get_size() const { return size; }
+    /**                 getters                      **/
+    int get_size() const { return params->get_size(); }
 
-    /**
-     * Returns the array of variables for the notes
-     * @return
-     */
     IntVarArray getFullVoicing(){ return voicing; }
 
     IntVarArray getBassMelodicIntervals(){ return bassMelodicIntervals; }
