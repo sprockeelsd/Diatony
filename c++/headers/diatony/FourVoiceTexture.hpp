@@ -22,7 +22,15 @@ public:
 
     FourVoiceTexture(FourVoiceTexture& s);
 
+    /**
+     * Returns the values taken by the variables vars in a solution as a pointer to an integer array
+     * @return an array of integers representing the values of the variables in a solution
+     */
+    int* return_solution() const;
+
     int getNVoices() const { return nVoices; }
+
+    FourVoiceTextureParameters* getParameters() const { return params; }
 
     Space* copy() override;
 

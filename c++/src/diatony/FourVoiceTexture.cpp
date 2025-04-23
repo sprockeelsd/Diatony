@@ -35,6 +35,19 @@ Space* FourVoiceTexture::copy() {
     //return {};
 //}
 
+/**
+ * Returns the values taken by the variables vars in a solution as a pointer to an integer array
+ * @return an array of integers representing the values of the variables in a solution
+ */
+int* FourVoiceTexture::return_solution() const{
+    int size = params->get_totalNumberOfChords();
+    int* solution = new int[size*4];
+    for(int i = 0; i < 4*size; i++){
+        solution[i] = fullVoicing[i].val();
+    }
+    return solution;
+}
+
 string FourVoiceTexture::to_string() const {
     string message;
     message += "Four Voice Texture object:\n";

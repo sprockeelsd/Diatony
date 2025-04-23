@@ -68,13 +68,18 @@ int main(int argc, char* argv[]) {
     delete space;
 
     int n_sols = 0;
+    FourVoiceTexture* lastSol = nullptr;
     while (FourVoiceTexture* sol = e.next()) {
         n_sols += 1;
+        lastSol = (FourVoiceTexture*) sol->copy();
         std::cout << sol->to_string() << std::endl;
         if (n_sols > 10) break;
     }
     std::cout << n_sols << " solutions found." << std::endl;
 
-
+    if(build_midi == "true" && lastSol != nullptr){
+            writeSolToMIDIFile(lastSol->getParameters()->get_totalNumberOfChords(), "../out/MidiFiles/sol", lastSol);
+        cout << "MIDI file(s) created" << endl;
+    }
     return 0;
 }
