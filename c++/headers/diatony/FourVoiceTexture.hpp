@@ -6,19 +6,19 @@
 #define FOURVOICETEXTURE_HPP
 
 #include "TonalProgression.hpp"
+#include "FourVoiceTextureParameters.hpp"
 #include "../aux/Utilities.hpp"
 
 class FourVoiceTexture : public Space { // todo add IntLexMinimizeSpace again when the changes to the structure are over
 private:
     int                         nVoices = 4;
-    int                         size; /// the number of chords in the progression
-    TonalProgressionParameters* params;
-    TonalProgression*           tonalProgression;
+    FourVoiceTextureParameters* params;
+    vector<TonalProgression*>           tonalProgressions;
 
     IntVarArray                 fullVoicing;
 
 public:
-    FourVoiceTexture(int size, TonalProgressionParameters* params);
+    FourVoiceTexture(FourVoiceTextureParameters* params);
 
     FourVoiceTexture(FourVoiceTexture& s);
 

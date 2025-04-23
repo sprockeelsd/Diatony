@@ -25,6 +25,8 @@ int main(int argc, char* argv[]) {
     /// Data for the problem
     Tonality* tonality = new MajorTonality(C);
 
+    vector<Tonality*> tonalities = {tonality};
+
     std::string search_type = argv[1];
     std::string build_midi = argv[2];
 
@@ -40,14 +42,16 @@ int main(int argc, char* argv[]) {
     vector<int> states = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FIRST_INVERSION, SECOND_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE
     };
 
-    int size = chords.size();
+    // TonalProgressionParameters(const int s, Tonality *t,
+    //                             vector<int> chordDegs, vector<int> chordQuals, vector<int> chordStas)
+    auto sec1params = new TonalProgressionParameters(chords.size(), tonality, chords, chords_qualities, states);
+    vector<TonalProgressionParameters*> sectionParams = {sec1params};
 
-    auto progressionParams = new TonalProgressionParameters(6, tonality, chords, chords_qualities, states);
-    std::cout << progressionParams->to_string() << std::endl;
-    return 0;
+    auto pieceParams = new FourVoiceTextureParameters(chords.size(), 1, {0}, {9}, tonalities, sectionParams);
 
-    auto space = new FourVoiceTexture(6, progressionParams);
+    auto space = new FourVoiceTexture(pieceParams);
     //return 0;
+
     DFS<FourVoiceTexture> e(space);
     delete space;
 
@@ -57,8 +61,5 @@ int main(int argc, char* argv[]) {
         std::cout << sol->to_string() << std::endl;
         if (n_sols > 10) break;
     }
-
-
-
     return 0;
 }

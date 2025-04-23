@@ -4,12 +4,15 @@
 
 #include "../../headers/diatony/FourVoiceTexture.hpp"
 
-FourVoiceTexture::FourVoiceTexture(int size, TonalProgressionParameters* params) : size(size), params(params) {;
+FourVoiceTexture::FourVoiceTexture(FourVoiceTextureParameters* params) : params(params) {;
 
-    fullVoicing                                     = IntVarArray(*this, nVoices * size, 0, 127);
+    fullVoicing = IntVarArray(*this, nVoices * params->get_totalNumberOfChords(), 0, 127);
 
-    tonalProgression = new TonalProgression(*this, this->params, fullVoicing);
-    std::cout << "here: " << tonalProgression->to_string() << std::endl;
+    for (int i = 0; i < params->get_numberOfSections(); i++) {
+        tonalProgressions.push_back(new TonalProgression(*this, this->params->get_sectionParameters(i), fullVoicing));
+        std::cout << "here: " << tonalProgressions.back()->to_string() << std::endl;
+    }
+
 
     /// go <-- soprano->bass: 4-3-2-1-8-7-6-5 etc
     auto r_to_l = [](const Space& home, const IntVar& x, int i) {
@@ -21,12 +24,13 @@ FourVoiceTexture::FourVoiceTexture(int size, TonalProgressionParameters* params)
 }
 
 FourVoiceTexture::FourVoiceTexture(FourVoiceTexture& s) : Space(s) { //IntLexMinimizeSpace
-    size = s.size;
     nVoices = s.nVoices;
+    params = s.params;
 
     fullVoicing.update(*this, s.fullVoicing);
-    tonalProgression = new TonalProgression(*this, *s.tonalProgression);
 
+    for (auto p : s.tonalProgressions)
+        tonalProgressions.push_back(new TonalProgression(*this, *p));
 }
 
 Space* FourVoiceTexture::copy() {
@@ -38,5 +42,14 @@ Space* FourVoiceTexture::copy() {
 //}
 
 string FourVoiceTexture::to_string() const {
-    return "Four Voice Texture object:\n\n" + tonalProgression->to_string();
+    string message;
+    message += "Four Voice Texture object:\n";
+    message += "Parameters: " + params->toString() + "\n";
+    message += "Full voicing array:" + intVarArray_to_string(fullVoicing) + "\n";
+    message += "Tonal Progressions:\n";
+    for (auto p : tonalProgressions) {
+        message += p->to_string() + "\n";
+    }
+    return message;
+    //"Four Voice Texture object:\n\n" + tonalProgression->to_string();
 }
