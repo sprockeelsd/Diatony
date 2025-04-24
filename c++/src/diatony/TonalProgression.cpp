@@ -26,10 +26,17 @@
  * @param home the space of the problem
  * @param params an object containing the parameters of the problem
  * @param fullVoicing the general array for the voicing of the whole piece
+ * @param bassIntervals
+ * @param tenorIntervals
+ * @param altoIntervals
+ * @param sopranoIntervals
+ * @param allMIntervals
  * @return an object constraining the variables on which the problem is defined
  * /!\ dominant diminished seventh chords are considered as minor ninth dominant chords without their fundamental
  */
-TonalProgression::TonalProgression(Home home, TonalProgressionParameters* params, IntVarArray& fullVoicing) : params(params){
+TonalProgression::TonalProgression(Home home, TonalProgressionParameters* params,
+        IntVarArray& fullVoicing, IntVarArray& bassIntervals, IntVarArray& tenorIntervals,
+        IntVarArray& altoIntervals, IntVarArray& sopranoIntervals, IntVarArray& allMIntervals) : params(params){
 
     if (params->get_size() != (params->get_end() - params->get_start()) + 1)
         throw std::runtime_error("TonalProgression: the length is not coherent with the start and end positions");
@@ -46,12 +53,12 @@ TonalProgression::TonalProgression(Home home, TonalProgressionParameters* params
     voicing = IntVarArray(home, fullVoicing.slice(params->get_start()*nVoices, 1, params->get_size()*nVoices));
 
     /// variable arrays for melodic intervals for each voice (max an octave both ways)
-    bassMelodicIntervals                            = IntVarArray(home, params->get_size() - 1, -PERFECT_OCTAVE, PERFECT_OCTAVE);
-    tenorMelodicIntervals                           = IntVarArray(home, params->get_size() - 1, -PERFECT_OCTAVE, PERFECT_OCTAVE);
-    altoMelodicIntervals                            = IntVarArray(home, params->get_size() - 1, -PERFECT_OCTAVE, PERFECT_OCTAVE);
-    sopranoMelodicIntervals                         = IntVarArray(home, params->get_size() - 1, -PERFECT_OCTAVE, PERFECT_OCTAVE);
+    bassMelodicIntervals        = IntVarArray(home, bassIntervals   .slice(params->get_start(), 1, params->get_size() - 1));
+    tenorMelodicIntervals       = IntVarArray(home, tenorIntervals  .slice(params->get_start(), 1, params->get_size() - 1));
+    altoMelodicIntervals        = IntVarArray(home, altoIntervals   .slice(params->get_start(), 1, params->get_size() - 1));
+    sopranoMelodicIntervals     = IntVarArray(home, sopranoIntervals.slice(params->get_start(), 1, params->get_size() - 1));
 
-    allMelodicIntervals                             = IntVarArray(home, nVoices* (params->get_size() - 1), -PERFECT_OCTAVE, PERFECT_OCTAVE);
+    allMelodicIntervals = IntVarArray(home, allMIntervals.slice(params->get_start() * nVoices, 1, nVoices* (params->get_size() - 1)));
 
     /// variable arrays for harmonic intervals between adjacent voices (only positive because there is no direction)
     bassTenorHarmonicIntervals                      = IntVarArray(home, params->get_size(), 0, PERFECT_OCTAVE + PERFECT_FIFTH);
@@ -87,17 +94,6 @@ TonalProgression::TonalProgression(Home home, TonalProgressionParameters* params
     |                                              link the arrays together                                            |
     |                                                                                                                  |
     -------------------------------------------------------------------------------------------------------------------*/
-
-    link_melodic_arrays(home, nVoices, params->get_size(), voicing, bassMelodicIntervals,
-                        altoMelodicIntervals, tenorMelodicIntervals, sopranoMelodicIntervals);
-
-    /// global arrays
-    for(int i = 0; i < params->get_size()-1; i++){
-        rel(home, expr(home, allMelodicIntervals[nVoices * i + BASS]            == bassMelodicIntervals[i]));
-        rel(home, expr(home, allMelodicIntervals[nVoices * i + TENOR]           == tenorMelodicIntervals[i]));
-        rel(home, expr(home, allMelodicIntervals[nVoices * i + ALTO]            == altoMelodicIntervals[i]));
-        rel(home, expr(home, allMelodicIntervals[nVoices * i + SOPRANO]         == sopranoMelodicIntervals[i]));
-    }
 
     link_harmonic_arrays(home, nVoices, params->get_size(), voicing,
                          bassTenorHarmonicIntervals, bassAltoHarmonicIntervals, bassSopranoHarmonicIntervals,
@@ -419,11 +415,6 @@ string TonalProgression::parameters(){
  */
 string TonalProgression::to_string(){
     string message;
-    message += "********************************************************************************************\n";
-    message += "*                                                                                          *\n";
-    message += "*                                          Solution                                        *\n";
-    message += "*                                                                                          *\n";
-    message += "********************************************************************************************\n\n";
     message += parameters();
     message += "\n-----------------------------------------variables------------------------------------------\n";
 
@@ -435,7 +426,7 @@ string TonalProgression::to_string(){
     message += "TenorMelodicIntervals = \t" + intVarArray_to_string(tenorMelodicIntervals) + "\n";
     message += "AltoMelodicIntervals = \t\t" + intVarArray_to_string(altoMelodicIntervals) + "\n";
     message += "SopranoMelodicIntervals = \t" + intVarArray_to_string(sopranoMelodicIntervals) + "\n\n";
-    // message += "AllMelodicIntervals = \t\t" + intVarArray_to_string(allMelodicIntervals) + "\n\n";
+    message += "AllMelodicIntervals = \t\t" + intVarArray_to_string(allMelodicIntervals) + "\n\n";
 
     message += "🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵"
                "🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵🎵\n\n";

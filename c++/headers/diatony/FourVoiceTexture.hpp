@@ -13,9 +13,17 @@ class FourVoiceTexture : public Space { // todo add IntLexMinimizeSpace again wh
 private:
     int                         nVoices = 4;
     FourVoiceTextureParameters* params;
-    vector<TonalProgression*>           tonalProgressions;
+    vector<TonalProgression*>   tonalProgressions;
 
     IntVarArray                 fullVoicing;
+
+    /// Melodic intervals
+    IntVarArray                 bassMelodicIntervals;
+    IntVarArray                 tenorMelodicIntervals;
+    IntVarArray                 altoMelodicIntervals;
+    IntVarArray                 sopranoMelodicIntervals;
+
+    IntVarArray                 allMelodicIntervals;
 
 public:
     FourVoiceTexture(FourVoiceTextureParameters* params);

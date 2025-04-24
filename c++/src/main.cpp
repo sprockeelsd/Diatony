@@ -67,9 +67,10 @@ int main(int argc, char* argv[]) {
     vector<ModulationParameters*> modulationParams = {mod};
 
     auto pieceParams = new FourVoiceTextureParameters(11, 2, sectionParams, modulationParams);
-    std::cout << pieceParams->toString() << std::endl;
 
     auto space = new FourVoiceTexture(pieceParams);
+    //std::cout << space->to_string() << std::endl;
+    //return 0;
 
     DFS<FourVoiceTexture> e(space);
     delete space;

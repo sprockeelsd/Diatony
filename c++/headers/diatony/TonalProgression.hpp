@@ -84,11 +84,18 @@ public:
      * @param home the space of the problem
      * @param params an object containing the parameters of the problem
      * @param fullVoicing the general array for the voicing of the whole piece
+     * @param bassIntervals
+     * @param tenorIntervals
+     * @param altoIntervals
+     * @param sopranoIntervals
+     * @param allMIntervals
      * @return an object constraining the variables on which the problem is defined
      * /!\ dominant diminished seventh chords are considered as minor ninth dominant chords without their fundamental
      */
     TonalProgression(Home home, TonalProgressionParameters* params,
-        IntVarArray& fullVoicing);
+        IntVarArray& fullVoicing, IntVarArray& bassIntervals, IntVarArray& tenorIntervals,
+        IntVarArray& altoIntervals, IntVarArray& sopranoIntervals,
+        IntVarArray& allMIntervals);
 
     // todo constructor for all solutions within a margin of the cost vector
     // TonalProgression(Home home, int s, Tonality *t, vector<int> chordDegs, vector<int> chordQuals, vector<int> chordStas,
