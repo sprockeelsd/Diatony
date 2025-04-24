@@ -16,6 +16,10 @@
  * Takes 2 arguments:
  * - the first one specifies whether we need to find all solutions or just the best one
  * - The second specifies whether we need to create a MIDI file or not
+ *
+ * This function finds the solution for a harmonisation problem, given a series of tonalities and chord degrees, qualities
+ * and states for the chords in each tonality. Currently, modulation constraints are not available, but they will be
+ * in the near future.
  */
 int main(int argc, char* argv[]) {
     /// if there is not exactly 2 argument, there is an error
@@ -66,7 +70,6 @@ int main(int argc, char* argv[]) {
     std::cout << pieceParams->toString() << std::endl;
 
     auto space = new FourVoiceTexture(pieceParams);
-    return 0;
 
     DFS<FourVoiceTexture> e(space);
     delete space;
