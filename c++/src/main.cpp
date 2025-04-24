@@ -43,7 +43,7 @@ int main(int argc, char* argv[]) {
     };
     // TonalProgressionParameters(const int s, Tonality *t,
     //                             vector<int> chordDegs, vector<int> chordQuals, vector<int> chordStas)
-    auto sec1params = new TonalProgressionParameters(chords.size(), 0, 5, CMajor, chords, chords_qualities, states);
+    auto sec1params = new TonalProgressionParameters(0, static_cast<int>(chords.size()), 0, 5, CMajor, chords, chords_qualities, states);
 
 
     vector<int> chords2 = {FIRST_DEGREE, SIXTH_DEGREE, FIVE_OF_FIVE, FIFTH_DEGREE, FIRST_DEGREE
@@ -54,15 +54,19 @@ int main(int argc, char* argv[]) {
         chords_qualities2.push_back(GMajor->get_chord_quality(chord));
     vector<int> states2 = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE
     };
-    auto sec2params = new TonalProgressionParameters(chords2.size(), 6, 10,  GMajor, chords2, chords_qualities2, states2);
+    auto sec2params = new TonalProgressionParameters(1, static_cast<int>(chords2.size()), 6, 10,  GMajor, chords2, chords_qualities2, states2);
 
     vector<TonalProgressionParameters*> sectionParams = {sec1params, sec2params};
 
-    auto pieceParams = new FourVoiceTextureParameters(11, 2, sectionParams);
+    auto mod = new ModulationParameters(PERFECT_CADENCE_MODULATION, 4, 5, sec1params, sec2params);
+
+    vector<ModulationParameters*> modulationParams = {mod};
+
+    auto pieceParams = new FourVoiceTextureParameters(11, 2, sectionParams, modulationParams);
+    std::cout << pieceParams->toString() << std::endl;
 
     auto space = new FourVoiceTexture(pieceParams);
-    std::cout << "Global piece: \n" << space->to_string() << std::endl;
-    //return 0;
+    return 0;
 
     DFS<FourVoiceTexture> e(space);
     delete space;
@@ -71,7 +75,7 @@ int main(int argc, char* argv[]) {
     FourVoiceTexture* lastSol = nullptr;
     while (FourVoiceTexture* sol = e.next()) {
         n_sols += 1;
-        lastSol = (FourVoiceTexture*) sol->copy();
+        lastSol = dynamic_cast<FourVoiceTexture *>(sol->copy());
         std::cout << sol->to_string() << std::endl;
         if (n_sols > 10) break;
     }

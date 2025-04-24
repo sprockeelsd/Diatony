@@ -17,9 +17,13 @@ string FourVoiceTextureParameters::toString() const {
     message += "Number of sections: " + std::to_string(numberOfSections) + "\n";
     message += "\n";
     message += "Section parameters: \n\n";
-    for ( auto p : sectionParameters ) {
+    for (const auto p : sectionParameters ) {
         message += p->to_string() + "\n";
     }
     message += "\n";
+    message += "Modulation parameters: \n\n";
+    for (const auto m : modulationParameters ) {
+        message += m->toString() + "\n";
+    }
     return message;
 }

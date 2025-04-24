@@ -15,6 +15,7 @@
  */
 class TonalProgressionParameters {
 protected:
+    const int                       sectionNumber;
     const int                       size;                                       // The number of chords in the progression
     const int                       start;                                      // The position in the global piece at which the progression starts
     const int                       end;                                        // The position in the global piece at which the progression ends
@@ -26,6 +27,7 @@ protected:
 public:
     /**
      * Constructor
+     * @param sec_n
      * @param s the number of chords
      * @param start the start position of this progression in the whole piece
      * @param end the end position of this progression in the whole piece
@@ -34,12 +36,15 @@ public:
      * @param chordQuals the chord qualities
      * @param chordStas the chord states
      */
-    TonalProgressionParameters(const int s, int start, int end, Tonality *t,
+    TonalProgressionParameters(const int sec_n, const int s, int start, int end, Tonality *t,
                                 vector<int> chordDegs, vector<int> chordQuals, vector<int> chordStas):
-        size(s), start(start), end(end), tonality(t), chordDegrees(std::move(chordDegs)), chordQualities(std::move(chordQuals)),
+        sectionNumber(sec_n), size(s), start(start), end(end), tonality(t),
+        chordDegrees(std::move(chordDegs)), chordQualities(std::move(chordQuals)),
         chordStates(std::move(chordStas)) {}
 
     /**                     getters                     **/
+    int get_section_number() const { return sectionNumber; }
+
     int get_size() const { return size; }
 
     int get_start() const { return start; }

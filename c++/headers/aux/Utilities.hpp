@@ -309,6 +309,21 @@ const vector<int> NATURAL_MINOR_SCALE = {MAJOR_SECOND, MINOR_SECOND, MAJOR_SECON
 const vector<int> HARMONIC_MINOR_SCALE = {MAJOR_SECOND, MINOR_SECOND, MAJOR_SECOND, MAJOR_SECOND, MINOR_SECOND, AUGMENTED_SECOND, MINOR_SECOND};
 const vector<int> MELODIC_MINOR_SCALE = {MAJOR_SECOND, MINOR_SECOND, MAJOR_SECOND, MAJOR_SECOND, MAJOR_SECOND, MAJOR_SECOND, MINOR_SECOND};
 
+/** Modulations */
+enum modulations{
+    PERFECT_CADENCE_MODULATION,         ///0
+    PIVOT_CHORD_MODULATION,             ///1
+    ALTERATION_MODULATION,              ///2, sudden change of the tonality by using a chord from the new key that contains a note that is not in the previous key
+    SECONDARY_DOMINANT_MODULATION,      ///3, introducing the sensitive note of the new tonality
+};
+
+const vector<string> modulation_type_names = {
+    "Perfect Cadence",
+    "Pivot Chord",
+    "Alteration",
+    "Secondary Dominant",
+};
+
 /***********************************************************************************************************************
  *                                                                                                                     *
  *                                                      Functions                                                      *

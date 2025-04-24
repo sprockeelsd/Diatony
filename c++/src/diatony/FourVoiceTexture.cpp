@@ -10,7 +10,6 @@ FourVoiceTexture::FourVoiceTexture(FourVoiceTextureParameters* params) : params(
 
     for (int i = 0; i < params->get_numberOfSections(); i++) {
         tonalProgressions.push_back(new TonalProgression(*this, this->params->get_sectionParameters(i), fullVoicing));
-        std::cout << "progression:\n" << tonalProgressions[i]->to_string() << std::endl;
     }
 
     branch(*this, fullVoicing, INT_VAR_NONE(), INT_VAL_MIN());

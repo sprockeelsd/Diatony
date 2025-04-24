@@ -10,7 +10,7 @@
  * @return a string representation of the object
  */
 string TonalProgressionParameters::to_string() const {
-    string message;
+    string message = "Section " + std::to_string(sectionNumber) + ":\n";
     message += "Number of chords: " + std::to_string(size) + "\n" +
         "Start: " + std::to_string(start) + "\n" +
             "End: " + std::to_string(end) + "\n" +
