@@ -25,30 +25,27 @@
  * Constructor
  * @param home the space of the problem
  * @param params an object containing the parameters of the problem
- * @param fullVoicing the array of variables on which the problem is defined
+ * @param fullVoicing the general array for the voicing of the whole piece
  * @return an object constraining the variables on which the problem is defined
  * /!\ dominant diminished seventh chords are considered as minor ninth dominant chords without their fundamental
  */
-TonalProgression::TonalProgression(Home home, TonalProgressionParameters* params,
-        IntVarArray& fullVoicing) : params(params){
+TonalProgression::TonalProgression(Home home, TonalProgressionParameters* params, IntVarArray& fullVoicing) : params(params){
 
-    if (params->get_size() != params->get_end() - params->get_start() + 1)
+    if (params->get_size() != (params->get_end() - params->get_start()) + 1)
         throw std::runtime_error("TonalProgression: the length is not coherent with the start and end positions");
 
     //todo: support seventh chords for all chord degrees + diminished seventh chords
-    /// Parameters
-    nOfNotesInChord                                 = IntArgs(params->get_size());
+
     /// keep track of the number of notes that should be in each chord if it is complete
+    nOfNotesInChord  = IntArgs(params->get_size());
     for(int i = 0; i < params->get_size(); i++)
-        nOfNotesInChord[i] = chordQualitiesIntervals.at(params->get_chordQualities()[i]).size() + 1;
+        nOfNotesInChord[i] = static_cast<int>(chordQualitiesIntervals.at(params->get_chordQualities()[i]).size()) + 1;
 
     /// solution array
-    std::cout << "start - duration " << params->get_start() << "   " << params->get_size() << std::endl;
-    voicing                               = IntVarArray(home, fullVoicing.slice(params->get_start()*nVoices, 1, params->get_size()*nVoices));
-    std::cout << "marche pas" << std::endl;
-    //voicing = fullVoicing;
+    //take a subset of the general piece array based on this section's start and end
+    voicing = IntVarArray(home, fullVoicing.slice(params->get_start()*nVoices, 1, params->get_size()*nVoices));
 
-    /// variable arrays for melodic intervals for each voice
+    /// variable arrays for melodic intervals for each voice (max an octave both ways)
     bassMelodicIntervals                            = IntVarArray(home, params->get_size() - 1, -PERFECT_OCTAVE, PERFECT_OCTAVE);
     tenorMelodicIntervals                           = IntVarArray(home, params->get_size() - 1, -PERFECT_OCTAVE, PERFECT_OCTAVE);
     altoMelodicIntervals                            = IntVarArray(home, params->get_size() - 1, -PERFECT_OCTAVE, PERFECT_OCTAVE);
@@ -91,11 +88,8 @@ TonalProgression::TonalProgression(Home home, TonalProgressionParameters* params
     |                                                                                                                  |
     -------------------------------------------------------------------------------------------------------------------*/
 
-    std::cout << "Still here" << std::endl;
     link_melodic_arrays(home, nVoices, params->get_size(), voicing, bassMelodicIntervals,
                         altoMelodicIntervals, tenorMelodicIntervals, sopranoMelodicIntervals);
-    std::cout << "Not here anymore" << std::endl;
-
 
     /// global arrays
     for(int i = 0; i < params->get_size()-1; i++){
@@ -115,7 +109,7 @@ TonalProgression::TonalProgression(Home home, TonalProgressionParameters* params
     |                                                                                                                  |
     -------------------------------------------------------------------------------------------------------------------*/
 
-    // @todo add a cost for doubled notes that are not tonal notes -> if a value is not in the tonal notes (1-2-4-5), then its occurence cannot be greater than 1 for each chord
+    // @todo add a cost for doubled notes that are not tonal notes -> if a value is not in the tonal notes (1-(2)-4-5), then its occurrence cannot be greater than 1 for each chord
 
     /// number of diminished chords in fundamental state with more than 3 notes (cost to minimize)
     compute_diminished_chords_cost(home, nVoices, params->get_size(),
@@ -267,11 +261,11 @@ TonalProgression::TonalProgression(Home home, TonalProgressionParameters* params
             }
 
             /// If the bass moves by a step, other voices should move in contrary motion
-            int bassFirstChord = (params->get_tonality()->get_degree_note(params->get_chordDegrees()[i] + 2 * params->get_chordStates()[i])
+            const int bassFirstChord = (params->get_tonality()->get_degree_note(params->get_chordDegrees()[i] + 2 * params->get_chordStates()[i])
                     % PERFECT_OCTAVE);
-            int bassSecondChord = (params->get_tonality()->get_degree_note(params->get_chordDegrees()[i + 1] + 2 * params->get_chordStates()[i + 1])
+            const int bassSecondChord = (params->get_tonality()->get_degree_note(params->get_chordDegrees()[i + 1] + 2 * params->get_chordStates()[i + 1])
                     % PERFECT_OCTAVE);
-            int bassMelodicMotion = abs(bassSecondChord - bassFirstChord);
+            const int bassMelodicMotion = abs(bassSecondChord - bassFirstChord);
             /// if the bass moves by a step between fund. state chords @todo check if this needs to apply in other cases
             if ((bassMelodicMotion == MINOR_SECOND || bassMelodicMotion == MAJOR_SECOND ||
                 bassMelodicMotion == MINOR_SEVENTH || bassMelodicMotion == MAJOR_SEVENTH) &&
@@ -296,7 +290,9 @@ TonalProgression::TonalProgression(Home home, TonalProgressionParameters* params
 }
 
 /**
+ * todo redo
  * Constructor to find all optimal solutions (with or without margin) based on the cost vector for one of the best ones.
+ * @param home
  * @param s the number of chords in the progression
  */
 // TonalProgression::TonalProgression(Home home, int s, Tonality *t, vector<int> chordDegs, vector<int> chordQuals,
@@ -332,7 +328,7 @@ TonalProgression::TonalProgression(Home home, TonalProgressionParameters* params
 
 /**
  * Copy constructor
- * @param home
+ * @param home the space of the problem
  * @param s an instance of the TonalProgression class
  * @return a copy of the given instance of the TonalProgression class
  * /!\ It is important to copy every variable instance variable of the given instance to the new instance

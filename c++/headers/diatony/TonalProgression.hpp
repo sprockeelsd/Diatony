@@ -39,7 +39,7 @@ protected:
     /** ----------------------------------Problem variables--------------------------------------------------------- **/
 
     ///global array for all the notes for all voices
-    IntVarArray                 voicing;
+    IntVarArray                 voicing; // contains the notes for the four voices [bass0, tenor0, alto0, soprano0, bass1, tenor1, alto1, soprano1, ...]
 
     /// Melodic intervals
     IntVarArray                 bassMelodicIntervals;
@@ -47,7 +47,7 @@ protected:
     IntVarArray                 altoMelodicIntervals;
     IntVarArray                 sopranoMelodicIntervals;
 
-    IntVarArray                 allMelodicIntervals;
+    IntVarArray                 allMelodicIntervals;        // contains the melodic intervals for all voices [bass0, tenor0, alto0, soprano0, bass1, tenor1, alto1, soprano1, ...]
 
     /// Harmonic intervals (always positive)
     IntVarArray                 bassTenorHarmonicIntervals;
@@ -71,7 +71,7 @@ protected:
     IntVar                      nOfFundStateDiminishedChordsWith4notes;
     IntVar                      nOfChordsWithLessThan4Values;
     IntVar                      nOfIncompleteChords;
-    IntVar                      nOfCommonNotesInSameVoice;                  /// /!\ this cost needs to be maximized, so its value is negative
+    IntVar                      nOfCommonNotesInSameVoice;                  // /!\ this cost needs to be maximized, so its value is negative
     IntVar                      costOfMelodicIntervals;
 
     IntVarArgs                  costVector;                                 // the costs in lexicographical order for minimization
@@ -83,20 +83,21 @@ public:
      * Constructor
      * @param home the space of the problem
      * @param params an object containing the parameters of the problem
-     * @param fullVoicing the array of variables on which the problem is defined
+     * @param fullVoicing the general array for the voicing of the whole piece
      * @return an object constraining the variables on which the problem is defined
      * /!\ dominant diminished seventh chords are considered as minor ninth dominant chords without their fundamental
      */
     TonalProgression(Home home, TonalProgressionParameters* params,
         IntVarArray& fullVoicing);
 
+    // todo constructor for all solutions within a margin of the cost vector
     // TonalProgression(Home home, int s, Tonality *t, vector<int> chordDegs, vector<int> chordQuals, vector<int> chordStas,
     // IntVarArray& fullVoicing,
     // vector<int> costs, double margin = 0.0);
 
     /**
      * Copy constructor
-     * @param home
+     * @param home the space of the problem
      * @param s an instance of the TonalProgression class
      * @return a copy of the given instance of the TonalProgression class
      * /!\ It is important to copy every variable instance variable of the given instance to the new instance
@@ -129,7 +130,7 @@ public:
     IntVarArray getAltoSopranoHarmonicIntervals(){ return altoSopranoHarmonicIntervals; }
 
     /**
-     * Returns the values taken by the variables vars in a solution as a pointer to an integer array
+     * Returns the values taken by the fullVoicing array in a solution as a pointer to an integer array
      * @return an array of integers representing the values of the variables in a solution
      */
     int* return_solution() const;

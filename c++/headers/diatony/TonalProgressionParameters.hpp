@@ -15,13 +15,13 @@
  */
 class TonalProgressionParameters {
 protected:
-    const int                         size;                                       // The number of chords in the progression
-    int                               start;
-    int                               end;
-    Tonality*                         tonality;                                   // The tonality of the progression
-    const vector<int>                 chordDegrees;                               // The degrees of the chords in that tonality
-    const vector<int>                 chordQualities;                             // The qualities of the chords
-    const vector<int>                 chordStates;                                // The states of the chords
+    const int                       size;                                       // The number of chords in the progression
+    const int                       start;                                      // The position in the global piece at which the progression starts
+    const int                       end;                                        // The position in the global piece at which the progression ends
+    Tonality*                       tonality;                                   // The tonality of the progression
+    const vector<int>               chordDegrees;                               // The degrees of the chords in the progression
+    const vector<int>               chordQualities;                             // The qualities of the chords
+    const vector<int>               chordStates;                                // The states of the chords
 
 public:
     /**
@@ -39,7 +39,7 @@ public:
         size(s), start(start), end(end), tonality(t), chordDegrees(std::move(chordDegs)), chordQualities(std::move(chordQuals)),
         chordStates(std::move(chordStas)) {}
 
-    /// ----------------getters----------------------------
+    /**                     getters                     **/
     int get_size() const { return size; }
 
     int get_start() const { return start; }
