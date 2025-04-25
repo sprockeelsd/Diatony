@@ -69,10 +69,11 @@ int main(int argc, char* argv[]) {
     auto pieceParams = new FourVoiceTextureParameters(11, 2, sectionParams, modulationParams);
 
     auto space = new FourVoiceTexture(pieceParams);
+
     //std::cout << space->to_string() << std::endl;
     //return 0;
 
-    DFS<FourVoiceTexture> e(space);
+    BAB<FourVoiceTexture> e(space);
     delete space;
 
     int n_sols = 0;
@@ -81,7 +82,7 @@ int main(int argc, char* argv[]) {
         n_sols += 1;
         lastSol = dynamic_cast<FourVoiceTexture *>(sol->copy());
         std::cout << sol->to_string() << std::endl;
-        if (n_sols > 10) break;
+        //if (n_sols >= 1) break;
     }
     std::cout << n_sols << " solutions found." << std::endl;
 
@@ -89,5 +90,11 @@ int main(int argc, char* argv[]) {
             writeSolToMIDIFile(lastSol->getParameters()->get_totalNumberOfChords(), "../out/MidiFiles/sol", lastSol);
         cout << "MIDI file(s) created" << endl;
     }
+
+    delete sec1params;
+    delete sec2params;
+    delete mod;
+    delete pieceParams;
+
     return 0;
 }

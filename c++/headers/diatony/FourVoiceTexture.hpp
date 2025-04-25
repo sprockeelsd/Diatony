@@ -9,7 +9,7 @@
 #include "FourVoiceTextureParameters.hpp"
 #include "../aux/Utilities.hpp"
 
-class FourVoiceTexture : public Space { // todo add IntLexMinimizeSpace again when the changes to the structure are over
+class FourVoiceTexture : public IntLexMinimizeSpace { // todo add IntLexMinimizeSpace again when the changes to the structure are over
 private:
     int                         nVoices = 4;
     FourVoiceTextureParameters* params;
@@ -22,8 +22,21 @@ private:
     IntVarArray                 tenorMelodicIntervals;
     IntVarArray                 altoMelodicIntervals;
     IntVarArray                 sopranoMelodicIntervals;
-
     IntVarArray                 allMelodicIntervals;
+
+
+    /**------------------------------------------------- costs --------------------------------------------------**/
+    /// Variables for each type of interval
+    IntVar                      nOfUnisons;                                // number of intervals that are a unison
+
+    /// cost variables auxiliary arrays
+    IntVarArray                 costsAllMelodicIntervals;
+
+    /// cost variables
+    IntVar                      costOfMelodicIntervals;
+
+
+    IntVarArgs                  costVector;                                 // the costs in lexicographical order for minimization
 
 public:
     FourVoiceTexture(FourVoiceTextureParameters* params);
@@ -42,7 +55,7 @@ public:
 
     Space* copy() override;
 
-    //virtual IntVarArgs cost() const;
+    IntVarArgs cost() const override;
 
     string to_string() const;
 

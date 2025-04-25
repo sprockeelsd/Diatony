@@ -89,7 +89,7 @@ void compute_cost_for_incomplete_chords(const Home &home, int nVoices, int size,
  * @param tenorMelodicIntervals the array of absolute melodic intervals for the tenor
  * @param altoMelodicIntervals the array of absolute melodic intervals for the alto
  * @param sopranoMelodicIntervals the array of absolute melodic intervals for the soprano
- * @param nOfUnissons the number of intervals that are a unisson
+ * @param nOfUnissons the number of intervals that are a unison
  * @param commonNotesInSameVoice an array containing the number of times when there is a common note in the same voice
  * for each voice
  * @param nOfCommonNotesInSameVoice the total number of times when there is a common note in the same voice

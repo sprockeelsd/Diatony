@@ -58,7 +58,7 @@ TonalProgression::TonalProgression(Home home, TonalProgressionParameters* params
     altoMelodicIntervals        = IntVarArray(home, altoIntervals   .slice(params->get_start(), 1, params->get_size() - 1));
     sopranoMelodicIntervals     = IntVarArray(home, sopranoIntervals.slice(params->get_start(), 1, params->get_size() - 1));
 
-    allMelodicIntervals = IntVarArray(home, allMIntervals.slice(params->get_start() * nVoices, 1, nVoices* (params->get_size() - 1)));
+    allMelodicIntervals         = IntVarArray(home, allMIntervals   .slice(params->get_start() * nVoices, 1, nVoices* (params->get_size() - 1)));
 
     /// variable arrays for harmonic intervals between adjacent voices (only positive because there is no direction)
     bassTenorHarmonicIntervals                      = IntVarArray(home, params->get_size(), 0, PERFECT_OCTAVE + PERFECT_FIFTH);
@@ -68,36 +68,27 @@ TonalProgression::TonalProgression(Home home, TonalProgressionParameters* params
     tenorSopranoHarmonicIntervals                   = IntVarArray(home, params->get_size(), 0, 2 * PERFECT_OCTAVE);
     altoSopranoHarmonicIntervals                    = IntVarArray(home, params->get_size(), 0, PERFECT_OCTAVE);
 
+    link_harmonic_arrays(home, nVoices, params->get_size(), voicing,
+                 bassTenorHarmonicIntervals, bassAltoHarmonicIntervals, bassSopranoHarmonicIntervals,
+                 tenorAltoHarmonicIntervals, tenorSopranoHarmonicIntervals, altoSopranoHarmonicIntervals);
+
     /// cost variables auxiliary arrays
     nDifferentValuesInDiminishedChord               = IntVarArray(home, params->get_size(), 0, nVoices);
     nDifferentValuesAllChords                       = IntVarArray(home, params->get_size(), 0, nVoices);
     nOFDifferentNotesInChords                       = IntVarArray(home, params->get_size(), 0, nVoices);
     commonNotesInSameVoice                          = IntVarArray(home, nVoices, 0, params->get_size() - 1);
-    costsAllMelodicIntervals                        = IntVarArray(home, nVoices * (params->get_size() - 1), UNISON_COST, MAX_MELODIC_COST);
 
-    nOfUnissons                                     = IntVar(home, 0, nVoices * (params->get_size() - 1));
+    nOfUnisons                                     = IntVar(home, 0, nVoices * (params->get_size() - 1));
+    count(home, allMelodicIntervals, UNISSON, IRT_EQ, nOfUnisons);
 
     /// cost variables
     nOfFundStateDiminishedChordsWith4notes          = IntVar(home, 0, params->get_size());
     nOfChordsWithLessThan4Values                    = IntVar(home, 0, params->get_size());
     nOfIncompleteChords                             = IntVar(home, 0, params->get_size());
     nOfCommonNotesInSameVoice                       = IntVar(home, - nVoices * (params->get_size() - 1), 0);
-    costOfMelodicIntervals                          = IntVar(home, 0, nVoices*(params->get_size()-1)* MAX_MELODIC_COST);
-
-    costVector = {nOfIncompleteChords, nOfFundStateDiminishedChordsWith4notes, nOfChordsWithLessThan4Values,
-                  costOfMelodicIntervals, nOfCommonNotesInSameVoice};
 
     /// Test constraints
 
-    /**-----------------------------------------------------------------------------------------------------------------
-    |                                                                                                                  |
-    |                                              link the arrays together                                            |
-    |                                                                                                                  |
-    -------------------------------------------------------------------------------------------------------------------*/
-
-    link_harmonic_arrays(home, nVoices, params->get_size(), voicing,
-                         bassTenorHarmonicIntervals, bassAltoHarmonicIntervals, bassSopranoHarmonicIntervals,
-                         tenorAltoHarmonicIntervals, tenorSopranoHarmonicIntervals, altoSopranoHarmonicIntervals);
 
     /**-----------------------------------------------------------------------------------------------------------------
     |                                                                                                                  |
@@ -123,13 +114,9 @@ TonalProgression::TonalProgression(Home home, TonalProgressionParameters* params
     /// count the number of common notes in the same voice between consecutive chords (cost to MAXIMIZE)
     /// /!\ The variable nOfCommonNotesInSameVoice has a NEGATIVE value so the minimization will maximize its absolute value
     compute_cost_for_common_notes_not_in_same_voice(home, bassMelodicIntervals, tenorMelodicIntervals,
-                                                    altoMelodicIntervals, sopranoMelodicIntervals, nOfUnissons,
+                                                    altoMelodicIntervals, sopranoMelodicIntervals, nOfUnisons,
                                                     commonNotesInSameVoice,
                                                     nOfCommonNotesInSameVoice);
-
-    /// weighted sum of melodic intervals (cost to minimize)
-    compute_cost_for_melodic_intervals(home, allMelodicIntervals, nOfUnissons,
-                                       costOfMelodicIntervals, costsAllMelodicIntervals);
 
     /**-----------------------------------------------------------------------------------------------------------------
     |                                                                                                                  |
@@ -309,20 +296,6 @@ TonalProgression::TonalProgression(Home home, TonalProgressionParameters* params
 // }
 
 /**
- * Cost function for lexicographical minimization. The order is as follows:
- * 1. Number of incomplete chords.
- * 2. Number of diminished chords in fundamental state with 4 notes.
- * 3. Number of chords with less than 4 note values.
- * 4. Number of fundamental state chords without doubled bass.
- * 5. Weighted sum of melodic intervals.
- * 6. Number of common notes in the same voice between consecutive chords.
- * @return the cost variables in order of importance
- */
-// IntVarArgs TonalProgression::cost() const {
-//     return costVector;
-// }
-
-/**
  * Copy constructor
  * @param home the space of the problem
  * @param s an instance of the TonalProgression class
@@ -351,18 +324,13 @@ TonalProgression::TonalProgression(Home home, TonalProgression& s) : params(s.pa
     nDifferentValuesAllChords.update(home, s.nDifferentValuesAllChords);
     nOFDifferentNotesInChords.update(home, s.nOFDifferentNotesInChords);
     commonNotesInSameVoice.update(home, s.commonNotesInSameVoice);
-    costsAllMelodicIntervals.update(home, s.costsAllMelodicIntervals);
 
-    nOfUnissons.update( home, s.nOfUnissons);
+    nOfUnisons.update( home, s.nOfUnisons);
 
     nOfFundStateDiminishedChordsWith4notes.update(home, s.nOfFundStateDiminishedChordsWith4notes);
     nOfChordsWithLessThan4Values.update(home, s.nOfChordsWithLessThan4Values);
     nOfIncompleteChords.update(home, s.nOfIncompleteChords);
     nOfCommonNotesInSameVoice.update(home, s.nOfCommonNotesInSameVoice);
-    costOfMelodicIntervals.update(home, s.costOfMelodicIntervals);
-
-    costVector = {nOfIncompleteChords, nOfFundStateDiminishedChordsWith4notes, nOfChordsWithLessThan4Values,
-                  costOfMelodicIntervals, nOfCommonNotesInSameVoice};
 }
 
 /**
@@ -375,14 +343,6 @@ int* TonalProgression::return_solution() const{
         solution[i] = voicing[i].val();
     }
     return solution;
-}
-
-/**
- * Returns the cost variables in lexicographical order
- * @return an IntVarArgs containing cost variables in lexicographical order ONCE A SOLUTION IS FOUND
- */
-IntVarArgs TonalProgression::get_cost_vector() const{
-    return costVector;
 }
 
 /**
@@ -440,9 +400,8 @@ string TonalProgression::to_string(){
     message += "nDifferentValuesInAllChords = \t\t" + intVarArray_to_string(nDifferentValuesAllChords) + "\n";
     message += "commonNotesInSameVoice = \t\t" + intVarArray_to_string(commonNotesInSameVoice) + "\n";
     message += "nOFDifferentNotesInChords = \t\t" + intVarArray_to_string(nOFDifferentNotesInChords) + "\n";
-    message += "costsAllMelodicIntervals = \t\t" + intVarArray_to_string(costsAllMelodicIntervals) + "\n\n";
 
-    message += "nOfUnissons = \t\t" + intVar_to_string(nOfUnissons) + "\n\n";
+    message += "nOfUnisons = \t\t" + intVar_to_string(nOfUnisons) + "\n\n";
 
     message += "------------------------------------cost variables----------------------------------------\n";
 
@@ -454,9 +413,5 @@ string TonalProgression::to_string(){
     message += "nOfCommonNotesAlto = " + intVar_to_string(commonNotesInSameVoice[ALTO]) + "\n";
     message += "nOfCommonNotesSoprano = " + intVar_to_string(commonNotesInSameVoice[SOPRANO]) + "\n";
     message += "nOfCommonNotesBass = " + intVar_to_string(commonNotesInSameVoice[BASS]) + "\n";
-    message += "costOfMelodicIntervals = " + intVar_to_string(costOfMelodicIntervals) + "\n\n";
-
-    message += "Cost vector = {" + intVarArgs_to_string(costVector) + "}\n\n";
-
     return message;
 }

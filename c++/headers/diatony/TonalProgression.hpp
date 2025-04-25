@@ -25,7 +25,7 @@ using namespace std;
  *                                                                                                                     *
  ***********************************************************************************************************************/
  /**
-  * This class models a classic 4 voice harmonic problem of tonal music. It takes as arguments a number of chords, a
+  * This class models a classic 4-voice harmonic problem of tonal music. It takes as arguments a number of chords, a
   * tonality, and a series of chords identified by their degree, quality and state. It models a 4 voice chord
   * progression following traditional rules and preferences of western tonal harmony for diatonic chord progressions.
   */
@@ -62,19 +62,15 @@ protected:
     IntVarArray                 nDifferentValuesAllChords;
     IntVarArray                 nOFDifferentNotesInChords;
     IntVarArray                 commonNotesInSameVoice;
-    IntVarArray                 costsAllMelodicIntervals;
 
     /// Variables for each type of interval
-    IntVar                      nOfUnissons;                                // number of intervals that are a unison
+    IntVar                      nOfUnisons;                                // number of intervals that are a unison
 
     /// cost variables
     IntVar                      nOfFundStateDiminishedChordsWith4notes;
     IntVar                      nOfChordsWithLessThan4Values;
     IntVar                      nOfIncompleteChords;
     IntVar                      nOfCommonNotesInSameVoice;                  // /!\ this cost needs to be maximized, so its value is negative
-    IntVar                      costOfMelodicIntervals;
-
-    IntVarArgs                  costVector;                                 // the costs in lexicographical order for minimization
 
     /** ---------------------------------------------Methods-------------------------------------------------------- **/
 
@@ -141,24 +137,6 @@ public:
      * @return an array of integers representing the values of the variables in a solution
      */
     int* return_solution() const;
-
-    /**
-     * Returns the cost variables in lexicographical order
-     * @return an IntVarArgs containing cost variables in lexicographical order ONCE A SOLUTION IS FOUND
-     */
-    IntVarArgs get_cost_vector() const;
-
-    /**
-     * Cost function for lexicographical minimization. The order is as follows:
-     * 1. Number of incomplete chords.
-     * 2. Number of diminished chords in fundamental state with 4 notes.
-     * 3. Number of chords with less than 4 note values.
-     * 4. Number of fundamental state chords without doubled bass.
-     * 5. Weighted sum of melodic intervals.
-     * 6. Number of common notes in the same voice between consecutive chords.
-     * @return the cost variables in order of importance
-     */
-    // virtual IntVarArgs cost() const;
 
     /**
      * returns the parameters in a string
