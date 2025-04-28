@@ -19,11 +19,10 @@
  * @param fullChordsVoicing the array containing all the chords in the form
  *          [bass0, alto0, tenor0, soprano0, bass1, alto1, tenor1, soprano1, ...]
  * @param nOfDifferentNotes the array containing the number of different notes in each diminished chord.
- * @param costVar the variable that will contain the number of diminished chords that don't respect the preference
  */
 void compute_diminished_chords_cost(const Home &home, int nVoices, int size, vector<int> chordStates,
-                                    vector<int> chordQualities, IntVarArray fullChordsVoicing,
-                                    IntVarArray nOfDifferentNotes, const IntVar &costVar);
+                                    vector<int> chordQualities, IntVarArray &fullChordsVoicing,
+                                    IntVarArray &nOfDifferentNotes);
 
 /**
  * Computes the cost for the number of notes in a chord, that is the number of chords that have less than 4 different
@@ -35,8 +34,8 @@ void compute_diminished_chords_cost(const Home &home, int nVoices, int size, vec
  * @param nOfDifferentNotes the array containing the number of different notes in each chord
  * @param costVar the variable that will contain the cost
  */
-void compute_n_of_notes_in_chord_cost(const Home &home, int nVoices, int size, IntVarArray fullChordsVoicing,
-                                      IntVarArray nOfDifferentNotes, const IntVar &costVar);
+void compute_n_of_notes_in_chord_cost(const Home &home, int nVoices, int size, IntVarArray &fullChordsVoicing,
+                                      IntVarArray &nOfDifferentNotes, const IntVar &costVar);
 
 /**
  * This function counts the number of times when a common note in the soprano voice when moving from a chord in first
@@ -84,7 +83,7 @@ void compute_cost_for_common_notes_not_in_same_voice(const Home &home, const Int
                                                      const IntVarArray &tenorMelodicIntervals,
                                                      const IntVarArray &altoMelodicIntervals,
                                                      const IntVarArray &sopranoMelodicIntervals,
-                                                     const IntVar &nOfUnissons, IntVarArray commonNotesInSameVoice,
+                                                     const IntVar &nOfUnissons, IntVarArray &commonNotesInSameVoice,
                                                      const IntVar &nOfCommonNotesInSameVoice);
 
 /**
@@ -102,6 +101,6 @@ void compute_cost_for_common_notes_not_in_same_voice(const Home &home, const Int
  */
 void
 compute_cost_for_melodic_intervals(const Home &home, const IntVarArray &allMelodicIntervals, const IntVar &nOfUnissons,
-                                   const IntVar &costOfMelodicIntervals, IntVarArray costAllMelodicIntervals);
+                                   const IntVar &costOfMelodicIntervals, IntVarArray &costAllMelodicIntervals);
 
 #endif //MYPROJECT_PREFERENCES_HPP

@@ -23,8 +23,11 @@ PROBLEM_FILES = $(SRC_DIR)/$(AUX_DIR)/Utilities.cpp \
 				$(SRC_DIR)/$(DIATONY_DIR)/HarmonicConstraints.cpp \
 				$(SRC_DIR)/$(DIATONY_DIR)/GeneralConstraints.cpp \
 				$(SRC_DIR)/$(DIATONY_DIR)/Preferences.cpp \
+				$(SRC_DIR)/$(DIATONY_DIR)/TonalProgression.cpp \
+				$(SRC_DIR)/$(DIATONY_DIR)/TonalProgressionParameters.cpp \
+				$(SRC_DIR)/$(DIATONY_DIR)/ModulationParameters.cpp \
 				$(SRC_DIR)/$(DIATONY_DIR)/FourVoiceTexture.cpp \
-				$(SRC_DIR)/$(DIATONY_DIR)/SolveDiatony.cpp \
+				$(SRC_DIR)/$(DIATONY_DIR)/FourVoiceTextureParameters.cpp \
 
 #MIDI handling files
 MIDI_FILES = $(SRC_DIR)/$(MIDI_DIR)/Options.cpp \

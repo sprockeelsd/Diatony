@@ -16,11 +16,10 @@
  * @param fullChordsVoicing the array containing all the chords in the form
  *          [bass0, alto0, tenor0, soprano0, bass1, alto1, tenor1, soprano1, ...]
  * @param nOfDifferentNotes the array containing the number of different notes in each diminished chord.
- * @param costVar the variable that will contain the number of diminished chords that don't respect the preference
  */
 void compute_diminished_chords_cost(const Home &home, int nVoices, int size, vector<int> chordStates,
-                                    vector<int> chordQualities, IntVarArray fullChordsVoicing,
-                                    IntVarArray nOfDifferentNotes, const IntVar &costVar) {
+                                    vector<int> chordQualities, IntVarArray &fullChordsVoicing,
+                                    IntVarArray &nOfDifferentNotes) {
     for(int i = 0; i < size; ++i){
         if(chordQualities[i] == DIMINISHED_CHORD && chordStates[i] == FUNDAMENTAL_STATE){
             IntVarArgs currentChord(fullChordsVoicing.slice(nVoices * i, 1, nVoices));
@@ -30,8 +29,6 @@ void compute_diminished_chords_cost(const Home &home, int nVoices, int size, vec
             rel(home, nOfDifferentNotes[i], IRT_EQ, 0);
         }
     }
-    /// costVar = number of diminished chords with 4 notes
-    count(home, nOfDifferentNotes, 4, IRT_EQ, costVar);
 }
 
 /**
@@ -45,8 +42,8 @@ void compute_diminished_chords_cost(const Home &home, int nVoices, int size, vec
  * @param nOfDifferentNotes the array containing the number of different notes in each chord
  * @param costVar the variable that will contain the cost
  */
-void compute_n_of_notes_in_chord_cost(const Home &home, int nVoices, int size, IntVarArray fullChordsVoicing,
-                                      IntVarArray nOfDifferentNotes, const IntVar &costVar) {
+void compute_n_of_notes_in_chord_cost(const Home &home, int nVoices, int size, IntVarArray &fullChordsVoicing,
+                                      IntVarArray &nOfDifferentNotes, const IntVar &costVar) {
     for(int i = 0; i < size; i++) {
         IntVarArgs currentChord(fullChordsVoicing.slice(nVoices * i, 1, nVoices));
         nvalues(home, currentChord, IRT_EQ,nOfDifferentNotes[i]);
@@ -89,7 +86,7 @@ void compute_cost_for_incomplete_chords(const Home &home, int nVoices, int size,
  * @param tenorMelodicIntervals the array of absolute melodic intervals for the tenor
  * @param altoMelodicIntervals the array of absolute melodic intervals for the alto
  * @param sopranoMelodicIntervals the array of absolute melodic intervals for the soprano
- * @param nOfUnissons the number of intervals that are a unisson
+ * @param nOfUnissons the number of intervals that are a unison
  * @param commonNotesInSameVoice an array containing the number of times when there is a common note in the same voice
  * for each voice
  * @param nOfCommonNotesInSameVoice the total number of times when there is a common note in the same voice
@@ -98,7 +95,7 @@ void compute_cost_for_common_notes_not_in_same_voice(const Home &home, const Int
                                                      const IntVarArray &tenorMelodicIntervals,
                                                      const IntVarArray &altoMelodicIntervals,
                                                      const IntVarArray &sopranoMelodicIntervals,
-                                                     const IntVar &nOfUnissons, IntVarArray commonNotesInSameVoice,
+                                                     const IntVar &nOfUnissons, IntVarArray &commonNotesInSameVoice,
                                                      const IntVar &nOfCommonNotesInSameVoice) {
 
     vector<IntVarArray> melodicIntervals = {bassMelodicIntervals, tenorMelodicIntervals,
@@ -127,10 +124,10 @@ void compute_cost_for_common_notes_not_in_same_voice(const Home &home, const Int
  */
 void
 compute_cost_for_melodic_intervals(const Home &home, const IntVarArray &allMelodicIntervals, const IntVar &nOfUnissons,
-                                   const IntVar &costOfMelodicIntervals, IntVarArray costAllMelodicIntervals) {
+                                   const IntVar &costOfMelodicIntervals, IntVarArray &costAllMelodicIntervals) {
 
     ///                    -octave,     - major seventh,    - minor seventh,    - major sixth,  - minor sixth,
-    IntArgs weights({   OCTAVE_COST, SEVENTH_COST,       SEVENTH_COST,       SIXTH_COST,     SIXTH_COST,
+    const IntArgs weights({   OCTAVE_COST, SEVENTH_COST,       SEVENTH_COST,       SIXTH_COST,     SIXTH_COST,
     ///                     -perfect fifth,     - tritone,      -perfect fourth,    - major third,  - minor third,
                             FIFTH_COST,         TRITONE_COST,   FOURTH_COST,        THIRD_COST,     THIRD_COST,
     ///                     - major second,     - minor second,     unison,

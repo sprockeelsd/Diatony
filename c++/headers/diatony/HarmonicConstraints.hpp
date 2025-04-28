@@ -84,8 +84,8 @@ void chord_note_occurrence_fundamental_state(Home home, int nVoices, int pos, ve
  */
 void chord_note_occurrence_first_inversion(Home home, int size, int nVoices, int currentPos, Tonality *tonality,
                                            vector<int> degrees, vector<int> qualities,
-                                           const IntVarArgs &currentChord, IntVarArray bassMelodicIntervals,
-                                           IntVarArray sopranoMelodicIntervals);
+                                           const IntVarArgs &currentChord, IntVarArray &bassMelodicIntervals,
+                                           IntVarArray &sopranoMelodicIntervals);
 
 /***********************************************************************************************************************
  *                                                                                                                     *
