@@ -127,7 +127,7 @@ compute_cost_for_melodic_intervals(const Home &home, const IntVarArray &allMelod
                                    const IntVar &costOfMelodicIntervals, IntVarArray &costAllMelodicIntervals) {
 
     ///                    -octave,     - major seventh,    - minor seventh,    - major sixth,  - minor sixth,
-    IntArgs weights({   OCTAVE_COST, SEVENTH_COST,       SEVENTH_COST,       SIXTH_COST,     SIXTH_COST,
+    const IntArgs weights({   OCTAVE_COST, SEVENTH_COST,       SEVENTH_COST,       SIXTH_COST,     SIXTH_COST,
     ///                     -perfect fifth,     - tritone,      -perfect fourth,    - major third,  - minor third,
                             FIFTH_COST,         TRITONE_COST,   FOURTH_COST,        THIRD_COST,     THIRD_COST,
     ///                     - major second,     - minor second,     unison,

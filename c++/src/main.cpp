@@ -88,7 +88,7 @@ int main(int argc, char* argv[]) {
         n_sols += 1;
         lastSol = dynamic_cast<FourVoiceTexture *>(sol->copy());
         std::cout << sol->to_string() << std::endl;
-        if (n_sols >= 1) break;
+        //if (n_sols >= 1) break;
     }
     std::cout << n_sols << " solutions found." << std::endl;
 

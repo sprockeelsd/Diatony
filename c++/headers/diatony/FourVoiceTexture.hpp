@@ -32,10 +32,12 @@ private:
     /// cost variables auxiliary arrays
     IntVarArray                 costsAllMelodicIntervals;
     IntVarArray                 nDifferentValuesInDiminishedChord;
+    IntVarArray                 nDifferentValuesAllChords;
 
     /// cost variables
     IntVar                      costOfMelodicIntervals;
     IntVar                      nOfFundStateDiminishedChordsWith4notes;
+    IntVar                      nOfChordsWithLessThan4Values;
 
     IntVarArgs                  costVector;                                 // the costs in lexicographical order for minimization
 
