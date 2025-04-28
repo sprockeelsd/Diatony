@@ -19,11 +19,10 @@
  * @param fullChordsVoicing the array containing all the chords in the form
  *          [bass0, alto0, tenor0, soprano0, bass1, alto1, tenor1, soprano1, ...]
  * @param nOfDifferentNotes the array containing the number of different notes in each diminished chord.
- * @param costVar the variable that will contain the number of diminished chords that don't respect the preference
  */
 void compute_diminished_chords_cost(const Home &home, int nVoices, int size, vector<int> chordStates,
                                     vector<int> chordQualities, IntVarArray &fullChordsVoicing,
-                                    IntVarArray &nOfDifferentNotes, const IntVar &costVar);
+                                    IntVarArray &nOfDifferentNotes);
 
 /**
  * Computes the cost for the number of notes in a chord, that is the number of chords that have less than 4 different

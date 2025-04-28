@@ -67,7 +67,7 @@ protected:
     IntVar                      nOfUnisons;                                // number of intervals that are a unison
 
     /// cost variables
-    IntVar                      nOfFundStateDiminishedChordsWith4notes;
+    //IntVar                      nOfFundStateDiminishedChordsWith4notes;
     IntVar                      nOfChordsWithLessThan4Values;
     IntVar                      nOfIncompleteChords;
     IntVar                      nOfCommonNotesInSameVoice;                  // /!\ this cost needs to be maximized, so its value is negative
@@ -85,13 +85,14 @@ public:
      * @param altoIntervals
      * @param sopranoIntervals
      * @param allMIntervals
+     * @param nDifferentValuesInDimChord
      * @return an object constraining the variables on which the problem is defined
      * /!\ dominant diminished seventh chords are considered as minor ninth dominant chords without their fundamental
      */
     TonalProgression(Home home, TonalProgressionParameters* params,
         IntVarArray& fullVoicing, IntVarArray& bassIntervals, IntVarArray& tenorIntervals,
         IntVarArray& altoIntervals, IntVarArray& sopranoIntervals,
-        IntVarArray& allMIntervals);
+        IntVarArray& allMIntervals, IntVarArray& nDifferentValuesInDimChord);
 
     // todo constructor for all solutions within a margin of the cost vector
     // TonalProgression(Home home, int s, Tonality *t, vector<int> chordDegs, vector<int> chordQuals, vector<int> chordStas,
@@ -110,27 +111,29 @@ public:
     /**                 getters                      **/
     int get_size() const { return params->get_size(); }
 
-    IntVarArray getFullVoicing(){ return voicing; }
+    IntVarArray &getFullVoicing(){ return voicing; }
 
-    IntVarArray getBassMelodicIntervals(){ return bassMelodicIntervals; }
+    IntVarArray &getBassMelodicIntervals(){ return bassMelodicIntervals; }
 
-    IntVarArray getTenorMelodicIntervals(){ return tenorMelodicIntervals; }
+    IntVarArray &getTenorMelodicIntervals(){ return tenorMelodicIntervals; }
 
-    IntVarArray getAltoMelodicIntervals(){ return altoMelodicIntervals; }
+    IntVarArray &getAltoMelodicIntervals(){ return altoMelodicIntervals; }
 
-    IntVarArray getSopranoMelodicIntervals(){ return sopranoMelodicIntervals; }
+    IntVarArray &getSopranoMelodicIntervals(){ return sopranoMelodicIntervals; }
 
-    IntVarArray getBassTenorHarmonicIntervals(){ return bassTenorHarmonicIntervals; }
+    IntVarArray &getBassTenorHarmonicIntervals(){ return bassTenorHarmonicIntervals; }
 
-    IntVarArray getBassAltoHarmonicIntervals(){ return bassAltoHarmonicIntervals; }
+    IntVarArray &getBassAltoHarmonicIntervals(){ return bassAltoHarmonicIntervals; }
 
-    IntVarArray getBassSopranoHarmonicIntervals(){ return bassSopranoHarmonicIntervals; }
+    IntVarArray &getBassSopranoHarmonicIntervals(){ return bassSopranoHarmonicIntervals; }
 
-    IntVarArray getTenorAltoHarmonicIntervals(){ return tenorAltoHarmonicIntervals; }
+    IntVarArray &getTenorAltoHarmonicIntervals(){ return tenorAltoHarmonicIntervals; }
 
-    IntVarArray getTenorSopranoHarmonicIntervals(){ return tenorSopranoHarmonicIntervals; }
+    IntVarArray &getTenorSopranoHarmonicIntervals(){ return tenorSopranoHarmonicIntervals; }
 
-    IntVarArray getAltoSopranoHarmonicIntervals(){ return altoSopranoHarmonicIntervals; }
+    IntVarArray &getAltoSopranoHarmonicIntervals(){ return altoSopranoHarmonicIntervals; }
+
+    IntVarArray &getNDifferentValuesInDiminishedChord(){ return nDifferentValuesInDiminishedChord; }
 
     /**
      * Returns the values taken by the fullVoicing array in a solution as a pointer to an integer array

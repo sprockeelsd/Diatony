@@ -28,32 +28,43 @@ FourVoiceTexture::FourVoiceTexture(FourVoiceTextureParameters* params) : params(
         rel(*this, expr(*this, allMelodicIntervals[nVoices * i + SOPRANO]         == sopranoMelodicIntervals[i]));
     }
 
-    /// Creation of the subproblems for each progression
-    for (int i = 0; i < params->get_numberOfSections(); i++) {
-        tonalProgressions.push_back(new TonalProgression(*this, this->params->get_sectionParameters(i), fullVoicing,
-            bassMelodicIntervals, tenorMelodicIntervals, altoMelodicIntervals, sopranoMelodicIntervals,
-            allMelodicIntervals));
-    }
-
-
     /**---------------------------------------- costs ------------------------------------*/
     /// Initialisation of the cost variable arrays
     costsAllMelodicIntervals                        = IntVarArray(*this, nVoices * (params->get_totalNumberOfChords() - 1), UNISON_COST, MAX_MELODIC_COST);
+    nDifferentValuesInDiminishedChord               = IntVarArray(*this, params->get_totalNumberOfChords(), 0, nVoices);
 
     nOfUnisons                                     = IntVar(*this, 0, nVoices * (params->get_totalNumberOfChords() - 1));
 
     /// Initialization of cost variables
     costOfMelodicIntervals                          = IntVar(*this, 0, nVoices*(params->get_totalNumberOfChords()-1)* MAX_MELODIC_COST);
+    nOfFundStateDiminishedChordsWith4notes          = IntVar(*this, 0, params->get_totalNumberOfChords());
+
+    /// Creation of the subproblems for each progression
+    for (int i = 0; i < params->get_numberOfSections(); i++) {
+        tonalProgressions.push_back(new TonalProgression(*this, this->params->get_sectionParameters(i), fullVoicing,
+            bassMelodicIntervals, tenorMelodicIntervals, altoMelodicIntervals, sopranoMelodicIntervals,
+            allMelodicIntervals, nDifferentValuesInDiminishedChord));
+    }
 
     /// weighted sum of melodic intervals (cost to minimize)
     compute_cost_for_melodic_intervals(*this, allMelodicIntervals, nOfUnisons,
                                        costOfMelodicIntervals, costsAllMelodicIntervals);
 
+    /// number of diminished chords in fundamental state with more than 3 notes (cost to minimize)
+    for (int i = 0; i < params->get_numberOfSections(); i++) {
+        auto sp  = params->get_sectionParameters()[i];
+        compute_diminished_chords_cost(*this, 4, sp->get_size(),
+                                       sp->get_chordStates(), sp->get_chordQualities(), fullVoicing, tonalProgressions[i]->getNDifferentValuesInDiminishedChord());
+    }
+    /// costVar = number of diminished chords with 4 notes
+    count(*this, nDifferentValuesInDiminishedChord, 4, IRT_EQ, nOfFundStateDiminishedChordsWith4notes);
+
 
     // costVector = {nOfIncompleteChords, nOfFundStateDiminishedChordsWith4notes, nOfChordsWithLessThan4Values,
     //           costOfMelodicIntervals, nOfCommonNotesInSameVoice};
 
-    costVector = {costOfMelodicIntervals};
+    costVector = {nOfFundStateDiminishedChordsWith4notes, costOfMelodicIntervals};
+
 
     branch(*this, fullVoicing, INT_VAR_NONE(), INT_VAL_MIN());
 }
@@ -74,10 +85,12 @@ FourVoiceTexture::FourVoiceTexture(FourVoiceTexture& s) : IntLexMinimizeSpace(s)
     nOfUnisons.update( *this, s.nOfUnisons);
 
     costsAllMelodicIntervals.update(*this, s.costsAllMelodicIntervals);
+    nDifferentValuesInDiminishedChord.update(*this, s.nDifferentValuesInDiminishedChord);
 
     costOfMelodicIntervals.update(*this, s.costOfMelodicIntervals);
+    nOfFundStateDiminishedChordsWith4notes.update(*this, s.nOfFundStateDiminishedChordsWith4notes);
 
-    costVector = {costOfMelodicIntervals};
+    costVector = {nOfFundStateDiminishedChordsWith4notes, costOfMelodicIntervals};
 
     for (auto p : s.tonalProgressions)
         tonalProgressions.push_back(new TonalProgression(*this, *p));
@@ -123,7 +136,7 @@ string FourVoiceTexture::to_string() const {
 
     message += "-------------------------------cost-related auxiliary arrays------------------------------\n";
 
-    // message += "nDifferentValuesInDiminishedChord = \t" + intVarArray_to_string(nDifferentValuesInDiminishedChord) + "\n";
+    message += "nDifferentValuesInDiminishedChord = \t" + intVarArray_to_string(nDifferentValuesInDiminishedChord) + "\n";
     // message += "nDifferentValuesInAllChords = \t\t" + intVarArray_to_string(nDifferentValuesAllChords) + "\n";
     // message += "commonNotesInSameVoice = \t\t" + intVarArray_to_string(commonNotesInSameVoice) + "\n";
     // message += "nOFDifferentNotesInChords = \t\t" + intVarArray_to_string(nOFDifferentNotesInChords) + "\n";
@@ -133,7 +146,7 @@ string FourVoiceTexture::to_string() const {
 
     message += "------------------------------------cost variables----------------------------------------\n";
 
-    // message += "nOfFundStateDiminishedChordsWith4notes = " + intVar_to_string(nOfFundStateDiminishedChordsWith4notes) + "\n";
+    message += "nOfFundStateDiminishedChordsWith4notes = " + intVar_to_string(nOfFundStateDiminishedChordsWith4notes) + "\n";
     // message += "nOfChordsWithLessThan4Values = " + intVar_to_string(nOfChordsWithLessThan4Values) + "\n";
     // message += "nOfIncompleteChords = " + intVar_to_string(nOfIncompleteChords) + "\n";
     // message += "nOfCommonNotesInSameVoice = " + intVar_to_string(nOfCommonNotesInSameVoice,true) + "\n";

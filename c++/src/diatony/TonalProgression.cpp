@@ -31,12 +31,14 @@
  * @param altoIntervals
  * @param sopranoIntervals
  * @param allMIntervals
+ * @param nDifferentValuesInDimChord
  * @return an object constraining the variables on which the problem is defined
  * /!\ dominant diminished seventh chords are considered as minor ninth dominant chords without their fundamental
  */
 TonalProgression::TonalProgression(Home home, TonalProgressionParameters* params,
         IntVarArray& fullVoicing, IntVarArray& bassIntervals, IntVarArray& tenorIntervals,
-        IntVarArray& altoIntervals, IntVarArray& sopranoIntervals, IntVarArray& allMIntervals) : params(params){
+        IntVarArray& altoIntervals, IntVarArray& sopranoIntervals, IntVarArray& allMIntervals,
+        IntVarArray& nDifferentValuesInDimChord) : params(params){
 
     if (params->get_size() != (params->get_end() - params->get_start()) + 1)
         throw std::runtime_error("TonalProgression: the length is not coherent with the start and end positions");
@@ -73,7 +75,7 @@ TonalProgression::TonalProgression(Home home, TonalProgressionParameters* params
                  tenorAltoHarmonicIntervals, tenorSopranoHarmonicIntervals, altoSopranoHarmonicIntervals);
 
     /// cost variables auxiliary arrays
-    nDifferentValuesInDiminishedChord               = IntVarArray(home, params->get_size(), 0, nVoices);
+    nDifferentValuesInDiminishedChord               = IntVarArray(home, nDifferentValuesInDimChord.slice(params->get_start(), 1, params->get_size()));
     nDifferentValuesAllChords                       = IntVarArray(home, params->get_size(), 0, nVoices);
     nOFDifferentNotesInChords                       = IntVarArray(home, params->get_size(), 0, nVoices);
     commonNotesInSameVoice                          = IntVarArray(home, nVoices, 0, params->get_size() - 1);
@@ -82,7 +84,6 @@ TonalProgression::TonalProgression(Home home, TonalProgressionParameters* params
     count(home, allMelodicIntervals, UNISSON, IRT_EQ, nOfUnisons);
 
     /// cost variables
-    nOfFundStateDiminishedChordsWith4notes          = IntVar(home, 0, params->get_size());
     nOfChordsWithLessThan4Values                    = IntVar(home, 0, params->get_size());
     nOfIncompleteChords                             = IntVar(home, 0, params->get_size());
     nOfCommonNotesInSameVoice                       = IntVar(home, - nVoices * (params->get_size() - 1), 0);
@@ -97,11 +98,6 @@ TonalProgression::TonalProgression(Home home, TonalProgressionParameters* params
     -------------------------------------------------------------------------------------------------------------------*/
 
     // @todo add a cost for doubled notes that are not tonal notes -> if a value is not in the tonal notes (1-(2)-4-5), then its occurrence cannot be greater than 1 for each chord
-
-    /// number of diminished chords in fundamental state with more than 3 notes (cost to minimize)
-    compute_diminished_chords_cost(home, nVoices, params->get_size(),
-                                   params->get_chordStates(), params->get_chordQualities(), voicing, nDifferentValuesInDiminishedChord,
-                                   nOfFundStateDiminishedChordsWith4notes);
 
     /// number of chords with less than 4 note values (cost to minimize)
     compute_n_of_notes_in_chord_cost(home, nVoices, params->get_size(), voicing,
@@ -327,7 +323,6 @@ TonalProgression::TonalProgression(Home home, TonalProgression& s) : params(s.pa
 
     nOfUnisons.update( home, s.nOfUnisons);
 
-    nOfFundStateDiminishedChordsWith4notes.update(home, s.nOfFundStateDiminishedChordsWith4notes);
     nOfChordsWithLessThan4Values.update(home, s.nOfChordsWithLessThan4Values);
     nOfIncompleteChords.update(home, s.nOfIncompleteChords);
     nOfCommonNotesInSameVoice.update(home, s.nOfCommonNotesInSameVoice);
@@ -405,7 +400,6 @@ string TonalProgression::to_string(){
 
     message += "------------------------------------cost variables----------------------------------------\n";
 
-    message += "nOfFundStateDiminishedChordsWith4notes = " + intVar_to_string(nOfFundStateDiminishedChordsWith4notes) + "\n";
     message += "nOfChordsWithLessThan4Values = " + intVar_to_string(nOfChordsWithLessThan4Values) + "\n";
     message += "nOfIncompleteChords = " + intVar_to_string(nOfIncompleteChords) + "\n";
     message += "nOfCommonNotesInSameVoice = " + intVar_to_string(nOfCommonNotesInSameVoice,true) + "\n";

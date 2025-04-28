@@ -30,35 +30,41 @@ int main(int argc, char* argv[]) {
     Tonality* CMajor = new MajorTonality(C);
     Tonality* GMajor = new MajorTonality(G);
 
+    Tonality* CMinor = new MinorTonality(C);
+    Tonality* EbMajor = new MajorTonality(E_FLAT);
+
     vector<Tonality*> tonalities = {CMajor};
 
 
     std::string search_type = argv[1];
     std::string build_midi = argv[2];
 
+    Tonality* t1 = CMinor;
     /// vectors representing the chords and the states
-    vector<int> chords = {FIRST_DEGREE, SIXTH_DEGREE, FIVE_OF_FIVE, FIFTH_DEGREE_APPOGIATURA, FIFTH_DEGREE, FIRST_DEGREE
+    vector<int> chords = {FIRST_DEGREE, SIXTH_DEGREE, SECOND_DEGREE, FIFTH_DEGREE_APPOGIATURA, FIFTH_DEGREE, FIRST_DEGREE
     };
-    vector<int> chords_qualities;
-    chords_qualities.reserve(chords.size());
+    vector<int> chords_qualities1;
+    chords_qualities1.reserve(chords.size());
     for(int chord : chords)
-        chords_qualities.push_back(CMajor->get_chord_quality(chord));
-    vector<int> states = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FIRST_INVERSION, SECOND_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE
+        chords_qualities1.push_back(t1->get_chord_quality(chord));
+    chords_qualities1[4] = DOMINANT_SEVENTH_CHORD;
+    vector<int> states1 = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, SECOND_INVERSION, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE
     };
-    // TonalProgressionParameters(const int s, Tonality *t,
-    //                             vector<int> chordDegs, vector<int> chordQuals, vector<int> chordStas)
-    auto sec1params = new TonalProgressionParameters(0, static_cast<int>(chords.size()), 0, 5, CMajor, chords, chords_qualities, states);
+
+    auto sec1params = new TonalProgressionParameters(0, static_cast<int>(chords.size()), 0, 5, t1, chords,
+        chords_qualities1, states1);
 
 
+    Tonality* t2 = EbMajor;
     vector<int> chords2 = {FIRST_DEGREE, SIXTH_DEGREE, FIVE_OF_FIVE, FIFTH_DEGREE, FIRST_DEGREE
     };
     vector<int> chords_qualities2;
     chords_qualities2.reserve(chords2.size());
     for(int chord : chords2)
-        chords_qualities2.push_back(GMajor->get_chord_quality(chord));
+        chords_qualities2.push_back(t2->get_chord_quality(chord));
     vector<int> states2 = {FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE, FUNDAMENTAL_STATE
     };
-    auto sec2params = new TonalProgressionParameters(1, static_cast<int>(chords2.size()), 6, 10,  GMajor, chords2, chords_qualities2, states2);
+    auto sec2params = new TonalProgressionParameters(1, static_cast<int>(chords2.size()), 6, 10,  t2, chords2, chords_qualities2, states2);
 
     vector<TonalProgressionParameters*> sectionParams = {sec1params, sec2params};
 
@@ -82,7 +88,7 @@ int main(int argc, char* argv[]) {
         n_sols += 1;
         lastSol = dynamic_cast<FourVoiceTexture *>(sol->copy());
         std::cout << sol->to_string() << std::endl;
-        //if (n_sols >= 1) break;
+        if (n_sols >= 1) break;
     }
     std::cout << n_sols << " solutions found." << std::endl;
 
