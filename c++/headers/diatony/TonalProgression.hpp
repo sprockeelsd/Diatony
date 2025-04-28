@@ -59,7 +59,6 @@ protected:
 
     /// cost variables auxiliary arrays
     IntVarArray                 nDifferentValuesInDiminishedChord;
-    //IntVarArray                 nDifferentValuesAllChords;
     IntVarArray                 nOFDifferentNotesInChords;
     IntVarArray                 commonNotesInSameVoice;
 
@@ -67,7 +66,6 @@ protected:
     IntVar                      nOfUnisons;                                // number of intervals that are a unison
 
     /// cost variables
-    //IntVar                      nOfChordsWithLessThan4Values;
     IntVar                      nOfIncompleteChords;
     IntVar                      nOfCommonNotesInSameVoice;                  // /!\ this cost needs to be maximized, so its value is negative
 

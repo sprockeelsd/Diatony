@@ -76,7 +76,6 @@ TonalProgression::TonalProgression(Home home, TonalProgressionParameters* params
 
     /// cost variables auxiliary arrays
     nDifferentValuesInDiminishedChord               = IntVarArray(home, nDifferentValuesInDimChord.slice(params->get_start(), 1, params->get_size()));
-    //nDifferentValuesAllChords                       = IntVarArray(home, params->get_size(), 0, nVoices);
     nOFDifferentNotesInChords                       = IntVarArray(home, params->get_size(), 0, nVoices);
     commonNotesInSameVoice                          = IntVarArray(home, nVoices, 0, params->get_size() - 1);
 
@@ -84,7 +83,6 @@ TonalProgression::TonalProgression(Home home, TonalProgressionParameters* params
     count(home, allMelodicIntervals, UNISSON, IRT_EQ, nOfUnisons);
 
     /// cost variables
-    //nOfChordsWithLessThan4Values                    = IntVar(home, 0, params->get_size());
     nOfIncompleteChords                             = IntVar(home, 0, params->get_size());
     nOfCommonNotesInSameVoice                       = IntVar(home, - nVoices * (params->get_size() - 1), 0);
 
@@ -100,8 +98,6 @@ TonalProgression::TonalProgression(Home home, TonalProgressionParameters* params
     // @todo add a cost for doubled notes that are not tonal notes -> if a value is not in the tonal notes (1-(2)-4-5), then its occurrence cannot be greater than 1 for each chord
 
     /// number of chords with less than 4 note values (cost to minimize)
-    // compute_n_of_notes_in_chord_cost(home, nVoices, params->get_size(), voicing,
-    //                                  nDifferentValuesAllChords, nOfChordsWithLessThan4Values);
 
     /// number of diminished chords in fundamental state with more than 3 notes (cost to minimize)
     compute_diminished_chords_cost(home, 4, params->get_size(),
@@ -321,13 +317,11 @@ TonalProgression::TonalProgression(Home home, TonalProgression& s) : params(s.pa
     voicing.update(home, s.voicing);
 
     nDifferentValuesInDiminishedChord.update(home, s.nDifferentValuesInDiminishedChord);
-    //nDifferentValuesAllChords.update(home, s.nDifferentValuesAllChords);
     nOFDifferentNotesInChords.update(home, s.nOFDifferentNotesInChords);
     commonNotesInSameVoice.update(home, s.commonNotesInSameVoice);
 
     nOfUnisons.update( home, s.nOfUnisons);
 
-    //nOfChordsWithLessThan4Values.update(home, s.nOfChordsWithLessThan4Values);
     nOfIncompleteChords.update(home, s.nOfIncompleteChords);
     nOfCommonNotesInSameVoice.update(home, s.nOfCommonNotesInSameVoice);
 }
@@ -396,7 +390,6 @@ string TonalProgression::to_string(){
     message += "-------------------------------cost-related auxiliary arrays------------------------------\n";
 
     message += "nDifferentValuesInDiminishedChord = \t" + intVarArray_to_string(nDifferentValuesInDiminishedChord) + "\n";
-    //message += "nDifferentValuesInAllChords = \t\t" + intVarArray_to_string(nDifferentValuesAllChords) + "\n";
     message += "commonNotesInSameVoice = \t\t" + intVarArray_to_string(commonNotesInSameVoice) + "\n";
     message += "nOFDifferentNotesInChords = \t\t" + intVarArray_to_string(nOFDifferentNotesInChords) + "\n";
 
@@ -404,7 +397,6 @@ string TonalProgression::to_string(){
 
     message += "------------------------------------cost variables----------------------------------------\n";
 
-    //message += "nOfChordsWithLessThan4Values = " + intVar_to_string(nOfChordsWithLessThan4Values) + "\n";
     message += "nOfIncompleteChords = " + intVar_to_string(nOfIncompleteChords) + "\n";
     message += "nOfCommonNotesInSameVoice = " + intVar_to_string(nOfCommonNotesInSameVoice,true) + "\n";
     message += "nOfCommonNotesTenor = " + intVar_to_string(commonNotesInSameVoice[TENOR]) + "\n";
