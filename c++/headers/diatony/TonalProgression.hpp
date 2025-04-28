@@ -59,7 +59,7 @@ protected:
 
     /// cost variables auxiliary arrays
     IntVarArray                 nDifferentValuesInDiminishedChord;
-    IntVarArray                 nOFDifferentNotesInChords;
+    IntVarArray                 noFDifferentNotesInChords;
     IntVarArray                 commonNotesInSameVoice;
 
     /// Variables for each type of interval
@@ -83,13 +83,16 @@ public:
      * @param sopranoIntervals
      * @param allMIntervals
      * @param nDifferentValuesInDimChord
+     * @param nDNotesInChords
+     * @param nIncompleteChords
      * @return an object constraining the variables on which the problem is defined
      * /!\ dominant diminished seventh chords are considered as minor ninth dominant chords without their fundamental
      */
     TonalProgression(Home home, TonalProgressionParameters* params,
         IntVarArray& fullVoicing, IntVarArray& bassIntervals, IntVarArray& tenorIntervals,
         IntVarArray& altoIntervals, IntVarArray& sopranoIntervals,
-        IntVarArray& allMIntervals, IntVarArray& nDifferentValuesInDimChord);
+        IntVarArray& allMIntervals, IntVarArray& nDifferentValuesInDimChord, IntVarArray& nDNotesInChords,
+        IntVar& nIncompleteChords);
 
     // todo constructor for all solutions within a margin of the cost vector
     // TonalProgression(Home home, int s, Tonality *t, vector<int> chordDegs, vector<int> chordQuals, vector<int> chordStas,

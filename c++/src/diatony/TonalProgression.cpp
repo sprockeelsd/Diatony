@@ -32,13 +32,16 @@
  * @param sopranoIntervals
  * @param allMIntervals
  * @param nDifferentValuesInDimChord
+ * @param nDNotesInChords
+ * @param nIncompleteChords
  * @return an object constraining the variables on which the problem is defined
  * /!\ dominant diminished seventh chords are considered as minor ninth dominant chords without their fundamental
  */
 TonalProgression::TonalProgression(Home home, TonalProgressionParameters* params,
         IntVarArray& fullVoicing, IntVarArray& bassIntervals, IntVarArray& tenorIntervals,
-        IntVarArray& altoIntervals, IntVarArray& sopranoIntervals, IntVarArray& allMIntervals,
-        IntVarArray& nDifferentValuesInDimChord) : params(params){
+        IntVarArray& altoIntervals, IntVarArray& sopranoIntervals,
+        IntVarArray& allMIntervals, IntVarArray& nDifferentValuesInDimChord, IntVarArray& nDNotesInChords,
+        IntVar& nIncompleteChords) : params(params){
 
     if (params->get_size() != (params->get_end() - params->get_start()) + 1)
         throw std::runtime_error("TonalProgression: the length is not coherent with the start and end positions");
@@ -76,14 +79,14 @@ TonalProgression::TonalProgression(Home home, TonalProgressionParameters* params
 
     /// cost variables auxiliary arrays
     nDifferentValuesInDiminishedChord               = IntVarArray(home, nDifferentValuesInDimChord.slice(params->get_start(), 1, params->get_size()));
-    nOFDifferentNotesInChords                       = IntVarArray(home, params->get_size(), 0, nVoices);
+    noFDifferentNotesInChords                       = IntVarArray(home, nDNotesInChords.slice(params->get_start(), 1, params->get_size()));
     commonNotesInSameVoice                          = IntVarArray(home, nVoices, 0, params->get_size() - 1);
 
     nOfUnisons                                     = IntVar(home, 0, nVoices * (params->get_size() - 1));
     count(home, allMelodicIntervals, UNISSON, IRT_EQ, nOfUnisons);
 
     /// cost variables
-    nOfIncompleteChords                             = IntVar(home, 0, params->get_size());
+    nOfIncompleteChords                             = IntVar(nIncompleteChords);
     nOfCommonNotesInSameVoice                       = IntVar(home, - nVoices * (params->get_size() - 1), 0);
 
     /// Test constraints
@@ -105,7 +108,7 @@ TonalProgression::TonalProgression(Home home, TonalProgressionParameters* params
 
     /// number of chords that don't have all their possible note values (cost to minimize)
     compute_cost_for_incomplete_chords(home, nVoices, params->get_size(), nOfNotesInChord,
-                                       voicing, nOFDifferentNotesInChords, nOfIncompleteChords);
+                                       voicing, noFDifferentNotesInChords, nOfIncompleteChords);
 
     /// count the number of common notes in the same voice between consecutive chords (cost to MAXIMIZE)
     /// /!\ The variable nOfCommonNotesInSameVoice has a NEGATIVE value so the minimization will maximize its absolute value
@@ -154,7 +157,7 @@ TonalProgression::TonalProgression(Home home, TonalProgressionParameters* params
             chord_note_occurrence_fundamental_state(home, nVoices, i, params->get_chordDegrees(),
                                                     params->get_chordQualities(), params->get_tonality(), currentChord,
                                                     nDifferentValuesInDiminishedChord[i],
-                                                    nOFDifferentNotesInChords[i % nVoices]);
+                                                    noFDifferentNotesInChords[i % nVoices]);
         }
         /// post the constraints specific to first inversion chords
         else if(params->get_chordStates()[i] == FIRST_INVERSION){
@@ -317,7 +320,7 @@ TonalProgression::TonalProgression(Home home, TonalProgression& s) : params(s.pa
     voicing.update(home, s.voicing);
 
     nDifferentValuesInDiminishedChord.update(home, s.nDifferentValuesInDiminishedChord);
-    nOFDifferentNotesInChords.update(home, s.nOFDifferentNotesInChords);
+    noFDifferentNotesInChords.update(home, s.noFDifferentNotesInChords);
     commonNotesInSameVoice.update(home, s.commonNotesInSameVoice);
 
     nOfUnisons.update( home, s.nOfUnisons);
@@ -391,7 +394,7 @@ string TonalProgression::to_string(){
 
     message += "nDifferentValuesInDiminishedChord = \t" + intVarArray_to_string(nDifferentValuesInDiminishedChord) + "\n";
     message += "commonNotesInSameVoice = \t\t" + intVarArray_to_string(commonNotesInSameVoice) + "\n";
-    message += "nOFDifferentNotesInChords = \t\t" + intVarArray_to_string(nOFDifferentNotesInChords) + "\n";
+    message += "noFDifferentNotesInChords = \t\t" + intVarArray_to_string(noFDifferentNotesInChords) + "\n";
 
     message += "nOfUnisons = \t\t" + intVar_to_string(nOfUnisons) + "\n\n";
 

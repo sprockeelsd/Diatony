@@ -74,23 +74,45 @@ int main(int argc, char* argv[]) {
 
     auto pieceParams = new FourVoiceTextureParameters(11, 2, sectionParams, modulationParams);
 
-    auto space = new FourVoiceTexture(pieceParams);
+    auto pb = new FourVoiceTexture(pieceParams);
 
-    //std::cout << space->to_string() << std::endl;
-    //return 0;
+    Options opts;
+    opts.threads = 1;
+    opts.stop = Stop::time(60000); // stop after 120 seconds
+    opts.cutoff = Cutoff::merge(
+            Cutoff::linear(2*pieceParams->get_totalNumberOfChords()),
+            Cutoff::geometric((4*pieceParams->get_totalNumberOfChords())^2, 2));
+    opts.nogoods_limit = pieceParams->get_totalNumberOfChords() * 4 * 4;
 
-    BAB<FourVoiceTexture> e(space);
-    delete space;
+
+    RBS<FourVoiceTexture, BAB> solver(pb, opts);
+    delete pb;
 
     int n_sols = 0;
     FourVoiceTexture* lastSol = nullptr;
-    while (FourVoiceTexture* sol = e.next()) {
+    auto start = std::chrono::high_resolution_clock::now();     /// start time
+    while (FourVoiceTexture* sol = solver.next()) {
         n_sols += 1;
         lastSol = dynamic_cast<FourVoiceTexture *>(sol->copy());
         std::cout << sol->to_string() << std::endl;
+        std::cout << statistics_to_string(solver.statistics()) << std::endl;
+        //todo improve branching and search (see notes)
         //if (n_sols >= 1) break;
     }
-    std::cout << n_sols << " solutions found." << std::endl;
+    auto currTime = std::chrono::high_resolution_clock::now();     /// current time
+    std::chrono::duration<double> duration = currTime - start;
+
+    std::cout << "search over" << std::endl;
+    if(solver.stopped()){
+        std::cout << "Best solution not found within the time limit." << std::endl;
+    }
+    else if(n_sols == 0){
+        std::cout << "No solutions" << std::endl;
+    }
+    else{
+        std::cout << "Best solution found." << std::endl;
+    }
+    std::cout << "time taken: " << duration.count() << " seconds and " << n_sols << " solutions found.\n" << std::endl;
 
     if(build_midi == "true" && lastSol != nullptr){
             writeSolToMIDIFile(lastSol->getParameters()->get_totalNumberOfChords(), "../out/MidiFiles/sol", lastSol);

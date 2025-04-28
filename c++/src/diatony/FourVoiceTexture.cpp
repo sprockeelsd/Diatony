@@ -32,6 +32,8 @@ FourVoiceTexture::FourVoiceTexture(FourVoiceTextureParameters* params) : params(
     costsAllMelodicIntervals                        = IntVarArray(*this, nVoices * (params->get_totalNumberOfChords() - 1), UNISON_COST, MAX_MELODIC_COST);
     nDifferentValuesInDiminishedChord               = IntVarArray(*this, params->get_totalNumberOfChords(), 0, nVoices);
     nDifferentValuesAllChords                       = IntVarArray(*this, params->get_totalNumberOfChords(), 0, nVoices);
+    nOfDifferentNotesInChords                       = IntVarArray(*this, params->get_totalNumberOfChords(), 0, nVoices);
+    nIncompleteChordsForEachSection                   = IntVarArray(*this, params->get_numberOfSections(), 0, params->get_totalNumberOfChords()); // upper bound
 
     nOfUnisons                                     = IntVar(*this, 0, nVoices * (params->get_totalNumberOfChords() - 1));
 
@@ -39,12 +41,15 @@ FourVoiceTexture::FourVoiceTexture(FourVoiceTextureParameters* params) : params(
     costOfMelodicIntervals                          = IntVar(*this, 0, nVoices*(params->get_totalNumberOfChords()-1)* MAX_MELODIC_COST);
     nOfFundStateDiminishedChordsWith4notes          = IntVar(*this, 0, params->get_totalNumberOfChords());
     nOfChordsWithLessThan4Values                    = IntVar(*this, 0, params->get_totalNumberOfChords());
+    nOfIncompleteChords                             = IntVar(*this, 0, params->get_totalNumberOfChords());
 
     /// Creation of the subproblems for each progression
     for (int i = 0; i < params->get_numberOfSections(); i++) {
         tonalProgressions.push_back(new TonalProgression(*this, this->params->get_sectionParameters(i), fullVoicing,
-            bassMelodicIntervals, tenorMelodicIntervals, altoMelodicIntervals, sopranoMelodicIntervals,
-            allMelodicIntervals, nDifferentValuesInDiminishedChord));
+                                                         bassMelodicIntervals, tenorMelodicIntervals,
+                                                         altoMelodicIntervals, sopranoMelodicIntervals,
+                                                         allMelodicIntervals, nDifferentValuesInDiminishedChord,
+                                                         nOfDifferentNotesInChords, nIncompleteChordsForEachSection[i]));
     }
 
     /// test constraints
@@ -61,11 +66,14 @@ FourVoiceTexture::FourVoiceTexture(FourVoiceTextureParameters* params) : params(
     compute_n_of_notes_in_chord_cost(*this, nVoices, params->get_totalNumberOfChords(), fullVoicing,
                                      nDifferentValuesAllChords, nOfChordsWithLessThan4Values);
 
+    /// the sum of incomplete chords in each section
+    linear(*this, nIncompleteChordsForEachSection, IRT_EQ, nOfIncompleteChords);
+
 
     // costVector = {nOfIncompleteChords, nOfFundStateDiminishedChordsWith4notes, nOfChordsWithLessThan4Values,
     //           costOfMelodicIntervals, nOfCommonNotesInSameVoice};
 
-    costVector = {nOfFundStateDiminishedChordsWith4notes, nOfChordsWithLessThan4Values, costOfMelodicIntervals};
+    costVector = {nOfIncompleteChords, nOfFundStateDiminishedChordsWith4notes, nOfChordsWithLessThan4Values, costOfMelodicIntervals};
 
 
     branch(*this, fullVoicing, INT_VAR_NONE(), INT_VAL_MIN());
@@ -86,16 +94,21 @@ FourVoiceTexture::FourVoiceTexture(FourVoiceTexture& s) : IntLexMinimizeSpace(s)
 
     nOfUnisons.update( *this, s.nOfUnisons);
 
+    /// cost-related arrays
     costsAllMelodicIntervals.update(*this, s.costsAllMelodicIntervals);
     nDifferentValuesInDiminishedChord.update(*this, s.nDifferentValuesInDiminishedChord);
     nDifferentValuesAllChords.update(*this, s.nDifferentValuesAllChords);
+    nOfDifferentNotesInChords.update(*this, s.nOfDifferentNotesInChords);
+    nIncompleteChordsForEachSection.update(*this, s.nIncompleteChordsForEachSection);
 
+    /// cost variables
     costOfMelodicIntervals.update(*this, s.costOfMelodicIntervals);
     nOfFundStateDiminishedChordsWith4notes.update(*this, s.nOfFundStateDiminishedChordsWith4notes);
     nOfChordsWithLessThan4Values.update(*this, s.nOfChordsWithLessThan4Values);
+    nOfIncompleteChords.update(*this, s.nOfIncompleteChords);
 
 
-    costVector = {nOfFundStateDiminishedChordsWith4notes, nOfChordsWithLessThan4Values, costOfMelodicIntervals};
+    costVector = {nOfIncompleteChords, nOfFundStateDiminishedChordsWith4notes, nOfChordsWithLessThan4Values, costOfMelodicIntervals};
 
     for (auto p : s.tonalProgressions)
         tonalProgressions.push_back(new TonalProgression(*this, *p));
@@ -144,7 +157,8 @@ string FourVoiceTexture::to_string() const {
     message += "nDifferentValuesInDiminishedChord = \t" + intVarArray_to_string(nDifferentValuesInDiminishedChord) + "\n";
     message += "nDifferentValuesInAllChords = \t\t" + intVarArray_to_string(nDifferentValuesAllChords) + "\n";
     // message += "commonNotesInSameVoice = \t\t" + intVarArray_to_string(commonNotesInSameVoice) + "\n";
-    // message += "nOFDifferentNotesInChords = \t\t" + intVarArray_to_string(nOFDifferentNotesInChords) + "\n";
+    message += "noFDifferentNotesInChords = \t\t" + intVarArray_to_string(nOfDifferentNotesInChords) + "\n";
+    message += "nIncompleteChordsForEachSection = \t" + intVarArray_to_string(nIncompleteChordsForEachSection) + "\n";
     message += "costsAllMelodicIntervals = \t\t" + intVarArray_to_string(costsAllMelodicIntervals) + "\n\n";
 
     message += "nOfUnisons = \t\t" + intVar_to_string(nOfUnisons) + "\n\n";
@@ -153,7 +167,7 @@ string FourVoiceTexture::to_string() const {
 
     message += "nOfFundStateDiminishedChordsWith4notes = " + intVar_to_string(nOfFundStateDiminishedChordsWith4notes) + "\n";
     message += "nOfChordsWithLessThan4Values = " + intVar_to_string(nOfChordsWithLessThan4Values) + "\n";
-    // message += "nOfIncompleteChords = " + intVar_to_string(nOfIncompleteChords) + "\n";
+    message += "nOfIncompleteChords = " + intVar_to_string(nOfIncompleteChords) + "\n";
     // message += "nOfCommonNotesInSameVoice = " + intVar_to_string(nOfCommonNotesInSameVoice,true) + "\n";
     // message += "nOfCommonNotesTenor = " + intVar_to_string(commonNotesInSameVoice[TENOR]) + "\n";
     // message += "nOfCommonNotesAlto = " + intVar_to_string(commonNotesInSameVoice[ALTO]) + "\n";
