@@ -80,14 +80,12 @@ TonalProgression::TonalProgression(Home home, TonalProgressionParameters* params
     /// cost variables auxiliary arrays
     nDifferentValuesInDiminishedChord               = IntVarArray(home, nDifferentValuesInDimChord.slice(params->get_start(), 1, params->get_size()));
     noFDifferentNotesInChords                       = IntVarArray(home, nDNotesInChords.slice(params->get_start(), 1, params->get_size()));
-    commonNotesInSameVoice                          = IntVarArray(home, nVoices, 0, params->get_size() - 1);
 
     nOfUnisons                                     = IntVar(home, 0, nVoices * (params->get_size() - 1));
     count(home, allMelodicIntervals, UNISSON, IRT_EQ, nOfUnisons);
 
     /// cost variables
     nOfIncompleteChords                             = IntVar(nIncompleteChords);
-    nOfCommonNotesInSameVoice                       = IntVar(home, - nVoices * (params->get_size() - 1), 0);
 
     /// Test constraints
 
@@ -109,13 +107,6 @@ TonalProgression::TonalProgression(Home home, TonalProgressionParameters* params
     /// number of chords that don't have all their possible note values (cost to minimize)
     compute_cost_for_incomplete_chords(home, nVoices, params->get_size(), nOfNotesInChord,
                                        voicing, noFDifferentNotesInChords, nOfIncompleteChords);
-
-    /// count the number of common notes in the same voice between consecutive chords (cost to MAXIMIZE)
-    /// /!\ The variable nOfCommonNotesInSameVoice has a NEGATIVE value so the minimization will maximize its absolute value
-    compute_cost_for_common_notes_not_in_same_voice(home, bassMelodicIntervals, tenorMelodicIntervals,
-                                                    altoMelodicIntervals, sopranoMelodicIntervals, nOfUnisons,
-                                                    commonNotesInSameVoice,
-                                                    nOfCommonNotesInSameVoice);
 
     /**-----------------------------------------------------------------------------------------------------------------
     |                                                                                                                  |
@@ -321,12 +312,10 @@ TonalProgression::TonalProgression(Home home, TonalProgression& s) : params(s.pa
 
     nDifferentValuesInDiminishedChord.update(home, s.nDifferentValuesInDiminishedChord);
     noFDifferentNotesInChords.update(home, s.noFDifferentNotesInChords);
-    commonNotesInSameVoice.update(home, s.commonNotesInSameVoice);
 
     nOfUnisons.update( home, s.nOfUnisons);
 
     nOfIncompleteChords.update(home, s.nOfIncompleteChords);
-    nOfCommonNotesInSameVoice.update(home, s.nOfCommonNotesInSameVoice);
 }
 
 /**
@@ -393,7 +382,6 @@ string TonalProgression::to_string(){
     message += "-------------------------------cost-related auxiliary arrays------------------------------\n";
 
     message += "nDifferentValuesInDiminishedChord = \t" + intVarArray_to_string(nDifferentValuesInDiminishedChord) + "\n";
-    message += "commonNotesInSameVoice = \t\t" + intVarArray_to_string(commonNotesInSameVoice) + "\n";
     message += "noFDifferentNotesInChords = \t\t" + intVarArray_to_string(noFDifferentNotesInChords) + "\n";
 
     message += "nOfUnisons = \t\t" + intVar_to_string(nOfUnisons) + "\n\n";
@@ -401,10 +389,5 @@ string TonalProgression::to_string(){
     message += "------------------------------------cost variables----------------------------------------\n";
 
     message += "nOfIncompleteChords = " + intVar_to_string(nOfIncompleteChords) + "\n";
-    message += "nOfCommonNotesInSameVoice = " + intVar_to_string(nOfCommonNotesInSameVoice,true) + "\n";
-    message += "nOfCommonNotesTenor = " + intVar_to_string(commonNotesInSameVoice[TENOR]) + "\n";
-    message += "nOfCommonNotesAlto = " + intVar_to_string(commonNotesInSameVoice[ALTO]) + "\n";
-    message += "nOfCommonNotesSoprano = " + intVar_to_string(commonNotesInSameVoice[SOPRANO]) + "\n";
-    message += "nOfCommonNotesBass = " + intVar_to_string(commonNotesInSameVoice[BASS]) + "\n";
     return message;
 }

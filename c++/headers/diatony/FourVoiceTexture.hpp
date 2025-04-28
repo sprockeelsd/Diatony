@@ -35,12 +35,14 @@ private:
     IntVarArray                 nDifferentValuesAllChords;
     IntVarArray                 nOfDifferentNotesInChords;
     IntVarArray                 nIncompleteChordsForEachSection;
+    IntVarArray                 commonNotesInSameVoice;
 
     /// cost variables
     IntVar                      costOfMelodicIntervals;
     IntVar                      nOfFundStateDiminishedChordsWith4notes;
     IntVar                      nOfChordsWithLessThan4Values;
     IntVar                      nOfIncompleteChords;
+    IntVar                      nOfCommonNotesInSameVoice;                  // /!\ this cost needs to be maximized, so its value is negative
 
     IntVarArgs                  costVector;                                 // the costs in lexicographical order for minimization
 
