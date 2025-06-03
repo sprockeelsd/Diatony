@@ -23,3 +23,12 @@ string TonalProgressionParameters::to_string() const {
             int_vector_to_string(chordStates) + "\n";
     return message;
 }
+
+string TonalProgressionParameters::pretty() const {
+    string message = "Section " + std::to_string(sectionNumber) + ":\n";
+    message += "Number of chords: " + std::to_string(size) + "\n" +
+        "Start: " + std::to_string(start) + "\n" +
+            "End: " + std::to_string(end) + "\n" +
+         "Tonality: " + midi_to_letter(tonality->get_tonic()) + " " + mode_int_to_name(tonality->get_mode()) + "\n";
+    return message;
+}

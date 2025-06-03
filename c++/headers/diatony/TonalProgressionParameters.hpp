@@ -65,6 +65,8 @@ public:
      * @return a string representation of the object
      */
     string to_string() const;
+
+    string pretty() const;
 };
 
 #endif //TONALPROGRESSIONPARAMETERS_HPP
