@@ -18,7 +18,7 @@ string FourVoiceTextureParameters::toString() const {
     message += "\n";
     message += "Section parameters: \n\n";
     for (const auto p : sectionParameters ) {
-        message += p->to_string() + "\n";
+        message += p->pretty() + "\n";
     }
     message += "\n";
     message += "Modulation parameters: \n\n";
