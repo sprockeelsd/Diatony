@@ -30,5 +30,13 @@ string TonalProgressionParameters::pretty() const {
         "Start: " + std::to_string(start) + "\n" +
             "End: " + std::to_string(end) + "\n" +
          "Tonality: " + midi_to_letter(tonality->get_tonic()) + " " + mode_int_to_name(tonality->get_mode()) + "\n";
+    //todo print the rest in a readable way
+    message += "Chords: ";
+    for (int i = 0; i < chordDegrees.size(); i++) {
+        message += degreeNames[chordDegrees[i]] + " (" + chordQualityNames[chordQualities[i]] + ") in " +
+                   stateNames[chordStates[i]];
+        if (i != chordDegrees.size() - 1)
+            message += " \n";
+    }
     return message;
 }
