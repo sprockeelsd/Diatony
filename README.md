@@ -1,4 +1,4 @@
-# Diatony: a diatonic model of tonal harmony
+# Diatony: a diatonic model of tonal harmony (/!\ the up-to-date version is on the main branch)
 This repository contains a constraint formalization of general western tonal music rules for diatonic harmony using constraint programming. It is mainly based on the books "L'harmonie en liberté" by Isabelle Duha and "Harmonic Practice in Tonal Music" by Robert Gauldin. The constraint solver used for modeling the rules is [Gecode](http://www.gecode.org/). This repository includes the [midifile](https://github.com/craigsapp/midifile) library to generate MIDI files. The model will be presented at IJCAI2024 and the article can be found in the proceedings.
 
 ## Contents
