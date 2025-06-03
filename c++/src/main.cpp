@@ -74,8 +74,6 @@ int main(int argc, char* argv[]) {
 
     auto pieceParams = new FourVoiceTextureParameters(11, 2, sectionParams, modulationParams);
 
-    auto pb = new FourVoiceTexture(pieceParams);
-
     Options opts;
     opts.threads = 1;
     opts.stop = Stop::time(60000); // stop after 120 seconds
@@ -84,38 +82,13 @@ int main(int argc, char* argv[]) {
             Cutoff::geometric((4*pieceParams->get_totalNumberOfChords())^2, 2));
     opts.nogoods_limit = pieceParams->get_totalNumberOfChords() * 4 * 4;
 
-
-    RBS<FourVoiceTexture, BAB> solver(pb, opts);
-    delete pb;
-
-    int n_sols = 0;
-    FourVoiceTexture* lastSol = nullptr;
-    auto start = std::chrono::high_resolution_clock::now();     /// start time
-    while (FourVoiceTexture* sol = solver.next()) {
-        n_sols += 1;
-        lastSol = dynamic_cast<FourVoiceTexture *>(sol->copy());
-        std::cout << sol->to_string() << std::endl;
-        std::cout << statistics_to_string(solver.statistics()) << std::endl;
-        //todo improve branching and search (see notes)
-        //if (n_sols >= 1) break;
-    }
-    auto currTime = std::chrono::high_resolution_clock::now();     /// current time
-    std::chrono::duration<double> duration = currTime - start;
-
-    std::cout << "search over" << std::endl;
-    if(solver.stopped()){
-        std::cout << "Best solution not found within the time limit." << std::endl;
-    }
-    else if(n_sols == 0){
-        std::cout << "No solutions" << std::endl;
-    }
-    else{
-        std::cout << "Best solution found." << std::endl;
-    }
-    std::cout << "time taken: " << duration.count() << " seconds and " << n_sols << " solutions found.\n" << std::endl;
-
-    if(build_midi == "true" && lastSol != nullptr){
-            writeSolToMIDIFile(lastSol->getParameters()->get_totalNumberOfChords(), "../out/MidiFiles/sol", lastSol);
+    auto sol = solve_diatony(pieceParams, &opts);
+    if (sol != nullptr)
+        std::cout << "Solution: " << sol->to_string() << std::endl;
+    else
+        std::cout << "No solution found." << std::endl;
+    if(build_midi == "true" && sol != nullptr){
+            writeSolToMIDIFile(sol->getParameters()->get_totalNumberOfChords(), "../out/MidiFiles/sol", sol);
         cout << "MIDI file(s) created" << endl;
     }
 
