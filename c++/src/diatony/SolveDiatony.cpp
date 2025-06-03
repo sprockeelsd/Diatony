@@ -12,7 +12,7 @@
  * @param params the parameters of the problem, containing the tonalities, chord degrees, qualities and states for each chord in each progression
  * @param opts the options for the search, containing the maximum search time, the restart strategy, etc.
  * @param print whether to print the solutions found during the search
- * @return
+ * @return the best solution found, or nullptr if no solution was found
  */
 const FourVoiceTexture* solve_diatony(FourVoiceTextureParameters* params, const Options* opts, bool print) {
     // create an instance of the FVT problem
