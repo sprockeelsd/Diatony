@@ -28,6 +28,18 @@ FourVoiceTexture::FourVoiceTexture(FourVoiceTextureParameters* params) : params(
         rel(*this, expr(*this, allMelodicIntervals[nVoices * i + SOPRANO]         == sopranoMelodicIntervals[i]));
     }
 
+    // Harmonic interval arrays initialization
+    bassTenorHarmonicIntervals                      = IntVarArray(*this, params->get_totalNumberOfChords(), 0, PERFECT_OCTAVE + PERFECT_FIFTH);
+    bassAltoHarmonicIntervals                       = IntVarArray(*this, params->get_totalNumberOfChords(), 0, 2 * PERFECT_OCTAVE + PERFECT_FIFTH);
+    bassSopranoHarmonicIntervals                    = IntVarArray(*this, params->get_totalNumberOfChords(), 0, 3 * PERFECT_OCTAVE + PERFECT_FIFTH);
+    tenorAltoHarmonicIntervals                      = IntVarArray(*this, params->get_totalNumberOfChords(), 0, PERFECT_OCTAVE);
+    tenorSopranoHarmonicIntervals                   = IntVarArray(*this, params->get_totalNumberOfChords(), 0, 2 * PERFECT_OCTAVE);
+    altoSopranoHarmonicIntervals                    = IntVarArray(*this, params->get_totalNumberOfChords(), 0, PERFECT_OCTAVE);
+
+    link_harmonic_arrays(*this, nVoices, params->get_totalNumberOfChords(), fullVoicing,
+             bassTenorHarmonicIntervals, bassAltoHarmonicIntervals, bassSopranoHarmonicIntervals,
+             tenorAltoHarmonicIntervals, tenorSopranoHarmonicIntervals, altoSopranoHarmonicIntervals);
+
     /// Initialisation of the cost variable arrays
     costsAllMelodicIntervals                        = IntVarArray(*this, nVoices * (params->get_totalNumberOfChords() - 1), UNISON_COST, MAX_MELODIC_COST);
     nDifferentValuesInDiminishedChord               = IntVarArray(*this, params->get_totalNumberOfChords(), 0, nVoices);
@@ -50,9 +62,14 @@ FourVoiceTexture::FourVoiceTexture(FourVoiceTextureParameters* params) : params(
         tonalProgressions.push_back(new TonalProgression(*this, this->params->get_sectionParameters(i), fullVoicing,
                                                          bassMelodicIntervals, tenorMelodicIntervals,
                                                          altoMelodicIntervals, sopranoMelodicIntervals,
-                                                         allMelodicIntervals, nDifferentValuesInDiminishedChord,
+                                                         allMelodicIntervals,
+                                                            bassTenorHarmonicIntervals, bassAltoHarmonicIntervals,
+                                                            bassSopranoHarmonicIntervals, tenorAltoHarmonicIntervals,
+                                                            tenorSopranoHarmonicIntervals, altoSopranoHarmonicIntervals,
+                                                         nDifferentValuesInDiminishedChord,
                                                          nOfDifferentNotesInChords, nIncompleteChordsForEachSection[i]));
     }
+
 
     /// Modulation constraints
     for (int i = 0; i < this->params->get_numberOfSections() - 1; i++) {
@@ -124,6 +141,13 @@ FourVoiceTexture::FourVoiceTexture(FourVoiceTexture& s) : IntLexMinimizeSpace(s)
 
     allMelodicIntervals.update(*this, s.allMelodicIntervals);
 
+    bassTenorHarmonicIntervals.update(*this, s.bassTenorHarmonicIntervals);
+    bassAltoHarmonicIntervals.update(*this, s.bassAltoHarmonicIntervals);
+    bassSopranoHarmonicIntervals.update(*this, s.bassSopranoHarmonicIntervals);
+    tenorAltoHarmonicIntervals.update(*this, s.tenorAltoHarmonicIntervals);
+    tenorSopranoHarmonicIntervals.update(*this, s.tenorSopranoHarmonicIntervals);
+    altoSopranoHarmonicIntervals.update(*this, s.altoSopranoHarmonicIntervals);
+
     nOfUnisons.update( *this, s.nOfUnisons);
 
     /// cost-related arrays
@@ -186,6 +210,13 @@ string FourVoiceTexture::to_string() const {
     message += "Soprano Melodic Intervals:\n" + intVarArray_to_string(sopranoMelodicIntervals) + "\n";
 
     message += "All Melodic Intervals:\n" + intVarArray_to_string(allMelodicIntervals) + "\n";
+
+    message += "Bass-Tenor Harmonic Intervals:\n" + intVarArray_to_string(bassTenorHarmonicIntervals) + "\n";
+    message += "Bass-Alto Harmonic Intervals:\n" + intVarArray_to_string(bassAltoHarmonicIntervals) + "\n";
+    message += "Bass-Soprano Harmonic Intervals:\n" + intVarArray_to_string(bassSopranoHarmonicIntervals) + "\n";
+    message += "Tenor-Alto Harmonic Intervals:\n" + intVarArray_to_string(tenorAltoHarmonicIntervals) + "\n";
+    message += "Tenor-Soprano Harmonic Intervals:\n" + intVarArray_to_string(tenorSopranoHarmonicIntervals) + "\n";
+    message += "Alto-Soprano Harmonic Intervals:\n" + intVarArray_to_string(altoSopranoHarmonicIntervals) + "\n\n";
 
     message += "-------------------------------cost-related auxiliary arrays------------------------------\n";
 
