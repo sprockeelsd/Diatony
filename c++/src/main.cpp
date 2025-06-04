@@ -82,7 +82,7 @@ int main(int argc, char* argv[]) {
             Cutoff::geometric((4*pieceParams->get_totalNumberOfChords())^2, 2));
     opts.nogoods_limit = pieceParams->get_totalNumberOfChords() * 4 * 4;
 
-    auto sol = solve_diatony(pieceParams, &opts, true);
+    auto sol = solve_diatony(pieceParams, &opts);
     if (sol != nullptr)
         std::cout << "Solution: " << sol->to_string() << std::endl;
     else
