@@ -83,7 +83,35 @@ FourVoiceTexture::FourVoiceTexture(FourVoiceTextureParameters* params) : params(
                                           this->params->get_modulationParameters(i)->get_from()->get_end(),
                                             this->params->get_modulationParameters(i)->get_to()->get_start()
                                           );
-                //todo forbid parallel fifths/octaves
+            case PIVOT_CHORD_MODULATION: // after the pivot chord, the chords are voiced as if they were in the new tonality
+                // nothing to do
+                break;
+            case ALTERATION_MODULATION: // make sure parallel fifths are not allowed
+                forbid_parallel_intervals(*this, params->get_totalNumberOfChords(), nVoices,
+                                          {PERFECT_FIFTH, PERFECT_OCTAVE, UNISSON}, fullVoicing,
+                                          bassTenorHarmonicIntervals, bassAltoHarmonicIntervals,
+                                          bassSopranoHarmonicIntervals, tenorAltoHarmonicIntervals,
+                                          tenorSopranoHarmonicIntervals, altoSopranoHarmonicIntervals,
+                                          this->params->get_modulationParameters(i)->get_from()->get_end(),
+                                            this->params->get_modulationParameters(i)->get_to()->get_start()
+                                          );
+                break;
+            case SECONDARY_DOMINANT_MODULATION: {
+                // The chromatism must be in the same voice
+                auto leading_tone = this->params->get_modulationParameters(i)->get_to()->get_tonality()->get_degree_note(SEVENTH_DEGREE);
+                auto modulation_start = this->params->get_modulationParameters(i)->get_start();
+
+                for (int j = BASS; j <= SOPRANO; j++) {
+                    // the leading tone must be preceded by the note one semitone below it in the same voice
+                    rel(*this, expr(*this, fullVoicing[(modulation_start + 1) * nVoices + j] % PERFECT_OCTAVE == leading_tone), BOT_IMP,
+                        expr(*this, fullVoicing[(modulation_start) * nVoices + j] % PERFECT_OCTAVE == leading_tone - MINOR_SECOND), true);
+                    // If the note leading to the chromatism is doubled, the one not going to the leading tone must go down
+                    rel(*this, expr(*this, fullVoicing[modulation_start] % PERFECT_OCTAVE ==
+                        (leading_tone + PERFECT_OCTAVE - MINOR_SECOND) % PERFECT_OCTAVE &&
+                        fullVoicing[(modulation_start + 1) * nVoices + j] % PERFECT_OCTAVE != leading_tone), BOT_IMP,
+                        expr(*this, allMelodicIntervals[modulation_start * nVoices + j] < 0), true);
+                }
+            }
                 break;
             default:
                 throw std::invalid_argument("Unknown modulation type: " +
