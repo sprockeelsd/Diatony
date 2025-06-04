@@ -21,6 +21,11 @@ public:
                          TonalProgressionParameters* from, TonalProgressionParameters* to) :
             type(type), start(start), end(end), from(from), to(to) {}
 
+    explicit ModulationParameters(const ModulationParameters* params) :
+            type(params->type), start(params->start), end(params->end),
+            from(new TonalProgressionParameters(params->from)),
+            to(new TonalProgressionParameters(params->to)) {}
+
     /**                 getters                     **/
     int get_type() const { return type; }
 

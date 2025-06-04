@@ -44,7 +44,9 @@ TonalProgression::TonalProgression(Home home, TonalProgressionParameters* params
         IntVar& nIncompleteChords) : params(params){
 
     if (params->get_size() != (params->get_end() - params->get_start()) + 1)
-        throw std::runtime_error("TonalProgression: the length is not coherent with the start and end positions");
+        throw std::runtime_error("TonalProgression: the length is not coherent with the start and end positions. length: "
+             + std::to_string(params->get_size()) + ", start: " + std::to_string(params->get_start())
+                                 + ", end: " + std::to_string(params->get_end()));
 
     //todo: support seventh chords for all chord degrees + diminished seventh chords
 

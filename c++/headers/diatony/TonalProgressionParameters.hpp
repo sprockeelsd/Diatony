@@ -42,6 +42,11 @@ public:
         chordDegrees(std::move(chordDegs)), chordQualities(std::move(chordQuals)),
         chordStates(std::move(chordStas)) {}
 
+    explicit TonalProgressionParameters(const TonalProgressionParameters * params):
+        sectionNumber(params->sectionNumber), size(params->size), start(params->start), end(params->end),
+        tonality(params->tonality),
+        chordDegrees(params->chordDegrees), chordQualities(params->chordQualities), chordStates(params->chordStates) {}
+
     /**                     getters                     **/
     int get_section_number() const { return sectionNumber; }
 
@@ -65,6 +70,8 @@ public:
      * @return a string representation of the object
      */
     string to_string() const;
+
+    string pretty() const;
 };
 
 #endif //TONALPROGRESSIONPARAMETERS_HPP

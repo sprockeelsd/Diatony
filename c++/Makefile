@@ -4,6 +4,8 @@ all: clean compile midifile
 #include the file variables
 include $(dir $(lastword $(MAKEFILE_LIST)))file_variables.mk
 
+#if some file does not find gecode properly, add it here in a dummy variable and update the makefile detection in CLion should fix it
+
 dylib:
 	g++ $(PROBLEM_FILES) $(MIDI_FILES) -std=c++11 -dynamiclib -fPIC -F/Library/Frameworks -framework gecode -o ../out/diatony.dylib
 	install_name_tool -change gecode.framework/Versions/49/gecode /Library/Frameworks/gecode.framework/Versions/49/gecode ../out/diatony.dylib
