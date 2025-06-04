@@ -46,6 +46,8 @@ public:
 
     TonalProgressionParameters* get_sectionParameters(const int section) const { return sectionParameters[section]; }
 
+    ModulationParameters* get_modulationParameters(const int modulation) const { return modulationParameters[modulation]; }
+
     /**
      * toString method
      * Prints the total number of chords of the piece, the number of sections, the section starts and ends, the tonalities of

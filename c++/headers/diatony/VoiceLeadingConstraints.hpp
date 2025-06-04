@@ -34,6 +34,8 @@
  * @param tenorAltoHarmonicIntervals the array containing the harmonic intervals between tenor and alto
  * @param tenorSopranoHarmonicIntervals the array containing the harmonic intervals between tenor and soprano
  * @param altoSopranoHarmonicIntervals the array containing the harmonic intervals between alto and soprano
+ * @param start_position
+ * @param end_position
  */
 void forbid_parallel_intervals(const Home &home, int size, int nOfVoices, const vector<int> &intervals,
                                const IntVarArray &FullChordsVoicing, const IntVarArray &bassTenorHarmonicIntervals,
@@ -41,7 +43,8 @@ void forbid_parallel_intervals(const Home &home, int size, int nOfVoices, const 
                                const IntVarArray &bassSopranoHarmonicIntervals,
                                const IntVarArray &tenorAltoHarmonicIntervals,
                                const IntVarArray &tenorSopranoHarmonicIntervals,
-                               const IntVarArray &altoSopranoHarmonicIntervals);
+                               const IntVarArray &altoSopranoHarmonicIntervals,
+                               int start_position = 0, int end_position = -1);
 
 /**
  * Forbids a given parallel interval between two voices

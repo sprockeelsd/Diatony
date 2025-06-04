@@ -54,6 +54,26 @@ FourVoiceTexture::FourVoiceTexture(FourVoiceTextureParameters* params) : params(
                                                          nOfDifferentNotesInChords, nIncompleteChordsForEachSection[i]));
     }
 
+    /// Modulation constraints
+    for (int i = 0; i < this->params->get_numberOfSections() - 1; i++) {
+        switch (this->params->get_modulationParameters(i)->get_type()) {
+            case PERFECT_CADENCE_MODULATION: // make sure that parallel fifths are not allowed
+                /**void forbid_parallel_intervals(const Home &home, int size, int nOfVoices, const vector<int> &intervals,
+                               const IntVarArray &FullChordsVoicing, const IntVarArray &bassTenorHarmonicIntervals,
+                               const IntVarArray &bassAltoHarmonicIntervals,
+                               const IntVarArray &bassSopranoHarmonicIntervals,
+                               const IntVarArray &tenorAltoHarmonicIntervals,
+                               const IntVarArray &tenorSopranoHarmonicIntervals,
+                               const IntVarArray &altoSopranoHarmonicIntervals,
+                               int start_position = 0, int end_position = -1);**/
+                //todo forbid parellel fifths/octaves
+                break;
+            default:
+                throw std::invalid_argument("Unknown modulation type: " +
+                                            std::to_string(this->params->get_modulationParameters(i)->get_type()));
+        }
+    }
+
     /// test constraints
 
     /**------------------------------------ cost linking ---------------------------------------------------**/

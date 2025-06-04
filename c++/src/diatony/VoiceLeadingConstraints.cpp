@@ -30,6 +30,8 @@
  * @param tenorAltoHarmonicIntervals the array containing the harmonic intervals between tenor and alto
  * @param tenorSopranoHarmonicIntervals the array containing the harmonic intervals between tenor and soprano
  * @param altoSopranoHarmonicIntervals the array containing the harmonic intervals between alto and soprano
+ * @param start_position
+ * @param end_position
  */
 void forbid_parallel_intervals(const Home &home, int size, int nOfVoices, const vector<int> &intervals,
                                const IntVarArray &FullChordsVoicing, const IntVarArray &bassTenorHarmonicIntervals,
@@ -37,8 +39,12 @@ void forbid_parallel_intervals(const Home &home, int size, int nOfVoices, const 
                                const IntVarArray &bassSopranoHarmonicIntervals,
                                const IntVarArray &tenorAltoHarmonicIntervals,
                                const IntVarArray &tenorSopranoHarmonicIntervals,
-                               const IntVarArray &altoSopranoHarmonicIntervals) {
-    for(int chord = 0; chord < size - 1; chord++){ /// for each chord
+                               const IntVarArray &altoSopranoHarmonicIntervals,
+                               int start_position, int end_position ) {
+    if (end_position == -1) {
+        end_position = size - 1; // if no end position is given, set it to the last chord
+    }
+    for(int chord = start_position; chord < end_position; chord++){ /// for each chord
         for(int interval : intervals){ /// for each interval
             /// from bass
             forbid_parallel_interval(home, nOfVoices, interval, chord,
