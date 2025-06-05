@@ -111,6 +111,15 @@ FourVoiceTexture::FourVoiceTexture(FourVoiceTextureParameters* params) : params(
                         fullVoicing[(modulation_start + 1) * nVoices + j] % PERFECT_OCTAVE != leading_tone), BOT_IMP,
                         expr(*this, allMelodicIntervals[modulation_start * nVoices + j] < 0), true);
                 }
+                // forbid parallel intervals in the modulation
+                forbid_parallel_intervals(*this, params->get_totalNumberOfChords(), nVoices,
+                          {PERFECT_FIFTH, PERFECT_OCTAVE, UNISSON}, fullVoicing,
+                          bassTenorHarmonicIntervals, bassAltoHarmonicIntervals,
+                          bassSopranoHarmonicIntervals, tenorAltoHarmonicIntervals,
+                          tenorSopranoHarmonicIntervals, altoSopranoHarmonicIntervals,
+                          this->params->get_modulationParameters(i)->get_from()->get_end(),
+                            this->params->get_modulationParameters(i)->get_to()->get_start()
+                          );
             }
                 break;
             default:
