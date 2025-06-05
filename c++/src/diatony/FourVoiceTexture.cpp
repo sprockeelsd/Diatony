@@ -28,6 +28,18 @@ FourVoiceTexture::FourVoiceTexture(FourVoiceTextureParameters* params) : params(
         rel(*this, expr(*this, allMelodicIntervals[nVoices * i + SOPRANO]         == sopranoMelodicIntervals[i]));
     }
 
+    // Harmonic interval arrays initialization
+    bassTenorHarmonicIntervals                      = IntVarArray(*this, params->get_totalNumberOfChords(), 0, PERFECT_OCTAVE + PERFECT_FIFTH);
+    bassAltoHarmonicIntervals                       = IntVarArray(*this, params->get_totalNumberOfChords(), 0, 2 * PERFECT_OCTAVE + PERFECT_FIFTH);
+    bassSopranoHarmonicIntervals                    = IntVarArray(*this, params->get_totalNumberOfChords(), 0, 3 * PERFECT_OCTAVE + PERFECT_FIFTH);
+    tenorAltoHarmonicIntervals                      = IntVarArray(*this, params->get_totalNumberOfChords(), 0, PERFECT_OCTAVE);
+    tenorSopranoHarmonicIntervals                   = IntVarArray(*this, params->get_totalNumberOfChords(), 0, 2 * PERFECT_OCTAVE);
+    altoSopranoHarmonicIntervals                    = IntVarArray(*this, params->get_totalNumberOfChords(), 0, PERFECT_OCTAVE);
+
+    link_harmonic_arrays(*this, nVoices, params->get_totalNumberOfChords(), fullVoicing,
+             bassTenorHarmonicIntervals, bassAltoHarmonicIntervals, bassSopranoHarmonicIntervals,
+             tenorAltoHarmonicIntervals, tenorSopranoHarmonicIntervals, altoSopranoHarmonicIntervals);
+
     /// Initialisation of the cost variable arrays
     costsAllMelodicIntervals                        = IntVarArray(*this, nVoices * (params->get_totalNumberOfChords() - 1), UNISON_COST, MAX_MELODIC_COST);
     nDifferentValuesInDiminishedChord               = IntVarArray(*this, params->get_totalNumberOfChords(), 0, nVoices);
@@ -50,8 +62,62 @@ FourVoiceTexture::FourVoiceTexture(FourVoiceTextureParameters* params) : params(
         tonalProgressions.push_back(new TonalProgression(*this, this->params->get_sectionParameters(i), fullVoicing,
                                                          bassMelodicIntervals, tenorMelodicIntervals,
                                                          altoMelodicIntervals, sopranoMelodicIntervals,
-                                                         allMelodicIntervals, nDifferentValuesInDiminishedChord,
+                                                         allMelodicIntervals,
+                                                            bassTenorHarmonicIntervals, bassAltoHarmonicIntervals,
+                                                            bassSopranoHarmonicIntervals, tenorAltoHarmonicIntervals,
+                                                            tenorSopranoHarmonicIntervals, altoSopranoHarmonicIntervals,
+                                                         nDifferentValuesInDiminishedChord,
                                                          nOfDifferentNotesInChords, nIncompleteChordsForEachSection[i]));
+    }
+
+
+    /// Modulation constraints
+    for (int i = 0; i < this->params->get_numberOfSections() - 1; i++) {
+        switch (this->params->get_modulationParameters(i)->get_type()) {
+            case PERFECT_CADENCE_MODULATION: // make sure that parallel fifths are not allowed
+                forbid_parallel_intervals(*this, params->get_totalNumberOfChords(), nVoices,
+                                          {PERFECT_FIFTH, PERFECT_OCTAVE, UNISSON}, fullVoicing,
+                                          bassTenorHarmonicIntervals, bassAltoHarmonicIntervals,
+                                          bassSopranoHarmonicIntervals, tenorAltoHarmonicIntervals,
+                                          tenorSopranoHarmonicIntervals, altoSopranoHarmonicIntervals,
+                                          this->params->get_modulationParameters(i)->get_from()->get_end(),
+                                            this->params->get_modulationParameters(i)->get_to()->get_start()
+                                          );
+            case PIVOT_CHORD_MODULATION: // after the pivot chord, the chords are voiced as if they were in the new tonality
+                // nothing to do
+                break;
+            case ALTERATION_MODULATION: // make sure parallel fifths are not allowed
+                forbid_parallel_intervals(*this, params->get_totalNumberOfChords(), nVoices,
+                                          {PERFECT_FIFTH, PERFECT_OCTAVE, UNISSON}, fullVoicing,
+                                          bassTenorHarmonicIntervals, bassAltoHarmonicIntervals,
+                                          bassSopranoHarmonicIntervals, tenorAltoHarmonicIntervals,
+                                          tenorSopranoHarmonicIntervals, altoSopranoHarmonicIntervals,
+                                          this->params->get_modulationParameters(i)->get_from()->get_end(),
+                                            this->params->get_modulationParameters(i)->get_to()->get_start()
+                                          );
+                break;
+            case SECONDARY_DOMINANT_MODULATION: {
+                // The chromatism must be in the same voice
+                auto leading_tone = this->params->get_modulationParameters(i)->get_to()->get_tonality()->get_degree_note(SEVENTH_DEGREE);
+                auto modulation_start = this->params->get_modulationParameters(i)->get_start();
+
+                for (int j = BASS; j <= SOPRANO; j++) {
+                    // the leading tone must be preceded by the note one semitone below it in the same voice
+                    rel(*this, expr(*this, fullVoicing[(modulation_start + 1) * nVoices + j] % PERFECT_OCTAVE == leading_tone), BOT_IMP,
+                        expr(*this, fullVoicing[(modulation_start) * nVoices + j] % PERFECT_OCTAVE == leading_tone - MINOR_SECOND), true);
+                    // If the note leading to the chromatism is doubled, the one not going to the leading tone must go down
+                    rel(*this, expr(*this, fullVoicing[modulation_start] % PERFECT_OCTAVE ==
+                        (leading_tone + PERFECT_OCTAVE - MINOR_SECOND) % PERFECT_OCTAVE &&
+                        fullVoicing[(modulation_start + 1) * nVoices + j] % PERFECT_OCTAVE != leading_tone), BOT_IMP,
+                        expr(*this, allMelodicIntervals[modulation_start * nVoices + j] < 0), true);
+                }
+            }
+                break;
+            default:
+                throw std::invalid_argument("Unknown modulation type: " +
+                                            modulation_type_names[this->params->get_modulationParameters(i)->get_type()] +
+                                            ". Could not post voicing-related constraints associated to this modulation type.");
+        }
     }
 
     /// test constraints
@@ -103,6 +169,13 @@ FourVoiceTexture::FourVoiceTexture(FourVoiceTexture& s) : IntLexMinimizeSpace(s)
     sopranoMelodicIntervals.update(*this, s.sopranoMelodicIntervals);
 
     allMelodicIntervals.update(*this, s.allMelodicIntervals);
+
+    bassTenorHarmonicIntervals.update(*this, s.bassTenorHarmonicIntervals);
+    bassAltoHarmonicIntervals.update(*this, s.bassAltoHarmonicIntervals);
+    bassSopranoHarmonicIntervals.update(*this, s.bassSopranoHarmonicIntervals);
+    tenorAltoHarmonicIntervals.update(*this, s.tenorAltoHarmonicIntervals);
+    tenorSopranoHarmonicIntervals.update(*this, s.tenorSopranoHarmonicIntervals);
+    altoSopranoHarmonicIntervals.update(*this, s.altoSopranoHarmonicIntervals);
 
     nOfUnisons.update( *this, s.nOfUnisons);
 
@@ -166,6 +239,13 @@ string FourVoiceTexture::to_string() const {
     message += "Soprano Melodic Intervals:\n" + intVarArray_to_string(sopranoMelodicIntervals) + "\n";
 
     message += "All Melodic Intervals:\n" + intVarArray_to_string(allMelodicIntervals) + "\n";
+
+    message += "Bass-Tenor Harmonic Intervals:\n" + intVarArray_to_string(bassTenorHarmonicIntervals) + "\n";
+    message += "Bass-Alto Harmonic Intervals:\n" + intVarArray_to_string(bassAltoHarmonicIntervals) + "\n";
+    message += "Bass-Soprano Harmonic Intervals:\n" + intVarArray_to_string(bassSopranoHarmonicIntervals) + "\n";
+    message += "Tenor-Alto Harmonic Intervals:\n" + intVarArray_to_string(tenorAltoHarmonicIntervals) + "\n";
+    message += "Tenor-Soprano Harmonic Intervals:\n" + intVarArray_to_string(tenorSopranoHarmonicIntervals) + "\n";
+    message += "Alto-Soprano Harmonic Intervals:\n" + intVarArray_to_string(altoSopranoHarmonicIntervals) + "\n\n";
 
     message += "-------------------------------cost-related auxiliary arrays------------------------------\n";
 

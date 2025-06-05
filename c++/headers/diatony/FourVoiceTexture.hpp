@@ -24,6 +24,14 @@ private:
     IntVarArray                 sopranoMelodicIntervals;
     IntVarArray                 allMelodicIntervals;
 
+    /// Harmonic intervals (always positive)
+    IntVarArray                 bassTenorHarmonicIntervals;
+    IntVarArray                 bassAltoHarmonicIntervals;
+    IntVarArray                 bassSopranoHarmonicIntervals;
+    IntVarArray                 tenorAltoHarmonicIntervals;
+    IntVarArray                 tenorSopranoHarmonicIntervals;
+    IntVarArray                 altoSopranoHarmonicIntervals;
+
 
     /**------------------------------------------------- costs --------------------------------------------------**/
     /// Variables for each type of interval

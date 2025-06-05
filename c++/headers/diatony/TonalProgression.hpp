@@ -80,6 +80,7 @@ public:
      * @param altoIntervals
      * @param sopranoIntervals
      * @param allMIntervals
+     * @param bassTenorHarmonicIntervals
      * @param nDifferentValuesInDimChord
      * @param nDNotesInChords
      * @param nIncompleteChords
@@ -89,7 +90,11 @@ public:
     TonalProgression(Home home, TonalProgressionParameters* params,
         IntVarArray& fullVoicing, IntVarArray& bassIntervals, IntVarArray& tenorIntervals,
         IntVarArray& altoIntervals, IntVarArray& sopranoIntervals,
-        IntVarArray& allMIntervals, IntVarArray& nDifferentValuesInDimChord, IntVarArray& nDNotesInChords,
+        IntVarArray& allMIntervals, IntVarArray& bassTenorIntervals,
+        IntVarArray& bassAltoIntervals, IntVarArray& bassSopranoIntervals,
+        IntVarArray& tenorAltoIntervals, IntVarArray& tenorSopranoIntervals,
+        IntVarArray& altoSopranoIntervals,
+        IntVarArray& nDifferentValuesInDimChord, IntVarArray& nDNotesInChords,
         IntVar& nIncompleteChords);
 
     // todo constructor for all solutions within a margin of the cost vector

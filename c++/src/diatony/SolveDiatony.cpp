@@ -17,6 +17,7 @@
 const FourVoiceTexture* solve_diatony(FourVoiceTextureParameters* params, const Options* opts, bool print) {
     // create an instance of the FVT problem
     const auto pb = new FourVoiceTexture(params);
+
     /// create the restart based solver
     RBS<FourVoiceTexture, BAB> solver(pb, *opts);
     delete pb;

@@ -38,10 +38,14 @@
  * /!\ dominant diminished seventh chords are considered as minor ninth dominant chords without their fundamental
  */
 TonalProgression::TonalProgression(Home home, TonalProgressionParameters* params,
-        IntVarArray& fullVoicing, IntVarArray& bassIntervals, IntVarArray& tenorIntervals,
-        IntVarArray& altoIntervals, IntVarArray& sopranoIntervals,
-        IntVarArray& allMIntervals, IntVarArray& nDifferentValuesInDimChord, IntVarArray& nDNotesInChords,
-        IntVar& nIncompleteChords) : params(params){
+    IntVarArray& fullVoicing, IntVarArray& bassIntervals, IntVarArray& tenorIntervals,
+    IntVarArray& altoIntervals, IntVarArray& sopranoIntervals,
+    IntVarArray& allMIntervals, IntVarArray& bassTenorIntervals,
+    IntVarArray& bassAltoIntervals, IntVarArray& bassSopranoIntervals,
+    IntVarArray& tenorAltoIntervals, IntVarArray& tenorSopranoIntervals,
+    IntVarArray& altoSopranoIntervals,
+    IntVarArray& nDifferentValuesInDimChord, IntVarArray& nDNotesInChords,
+    IntVar& nIncompleteChords) : params(params){
 
     if (params->get_size() != (params->get_end() - params->get_start()) + 1)
         throw std::runtime_error("TonalProgression: the length is not coherent with the start and end positions. length: "
@@ -68,16 +72,12 @@ TonalProgression::TonalProgression(Home home, TonalProgressionParameters* params
     allMelodicIntervals         = IntVarArray(home, allMIntervals   .slice(params->get_start() * nVoices, 1, nVoices* (params->get_size() - 1)));
 
     /// variable arrays for harmonic intervals between adjacent voices (only positive because there is no direction)
-    bassTenorHarmonicIntervals                      = IntVarArray(home, params->get_size(), 0, PERFECT_OCTAVE + PERFECT_FIFTH);
-    bassAltoHarmonicIntervals                       = IntVarArray(home, params->get_size(), 0, 2 * PERFECT_OCTAVE + PERFECT_FIFTH);
-    bassSopranoHarmonicIntervals                    = IntVarArray(home, params->get_size(), 0, 3 * PERFECT_OCTAVE + PERFECT_FIFTH);
-    tenorAltoHarmonicIntervals                      = IntVarArray(home, params->get_size(), 0, PERFECT_OCTAVE);
-    tenorSopranoHarmonicIntervals                   = IntVarArray(home, params->get_size(), 0, 2 * PERFECT_OCTAVE);
-    altoSopranoHarmonicIntervals                    = IntVarArray(home, params->get_size(), 0, PERFECT_OCTAVE);
-
-    link_harmonic_arrays(home, nVoices, params->get_size(), voicing,
-                 bassTenorHarmonicIntervals, bassAltoHarmonicIntervals, bassSopranoHarmonicIntervals,
-                 tenorAltoHarmonicIntervals, tenorSopranoHarmonicIntervals, altoSopranoHarmonicIntervals);
+    bassTenorHarmonicIntervals                      = IntVarArray(home, bassTenorIntervals.slice(params->get_start(), 1, params->get_size()));
+    bassAltoHarmonicIntervals                       = IntVarArray(home, bassAltoIntervals.slice(params->get_start(), 1, params->get_size()));
+    bassSopranoHarmonicIntervals                    = IntVarArray(home, bassSopranoIntervals.slice(params->get_start(), 1, params->get_size()));
+    tenorAltoHarmonicIntervals                      = IntVarArray(home, tenorAltoIntervals.slice(params->get_start(), 1, params->get_size()));
+    tenorSopranoHarmonicIntervals                   = IntVarArray(home, tenorSopranoIntervals.slice(params->get_start(), 1, params->get_size()));
+    altoSopranoHarmonicIntervals                    = IntVarArray(home, altoSopranoIntervals.slice(params->get_start(), 1, params->get_size()));
 
     /// cost variables auxiliary arrays
     nDifferentValuesInDiminishedChord               = IntVarArray(home, nDifferentValuesInDimChord.slice(params->get_start(), 1, params->get_size()));
