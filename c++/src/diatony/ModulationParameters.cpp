@@ -4,11 +4,16 @@
 
 #include "../../headers/diatony/ModulationParameters.hpp"
 
-string ModulationParameters::toString() const {
+/**
+ * to_string method
+ * @return a string representation of the modulation parameters
+ */
+string ModulationParameters::to_string() const {
     string message;
     message += modulation_type_names[type] + " modulation ";
-    message += "from section " + to_string(from->get_progression_number()) + " to section " + to_string(to->get_progression_number()) + "\n";
-    message += "starting position: " + to_string(start) + "\n";
-    message += "ending position: " + to_string(end) + "\n";
+    message += "from section " + std::to_string(from->get_progression_number()) + " to section " +
+        std::to_string(to->get_progression_number()) + "\n";
+    message += "starting position: " + std::to_string(start) + "\n";
+    message += "ending position: " + std::to_string(end) + "\n";
     return message;
 }

@@ -54,21 +54,21 @@ public:
 
     /**                     getters                     **/
 
-    int get_progression_number() const { return progression_number; }
+    int         get_progression_number()    const { return progression_number; }
 
-    int get_size() const { return size; }
+    int         get_size()                  const { return size; }
 
-    int get_start() const { return start; }
+    int         get_start()                 const { return start; }
 
-    int get_end() const { return end; }
+    int         get_end()                   const { return end; }
 
-    Tonality *get_tonality() const { return tonality; }
+    Tonality *  get_tonality()              const { return tonality; }
 
-    vector<int> get_chordDegrees() const { return chord_degrees; }
+    vector<int> get_chordDegrees()          const { return chord_degrees; }
 
-    vector<int> get_chordQualities() const { return chord_qualities; }
+    vector<int> get_chordQualities()        const { return chord_qualities; }
 
-    vector<int> get_chordStates() const { return chord_states; }
+    vector<int> get_chordStates()           const { return chord_states; }
 
     /**
      * to_string method
@@ -83,5 +83,16 @@ public:
      */
     string pretty() const;
 };
+
+/**
+ * << operator overload
+ * @param os the output stream
+ * @param params the TonalProgressionParameters object to print
+ * @return the output stream with the parameters of the TonalProgressionParameters object in the pretty format
+ */
+inline std::ostream& operator<<(std::ostream& os, const TonalProgressionParameters& params) {
+    os << params.pretty();
+    return os;
+}
 
 #endif //TONALPROGRESSIONPARAMETERS_HPP

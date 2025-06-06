@@ -96,7 +96,7 @@ FourVoiceTexture::FourVoiceTexture(FourVoiceTextureParameters* params) : params(
                                             this->params->get_modulationParameters(i)->get_to()->get_start()
                                           );
                 break;
-            case SECONDARY_DOMINANT_MODULATION: {
+            case CHROMATIC_MODULATION: {
                 // The chromatism must be in the same voice
                 auto leading_tone = this->params->get_modulationParameters(i)->get_to()->get_tonality()->get_degree_note(SEVENTH_DEGREE);
                 auto modulation_start = this->params->get_modulationParameters(i)->get_start();

@@ -5,7 +5,7 @@
 #include "../../headers/diatony/FourVoiceTextureParameters.hpp"
 
 /**
- * toString method
+ * to_string method
  * Prints the total number of chords of the piece, the number of sections, the section starts and ends, the tonalities of
  * the sections, and the parameters for each of the sections
  * @return a string representation of the object
@@ -23,7 +23,7 @@ string FourVoiceTextureParameters::toString() const {
     message += "\n";
     message += "Modulation parameters: \n\n";
     for (const auto m : modulationParameters ) {
-        message += m->toString() + "\n";
+        message += m->to_string() + "\n";
     }
     return message;
 }

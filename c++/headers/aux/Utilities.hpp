@@ -311,10 +311,10 @@ const vector<int> MELODIC_MINOR_SCALE = {MAJOR_SECOND, MINOR_SECOND, MAJOR_SECON
 
 /** Modulations */
 enum modulations{
-    PERFECT_CADENCE_MODULATION,         ///0
-    PIVOT_CHORD_MODULATION,             ///1
-    ALTERATION_MODULATION,              ///2, sudden change of the tonality by using a chord from the new key that contains a note that is not in the previous key
-    SECONDARY_DOMINANT_MODULATION,      ///3, introducing the sensitive note of the new tonality
+    PERFECT_CADENCE_MODULATION,         ///0.
+    PIVOT_CHORD_MODULATION,             ///1.
+    ALTERATION_MODULATION,              ///2. sudden change of the tonality by using a chord from the new key that contains a note that is not in the previous key
+    CHROMATIC_MODULATION,               ///3. introducing the leading tone of the new tonality
 };
 
 const vector<string> modulation_type_names = {

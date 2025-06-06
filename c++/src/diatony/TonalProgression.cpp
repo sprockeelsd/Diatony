@@ -355,7 +355,7 @@ string TonalProgression::parameters(){
 }
 
 /**
- * toString method
+ * to_string method
  * @return a string representation of the current instance of the FourVoiceTexture class.
  * Right now, it returns a string "FourVoiceTexture object. size = <size>"
  * If a variable is not assigned when this function is called, it writes <not assigned> instead of the value

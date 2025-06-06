@@ -92,6 +92,8 @@ int main(int argc, char* argv[]) {
         cout << "MIDI file(s) created" << endl;
     }
 
+    std::cout << *sec1params << std::endl;
+
     delete sec1params;
     delete sec2params;
     delete mod;
