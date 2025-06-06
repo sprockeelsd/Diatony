@@ -128,7 +128,7 @@ TonalProgression::TonalProgression(Home home, TonalProgressionParameters* params
      for(int i = 0; i < params->get_size(); i++) {
          IntVarArgs currentChord(voicing.slice(nVoices * i, 1, nVoices));
 
-         //set the chord's domain to the notes of the degree chordDegrees[i]'s chord with the right quality
+         //set the chord's domain to the notes of the degree chord_degrees[i]'s chord with the right quality
          set_to_chord(home, params->get_tonality(), params->get_chordDegrees()[i], params->get_chordQualities()[i], currentChord);
 
          //set the bass based on the chord's state
