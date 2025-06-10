@@ -84,7 +84,7 @@ TonalProgression::TonalProgression(Home home, TonalProgressionParameters* params
     noFDifferentNotesInChords                       = IntVarArray(home, nDNotesInChords.slice(params->get_start(), 1, params->get_size()));
 
     nOfUnisons                                     = IntVar(home, 0, nVoices * (params->get_size() - 1));
-    count(home, allMelodicIntervals, UNISSON, IRT_EQ, nOfUnisons);
+    count(home, allMelodicIntervals, UNISON, IRT_EQ, nOfUnisons);
 
     /// cost variables
     nOfIncompleteChords                             = IntVar(nIncompleteChords);
@@ -184,7 +184,7 @@ TonalProgression::TonalProgression(Home home, TonalProgressionParameters* params
         if(params->get_chordDegrees()[i] != params->get_chordDegrees()[i + 1]){
             /// @todo maybe do it also <--- so that it can propagate in both directions, if the harmonic interval is a perfect fifth or octave the previous and next chords can't
             //todo maybe rewrite this
-            forbid_parallel_intervals(home, params->get_size(), nVoices, {PERFECT_FIFTH, PERFECT_OCTAVE, UNISSON},
+            forbid_parallel_intervals(home, params->get_size(), nVoices, {PERFECT_FIFTH, PERFECT_OCTAVE, UNISON},
                                       voicing, bassTenorHarmonicIntervals, bassAltoHarmonicIntervals,
                                       bassSopranoHarmonicIntervals, tenorAltoHarmonicIntervals,
                                       tenorSopranoHarmonicIntervals, altoSopranoHarmonicIntervals);

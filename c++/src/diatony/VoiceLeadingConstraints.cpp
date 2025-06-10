@@ -309,7 +309,7 @@ void fifth_degree_appogiatura(const Home& home, int nVoices, int currentPosition
             expr(home, melodicIntervals[voice][currentPosition] == -MINOR_SECOND), true);
         /// the third of the scale must go down to the second by step
         rel(home, expr(home, currentChord[voice] % PERFECT_OCTAVE == tonality->get_degree_note(THIRD_DEGREE)),
-                       BOT_IMP, expr(home, melodicIntervals[voice][currentPosition] < UNISSON), true);
+                       BOT_IMP, expr(home, melodicIntervals[voice][currentPosition] < UNISON), true);
         rel(home, expr(home, currentChord[voice] % PERFECT_OCTAVE == tonality->get_degree_note(THIRD_DEGREE)),
             BOT_IMP, expr(home, melodicIntervals[voice][currentPosition] >= -MAJOR_SECOND), true);
     }

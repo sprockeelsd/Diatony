@@ -76,7 +76,7 @@ FourVoiceTexture::FourVoiceTexture(FourVoiceTextureParameters* params) : params(
         switch (this->params->get_modulationParameters(i)->get_type()) {
             case PERFECT_CADENCE_MODULATION: // make sure that parallel fifths are not allowed
                 forbid_parallel_intervals(*this, params->get_totalNumberOfChords(), nVoices,
-                                          {PERFECT_FIFTH, PERFECT_OCTAVE, UNISSON}, fullVoicing,
+                                          {PERFECT_FIFTH, PERFECT_OCTAVE, UNISON}, fullVoicing,
                                           bassTenorHarmonicIntervals, bassAltoHarmonicIntervals,
                                           bassSopranoHarmonicIntervals, tenorAltoHarmonicIntervals,
                                           tenorSopranoHarmonicIntervals, altoSopranoHarmonicIntervals,
@@ -88,7 +88,7 @@ FourVoiceTexture::FourVoiceTexture(FourVoiceTextureParameters* params) : params(
                 break;
             case ALTERATION_MODULATION: // make sure parallel fifths are not allowed
                 forbid_parallel_intervals(*this, params->get_totalNumberOfChords(), nVoices,
-                                          {PERFECT_FIFTH, PERFECT_OCTAVE, UNISSON}, fullVoicing,
+                                          {PERFECT_FIFTH, PERFECT_OCTAVE, UNISON}, fullVoicing,
                                           bassTenorHarmonicIntervals, bassAltoHarmonicIntervals,
                                           bassSopranoHarmonicIntervals, tenorAltoHarmonicIntervals,
                                           tenorSopranoHarmonicIntervals, altoSopranoHarmonicIntervals,
@@ -113,7 +113,7 @@ FourVoiceTexture::FourVoiceTexture(FourVoiceTextureParameters* params) : params(
                 }
                 // forbid parallel intervals in the modulation
                 forbid_parallel_intervals(*this, params->get_totalNumberOfChords(), nVoices,
-                          {PERFECT_FIFTH, PERFECT_OCTAVE, UNISSON}, fullVoicing,
+                          {PERFECT_FIFTH, PERFECT_OCTAVE, UNISON}, fullVoicing,
                           bassTenorHarmonicIntervals, bassAltoHarmonicIntervals,
                           bassSopranoHarmonicIntervals, tenorAltoHarmonicIntervals,
                           tenorSopranoHarmonicIntervals, altoSopranoHarmonicIntervals,

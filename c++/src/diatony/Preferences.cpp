@@ -102,7 +102,7 @@ void compute_cost_for_common_notes_not_in_same_voice(const Home &home, const Int
                                             altoMelodicIntervals, sopranoMelodicIntervals};
     /// costsForEachVoice[voice] = nb of times where the interval is 0
     for(int voice = BASS; voice <= SOPRANO; voice++){
-        count(home, melodicIntervals[voice], UNISSON, IRT_EQ, commonNotesInSameVoice[voice]);
+        count(home, melodicIntervals[voice], UNISON, IRT_EQ, commonNotesInSameVoice[voice]);
     }
     /// the sum of costs for each voice = the number of times where there is a common note in the same voice
     rel(home, expr(home, nOfUnissons + nOfCommonNotesInSameVoice == 0));
@@ -146,6 +146,6 @@ compute_cost_for_melodic_intervals(const Home &home, const IntVarArray &allMelod
     linear(home, costAllMelodicIntervals, IRT_EQ, costOfMelodicIntervals);
 
     /// count the number of occurences of each interval, useful for the preference of common notes in same voice
-    count(home, allMelodicIntervals, UNISSON,
+    count(home, allMelodicIntervals, UNISON,
           IRT_EQ, nOfUnissons);
 }
