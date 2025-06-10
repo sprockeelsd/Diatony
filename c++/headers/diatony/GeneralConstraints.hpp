@@ -7,6 +7,7 @@
 
 #include "../aux/Tonality.hpp"
 #include "../aux/Utilities.hpp"
+#include "FourVoiceTextureParameters.hpp"
 
 /***********************************************************************************************************************
  *                                                                                                                     *
@@ -34,17 +35,17 @@ void restrain_voices_domains(const Home &home, int nVoices, int n, vector<int> l
  * Link the melodic intervals arrays to the fullChordsVoicing array
  * @param home The instance of the problem
  * @param nVoices the number of voices
- * @param size the number of chords
  * @param fullChordsVoicing the array containing all the chords in the form [bass0, alto0, tenor0, soprano0, bass1, ...]
  * @param bassMelodicIntervals the melodic intervals of the bass
  * @param tenorMelodicIntervals the melodic intervals of the tenor
  * @param altoMelodicIntervals the melodic intervals of the alto
  * @param sopranoMelodicIntervals the melodic intervals of the soprano
+ * @param allMelodicIntervals
  */
-void link_melodic_arrays(const Home &home, int nVoices, int size,
+void link_melodic_arrays(const Home &home, int nVoices, FourVoiceTextureParameters* params,
                          IntVarArray &fullChordsVoicing, IntVarArray &bassMelodicIntervals,
                          IntVarArray &altoMelodicIntervals, IntVarArray &tenorMelodicIntervals,
-                         IntVarArray &sopranoMelodicIntervals);
+                         IntVarArray &sopranoMelodicIntervals, IntVarArray &allMelodicIntervals);
 
 /**
  * Link the harmonic intervals arrays to the fullChordsVoicing array for each voice

@@ -43,24 +43,31 @@ void restrain_voices_domains(const Home &home, int nVoices, int n,
  * Link the melodic intervals arrays to the fullChordsVoicing array
  * @param home The instance of the problem
  * @param nVoices the number of voices
- * @param size the number of chords
  * @param fullChordsVoicing the array containing all the chords in the form [bass0, alto0, tenor0, soprano0, bass1,...]
  * @param bassMelodicIntervals the melodic intervals of the bass
  * @param tenorMelodicIntervals the melodic intervals of the tenor
  * @param altoMelodicIntervals the melodic intervals of the alto
  * @param sopranoMelodicIntervals the melodic intervals of the soprano
+ * @param allMelodicIntervals
  */
-void link_melodic_arrays(const Home &home, int nVoices, int size,
+void link_melodic_arrays(const Home &home, int nVoices, FourVoiceTextureParameters* params,
                          IntVarArray &fullChordsVoicing, IntVarArray &bassMelodicIntervals,
                          IntVarArray &altoMelodicIntervals, IntVarArray &tenorMelodicIntervals,
-                         IntVarArray &sopranoMelodicIntervals) {
-
+                         IntVarArray &sopranoMelodicIntervals, IntVarArray &allMelodicIntervals) {
+    auto size = params->get_totalNumberOfChords();
     for (int i = 0; i < size - 1; ++i)
     {
         rel(home, bassMelodicIntervals[i]    == fullChordsVoicing[(i + 1) * nVoices + BASS]      - fullChordsVoicing[i * nVoices + BASS]);
         rel(home, tenorMelodicIntervals[i]   == fullChordsVoicing[((i + 1) * nVoices) + TENOR]   - fullChordsVoicing[(i * nVoices) + TENOR]);
         rel(home, altoMelodicIntervals[i]    == fullChordsVoicing[((i + 1) * nVoices) + ALTO]    - fullChordsVoicing[(i * nVoices) + ALTO]);
         rel(home, sopranoMelodicIntervals[i] == fullChordsVoicing[((i + 1) * nVoices) + SOPRANO] - fullChordsVoicing[(i * nVoices) + SOPRANO]);
+    }
+
+    for(int i = 0; i < params->get_totalNumberOfChords()-1; i++){
+        rel(home, expr(home, allMelodicIntervals[nVoices * i + BASS]            == bassMelodicIntervals[i]));
+        rel(home, expr(home, allMelodicIntervals[nVoices * i + TENOR]           == tenorMelodicIntervals[i]));
+        rel(home, expr(home, allMelodicIntervals[nVoices * i + ALTO]            == altoMelodicIntervals[i]));
+        rel(home, expr(home, allMelodicIntervals[nVoices * i + SOPRANO]         == sopranoMelodicIntervals[i]));
     }
 }
 
