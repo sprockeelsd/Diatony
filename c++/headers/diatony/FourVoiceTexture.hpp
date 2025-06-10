@@ -10,7 +10,7 @@
 #include "../aux/Utilities.hpp"
 
 class FourVoiceTexture : public IntLexMinimizeSpace { // todo add IntLexMinimizeSpace again when the changes to the structure are over
-private:
+protected:
     int                         nVoices = 4;
     FourVoiceTextureParameters* params;
     vector<TonalProgression*>   tonalProgressions;
