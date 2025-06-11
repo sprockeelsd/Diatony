@@ -119,12 +119,6 @@ TonalProgression::TonalProgression(Home home, TonalProgressionParameters* params
     ///todo check the constraint for Vda again with the new representation where it is its own chord!
     ///todo check that all constraints still work as expected with the new additions
 
-    /// restrain the domain of the voices to their range + state that bass <= tenor <= alto <= soprano
-    restrain_voices_domains(home, nVoices, params->get_size(),
-                            {BASS_MIN, TENOR_MIN, ALTO_MIN, SOPRANO_MIN},
-                            {BASS_MAX, TENOR_MAX, ALTO_MAX, SOPRANO_MAX},
-                            voicing);
-
      for(int i = 0; i < params->get_size(); i++) {
          IntVarArgs currentChord(voicing.slice(nVoices * i, 1, nVoices));
 

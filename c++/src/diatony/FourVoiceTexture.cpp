@@ -86,6 +86,12 @@ FourVoiceTexture::FourVoiceTexture(FourVoiceTextureParameters* params) : params(
         tenorSopranoHarmonicIntervals, altoSopranoHarmonicIntervals
     );
 
+    /// restrain the domain of the voices to their range + state that bass <= tenor <= alto <= soprano
+    restrain_voices_domains(*this, nVoices, params->get_totalNumberOfChords(),
+                            {BASS_MIN, TENOR_MIN, ALTO_MIN, SOPRANO_MIN},
+                            {BASS_MAX, TENOR_MAX, ALTO_MAX, SOPRANO_MAX},
+                            fullVoicing);
+
     /// Creation of the subproblems for each progression
     for (int i = 0; i < params->get_numberOfSections(); i++) {
         tonalProgressions.push_back(

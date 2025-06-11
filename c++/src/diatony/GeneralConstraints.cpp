@@ -15,7 +15,7 @@
  ***********************************************************************************************************************/
 
 /**
- * Sets the domains of the different voices to their range
+ * Sets the domains of the different voices to their range (defined in Utilities.hpp)
  * @param home the instance of the problem
  * @param nVoices the number of voices
  * @param n the number of chords
@@ -23,9 +23,8 @@
  * @param upperBounds the upper bounds of the voices
  * @param fullChordsVoicing the array containing all the chords in the form [bass0, alto0, tenor0, soprano0, bass1, ...]
  */
-void restrain_voices_domains(const Home &home, int nVoices, int n,
-                             vector<int> lowerBounds, vector<int> upperBounds,
-                             IntVarArray &fullChordsVoicing) {
+void restrain_voices_domains(const Home &home, const int nVoices, const int n, const vector<int> &lowerBounds,
+    const vector<int> &upperBounds, IntVarArray &fullChordsVoicing) {
     /// Restrain the domains of the different voices to their range
     for(int i = BASS; i <= SOPRANO; i++){
         IntVarArgs currentVoice(fullChordsVoicing.slice(i, nVoices, nVoices * n));
@@ -43,26 +42,27 @@ void restrain_voices_domains(const Home &home, int nVoices, int n,
  * Link the melodic intervals arrays to the fullChordsVoicing array
  * @param home The instance of the problem
  * @param nVoices the number of voices
- * @param fullChordsVoicing the array containing all the chords in the form [bass0, alto0, tenor0, soprano0, bass1,...]
+ * @param params the parameters of the progression
+ * @param fullChordsVoicing the array containing all the chords in the form [bass0, alto0, tenor0, soprano0, bass1, ...]
  * @param bassMelodicIntervals the melodic intervals of the bass
  * @param tenorMelodicIntervals the melodic intervals of the tenor
  * @param altoMelodicIntervals the melodic intervals of the alto
  * @param sopranoMelodicIntervals the melodic intervals of the soprano
- * @param allMelodicIntervals
+ * @param allMelodicIntervals the array containing all the melodic intervals in the form
  */
-void link_melodic_arrays(const Home &home, int nVoices, FourVoiceTextureParameters* params,
+void link_melodic_arrays(const Home &home, const int nVoices, const FourVoiceTextureParameters* params,
                          IntVarArray &fullChordsVoicing, IntVarArray &bassMelodicIntervals,
                          IntVarArray &altoMelodicIntervals, IntVarArray &tenorMelodicIntervals,
                          IntVarArray &sopranoMelodicIntervals, IntVarArray &allMelodicIntervals) {
-    auto size = params->get_totalNumberOfChords();
-    for (int i = 0; i < size - 1; ++i)
-    {
-        rel(home, bassMelodicIntervals[i]    == fullChordsVoicing[(i + 1) * nVoices + BASS]      - fullChordsVoicing[i * nVoices + BASS]);
-        rel(home, tenorMelodicIntervals[i]   == fullChordsVoicing[((i + 1) * nVoices) + TENOR]   - fullChordsVoicing[(i * nVoices) + TENOR]);
-        rel(home, altoMelodicIntervals[i]    == fullChordsVoicing[((i + 1) * nVoices) + ALTO]    - fullChordsVoicing[(i * nVoices) + ALTO]);
-        rel(home, sopranoMelodicIntervals[i] == fullChordsVoicing[((i + 1) * nVoices) + SOPRANO] - fullChordsVoicing[(i * nVoices) + SOPRANO]);
+    const auto size = params->get_totalNumberOfChords();
+    // link each of the voice's melodic interval arrays
+    for (int i = 0; i < size - 1; ++i){
+        rel(home, bassMelodicIntervals[i]    == fullChordsVoicing[(i + 1) * nVoices + BASS]    - fullChordsVoicing[i * nVoices + BASS]);
+        rel(home, tenorMelodicIntervals[i]   == fullChordsVoicing[(i + 1) * nVoices + TENOR]   - fullChordsVoicing[i * nVoices + TENOR]);
+        rel(home, altoMelodicIntervals[i]    == fullChordsVoicing[(i + 1) * nVoices + ALTO]    - fullChordsVoicing[i * nVoices + ALTO]);
+        rel(home, sopranoMelodicIntervals[i] == fullChordsVoicing[(i + 1) * nVoices + SOPRANO] - fullChordsVoicing[i * nVoices + SOPRANO]);
     }
-
+    // link the allMelodicIntervals array
     for(int i = 0; i < params->get_totalNumberOfChords()-1; i++){
         rel(home, expr(home, allMelodicIntervals[nVoices * i + BASS]            == bassMelodicIntervals[i]));
         rel(home, expr(home, allMelodicIntervals[nVoices * i + TENOR]           == tenorMelodicIntervals[i]));
@@ -84,11 +84,10 @@ void link_melodic_arrays(const Home &home, int nVoices, FourVoiceTextureParamete
  * @param tenorSopranoHarmonicIntervals the harmonic intervals between tenor and soprano
  * @param altoSopranoHarmonicIntervals the harmonic intervals between alto and soprano
  */
-void link_harmonic_arrays(const Home &home, int nVoices, int size,   IntVarArray fullChordsVoicing,
+void link_harmonic_arrays(const Home &home, const int nVoices, const int size, IntVarArray fullChordsVoicing,
                           IntVarArray bassTenorHarmonicIntervals,    IntVarArray bassAltoHarmonicIntervals,
                           IntVarArray bassSopranoHarmonicIntervals,  IntVarArray tenorAltoHarmonicIntervals,
                           IntVarArray tenorSopranoHarmonicIntervals, IntVarArray altoSopranoHarmonicIntervals) {
-
     for(int i = 0; i < size; ++i){
         rel(home, bassTenorHarmonicIntervals[i] == fullChordsVoicing[(nVoices * i) + TENOR] - fullChordsVoicing[nVoices * i + BASS]);
         rel(home, bassAltoHarmonicIntervals[i] == fullChordsVoicing[(nVoices * i) + ALTO] - fullChordsVoicing[nVoices * i + BASS]);
