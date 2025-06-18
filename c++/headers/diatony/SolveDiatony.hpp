@@ -16,6 +16,8 @@
  * @param print whether to print the solutions found during the search
  * @return the best solution found, or nullptr if no solution was found
  */
-const FourVoiceTexture* solve_diatony(FourVoiceTextureParameters* params, const Options* opts, bool print = false);
+const FourVoiceTexture* solve_diatony(FourVoiceTextureParameters* params, const Options* opts = nullptr, bool print = false);
+
+//todo other functions (returning all sols, finding approximately optimal solutions, etc.)
 
 #endif //DIATONY_SOLVEPROBLEM_HPP
