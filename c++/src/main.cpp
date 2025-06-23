@@ -17,9 +17,8 @@
  * - the first one specifies whether we need to find all solutions or just the best one
  * - The second specifies whether we need to create a MIDI file or not
  *
- * This function finds the solution for a harmonisation problem, given a series of tonalities and chord degrees, qualities
- * and states for the chords in each tonality. Currently, modulation constraints are not available, but they will be
- * in the near future.
+ * This function finds the solution for a harmonization problem, given a series of tonalities and chord degrees, qualities
+ * and states for the chords in each tonality. Currently, modulation constraints are not available, but they will be soon.
  */
 int main(int argc, char* argv[]) {
     /// if there is not exactly 2 argument, there is an error

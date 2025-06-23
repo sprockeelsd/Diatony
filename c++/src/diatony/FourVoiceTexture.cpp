@@ -11,7 +11,7 @@
 FourVoiceTexture::FourVoiceTexture(FourVoiceTextureParameters* params) : params(params) {
 
     /// General arrays initialization
-    fullVoicing                             = IntVarArray(*this, nVoices * params->get_totalNumberOfChords(), 0, 127);
+    fullVoicing                             = IntVarArray(*this, nVoices * params->get_totalNumberOfChords(), BASS_MIN, SOPRANO_MAX);
 
     bassMelodicIntervals                    = IntVarArray(*this, params->get_totalNumberOfChords() - 1, -PERFECT_OCTAVE, PERFECT_OCTAVE);
     tenorMelodicIntervals                   = IntVarArray(*this, params->get_totalNumberOfChords() - 1, -PERFECT_OCTAVE, PERFECT_OCTAVE);
