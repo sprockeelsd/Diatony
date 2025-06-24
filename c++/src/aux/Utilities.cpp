@@ -58,7 +58,7 @@ vector<int> get_all_given_note(int note)
  * @return the interval in semitones between the root and the note
  */
 int get_interval_from_root(int quality, int chordNote){
-    auto intervals = chordQualitiesIntervals.at(quality); // the intervals between consecutive notes in the chord
+    const auto& intervals = chordQualitiesIntervals.at(quality); // the intervals between consecutive notes in the chord
     int diff = 0; // the difference between the bass and the fundamental in semitones
     int s = 0; // variable to iterate over notes
     while (s < chordNote){
@@ -73,7 +73,7 @@ int get_interval_from_root(int quality, int chordNote){
  * @param vector a vector of integers
  * @return string the string representation of the vector
  */
-string int_vector_to_string(vector<int> vector){
+string int_vector_to_string(const vector<int> &vector){
     string s;
     for (int i = 0; i < vector.size(); ++i) {
         s += to_string(vector[i]);
@@ -89,8 +89,9 @@ string int_vector_to_string(vector<int> vector){
  * @param size the size of the array
  * @return a vector<int> containing the same values as the array
  */
-vector<int> int_pointer_to_vector(int* ptr, int size){
+vector<int> int_pointer_to_vector(const int* ptr, const int size){
     vector<int> v;
+    v.reserve(size);
     for(int i = 0; i < size; i++){
         v.push_back(ptr[i]);
     }
@@ -102,7 +103,7 @@ vector<int> int_pointer_to_vector(int* ptr, int size){
  * @param stats a Search::Statistics object representing the statistics of a search
  * @return The string representation of the statistics object
  */
-string statistics_to_string(Search::Statistics stats){
+string statistics_to_string(const Search::Statistics &stats){
     string s = "Nodes traversed: " + to_string(stats.node) + "\n";
     s += "Failed nodes explored: " + to_string(stats.fail) + "\n";
     s += "Restarts performed: " + to_string(stats.restart) + "\n";
@@ -117,7 +118,7 @@ string statistics_to_string(Search::Statistics stats){
  * @param stats a Search::Statistics object representing the statistics of a search
  * @return The string representation of the statistics object
  */
-string statistics_to_csv_string(Search::Statistics stats){
+string statistics_to_csv_string(const Search::Statistics &stats){
     string s = to_string(stats.node) + ",";
     s += to_string(stats.fail) + ",";
     s += to_string(stats.restart) + ",";
@@ -159,7 +160,7 @@ string intVarArray_to_string(IntVarArray vars){
     return res;
 }
 
-vector<int> intVarArray_to_int_vector(IntVarArray vars) {
+vector<int> intVarArray_to_int_vector(const IntVarArray& vars) {
     vector<int> res;
     for (auto & var : vars) {
         if (!var.assigned()) {
@@ -179,7 +180,7 @@ string intVarArgs_to_string(IntVarArgs args){
     int s = args.size();
     string res;
     for(int i = 0; i < s; i++){
-        res += intVar_to_string(args[i], 0);
+        res += intVar_to_string(args[i], false);
         if(i != s - 1)
             res += ", ";
     }
@@ -218,8 +219,8 @@ string time(){
 
 /**
  * Write a text into a log file
- * Useful for debugging in the OM environment
  * @param message the text to write
+ * @param filename the name of the file to write
  */
 void write_to_log_file(const char *message, const string& filename) {
     const char* homeDir = std::getenv("HOME"); // Get the user's home directory

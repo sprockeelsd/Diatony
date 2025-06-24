@@ -11,58 +11,64 @@
 #include "../aux/Tonality.hpp"
 
 /**
- * Class representing all the parameters necessary to create a tonal progression
+ * Class representing all the parameters necessary to create a tonal progression.
  */
 class TonalProgressionParameters {
 protected:
-    const int                       sectionNumber;
-    const int                       size;                                       // The number of chords in the progression
-    const int                       start;                                      // The position in the global piece at which the progression starts
-    const int                       end;                                        // The position in the global piece at which the progression ends
-    Tonality*                       tonality;                                   // The tonality of the progression
-    const vector<int>               chordDegrees;                               // The degrees of the chords in the progression
-    const vector<int>               chordQualities;                             // The qualities of the chords
-    const vector<int>               chordStates;                                // The states of the chords
+    const int                       progression_number;     // The position of the progression in the piece (0 for the first progression, 1 for the second, etc.)
+    const int                       size;                   // The number of chords in the progression
+    const int                       start;                  // The position in the global piece at which the progression starts
+    const int                       end;                    // The position in the global piece at which the progression ends
+    Tonality*                       tonality;               // The tonality of the progression
+    const vector<int>               chord_degrees;          // The degrees of the chords in the progression
+    const vector<int>               chord_qualities;        // The qualities of the chords
+    const vector<int>               chord_states;           // The states of the chords
 
 public:
     /**
      * Constructor
-     * @param sec_n
-     * @param s the number of chords
-     * @param start the start position of this progression in the whole piece
-     * @param end the end position of this progression in the whole piece
-     * @param t the tonality
-     * @param chordDegs the chord degrees
-     * @param chordQuals the chord qualities
-     * @param chordStas the chord states
+     * @param prog_n        The position of the progression in the piece (0 for the first progression, 1 for the second, etc.)
+     * @param s             The number of chords
+     * @param start         The start position of this progression in the whole piece
+     * @param end           The end position of this progression in the whole piece
+     * @param t             The tonality
+     * @param chord_degs    The chord degrees
+     * @param chord_quals   The chord qualities
+     * @param chord_stas    The chord states
      */
-    TonalProgressionParameters(const int sec_n, const int s, int start, int end, Tonality *t,
-                                vector<int> chordDegs, vector<int> chordQuals, vector<int> chordStas):
-        sectionNumber(sec_n), size(s), start(start), end(end), tonality(t),
-        chordDegrees(std::move(chordDegs)), chordQualities(std::move(chordQuals)),
-        chordStates(std::move(chordStas)) {}
+    TonalProgressionParameters(const int prog_n, const int s, int start, int end, Tonality *t,
+                                vector<int> chord_degs, vector<int> chord_quals, vector<int> chord_stas):
+        progression_number(prog_n), size(s), start(start), end(end), tonality(t),
+        chord_degrees(std::move(chord_degs)), chord_qualities(std::move(chord_quals)),
+        chord_states(std::move(chord_stas)) {}
 
+    /**
+     * Copy constructor
+     * @param params A pointer to a TonalProgressionParameters object
+     */
     explicit TonalProgressionParameters(const TonalProgressionParameters * params):
-        sectionNumber(params->sectionNumber), size(params->size), start(params->start), end(params->end),
+        progression_number(params->progression_number), size(params->size), start(params->start), end(params->end),
         tonality(params->tonality),
-        chordDegrees(params->chordDegrees), chordQualities(params->chordQualities), chordStates(params->chordStates) {}
+        chord_degrees(params->chord_degrees), chord_qualities(params->chord_qualities),
+        chord_states(params->chord_states) {}
 
     /**                     getters                     **/
-    int get_section_number() const { return sectionNumber; }
 
-    int get_size() const { return size; }
+    int         get_progression_number()    const { return progression_number; }
 
-    int get_start() const { return start; }
+    int         get_size()                  const { return size; }
 
-    int get_end() const { return end; }
+    int         get_start()                 const { return start; }
 
-    Tonality *get_tonality() const { return tonality; }
+    int         get_end()                   const { return end; }
 
-    vector<int> get_chordDegrees() const { return chordDegrees; }
+    Tonality *  get_tonality()              const { return tonality; }
 
-    vector<int> get_chordQualities() const { return chordQualities; }
+    vector<int> get_chordDegrees()          const { return chord_degrees; }
 
-    vector<int> get_chordStates() const { return chordStates; }
+    vector<int> get_chordQualities()        const { return chord_qualities; }
+
+    vector<int> get_chordStates()           const { return chord_states; }
 
     /**
      * to_string method
@@ -71,7 +77,22 @@ public:
      */
     string to_string() const;
 
+    /**
+     * pretty to_string method, with human-readable format
+     * @return a string representation of the object in a more readable format
+     */
     string pretty() const;
 };
+
+/**
+ * << operator overload
+ * @param os the output stream
+ * @param params the TonalProgressionParameters object to print
+ * @return the output stream with the parameters of the TonalProgressionParameters object in the pretty format
+ */
+inline std::ostream& operator<<(std::ostream& os, const TonalProgressionParameters& params) {
+    os << params.pretty();
+    return os;
+}
 
 #endif //TONALPROGRESSIONPARAMETERS_HPP

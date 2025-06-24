@@ -9,17 +9,29 @@
 /**
  * Returns the best solution to the Four voice texture problem specified by the parameters. If the maximum search time
  * specified in the options is reached, the best solution found so far is returned.
- * @param params the parameters of the problem, containing the tonalities, chord degrees, qualities and states for each chord in each progression
+ * @param params the parameters of the problem, containing the tonalities, chord degrees, qualities and states for each
+ * chord in each progression.
  * @param opts the options for the search, containing the maximum search time, the restart strategy, etc.
  * @param print whether to print the solutions found during the search
  * @return the best solution found, or nullptr if no solution was found
  */
-const FourVoiceTexture* solve_diatony(FourVoiceTextureParameters* params, const Options* opts, bool print) {
+const FourVoiceTexture* solve_diatony(FourVoiceTextureParameters* params, const Options* opts, const bool print) {
     // create an instance of the FVT problem
     const auto pb = new FourVoiceTexture(params);
-
-    /// create the restart based solver
-    RBS<FourVoiceTexture, BAB> solver(pb, *opts);
+    /// create the restart based solver with the search options
+    Options options;
+    if (!opts) {
+        options.threads = 1;
+        options.stop = Stop::time(60000); // stop after 120 seconds
+        options.cutoff = Cutoff::merge(
+                Cutoff::linear(2*params->get_totalNumberOfChords()),
+                Cutoff::geometric((4*params->get_totalNumberOfChords())^2, 2));
+        options.nogoods_limit = params->get_totalNumberOfChords() * 4 * 4;
+    }
+    else {
+        options = *opts; // copy the options
+    }
+    RBS<FourVoiceTexture, BAB> solver(pb, options);
     delete pb;
 
     int n_sols = 0;
@@ -54,4 +66,5 @@ const FourVoiceTexture* solve_diatony(FourVoiceTextureParameters* params, const 
     }
     return lastSol;
 }
+
 //todo other functions (returning all sols, finding approximately optimal solutions, etc.)

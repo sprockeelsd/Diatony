@@ -11,6 +11,9 @@
 #include "TonalProgressionParameters.hpp"
 #include "ModulationParameters.hpp"
 
+/**
+ * This class represents the parameters for a four-voice texture problem.
+ */
 class FourVoiceTextureParameters {
 protected:
     const int                               totalNumberOfChords;        // total number of chords in the piece

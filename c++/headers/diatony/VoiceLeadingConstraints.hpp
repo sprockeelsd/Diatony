@@ -14,10 +14,12 @@
  * chords.                                                                                                             *
  * It currently contains the following constraints:                                                                    *
  *      - forbid_parallel_interval: forbids a given parallel interval between two voices                               *
- *      - fundamental_state_chord_to_fundamental_state_chord: sets the rules for the melodic movements between chords  *
- *          in fundamental state                                                                                       *
- *      - interrupted_cadence: sets the constraint for a fifth degree followed by a sixth degree in     *
- *          funda mental state                                                                                         *
+ *      - Contrary motion to bass: enforces that all voices move in contrary movement to the bass                      *
+ *      - Tritone resolution: forces the tritone to resolve properly                                                   *
+ *      - interrupted_cadence: sets the constraint for a fifth degree followed by a sixth degree in fundamental state  *
+ *      - Italian augmented sixth: ensures proper resolution                                                           *
+ *      - Species seventh: the seventh must be prepared                                                                *
+ *      - Fifth degree appogiatura: ensures proper voice movements                                                     *
  *                                                                                                                     *
  ***********************************************************************************************************************/
 
@@ -34,21 +36,17 @@
  * @param tenorAltoHarmonicIntervals the array containing the harmonic intervals between tenor and alto
  * @param tenorSopranoHarmonicIntervals the array containing the harmonic intervals between tenor and soprano
  * @param altoSopranoHarmonicIntervals the array containing the harmonic intervals between alto and soprano
- * @param start_position
- * @param end_position
+ * @param start_position optional parameter to define the start position
+ * @param end_position optional parameter to define the end position
  */
 void forbid_parallel_intervals(const Home &home, int size, int nOfVoices, const vector<int> &intervals,
-                               const IntVarArray &FullChordsVoicing, const IntVarArray &bassTenorHarmonicIntervals,
-                               const IntVarArray &bassAltoHarmonicIntervals,
-                               const IntVarArray &bassSopranoHarmonicIntervals,
-                               const IntVarArray &tenorAltoHarmonicIntervals,
-                               const IntVarArray &tenorSopranoHarmonicIntervals,
-                               const IntVarArray &altoSopranoHarmonicIntervals,
-                               int start_position = 0, int end_position = -1);
+    const IntVarArray &FullChordsVoicing,           const IntVarArray &bassTenorHarmonicIntervals,
+    const IntVarArray &bassAltoHarmonicIntervals,   const IntVarArray &bassSopranoHarmonicIntervals,
+    const IntVarArray &tenorAltoHarmonicIntervals,  const IntVarArray &tenorSopranoHarmonicIntervals,
+    const IntVarArray &altoSopranoHarmonicIntervals, int start_position = 0, int end_position = -1);
 
 /**
  * Forbids a given parallel interval between two voices
- * @todo make it with argument variables + make it cleaner
  * @param home the instance of the problem
  * @param nVoices the number of voices
  * @param forbiddenParallelInterval the interval that must not be parallel
@@ -58,8 +56,8 @@ void forbid_parallel_intervals(const Home &home, int size, int nOfVoices, const 
  * @param voicesHarmonicIntervals the array containing the harmonic intervals between adjacent voices
  * @param FullChordsVoicing the array containing all the notes of the chords in the progression
  */
-void forbid_parallel_interval(Home home, int nVoices, int forbiddenParallelInterval, int currentPosition, int voice1ID,
-                              int voice2ID, IntVarArray voicesHarmonicIntervals, IntVarArray FullChordsVoicing);
+void forbid_parallel_interval(Home home, int nVoices, int forbiddenParallelInterval, int currentPosition,
+    int voice1ID, int voice2ID, IntVarArray voicesHarmonicIntervals, IntVarArray FullChordsVoicing);
 
 /**
  * Adds the constraint that Soprano, Alto and Tenor must move in contrary motion to the bass
@@ -71,22 +69,17 @@ void forbid_parallel_interval(Home home, int nVoices, int forbiddenParallelInter
  * @param sopranoMelodicInterval the array containing the melodic intervals of the soprano
  */
 void contrary_motion_to_bass(const Home& home, int currentPosition, const IntVarArray& bassMelodicInterval,
-                             const IntVarArray& tenorMelodicInterval, const IntVarArray& altoMelodicInterval,
-                             const IntVarArray& sopranoMelodicInterval);
-
-/***********************************************************************************************************************
- *                                                                                                                     *
- *                                          Fundamental state chord constraints                                        *
- *                                                                                                                     *
- ***********************************************************************************************************************/
+    const IntVarArray& tenorMelodicInterval, const IntVarArray& altoMelodicInterval,
+    const IntVarArray& sopranoMelodicInterval);
 
 /**
  * Forces the tritone to resolve properly
  * @param home the instance of the problem
- * @param nvoices the number of voices in the piece
+ * @param nVoices the number of voices in the piece
  * @param currentPosition the current position in the chord progression
  * @param tonality the tonality of the piece
  * @param chordDegs the degrees of the chords
+ * @param chordQuals the qualities of the chords
  * @param chordStas the state of the chords
  * @param bassMelodicIntervals the melodic interval of the bass between the current position and the next
  * @param tenorMelodicIntervals the melodic interval of the tenor between the current position and the next
@@ -94,14 +87,14 @@ void contrary_motion_to_bass(const Home& home, int currentPosition, const IntVar
  * @param sopranoMelodicIntervals the melodic interval of the soprano between the current position and the next
  * @param fullChordsVoicing the array containing all the notes of the chords in the progression
  */
-void tritone_resolution(const Home &home, int nVoices, int currentPosition, Tonality *tonality, vector<int> chordDegs,
-                        vector<int> chordQuals, vector<int> chordStas, const IntVarArray &bassMelodicIntervals,
-                        const IntVarArray &tenorMelodicIntervals, const IntVarArray &altoMelodicIntervals,
-                        const IntVarArray &sopranoMelodicIntervals, IntVarArray &fullChordsVoicing);
+void tritone_resolution(const Home &home, int nVoices, int currentPosition, Tonality *tonality, const vector<int> &chordDegs,
+    const vector<int> &chordQuals, const vector<int> &chordStas, const IntVarArray &bassMelodicIntervals,
+    const IntVarArray &tenorMelodicIntervals, const IntVarArray &altoMelodicIntervals,
+    const IntVarArray &sopranoMelodicIntervals, IntVarArray &fullChordsVoicing);
 
 /**
- * Sets the constraint for a fifth degree followed by a sixth degree in fundamental state
- *      the seventh of the scale must rise to the tonic and the other voices are going down (except for the bass)
+ * Sets the constraint for a fifth degree followed by a sixth degree in fundamental state.
+ * The seventh of the scale must rise to the tonic, and the other voices are going down (except for the bass)
  * @param home the instance of the problem
  * @param currentPosition the current position in the chord progression
  * @param tonality the tonality of the piece
@@ -111,39 +104,37 @@ void tritone_resolution(const Home &home, int nVoices, int currentPosition, Tona
  * @param sopranoMelodicInterval the melodic intervals of the soprano
  */
 void interrupted_cadence(const Home &home, int currentPosition, Tonality *tonality, IntVarArray fullChordsVoicing,
-                         const IntVarArray &tenorMelodicInterval, const IntVarArray &altoMelodicInterval,
-                         const IntVarArray &sopranoMelodicInterval);
+    const IntVarArray &tenorMelodicInterval, const IntVarArray &altoMelodicInterval,
+    const IntVarArray &sopranoMelodicInterval);
 
 /**
  * Posts the voicing constraints for augmented sixth chords (italian)
- * @param home
- * @param nOfVoices
- * @param currentPosition
- * @param tonality
- * @param fullChordsVoicing
- * @param bassMelodicIntervals
- * @param tenorMelodicIntervals
- * @param altoMelodicIntervals
- * @param sopranoMelodicIntervals
+ * @param home the instance of the problem
+ * @param nOfVoices the number of voices in the piece
+ * @param currentPosition the current position in the chord progression
+ * @param tonality the tonality of the piece
+ * @param fullChordsVoicing the array containing all the notes of the chords in the progression
+ * @param bassMelodicIntervals the melodic interval of the bass between the current position and the next
+ * @param tenorMelodicIntervals the melodic interval of the tenor between the current position and the next
+ * @param altoMelodicIntervals the melodic interval of the alto between the current position and the next
+ * @param sopranoMelodicIntervals the melodic interval of the soprano between the current position and the next
  */
 void italian_augmented_sixth(const Home &home, int nOfVoices, int currentPosition, Tonality *tonality, IntVarArray &fullChordsVoicing,
-                             const IntVarArray &bassMelodicIntervals, const IntVarArray &tenorMelodicIntervals,
-                             const IntVarArray &altoMelodicIntervals, const IntVarArray &sopranoMelodicIntervals);
+    const IntVarArray &bassMelodicIntervals, const IntVarArray &tenorMelodicIntervals,
+    const IntVarArray &altoMelodicIntervals, const IntVarArray &sopranoMelodicIntervals);
 
-/***********************************************************************************************************************
- *                                                                                                                     *
- *                                           First inversion chord constraints                                         *
- *                                                                                                                     *
- ***********************************************************************************************************************/
-
-/***********************************************************************************************************************
- *                                                                                                                     *
- *                                           Second inversion chord constraints                                        *
- *                                                                                                                     *
- ***********************************************************************************************************************/
-
-void species_seventh(const Home &home, int nOfVoices, int currentPosition, Tonality* tonality, vector<int> chordDegrees, vector<int> chordQualities,
-                     IntVarArray &fullChordsVoicing);
+/**
+ * Ensures that the seventh of the chord is prepared in the previous chord
+ * @param home the instance of the problem
+ * @param nOfVoices the number of voices in the piece
+ * @param currentPosition the current position in the chord progression
+ * @param tonality the tonality of the piece
+ * @param chordDegrees the degrees of the chords in the progression
+ * @param chordQualities the qualities of the chords in the progression
+ * @param fullChordsVoicing the array containing all the notes of the chords in the progression
+ */
+void species_seventh(const Home &home, int nOfVoices, int currentPosition, Tonality* tonality,
+    const vector<int> &chordDegrees, const vector<int> &chordQualities, IntVarArray &fullChordsVoicing);
 
 /**
  * Sets the constraint for a first degree in second inversion followed by a fifth degree (appogiatura)
@@ -158,7 +149,7 @@ void species_seventh(const Home &home, int nOfVoices, int currentPosition, Tonal
  * @param sopranoMelodicInterval the melodic interval of the soprano between the current position and the next
  */
 void fifth_degree_appogiatura(const Home& home, int nVoices, int currentPosition, Tonality *tonality, IntVarArray &fullChordsVoicing,
-                              IntVarArray &bassMelodicInterval, const IntVarArray& tenorMelodicInterval,
-                              const IntVarArray& altoMelodicInterval, const IntVarArray& sopranoMelodicInterval);
+    IntVarArray &bassMelodicInterval, const IntVarArray& tenorMelodicInterval,
+    const IntVarArray& altoMelodicInterval, const IntVarArray& sopranoMelodicInterval);
 
 #endif

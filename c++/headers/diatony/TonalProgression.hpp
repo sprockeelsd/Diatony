@@ -6,9 +6,6 @@
 #define TONAL_PROGRESSION_HPP
 
 #include "../aux/Utilities.hpp"
-#include "../aux/Tonality.hpp"
-#include "../aux/MajorTonality.hpp"
-#include "../aux/MinorTonality.hpp"
 #include "TonalProgressionParameters.hpp"
 #include "GeneralConstraints.hpp"
 #include "HarmonicConstraints.hpp"
@@ -26,14 +23,14 @@ using namespace std;
  ***********************************************************************************************************************/
  /**
   * This class models a classic 4-voice harmonic problem of tonal music. It takes as arguments a number of chords, a
-  * tonality, and a series of chords identified by their degree, quality and state. It models a 4 voice chord
+  * tonality, and a series of chords identified by their degree, quality and state. It models a 4-voice chord
   * progression following traditional rules and preferences of western tonal harmony for diatonic chord progressions.
   */
 
 class TonalProgression {
 protected:
-    int                             nVoices = 4;                                // The number of voices
-    TonalProgressionParameters*     params;                                     // The parameters of the problem
+    int                             nVoices = 4;
+    TonalProgressionParameters*     params;
     IntArgs                         nOfNotesInChord;                            // The max number of notes in each chord
 
     /** ----------------------------------Problem variables--------------------------------------------------------- **/
@@ -47,7 +44,8 @@ protected:
     IntVarArray                 altoMelodicIntervals;
     IntVarArray                 sopranoMelodicIntervals;
 
-    IntVarArray                 allMelodicIntervals;        // contains the melodic intervals for all voices [bass0, tenor0, alto0, soprano0, bass1, tenor1, alto1, soprano1, ...]
+    // contains the melodic intervals for all voices [bass0, tenor0, alto0, soprano0, bass1, tenor1, alto1, soprano1, ...]
+    IntVarArray                 allMelodicIntervals;
 
     /// Harmonic intervals (always positive)
     IntVarArray                 bassTenorHarmonicIntervals;
@@ -58,11 +56,11 @@ protected:
     IntVarArray                 altoSopranoHarmonicIntervals;
 
     /// cost variables auxiliary arrays
-    IntVarArray                 nDifferentValuesInDiminishedChord;
-    IntVarArray                 noFDifferentNotesInChords;
+    IntVarArray                 nDifferentValuesInDiminishedChord;  /// The number of different note values in diminished chords (distinct value, e.g., 60,72
+    IntVarArray                 noFDifferentNotesInChords;          /// the number of different notes (e.g., root, third,...) in each chord
 
     /// Variables for each type of interval
-    IntVar                      nOfUnisons;                                // number of intervals that are a unison
+    IntVar                      nOfUnisons;
 
     /// cost variables
     IntVar                      nOfIncompleteChords;
@@ -75,39 +73,38 @@ public:
      * @param home the space of the problem
      * @param params an object containing the parameters of the problem
      * @param fullVoicing the general array for the voicing of the whole piece
-     * @param bassIntervals
-     * @param tenorIntervals
-     * @param altoIntervals
-     * @param sopranoIntervals
-     * @param allMIntervals
-     * @param bassTenorHarmonicIntervals
-     * @param nDifferentValuesInDimChord
-     * @param nDNotesInChords
-     * @param nIncompleteChords
+     * @param bassIntervals the melodic intervals for the bass voice
+     * @param tenorIntervals the melodic intervals for the tenor voice
+     * @param altoIntervals the melodic intervals for the alto voice
+     * @param sopranoIntervals the melodic intervals for the soprano voice
+     * @param allMIntervals the melodic intervals for all voices
+     * @param bassTenorIntervals the harmonic intervals between the bass and tenor voices
+     * @param bassAltoIntervals the harmonic intervals between the bass and alto voices
+     * @param bassSopranoIntervals the harmonic intervals between the bass and soprano voices
+     * @param tenorAltoIntervals the harmonic intervals between the tenor and alto voices
+     * @param tenorSopranoIntervals the harmonic intervals between the tenor and soprano voices
+     * @param altoSopranoIntervals the harmonic intervals between the alto and soprano voices
+     * @param nDifferentValuesInDimChord the number of different values in diminished chords
+     * @param nDNotesInChords the number of different notes in each chord
+     * @param nIncompleteChords the number of incomplete chords in the progression
      * @return an object constraining the variables on which the problem is defined
      * /!\ dominant diminished seventh chords are considered as minor ninth dominant chords without their fundamental
      */
     TonalProgression(Home home, TonalProgressionParameters* params,
-        IntVarArray& fullVoicing, IntVarArray& bassIntervals, IntVarArray& tenorIntervals,
-        IntVarArray& altoIntervals, IntVarArray& sopranoIntervals,
-        IntVarArray& allMIntervals, IntVarArray& bassTenorIntervals,
-        IntVarArray& bassAltoIntervals, IntVarArray& bassSopranoIntervals,
-        IntVarArray& tenorAltoIntervals, IntVarArray& tenorSopranoIntervals,
-        IntVarArray& altoSopranoIntervals,
-        IntVarArray& nDifferentValuesInDimChord, IntVarArray& nDNotesInChords,
-        IntVar& nIncompleteChords);
+        IntVarArray& fullVoicing,                   IntVarArray& bassIntervals,         IntVarArray& tenorIntervals,
+        IntVarArray& altoIntervals,                 IntVarArray& sopranoIntervals,      IntVarArray& allMIntervals,
+        IntVarArray& bassTenorIntervals,            IntVarArray& bassAltoIntervals,     IntVarArray& bassSopranoIntervals,
+        IntVarArray& tenorAltoIntervals,            IntVarArray& tenorSopranoIntervals, IntVarArray& altoSopranoIntervals,
+        IntVarArray& nDifferentValuesInDimChord,    IntVarArray& nDNotesInChords,       IntVar& nIncompleteChords);
 
     // todo constructor for all solutions within a margin of the cost vector
-    // TonalProgression(Home home, int s, Tonality *t, vector<int> chordDegs, vector<int> chordQuals, vector<int> chordStas,
-    // IntVarArray& fullVoicing,
-    // vector<int> costs, double margin = 0.0);
 
     /**
      * Copy constructor
      * @param home the space of the problem
      * @param s an instance of the TonalProgression class
      * @return a copy of the given instance of the TonalProgression class
-     * /!\ It is important to copy every variable instance variable of the given instance to the new instance
+     * /!\ It is important to copy every variable of the given instance to the new instance
      */
     TonalProgression(Home home, TonalProgression &s);
 
@@ -148,14 +145,12 @@ public:
      * returns the parameters in a string
      * @return a string containing the parameters of the problem
      */
-    string parameters();
+    string parameters() const;
 
     /**
-     * toString method
-     * @return a string representation of the current instance of the FourVoiceTexture class.
-     * Right now, it returns a string "FourVoiceTexture object. size = <size>"
-     * If a variable is not assigned when this function is called, it writes <not assigned> instead of the value
+     * to_string method
+     * @return A string representation of the current instance of the TonalProgression class.
      */
-    string to_string();
+    string to_string() const;
 };
 #endif

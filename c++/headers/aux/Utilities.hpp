@@ -5,21 +5,17 @@
 #ifndef UTILITIES
 #define UTILITIES
 
-#include <map>
-#include <vector>
-#include <iostream>
 #include <fstream>
-#include <stdlib.h>
-#include <string>
-#include <ctime>
-#include <exception>
+#include <map>
 #include <set>
+#include <string>
+#include <vector>
 
-#include "gecode/kernel.hh"
 #include "gecode/int.hh"
-#include "gecode/search.hh"
+#include "gecode/kernel.hh"
+// ReSharper disable once CppUnusedIncludeDirective
 #include "gecode/minimodel.hh"
-#include "gecode/set.hh"
+#include "gecode/search.hh"
 
 using namespace std;
 using namespace Gecode;
@@ -42,104 +38,51 @@ enum solver_types{
     LDS_SOLVER  //2
 };
 
-/** Branching strategies */
-enum variable_selection{
-    DEGREE_MAX,                     //0
-    DOM_SIZE_MIN,                   //1
-    RIGHT_TO_LEFT,                  //2
-    LEFT_TO_RIGHT_SOPRANO_TO_BASS,  //3
-    AFC_MAX,                        //4
-};
-
-/// go <-- soprano->bass: 4-3-2-1-8-7-6-5 etc
-auto right_to_left = [](const Space& home, const IntVar& x, int i) {
-    return i;
-};
-
-/// go --> soprano->bass
-auto left_to_right_soprano_to_bass = [](const Space& home, const IntVar& x, int i) {
-    return (i/4) * 4 + (4 - i%4);
-};
-
-const vector<IntVarBranch> variable_selection_heuristics = {INT_VAR_DEGREE_MAX(),
-                                                            INT_VAR_SIZE_MIN(),
-                                                            INT_VAR_MERIT_MAX(right_to_left),
-                                                            INT_VAR_MERIT_MIN(left_to_right_soprano_to_bass)};
-
-const vector<string> variable_selection_heuristics_names = {"Degree max", "Domain size min", "Left to right",
-                                                            "Right to left", "AFC max"};
-
-enum value_selection{
-    VAL_MIN,            //0
-    VAL_MAX,            //1
-    VAL_MED,            //2
-    VAL_RND,            //3
-};
-
-/// value selection heuristic
-auto branchVal = [](const Space& home, IntVar x, int i) {
-    return x.min();
-};
-
-/// commit function (EQ and DIFF)
-auto branchCommit = [](Space& home, unsigned int a, IntVar x, int i, int n){
-    if (a == 0U){
-        rel(home, x, IRT_EQ, n);
-    } else {
-        rel(home, x, IRT_NQ, n);
-    }
-};
-
-const vector<IntValBranch> value_selection_heuristics = {INT_VAL_MIN(), INT_VAL_MAX(), INT_VAL_MED(), INT_VAL_RND(1U)};
-
-const vector<string> value_selection_heuristics_names = {"Value min", "Value max", "Median value", "Value random"};
-
-
 /** Voice ranges */
-const int BASS_MIN = 40;
-const int BASS_MAX = 60;
-const int TENOR_MIN = 48;
-const int TENOR_MAX = 69;
-const int ALTO_MIN = 55;
-const int ALTO_MAX = 75;
-const int SOPRANO_MIN = 60;
-const int SOPRANO_MAX = 84;
+constexpr int BASS_MIN = 40;
+constexpr int BASS_MAX = 60;
+constexpr int TENOR_MIN = 48;
+constexpr int TENOR_MAX = 69;
+constexpr int ALTO_MIN = 55;
+constexpr int ALTO_MAX = 75;
+constexpr int SOPRANO_MIN = 60;
+constexpr int SOPRANO_MAX = 84;
 
 /** Melodic costs */
-const int UNISON_COST = 0;
-const int SECOND_COST = 1;
-const int THIRD_COST = 3;
-const int FOURTH_COST = 6;
-const int TRITONE_COST = 6;
-const int FIFTH_COST = 6;
-const int SIXTH_COST = 12;
-const int SEVENTH_COST = 18;
-const int OCTAVE_COST = 6;
+constexpr int UNISON_COST = 0;
+constexpr int SECOND_COST = 1;
+constexpr int THIRD_COST = 3;
+constexpr int FOURTH_COST = 6;
+constexpr int TRITONE_COST = 6;
+constexpr int FIFTH_COST = 6;
+constexpr int SIXTH_COST = 12;
+constexpr int SEVENTH_COST = 18;
+constexpr int OCTAVE_COST = 6;
 
-const int MAX_MELODIC_COST = SEVENTH_COST;
+constexpr int MAX_MELODIC_COST = SEVENTH_COST;
 
 /** Notes */
-const int B_SHARP = 0;
-const int C = 0;
-const int C_SHARP = 1;
-const int D_FLAT = 1;
-const int D = 2;
-const int D_SHARP = 3;
-const int E_FLAT = 3;
-const int E = 4;
-const int F_FLAT = 4;
-const int E_SHARP = 5;
-const int F = 5;
-const int F_SHARP = 6;
-const int G_FLAT = 6;
-const int G = 7;
-const int G_SHARP = 8;
-const int A_FLAT = 8;
-const int A = 9;
-const int A_SHARP = 10;
-const int B_FLAT = 10;
-const int B = 11;
-const int C_FLAT = 11;
+constexpr int B_SHARP = 0;
+constexpr int C = 0;
+constexpr int C_SHARP = 1;
+constexpr int D_FLAT = 1;
+constexpr int D = 2;
+constexpr int D_SHARP = 3;
+constexpr int E_FLAT = 3;
+constexpr int E = 4;
+constexpr int F_FLAT = 4;
+constexpr int E_SHARP = 5;
+constexpr int F = 5;
+constexpr int F_SHARP = 6;
+constexpr int G_FLAT = 6;
+constexpr int G = 7;
+constexpr int G_SHARP = 8;
+constexpr int A_FLAT = 8;
+constexpr int A = 9;
+constexpr int A_SHARP = 10;
+constexpr int B_FLAT = 10;
+constexpr int B = 11;
+constexpr int C_FLAT = 11;
 
 const vector<std::string> noteNames = {"C", "Csharp", "D", "Eb", "E", "F", "Fsharp", "G", "Ab", "A", "Bb", "B"};
 
@@ -188,7 +131,7 @@ enum cadences{
 /** Intervals */
 // "classic" intervals
 enum intervals{
-    UNISSON,            //0
+    UNISON,            //0
     MINOR_SECOND,       //1
     MAJOR_SECOND,       //2
     MINOR_THIRD,        //3
@@ -204,10 +147,10 @@ enum intervals{
 };
 
 // augmented/diminished intervals
-const int AUGMENTED_SECOND = 3;
-const int DIMINISHED_THIRD = 2;
-const int AUGMENTED_FOURTH = TRITONE;
-const int DIMINISHED_FIFTH = TRITONE;
+constexpr int AUGMENTED_SECOND = 3;
+constexpr int DIMINISHED_THIRD = 2;
+constexpr int AUGMENTED_FOURTH = TRITONE;
+constexpr int DIMINISHED_FIFTH = TRITONE;
 
 /** Chords */
 enum chordTypes{
@@ -284,7 +227,7 @@ enum chordNotes{
 
 /** Modes */
 enum Mode {
-    IONIAN,     //0 , major mode
+    IONIAN,     //0, major mode
     DORIAN,     //1
     PHRYGIAN,   //2
     LYDIAN,     //3
@@ -294,8 +237,8 @@ enum Mode {
 };
 
 // syntactic sugar for more commonly used modes
-const int MAJOR_MODE = IONIAN;
-const int MINOR_MODE = AEOLIAN;
+constexpr int MAJOR_MODE = IONIAN;
+constexpr int MINOR_MODE = AEOLIAN;
 
 const vector<std::string> modeNames = {"Major", "Dorian", "Phrygian", "Lydian", "Mixolydian", "Minor", "Locrian"};
 
@@ -311,10 +254,10 @@ const vector<int> MELODIC_MINOR_SCALE = {MAJOR_SECOND, MINOR_SECOND, MAJOR_SECON
 
 /** Modulations */
 enum modulations{
-    PERFECT_CADENCE_MODULATION,         ///0
-    PIVOT_CHORD_MODULATION,             ///1
-    ALTERATION_MODULATION,              ///2, sudden change of the tonality by using a chord from the new key that contains a note that is not in the previous key
-    SECONDARY_DOMINANT_MODULATION,      ///3, introducing the sensitive note of the new tonality
+    PERFECT_CADENCE_MODULATION,         ///0.
+    PIVOT_CHORD_MODULATION,             ///1.
+    ALTERATION_MODULATION,              ///2. sudden change of the tonality by using a chord from the new key that contains a note that is not in the previous key
+    CHROMATIC_MODULATION,               ///3. introducing the leading tone of the new tonality
 };
 
 const vector<string> modulation_type_names = {
@@ -359,28 +302,28 @@ int get_interval_from_root(int quality, int chordNote);
  * @param size the size of the array
  * @return a vector<int> containing the same values as the array
  */
-vector<int> int_pointer_to_vector(int* ptr, int size);
+vector<int> int_pointer_to_vector(const int* ptr, int size);
 
 /**
  * Transforms a vector of integers into a string
  * @param vector a vector of integers
  * @return string the string representation of the vector
  */
-string int_vector_to_string(vector<int> vector);
+string int_vector_to_string(const vector<int> &vector);
 
 /**
  * Prints the Search::Statistics object into a readable format
  * @param stats a Search::Statistics object representing the statistics of a search
  * @return The string representation of the statistics object
  */
-string statistics_to_string(Search::Statistics stats);
+string statistics_to_string(const Search::Statistics &stats);
 
 /**
  * Prints the Search::Statistics object into a csv format (coma separated)
  * @param stats a Search::Statistics object representing the statistics of a search
  * @return The string representation of the statistics object
  */
-string statistics_to_csv_string(Search::Statistics stats);
+string statistics_to_csv_string(const Search::Statistics &stats);
 
 /**
  * Returns the value of a variable as a string
@@ -397,7 +340,7 @@ string intVar_to_string(const IntVar &var, bool absolute = false);
  */
 string intVarArray_to_string(IntVarArray vars);
 
-vector<int> intVarArray_to_int_vector(IntVarArray vars);
+vector<int> intVarArray_to_int_vector(const IntVarArray& vars);
 
 /**
  * Returns the values of an IntVarArgs as a string
@@ -428,6 +371,7 @@ string time();
 /**
  * Write a text into a log file
  * @param message the text to write
+ * @param filename the name of the file to write
  */
 void write_to_log_file(const char *message, const string& filename);
 
